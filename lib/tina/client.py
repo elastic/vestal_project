@@ -21,8 +21,11 @@ def llm_client(route: str = "A"):
             "For route B, call the Elasticsearch _inference API directly."
         )
     from openai import OpenAI
+    proxy_url = os.environ["LLM_PROXY_URL"]
+    if proxy_url and not proxy_url.startswith(("http://", "https://")):
+        proxy_url = f"https://{proxy_url}"
     return OpenAI(
-        base_url=os.environ["LLM_PROXY_URL"],
+        base_url=proxy_url,
         api_key=os.environ.get("LLM_APIKEY", "unused"),
     )
 
