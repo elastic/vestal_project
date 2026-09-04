@@ -105,10 +105,28 @@ def inline_svg(path: pathlib.Path) -> str:
 
 # ── Build ──
 
+def inline_svg_images(html_body: str, base_path: pathlib.Path) -> str:
+    """Replace <img src="*.svg"> with inline data URIs, resolving relative to base_path."""
+    def replace_svg_src(m: re.Match) -> str:
+        before = m.group(1)
+        src = m.group(2)
+        after = m.group(3)
+        if src.startswith('data:') or src.startswith('http'):
+            return m.group(0)
+        svg_path = (base_path / src).resolve()
+        if not svg_path.exists() or not svg_path.suffix == '.svg':
+            return m.group(0)
+        data = base64.b64encode(svg_path.read_bytes()).decode()
+        return f'{before}data:image/svg+xml;base64,{data}{after}'
+    # Match src="...svg" in img tags
+    return re.sub(r'(<img[^>]+src=")([^"]+\.svg)("[^>]*>)', replace_svg_src, html_body)
+
+
 def build(source_path: pathlib.Path) -> str:
     """Render slides.md → self-contained HTML string."""
     source = source_path.read_text()
     slides_data = parse_slides(source)
+    slides_dir = source_path.parent  # for resolving relative image paths
 
     template = (TEMPLATE_DIR / "deck.html").read_text()
 
@@ -124,15 +142,17 @@ def build(source_path: pathlib.Path) -> str:
     slides_html = []
     for i, slide in enumerate(slides_data):
         layout = slide['fm'].get('layout', 'concept')
-        rule_marker = '<!-- rule -->' if slide['fm'].get('rule') else ''
+        rule_marker = '<!-- rule -->' if '<!-- rule -->' in slide['raw'] else ''
+        # Inline any SVG <img> references to make index.html self-contained
+        body = inline_svg_images(slide['body'], slides_dir)
         slide_html = (
             f'<section class="slide" data-layout="{html.escape(layout)}" '
             f'data-index="{i}">'
             f'{rule_marker}'
-            f'{slide["body"]}'
-            f'\n<img src="" class="elastic-logo" alt="Elastic" '
-            f'style="content:url(\'data:image/svg+xml;base64,'
-            f'{base64.b64encode(logo_svg.encode()).decode()}\');"/>'
+            f'{body}'
+            f'\n<img class="elastic-logo" alt="Elastic" '
+            f'src="data:image/svg+xml;base64,'
+            f'{base64.b64encode(logo_svg.encode()).decode()}"/>'
             f'</section>'
         )
         slides_html.append(slide_html)

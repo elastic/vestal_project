@@ -7,7 +7,7 @@
   var slides, current, stepIndex, steps;
 
   function init() {
-    slides = Array.from(document.querySelectorAll('.slide'));
+    slides = Array.from(document.querySelectorAll('.deck > section[data-index]'));
     if (!slides.length) return;
 
     // Deep-link: #/N (1-based)
