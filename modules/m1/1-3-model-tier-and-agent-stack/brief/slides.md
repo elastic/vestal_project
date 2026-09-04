@@ -3,6 +3,10 @@
 <p class="track-code">Lab 1.3</p>
 <h1 class="slide-title">Four versions of Tina.<br>Each one fails at exactly one thing.</h1>
 <p class="slide-subtitle">Build Tina from a bare completion to a ReAct agent on Elasticsearch.</p>
+<div style="margin-top:auto;padding:10px 16px;background:rgba(255,255,255,0.12);border-radius:8px;border:1px solid rgba(255,255,255,0.25);font-size:13px;display:flex;align-items:center;gap:10px;max-width:420px;">
+  <span style="font-size:18px;">&#8592;</span>
+  <span><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</span>
+</div>
 
 ---
 

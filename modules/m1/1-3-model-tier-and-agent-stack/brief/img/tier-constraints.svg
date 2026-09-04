@@ -1,26 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 280" role="img" aria-label="Three Cortex constraints that each rule out a different model tier">
-  <!-- background -->
-  <rect width="480" height="280" fill="#F5F7FA" rx="10"/>
-  <text x="240" y="30" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#101C3F">Three Cortex constraints — each rules out a different tier</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 260" role="img" aria-label="Three Cortex constraints that each rule out a different model tier">
+  <rect width="460" height="260" fill="#F5F7FA" rx="10"/>
+  <text x="230" y="28" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="700" fill="#101C3F">Three Cortex constraints — each rules out a different tier</text>
 
   <!-- Residency row -->
-  <rect x="20" y="48" width="440" height="64" rx="8" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
-  <rect x="20" y="48" width="8" height="64" rx="4" fill="#0B64DD"/>
-  <text x="42" y="74" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#0B64DD">Data residency</text>
-  <text x="42" y="94" font-family="Arial,sans-serif" font-size="12" fill="#343741">Cortex requires EU-hosted inference. One tier's provider has no EU region.</text>
-  <text x="360" y="84" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#FF957D">Rules out that tier</text>
+  <rect x="16" y="44" width="428" height="60" rx="8" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
+  <rect x="16" y="44" width="7" height="60" rx="3.5" fill="#0B64DD"/>
+  <text x="34" y="70" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#0B64DD">Data residency</text>
+  <text x="34" y="88" font-family="Arial,sans-serif" font-size="11" fill="#343741">Cortex requires EU-hosted inference. One tier's provider has no EU region.</text>
+  <text x="34" y="96" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#FF957D">&#x2192; Rules out that tier</text>
 
   <!-- Cost ceiling row -->
-  <rect x="20" y="124" width="440" height="64" rx="8" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
-  <rect x="20" y="124" width="8" height="64" rx="4" fill="#153385"/>
-  <text x="42" y="150" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#153385">Cost ceiling</text>
-  <text x="42" y="170" font-family="Arial,sans-serif" font-size="12" fill="#343741">Compliance budget: under $X per 1,000 requests. Strong tier exceeds it.</text>
-  <text x="360" y="160" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#FF957D">Rules out strong tier</text>
+  <rect x="16" y="116" width="428" height="60" rx="8" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
+  <rect x="16" y="116" width="7" height="60" rx="3.5" fill="#153385"/>
+  <text x="34" y="142" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#153385">Cost ceiling</text>
+  <text x="34" y="160" font-family="Arial,sans-serif" font-size="11" fill="#343741">Compliance budget: under $X per 1,000 requests. Strong tier exceeds it.</text>
+  <text x="34" y="168" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#FF957D">&#x2192; Rules out the strong tier</text>
 
   <!-- Accuracy floor row -->
-  <rect x="20" y="200" width="440" height="64" rx="8" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
-  <rect x="20" y="200" width="8" height="64" rx="4" fill="#48EFCF"/>
-  <text x="42" y="226" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#101C3F">Accuracy floor</text>
-  <text x="42" y="246" font-family="Arial,sans-serif" font-size="12" fill="#343741">Field accuracy on structured output must exceed 90%. Fast tier misses the bar.</text>
-  <text x="360" y="236" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#FF957D">Rules out fast tier</text>
+  <rect x="16" y="188" width="428" height="60" rx="8" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
+  <rect x="16" y="188" width="7" height="60" rx="3.5" fill="#48EFCF"/>
+  <text x="34" y="214" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#101C3F">Accuracy floor</text>
+  <text x="34" y="232" font-family="Arial,sans-serif" font-size="11" fill="#343741">Field accuracy on structured output must exceed 90%. Fast tier misses the bar.</text>
+  <text x="34" y="240" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#FF957D">&#x2192; Rules out the fast tier</text>
 </svg>
