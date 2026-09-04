@@ -1,0 +1,134 @@
+/* Elastic Design System — Tokens (ARA deck edition)
+   Mier B removed (limited license).
+   Space Grotesk is the headline face for developer resources (brand special-use allowance).
+   Fonts are self-hosted woff2; no external network requests.
+*/
+
+/* ---------- Space Grotesk (developer-resource headline) ---------- */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/SpaceGrotesk/weight-700.woff2') format('woff2');
+}
+
+/* ---------- Inter (body) ---------- */
+@font-face {
+  font-family: 'Inter';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/Inter/weight-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/Inter/weight-600.woff2') format('woff2');
+}
+
+/* ---------- Space Mono (numbers, code, track codes) ---------- */
+@font-face {
+  font-family: 'Space Mono';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/SpaceMono/weight-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Space Mono';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/SpaceMono/weight-700.woff2') format('woff2');
+}
+
+:root {
+  /* ---------- Core brand colors ---------- */
+  --elastic-blue:    #0B64DD;
+  --light-teal:      #48EFCF;
+  --light-poppy:     #FF957D;
+  --pink:            #F04E98;
+  --yellow:          #FEC514;
+  --midnight:        #153385;
+  --developer-blue:  #101C3F;
+
+  /* ---------- Text ---------- */
+  --dark-ink: #1C1E23;
+  --ink:      #343741;
+  --white:    #FFFFFF;
+
+  /* ---------- Backgrounds / greys ---------- */
+  --light-grey:  #F5F7FA;
+  --medium-grey: #DCE2EA;
+  --dark-grey:   #ABB4C4;
+
+  /* ---------- Logo cluster colors (do NOT recolor logo — official only) ---------- */
+  --logo-pink:   #F04E98;
+  --logo-yellow: #FEC514;
+  --logo-teal:   #02BCB7;
+  --logo-lime:   #9ADC30;
+  --logo-blue:   #0B64DD;
+
+  /* ---------- Type ---------- */
+  --font-headline: 'Space Grotesk', 'Inter', Arial, sans-serif;
+  --font-body:     'Inter', Arial, sans-serif;
+  --font-code:     'Space Mono', ui-monospace, monospace;
+
+  /* ---------- Type scale ---------- */
+  --fs-display:  clamp(40px, 5.5vw, 72px);
+  --fs-h1:       clamp(32px, 3.6vw, 48px);
+  --fs-h2:       clamp(24px, 2.4vw, 32px);
+  --fs-h3:       20px;
+  --fs-body:     16px;
+  --fs-small:    14px;
+  --fs-micro:    12px;
+
+  /* Headline line-height 1.14, paragraph line-height 1.55 (Elastic brand spec) */
+  --lh-tight: 1.14;
+  --lh-snug:  1.25;
+  --lh-body:  1.55;
+
+  /* ---------- Spacing (4pt grid) ---------- */
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3:  12px;
+  --s-4:  16px;
+  --s-5:  24px;
+  --s-6:  32px;
+  --s-7:  48px;
+  --s-8:  64px;
+  --s-9:  96px;
+
+  /* ---------- Radii ---------- */
+  --r-xs:  4px;
+  --r-sm:  6px;
+  --r-md:  8px;
+  --r-lg:  12px;
+  --r-xl:  16px;
+  --r-pill: 999px;
+
+  /* ---------- Shadows ---------- */
+  --shadow-sm: 0 1px 2px rgba(16, 28, 63, 0.06);
+  --shadow-md: 0 4px 12px rgba(16, 28, 63, 0.08);
+  --shadow-lg: 0 12px 32px rgba(16, 28, 63, 0.12);
+
+  /* ---------- Borders ---------- */
+  --border-card:   1.5px solid var(--developer-blue);
+  --border-subtle: 1px solid var(--medium-grey);
+}
+
+html { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: inherit; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--ink);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}

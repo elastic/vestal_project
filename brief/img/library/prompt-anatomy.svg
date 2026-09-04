@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" role="img" aria-label="System prompt anatomy: four regions — Role, Schema, Constraints, Grounding">
+  <!-- Role region -->
+  <g class="step">
+    <rect x="2" y="2" width="236" height="44" rx="4" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
+    <rect x="2" y="2" width="8" height="44" rx="2" fill="#0B64DD"/>
+    <text x="22" y="29" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#101C3F">Role</text>
+  </g>
+  <!-- Schema region -->
+  <g class="step">
+    <rect x="2" y="52" width="236" height="44" rx="4" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
+    <rect x="2" y="52" width="8" height="44" rx="2" fill="#153385"/>
+    <text x="22" y="79" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#101C3F">Schema</text>
+  </g>
+  <!-- Constraints region -->
+  <g class="step">
+    <rect x="2" y="102" width="236" height="44" rx="4" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
+    <rect x="2" y="102" width="8" height="44" rx="2" fill="#48EFCF"/>
+    <text x="22" y="129" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#101C3F">Constraints</text>
+  </g>
+  <!-- Grounding region -->
+  <g class="step">
+    <rect x="2" y="152" width="236" height="44" rx="4" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
+    <rect x="2" y="152" width="8" height="44" rx="2" fill="#101C3F"/>
+    <text x="22" y="179" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#101C3F">Grounding instruction</text>
+  </g>
+</svg>

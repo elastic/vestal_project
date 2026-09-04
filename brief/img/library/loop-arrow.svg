@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-label="Loop arrow">
+  <!-- clockwise arc from bottom-left to top-right with arrowhead -->
+  <path class="draw-target" d="M 15 65 A 38 38 0 1 1 65 15" fill="none" stroke="#101C3F" stroke-width="3" stroke-linecap="round"/>
+  <!-- arrowhead at top-right -->
+  <polygon points="65,15 52,10 58,26" fill="#101C3F"/>
+</svg>

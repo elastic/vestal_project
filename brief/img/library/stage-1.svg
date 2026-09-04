@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 80" role="img" aria-label="Stage 1: bare completion — User to LLM to Answer">
+  <!-- User box -->
+  <rect x="4" y="16" width="72" height="40" rx="4" fill="#FFFFFF" stroke="#101C3F" stroke-width="2"/>
+  <text x="40" y="41" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#101C3F">User</text>
+  <!-- arrow -->
+  <line x1="76" y1="36" x2="136" y2="36" stroke="#101C3F" stroke-width="2"/>
+  <polygon points="136,36 124,30 124,42" fill="#101C3F"/>
+  <!-- LLM box -->
+  <rect x="136" y="10" width="92" height="52" rx="8" fill="#0B64DD"/>
+  <text x="182" y="41" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#FFFFFF">LLM</text>
+  <!-- arrow -->
+  <line x1="228" y1="36" x2="288" y2="36" stroke="#101C3F" stroke-width="2"/>
+  <polygon points="288,36 276,30 276,42" fill="#101C3F"/>
+  <!-- Answer box -->
+  <rect x="288" y="16" width="88" height="40" rx="4" fill="#F5F7FA" stroke="#101C3F" stroke-width="1.5"/>
+  <text x="332" y="41" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" fill="#101C3F">Answer</text>
+</svg>

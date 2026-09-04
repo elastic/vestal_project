@@ -1,0 +1,5 @@
+{"query_id": "dev-1", "query_text": "What is Cortex Bank's CTR threshold for cash transactions?", "relevant_ids": ["policy-003"]}
+{"query_id": "dev-2", "query_text": "What are the structuring red flags Cortex monitors for?", "relevant_ids": ["policy-001"]}
+{"query_id": "dev-3", "query_text": "What is the SAR filing deadline at Cortex?", "relevant_ids": ["policy-011"]}
+{"query_id": "dev-4", "query_text": "How does Cortex define a high-risk customer?", "relevant_ids": ["policy-008"]}
+{"query_id": "dev-5", "query_text": "What velocity thresholds trigger enhanced monitoring?", "relevant_ids": ["risk-scoring-reference"]}

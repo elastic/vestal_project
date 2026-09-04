@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title><!-- DECK_TITLE --></title>
+<link rel="stylesheet" href="../../brand/tokens.css">
+<link rel="stylesheet" href="deck.css">
+</head>
+<body>
+
+<div class="deck" id="deck">
+<!-- SLIDES_PLACEHOLDER -->
+</div>
+
+<div id="nav-bar">
+  <button id="btn-prev" aria-label="Previous slide">&#8592; Prev</button>
+  <span id="slide-counter">1 / 1</span>
+  <button id="btn-overview" aria-label="Overview">&#9726; Overview</button>
+  <button id="btn-next" aria-label="Next slide">Next &#8594;</button>
+</div>
+
+<div id="overview" role="dialog" aria-label="Slide overview"></div>
+
+<script src="deck.js"></script>
+<script src="status-poller.js"></script>
+</body>
+</html>

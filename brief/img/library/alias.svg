@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 60" role="img" aria-label="Index alias tag">
+  <!-- pentagon/tag shape pointing right -->
+  <polygon points="4,4 90,4 116,30 90,56 4,56" fill="#FFFFFF" stroke="#101C3F" stroke-width="2" stroke-linejoin="round"/>
+  <text x="48" y="35" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#101C3F">alias</text>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 80" role="img" aria-label="Propagation timeline: Deploy, Policy update, Answer updated">
+  <!-- axis line -->
+  <line x1="20" y1="40" x2="380" y2="40" stroke="#101C3F" stroke-width="2"/>
+  <!-- arrow at right end -->
+  <polygon points="380,40 368,34 368,46" fill="#101C3F"/>
+
+  <!-- Deploy marker (left) -->
+  <line x1="60" y1="32" x2="60" y2="48" stroke="#101C3F" stroke-width="2"/>
+  <text x="60" y="24" text-anchor="middle" font-size="11" font-family="Arial, sans-serif" fill="#101C3F">Deploy</text>
+
+  <!-- Policy update marker (center) -->
+  <line x1="200" y1="28" x2="200" y2="52" stroke="#153385" stroke-width="2"/>
+  <text x="200" y="20" text-anchor="middle" font-size="11" font-family="Arial, sans-serif" font-weight="600" fill="#153385">Policy update</text>
+
+  <!-- Answer updated marker (right, Light Teal dot + checkmark) -->
+  <circle cx="320" cy="40" r="7" fill="#48EFCF"/>
+  <text x="320" y="44" text-anchor="middle" font-size="12" font-family="Arial, sans-serif" fill="#101C3F">&#10003;</text>
+  <text x="320" y="20" text-anchor="middle" font-size="11" font-family="Arial, sans-serif" font-weight="600" fill="#48EFCF">Answer updated</text>
+
+  <!-- "seconds" label -->
+  <text x="260" y="68" text-anchor="middle" font-size="10" font-family="Arial, sans-serif" fill="#ABB4C4">seconds</text>
+</svg>

@@ -1,0 +1,224 @@
+[
+  {
+    "filename": "policy-001-structuring-red-flags-and-detection.md",
+    "doc_type": "policy",
+    "word_count": 752
+  },
+  {
+    "filename": "policy-002-know-your-customer-kyc-due-diligence.md",
+    "doc_type": "policy",
+    "word_count": 661
+  },
+  {
+    "filename": "policy-003-currency-transaction-report-vs-suspiciou.md",
+    "doc_type": "policy",
+    "word_count": 742
+  },
+  {
+    "filename": "policy-004-beneficial-ownership-verification.md",
+    "doc_type": "policy",
+    "word_count": 708
+  },
+  {
+    "filename": "policy-005-transaction-velocity-and-pattern-monitor.md",
+    "doc_type": "policy",
+    "word_count": 622
+  },
+  {
+    "filename": "policy-006-transaction-screening-and-sanctions-matc.md",
+    "doc_type": "policy",
+    "word_count": 736
+  },
+  {
+    "filename": "policy-007-regulatory-escalation-procedures.md",
+    "doc_type": "policy",
+    "word_count": 813
+  },
+  {
+    "filename": "policy-008-customer-risk-assessment.md",
+    "doc_type": "policy",
+    "word_count": 715
+  },
+  {
+    "filename": "policy-009-ongoing-transaction-monitoring.md",
+    "doc_type": "policy",
+    "word_count": 666
+  },
+  {
+    "filename": "policy-010-third-party-vendor-vetting.md",
+    "doc_type": "policy",
+    "word_count": 684
+  },
+  {
+    "filename": "policy-011-suspicious-activity-reporting-deadlines.md",
+    "doc_type": "policy",
+    "word_count": 613
+  },
+  {
+    "filename": "policy-012-audit-trail-and-documentation.md",
+    "doc_type": "policy",
+    "word_count": 704
+  },
+  {
+    "filename": "policy-013-regulatory-correspondence-handling.md",
+    "doc_type": "policy",
+    "word_count": 712
+  },
+  {
+    "filename": "policy-014-politically-exposed-person-pep-identific.md",
+    "doc_type": "policy",
+    "word_count": 718
+  },
+  {
+    "filename": "policy-015-wire-transfer-red-flags.md",
+    "doc_type": "policy",
+    "word_count": 706
+  },
+  {
+    "filename": "policy-016-trade-based-money-laundering-indicators.md",
+    "doc_type": "policy",
+    "word_count": 773
+  },
+  {
+    "filename": "policy-017-business-email-compromise-prevention.md",
+    "doc_type": "policy",
+    "word_count": 672
+  },
+  {
+    "filename": "policy-018-customer-termination-procedures.md",
+    "doc_type": "policy",
+    "word_count": 653
+  },
+  {
+    "filename": "risk-scoring-reference.md",
+    "doc_type": "reference",
+    "word_count": 1686,
+    "table_char_start": 3856,
+    "table_char_end": 7976
+  },
+  {
+    "filename": "sar-101-structuring-via-daily-atm-withdrawals.md",
+    "doc_type": "sar",
+    "word_count": 535
+  },
+  {
+    "filename": "sar-102-smurfing-through-coordinated-deposits.md",
+    "doc_type": "sar",
+    "word_count": 522
+  },
+  {
+    "filename": "sar-103-shell-company-layering-and-ownership-obf.md",
+    "doc_type": "sar",
+    "word_count": 540
+  },
+  {
+    "filename": "sar-104-wire-fraud-via-business-email-compromise.md",
+    "doc_type": "sar",
+    "word_count": 557
+  },
+  {
+    "filename": "sar-105-trade-based-money-laundering-over-invoic.md",
+    "doc_type": "sar",
+    "word_count": 537
+  },
+  {
+    "filename": "sar-106-beneficial-ownership-concealment-with-no.md",
+    "doc_type": "sar",
+    "word_count": 530
+  },
+  {
+    "filename": "sar-107-cryptocurrency-arbitrage-unregistered-ms.md",
+    "doc_type": "sar",
+    "word_count": 530
+  },
+  {
+    "filename": "sar-108-real-estate-integration-all-cash-purchas.md",
+    "doc_type": "sar",
+    "word_count": 503
+  },
+  {
+    "filename": "sar-109-loan-layering-funds-used-as-loan-collateral.md",
+    "doc_type": "sar",
+    "word_count": 602
+  },
+  {
+    "filename": "sar-110-prepaid-card-structuring-sub-threshold-loads.md",
+    "doc_type": "sar",
+    "word_count": 579
+  },
+  {
+    "filename": "sar-111-casino-chip-purchase-pattern-rapid-conversion.md",
+    "doc_type": "sar",
+    "word_count": 581
+  },
+  {
+    "filename": "sar-112-student-loan-fraud-educational-institution-mi.md",
+    "doc_type": "sar",
+    "word_count": 568
+  },
+  {
+    "filename": "sar-113-correspondent-banking-red-flags-nested-interm.md",
+    "doc_type": "sar",
+    "word_count": 605
+  },
+  {
+    "filename": "sar-114-romantic-fraud-advance-fee-international-wire.md",
+    "doc_type": "sar",
+    "word_count": 559
+  },
+  {
+    "filename": "sar-115-import-export-invoice-padding-trade-finance-a.md",
+    "doc_type": "sar",
+    "word_count": 597
+  },
+  {
+    "filename": "sar-116-informal-value-transfer-system-hawala-network.md",
+    "doc_type": "sar",
+    "word_count": 592
+  },
+  {
+    "filename": "sar-117-phantom-shipping-bill-of-lading-manipulation.md",
+    "doc_type": "sar",
+    "word_count": 556
+  },
+  {
+    "filename": "sar-118-virtual-asset-exchange-unregistered-crypto-pl.md",
+    "doc_type": "sar",
+    "word_count": 550
+  },
+  {
+    "filename": "wire-fraud-201-business-email-compromise-supplier-invoice-re.md",
+    "doc_type": "wire-fraud",
+    "word_count": 1071
+  },
+  {
+    "filename": "wire-fraud-202-executive-impersonation-ceo-wire-fraud.md",
+    "doc_type": "wire-fraud",
+    "word_count": 943
+  },
+  {
+    "filename": "wire-fraud-203-real-estate-wire-fraud-closing-day-intercepti.md",
+    "doc_type": "wire-fraud",
+    "word_count": 1048
+  },
+  {
+    "filename": "wire-fraud-204-w-2-wage-fraud-payroll-diversion-scheme.md",
+    "doc_type": "wire-fraud",
+    "word_count": 1035
+  },
+  {
+    "filename": "wire-fraud-205-mortgage-refinance-fraud-false-wire-instructi.md",
+    "doc_type": "wire-fraud",
+    "word_count": 1099
+  },
+  {
+    "filename": "wire-fraud-206-irs-tax-refund-diversion-account-takeover.md",
+    "doc_type": "wire-fraud",
+    "word_count": 1143
+  },
+  {
+    "filename": "wire-fraud-207-international-wire-fraud-swift-message-forger.md",
+    "doc_type": "wire-fraud",
+    "word_count": 1061
+  }
+]

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 240" role="img" aria-label="Stage 3: tool calling — User, Index, LLM with Tool, Answer">
+  <!-- User box -->
+  <rect x="4" y="96" width="72" height="40" rx="4" fill="#FFFFFF" stroke="#101C3F" stroke-width="2"/>
+  <text x="40" y="121" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#101C3F">User</text>
+  <!-- arrow user -> LLM -->
+  <line x1="76" y1="116" x2="136" y2="116" stroke="#101C3F" stroke-width="2"/>
+  <polygon points="136,116 124,110 124,122" fill="#101C3F"/>
+  <!-- LLM box -->
+  <rect x="136" y="90" width="92" height="52" rx="8" fill="#0B64DD"/>
+  <text x="182" y="121" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#FFFFFF">LLM</text>
+  <!-- arrow LLM -> Answer -->
+  <line x1="228" y1="116" x2="288" y2="116" stroke="#101C3F" stroke-width="2"/>
+  <polygon points="288,116 276,110 276,122" fill="#101C3F"/>
+  <!-- Answer box -->
+  <rect x="288" y="96" width="88" height="40" rx="4" fill="#F5F7FA" stroke="#101C3F" stroke-width="1.5"/>
+  <text x="332" y="121" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" fill="#101C3F">Answer</text>
+
+  <!-- Index + context arrow -->
+  <rect x="148" y="14" width="68" height="48" rx="6" fill="#FFFFFF" stroke="#101C3F" stroke-width="2"/>
+  <ellipse cx="182" cy="14" rx="34" ry="8" fill="#0B64DD" stroke="#101C3F" stroke-width="2"/>
+  <text x="182" y="44" text-anchor="middle" font-size="11" font-family="Arial, sans-serif" fill="#101C3F">ES Index</text>
+  <line x1="182" y1="62" x2="182" y2="90" stroke="#0B64DD" stroke-width="2" stroke-dasharray="4,3"/>
+  <polygon points="182,90 176,78 188,78" fill="#0B64DD"/>
+
+  <!-- Stage 3 addition: Tool hexagon + bidirectional arrows -->
+  <g class="step">
+    <polygon points="182,168 218,186 218,222 182,240 146,222 146,186" fill="#48EFCF" stroke="#101C3F" stroke-width="1.5"/>
+    <text x="182" y="208" text-anchor="middle" font-size="12" font-family="Arial, sans-serif" font-weight="600" fill="#101C3F">Tool</text>
+    <!-- LLM -> Tool (call) -->
+    <line x1="172" y1="142" x2="164" y2="168" stroke="#101C3F" stroke-width="2"/>
+    <polygon points="164,168 160,154 174,156" fill="#101C3F"/>
+    <text x="142" y="160" text-anchor="end" font-size="10" font-family="Arial, sans-serif" fill="#101C3F">call</text>
+    <!-- Tool -> LLM (result) -->
+    <line x1="196" y1="168" x2="204" y2="142" stroke="#48EFCF" stroke-width="2"/>
+    <polygon points="204,142 198,156 212,154" fill="#48EFCF"/>
+    <text x="222" y="160" font-size="10" font-family="Arial, sans-serif" fill="#101C3F">result</text>
+  </g>
+</svg>

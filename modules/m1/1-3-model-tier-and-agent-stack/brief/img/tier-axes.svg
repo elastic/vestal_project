@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" role="img" aria-label="Four axes for tier selection: cost per 1000 requests, latency p50, capability on task, deployment constraints">
+  <!-- background -->
+  <rect width="480" height="300" fill="#F5F7FA" rx="10"/>
+
+  <!-- Title -->
+  <text x="240" y="30" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#101C3F">Four axes for tier selection</text>
+
+  <!-- Cost card -->
+  <rect x="20" y="50" width="200" height="100" rx="8" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
+  <rect x="20" y="50" width="8" height="100" rx="4" fill="#0B64DD"/>
+  <text x="40" y="78" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#0B64DD">Cost</text>
+  <text x="40" y="98" font-family="Arial,sans-serif" font-size="12" fill="#343741">per 1,000 requests</text>
+  <text x="40" y="118" font-family="Arial,sans-serif" font-size="11" fill="#ABB4C4">gpt-4o-mini vs claude-sonnet-5</text>
+  <text x="40" y="138" font-family="Arial,sans-serif" font-size="11" fill="#ABB4C4">ratio often 20:1 or more</text>
+
+  <!-- Latency card -->
+  <rect x="260" y="50" width="200" height="100" rx="8" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
+  <rect x="260" y="50" width="8" height="100" rx="4" fill="#153385"/>
+  <text x="280" y="78" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#153385">Latency</text>
+  <text x="280" y="98" font-family="Arial,sans-serif" font-size="12" fill="#343741">p50 milliseconds per call</text>
+  <text x="280" y="118" font-family="Arial,sans-serif" font-size="11" fill="#ABB4C4">fast tier: typically &lt;200 ms</text>
+  <text x="280" y="138" font-family="Arial,sans-serif" font-size="11" fill="#ABB4C4">strong tier: 500 ms+</text>
+
+  <!-- Capability card -->
+  <rect x="20" y="170" width="200" height="100" rx="8" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
+  <rect x="20" y="170" width="8" height="100" rx="4" fill="#48EFCF"/>
+  <text x="40" y="198" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#101C3F">Capability</text>
+  <text x="40" y="218" font-family="Arial,sans-serif" font-size="12" fill="#343741">on your specific task</text>
+  <text x="40" y="238" font-family="Arial,sans-serif" font-size="11" fill="#ABB4C4">structured output accuracy</text>
+  <text x="40" y="258" font-family="Arial,sans-serif" font-size="11" fill="#ABB4C4">measure; do not assume</text>
+
+  <!-- Constraints card -->
+  <rect x="260" y="170" width="200" height="100" rx="8" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
+  <rect x="260" y="170" width="8" height="100" rx="4" fill="#FEC514"/>
+  <text x="280" y="198" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#101C3F">Constraints</text>
+  <text x="280" y="218" font-family="Arial,sans-serif" font-size="12" fill="#343741">deployment requirements</text>
+  <text x="280" y="238" font-family="Arial,sans-serif" font-size="11" fill="#ABB4C4">data residency / region</text>
+  <text x="280" y="258" font-family="Arial,sans-serif" font-size="11" fill="#ABB4C4">hard rules; not preferences</text>
+</svg>

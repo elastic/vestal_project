@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 130" role="img" aria-label="Agent">
+  <!-- outer circle background -->
+  <circle cx="60" cy="55" r="50" fill="#0B64DD"/>
+  <!-- loop arrow around circle -->
+  <path d="M 60 5 A 50 50 0 1 1 15 75" fill="none" stroke="#101C3F" stroke-width="3" stroke-linecap="round"/>
+  <polygon points="15,75 8,60 26,65" fill="#101C3F"/>
+  <!-- inner LLM box -->
+  <rect x="30" y="32" width="60" height="46" rx="6" fill="#FFFFFF"/>
+  <text x="60" y="60" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#0B64DD">LLM</text>
+  <!-- label -->
+  <text x="60" y="122" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#101C3F">Agent</text>
+</svg>
