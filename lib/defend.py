@@ -32,17 +32,27 @@ def load_questions() -> list[dict]:
     return json.loads(QUESTIONS_FILE.read_text())
 
 
+def _flatten(d: dict, prefix: str = "") -> dict:
+    """Flatten a nested dict to dotted keys: {"fast": {"latency": 1}} -> {"fast.latency": 1}."""
+    out: dict = {}
+    for k, v in d.items():
+        key = f"{prefix}.{k}" if prefix else k
+        if isinstance(v, dict):
+            out.update(_flatten(v, key))
+        else:
+            out[key] = v
+    return out
+
+
 def load_results() -> dict:
-    """Merge all results files into a flat dict of metric_name -> value."""
+    """Merge all results files into a flat dotted dict of metric_name -> value."""
     combined: dict = {}
     if RESULTS_DIR.exists():
         for p in sorted(RESULTS_DIR.glob("*.json")):
             try:
                 data = json.loads(p.read_text())
                 if "metrics" in data:
-                    combined.update(data["metrics"])
-                if "constraints" in data:
-                    combined.update({f"constraint.{k}": v for k, v in data["constraints"].items()})
+                    combined.update(_flatten(data["metrics"]))
             except Exception:
                 pass
     return combined
