@@ -124,10 +124,10 @@ policy-011 (actual):
 # Record how many stay grounded.
 
 Element removed    | Grounded
-role               | 5 / 6
-schema             | 5 / 6
-constraints        | 4 / 6
-<span class="wrong">grounding</span>          | <span class="wrong">1 / 6</span>  ← biggest drop
+role               | ? / 6
+schema             | ? / 6
+constraints        | ? / 6
+grounding          | ? / 6   ← your results will differ
   </div>
 </div>
 <div class="col-text">
@@ -143,17 +143,17 @@ constraints        | 4 / 6
 <h2 class="slide-heading">Decision rule</h2>
 <table class="rule-table">
   <tr><th>Prompt element removed</th><th>Grounded pass rate drops most</th><th>Therefore</th></tr>
-  <tr class="correct">
-    <td>Grounding instruction</td><td>&#x2193; biggest</td><td>Grounding was decisive</td>
+  <tr>
+    <td>Element A</td><td>&#x2193; biggest drop</td><td>Element A was decisive</td>
   </tr>
   <tr>
-    <td>Constraints</td><td>&#x2193; second</td><td>Constraints were decisive</td>
+    <td>Element B</td><td>&#x2193; smaller drop</td><td>Element B was not decisive</td>
   </tr>
   <tr>
-    <td>Role or Schema</td><td>&#x2193; small</td><td>Those were not decisive</td>
+    <td>Element C or D</td><td>&#x2193; smallest drop</td><td>Those were not decisive</td>
   </tr>
 </table>
-<p class="rule-caption">The Defend asks which element your fix depended on. Your ablation results answer it — not general knowledge.</p>
+<p class="rule-caption">Which element is "A" depends on which one your prompt was missing. Your ablation results answer it — not general knowledge.</p>
 
 ---
 
