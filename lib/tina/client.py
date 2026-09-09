@@ -41,8 +41,18 @@ def es_client():
 
 
 def model_fast() -> str:
-    return os.environ.get("ARA_MODEL_FAST", "gpt-4o-mini")
+    val = os.environ.get("ARA_MODEL_FAST")
+    if not val:
+        raise EnvironmentError(
+            "ARA_MODEL_FAST is not set. Run the harness setup cell or source /home/elastic/env."
+        )
+    return val
 
 
 def model_strong() -> str:
-    return os.environ.get("ARA_MODEL_STRONG", "claude-sonnet-5")
+    val = os.environ.get("ARA_MODEL_STRONG")
+    if not val:
+        raise EnvironmentError(
+            "ARA_MODEL_STRONG is not set. Run the harness setup cell or source /home/elastic/env."
+        )
+    return val
