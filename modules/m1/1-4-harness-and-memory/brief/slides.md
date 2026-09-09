@@ -2,7 +2,7 @@
 
 <p class="track-code">Lab 1.4</p>
 <h1 class="slide-title">Turn three: "Is that reportable?"<br>Tina has no idea what "that" is.</h1>
-<p class="slide-subtitle"><strong>Tina</strong> is Cortex Bank's AI compliance assistant. Model calls have no memory. You give her one — implement the MemoryStore, then defend the harness posture that fits Cortex's constraints.</p>
+<p class="slide-subtitle"><strong>Tina</strong> is Cortex Bank's AI compliance assistant. Model calls have no memory. You give her one: implement the MemoryStore, then defend the harness posture that fits Cortex's constraints.</p>
 <div style="margin-top:auto;padding:10px 16px;background:rgba(255,255,255,0.12);border-radius:8px;border:1px solid rgba(255,255,255,0.25);font-size:13px;display:flex;align-items:center;gap:10px;max-width:420px;">
   <span style="font-size:18px;">&#8592;</span>
   <span><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</span>
@@ -14,17 +14,17 @@
 
 <div class="col-left">
   <div class="terminal-block">
-Turn 1 — Analyst: I'm reviewing Elias Vance,
+Turn 1, Analyst: I'm reviewing Elias Vance,
   account 4492. He made 10 daily withdrawals
   of $9,500 each over two weeks.
 
-Turn 2 — Analyst: Are his wire transfers
+Turn 2, Analyst: Are his wire transfers
   consistent with that pattern?
 
   Tina: I see several wire transfers in the
   account. They appear routine.
 
-Turn 3 — Analyst: Is <span class="wrong">that</span> reportable?
+Turn 3, Analyst: Is <span class="wrong">that</span> reportable?
 
   Tina: I'm sorry, could you clarify
   what you mean by "that"?
@@ -61,7 +61,7 @@ Turn 3 — Analyst: Is <span class="wrong">that</span> reportable?
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Three memory scopes</h2>
-  <p class="slide-body">"That account" in turn three needs <strong>working memory</strong> — it must survive across the conversation but not necessarily across sessions. The right scope avoids over-storing (full persistent) and under-storing (context-only).</p>
+  <p class="slide-body">"That account" in turn three needs <strong>working memory</strong>: it must survive across the conversation but not necessarily across sessions. The right scope avoids over-storing (full persistent) and under-storing (context-only).</p>
 </div>
 
 ---
@@ -104,7 +104,7 @@ Turn 3 — Analyst: Is <span class="wrong">that</span> reportable?
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Three harness postures</h2>
-  <p class="slide-body"><strong>Sequential</strong> runs fixed steps in order — auditable, predictable. <strong>Graph</strong> branches based on what each step returns — flexible, harder to trace. <strong>Event-driven</strong> reacts to external signals — responsive, requires durable queues.</p>
+  <p class="slide-body"><strong>Sequential</strong> runs fixed steps in order: auditable, predictable. <strong>Graph</strong> branches based on what each step returns: flexible, harder to trace. <strong>Event-driven</strong> reacts to external signals: responsive, requires durable queues.</p>
 </div>
 
 ---
@@ -161,5 +161,5 @@ Turn 3 — Analyst: Is <span class="wrong">that</span> reportable?
 <p style="opacity:0.8;font-size:18px;">Environment status:</p>
 <div class="status-indicator">
   <div class="status-dot"></div>
-  <span class="status-text">Provisioning — check back in a moment</span>
+  <span class="status-text">Provisioning - check back in a moment</span>
 </div>

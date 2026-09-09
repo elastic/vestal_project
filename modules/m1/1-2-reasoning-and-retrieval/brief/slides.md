@@ -122,7 +122,7 @@ Policy-003:  threshold=10000, direction="at or above"
 <div class="col-diagram">
   <table class="rule-table" style="font-size:14px;">
     <tr><th>Cadence</th><th>Approach</th></tr>
-    <tr class="correct"><td>Weekly updates</td><td>Retrieval — propagates in seconds</td></tr>
+    <tr class="correct"><td>Weekly updates</td><td>Retrieval - propagates in seconds</td></tr>
     <tr><td>Annual updates</td><td>Depends on your measured latency</td></tr>
   </table>
   <p style="font-size:12px;color:var(--dark-grey);margin-top:8px;">Propagation time is the deciding variable.</p>
@@ -206,5 +206,5 @@ Policy-003:  threshold=10000, direction="at or above"
 <p style="opacity:0.8;font-size:18px;">Environment status:</p>
 <div class="status-indicator">
   <div class="status-dot"></div>
-  <span class="status-text">Provisioning — check back in a moment</span>
+  <span class="status-text">Provisioning - check back in a moment</span>
 </div>

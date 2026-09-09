@@ -52,12 +52,12 @@ User: What is the CTR threshold?
 Response from embedding endpoint:
 [0.023, -0.451, 0.887, 0.112,
  -0.334, 0.556, 0.091, ...]
-(768 floats — not an answer)
+(768 floats - not an answer)
   </div>
 </div>
 <div class="col-text">
   <h2 class="slide-heading">When the wrong model gets the job</h2>
-  <p class="slide-body">Ask an embedding model to "answer" a question and it returns a vector. The UI may show nothing, or raw numbers. No error — just the wrong output type for the task.</p>
+  <p class="slide-body">Ask an embedding model to "answer" a question and it returns a vector. The UI may show nothing, or raw numbers. No error - just the wrong output type for the task.</p>
 </div>
 
 ---
@@ -107,7 +107,7 @@ policy-011 (actual):
 <!-- layout: concept -->
 
 <div class="col-diagram">
-  <img src="../../../../brief/img/library/prompt-anatomy.svg" alt="System prompt anatomy: four regions — role, output schema, constraints, grounding instruction" style="max-width:100%;max-height:300px;">
+  <img src="../../../../brief/img/library/prompt-anatomy.svg" alt="System prompt anatomy: four regions: role, output schema, constraints, grounding instruction" style="max-width:100%;max-height:300px;">
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Anatomy of a system prompt</h2>
@@ -153,7 +153,7 @@ grounding          | ? / 6   ← your results will differ
     <td>Element C or D</td><td>&#x2193; smallest drop</td><td>Those were not decisive</td>
   </tr>
 </table>
-<p class="rule-caption">Which element is "A" depends on which one your prompt was missing. Your ablation results answer it — not general knowledge.</p>
+<p class="rule-caption">Which element is "A" depends on which one your prompt was missing. Your ablation results answer it, not general knowledge.</p>
 
 ---
 
@@ -179,5 +179,5 @@ grounding          | ? / 6   ← your results will differ
 <p style="opacity:0.8;font-size:18px;">Environment status:</p>
 <div class="status-indicator">
   <div class="status-dot"></div>
-  <span class="status-text">Provisioning — check back in a moment</span>
+  <span class="status-text">Provisioning - check back in a moment</span>
 </div>
