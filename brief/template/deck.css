@@ -202,6 +202,10 @@ body { background: var(--developer-blue); display: flex; flex-direction: column;
   background: var(--light-teal);
   animation: none;
 }
+.status-dot.failed {
+  background: var(--danger, #BD271E);
+  animation: none;
+}
 .status-text { opacity: 0.9; }
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }

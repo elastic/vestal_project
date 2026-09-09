@@ -343,6 +343,10 @@ body { background: var(--developer-blue); display: flex; flex-direction: column;
   background: var(--light-teal);
   animation: none;
 }
+.status-dot.failed {
+  background: var(--danger, #BD271E);
+  animation: none;
+}
 .status-text { opacity: 0.9; }
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
@@ -689,23 +693,37 @@ Turn 3, Analyst: Is <span class="wrong">that</span> reportable?
   document.addEventListener('DOMContentLoaded', init);
 }());
 </script>
-<script>/* Polls /status.json every 10 s; turns the last-slide indicator green when ready. */
+<script>/* Polls /status.json every 10 s; three states: waiting (amber), ready (green), failed (red). */
 (function () {
+  function setState(state, text) {
+    var dots  = document.querySelectorAll('.status-dot');
+    var texts = document.querySelectorAll('.status-text');
+    dots.forEach(function (d) {
+      d.classList.remove('ready', 'failed');
+      if (state !== 'waiting') d.classList.add(state);
+    });
+    texts.forEach(function (t) { t.textContent = text; });
+  }
+
   function poll() {
     fetch('/status.json', { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
-        if (data && data.ready) {
-          var dots = document.querySelectorAll('.status-dot');
-          var texts = document.querySelectorAll('.status-text');
-          dots.forEach(function (d) { d.classList.add('ready'); });
-          texts.forEach(function (t) { t.textContent = 'Environment ready — select Check'; });
+        if (!data) {
+          setTimeout(poll, 10000);
+          return;
+        }
+        if (data.ready) {
+          setState('ready', 'Environment ready - select Next');
+        } else if (data.error) {
+          setState('failed', 'Provisioning failed - stop this track and start it again');
         } else {
           setTimeout(poll, 10000);
         }
       })
       .catch(function () { setTimeout(poll, 10000); });
   }
+
   document.addEventListener('DOMContentLoaded', function () {
     setTimeout(poll, 5000);
   });
