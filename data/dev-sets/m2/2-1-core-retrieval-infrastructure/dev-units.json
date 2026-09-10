@@ -1,0 +1,26 @@
+[
+  {
+    "unit_id": "policy-004-beneficial-ownership-table",
+    "doc_id": "policy-004",
+    "description": "Beneficial ownership verification thresholds — structured table or list that must stay intact",
+    "start": 0,
+    "end": 500,
+    "note": "These are approximate char offsets for illustration. Use chunk_unit_preserving with the actual char ranges from your corpus loader to keep this section intact."
+  },
+  {
+    "unit_id": "sar-101-step-sequence",
+    "doc_id": "sar-101",
+    "description": "SAR 101 investigation step sequence — numbered steps that must not be split mid-step",
+    "start": 0,
+    "end": 800,
+    "note": "Approximate offsets. Adjust to the actual numbered-step block in the document."
+  },
+  {
+    "unit_id": "policy-006-screening-criteria",
+    "doc_id": "policy-006",
+    "description": "Sanctions screening match criteria — enumerated criteria that lose meaning when split",
+    "start": 0,
+    "end": 600,
+    "note": "Approximate offsets. Adjust to the match-criteria enumeration in the document."
+  }
+]

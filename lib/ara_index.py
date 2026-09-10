@@ -159,8 +159,13 @@ def index_chunks(
     chunks: list[Chunk],
     embed_id: str | None = None,
     recreate: bool = False,
+    require_existing: bool = False,
 ) -> dict:
-    """Index chunks into ES. Creates the index if it does not exist.
+    """Index chunks into ES.
+
+    require_existing=True raises ValueError if the index does not exist yet,
+    forcing the caller to create the index and its mapping explicitly first.
+    This ensures the mapping is the learner's decision, not the library's.
 
     Returns a summary dict: {"indexed": int, "errors": int}.
     """
@@ -170,6 +175,12 @@ def index_chunks(
         es.indices.delete(index=index)
 
     if not es.indices.exists(index=index):
+        if require_existing:
+            raise ValueError(
+                f"Index '{index}' does not exist. "
+                "Create it with the correct mapping in Kibana Dev Tools first, "
+                "then run this cell."
+            )
         eid = embed_id or os.environ.get("ARA_EMBED_ID")
         if not eid:
             raise EnvironmentError("ARA_EMBED_ID is not set and embed_id not supplied")
