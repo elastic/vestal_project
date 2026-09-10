@@ -17,11 +17,13 @@ Environment variables consumed (set by challenge 01 setup or by the learner outs
   ES_URL                     Elasticsearch base URL
   ES_API_KEY                 Elasticsearch API key
   ARA_TRACE_DIR              Where to write trace files (default: /home/elastic/.traces)
+  ARA_INFERENCE_COMPLETION_ID  Elasticsearch _inference completion endpoint (route B, cortex-generation)
 """
 
 from tina.client import llm_client, es_client
 from tina.tools import ToolRegistry
 from tina.loop import react_loop
 from tina.memory import MemoryStore
+from tina.rag import rag_answer, load_retriever
 
-__all__ = ["llm_client", "es_client", "ToolRegistry", "react_loop", "MemoryStore"]
+__all__ = ["llm_client", "es_client", "ToolRegistry", "react_loop", "MemoryStore", "rag_answer", "load_retriever"]
