@@ -1,0 +1,32 @@
+[
+  {
+    "query_id": "dev-01",
+    "query_text": "What is the internal daily monitoring threshold for cash at Cortex Bank?",
+    "relevant_ids": ["policy-001"]
+  },
+  {
+    "query_id": "dev-02",
+    "query_text": "What are the key steps in the SAR filing process at Cortex Bank?",
+    "relevant_ids": ["policy-003", "policy-011"]
+  },
+  {
+    "query_id": "dev-03",
+    "query_text": "Describe the risk tier structure and escalation requirements.",
+    "relevant_ids": ["risk-scoring-reference"]
+  },
+  {
+    "query_id": "dev-04",
+    "query_text": "What happened with the Horizon Tech wire fraud and how was it resolved?",
+    "relevant_ids": ["wire-fraud-202"]
+  },
+  {
+    "query_id": "dev-05",
+    "query_text": "What are the wire transfer red flags Cortex Bank monitors?",
+    "relevant_ids": ["policy-015", "wire-fraud-202"]
+  },
+  {
+    "query_id": "dev-06",
+    "query_text": "What customer identification requirements apply to beneficial ownership?",
+    "relevant_ids": ["policy-004", "policy-002"]
+  }
+]
