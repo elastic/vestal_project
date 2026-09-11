@@ -1,0 +1,15 @@
+[
+  {
+    "query_id": "dev-esql-01",
+    "type": "filter",
+    "description": "Filter transactions above $10,000 from US within 30 days",
+    "example_query": "FROM cortex-transactions | WHERE amount > ?threshold AND origin_country == ?country | WHERE DATE_DIFF('day', transaction_date, NOW()) <= ?days | LIMIT 100",
+    "dev_parameters": {"threshold": 10000, "country": "US", "days": 30}
+  },
+  {
+    "query_id": "dev-esql-02",
+    "type": "aggregation",
+    "description": "Count flagged transactions by risk tier",
+    "example_query": "FROM cortex-transactions | WHERE is_flagged == true | STATS count = COUNT(*), total = SUM(amount) BY risk_tier | SORT count DESC"
+  }
+]

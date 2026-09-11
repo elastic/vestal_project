@@ -1,0 +1,8 @@
+[
+  {"id": "dev-rq-01", "text": "What is the CTR threshold?", "label": "fast", "query_type": "single_hop"},
+  {"id": "dev-rq-02", "text": "How many days to file a SAR after detection?", "label": "fast", "query_type": "single_hop"},
+  {"id": "dev-rq-03", "text": "What risk tier applies to accounts with sovereign wealth fund exposure?", "label": "fast", "query_type": "single_hop"},
+  {"id": "dev-rq-04", "text": "Compare structuring and layering techniques and explain how each evades detection differently at Cortex Bank.", "label": "strong", "query_type": "multi_part"},
+  {"id": "dev-rq-05", "text": "How do the SAR and CTR reporting deadlines interact when both are triggered by the same transaction?", "label": "strong", "query_type": "multi_part"},
+  {"id": "dev-rq-06", "text": "Analyze what makes a beneficial ownership structure suspicious and how Cortex Bank identifies it across wire fraud and SAR filings.", "label": "strong", "query_type": "multi_part"}
+]
