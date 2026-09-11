@@ -1,0 +1,10 @@
+[
+  {"query_id": "dev-p-01", "query_text": "What internal controls does Cortex Bank use to detect accounts that receive unusually large deposits shortly after opening?", "doc_type": "policy", "relevant_doc_ids": ["policy-002"]},
+  {"query_id": "dev-p-02", "query_text": "How does Cortex Bank handle a customer who cannot explain the source of large cash deposits?", "doc_type": "policy", "relevant_doc_ids": ["policy-001"]},
+  {"query_id": "dev-p-03", "query_text": "What are the record-keeping requirements for wire transfers above the reporting threshold at Cortex Bank?", "doc_type": "policy", "relevant_doc_ids": ["policy-009"]},
+  {"query_id": "dev-s-01", "query_text": "What account behavior triggered the SAR investigation in sar-108?", "doc_type": "sar", "relevant_doc_ids": ["sar-108"]},
+  {"query_id": "dev-s-02", "query_text": "How did the analyst determine the transactions in sar-111 were consistent with layering rather than legitimate business activity?", "doc_type": "sar", "relevant_doc_ids": ["sar-111"]},
+  {"query_id": "dev-s-03", "query_text": "Describe the unusual ATM withdrawal pattern that prompted the SAR filing in sar-116.", "doc_type": "sar", "relevant_doc_ids": ["sar-116"]},
+  {"query_id": "dev-w-01", "query_text": "How did Cortex Bank's fraud team first detect the wire-fraud-202 scheme before funds left the country?", "doc_type": "wire-fraud", "relevant_doc_ids": ["wire-fraud-202"]},
+  {"query_id": "dev-w-02", "query_text": "What indicators in the wire-fraud-207 case file show the fraudster researched the target company before the attack?", "doc_type": "wire-fraud", "relevant_doc_ids": ["wire-fraud-207"]}
+]
