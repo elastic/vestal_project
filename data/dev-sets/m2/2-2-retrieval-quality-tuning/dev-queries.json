@@ -1,0 +1,50 @@
+[
+  {
+    "query_id": "dev-id-01",
+    "query_text": "Risk-Scoring Threshold Reference Guide",
+    "query_class": "identifier",
+    "relevant_doc_ids": ["risk-scoring-reference"]
+  },
+  {
+    "query_id": "dev-id-02",
+    "query_text": "Suspicious Activity Reporting Deadlines policy",
+    "query_class": "identifier",
+    "relevant_doc_ids": ["policy-011"]
+  },
+  {
+    "query_id": "dev-id-03",
+    "query_text": "Wire Fraud Business Email Compromise FIU-2023",
+    "query_class": "identifier",
+    "relevant_doc_ids": ["wire-fraud-201"]
+  },
+  {
+    "query_id": "dev-id-04",
+    "query_text": "Cryptocurrency Arbitrage Unregistered Money Services",
+    "query_class": "identifier",
+    "relevant_doc_ids": ["sar-107"]
+  },
+  {
+    "query_id": "dev-con-01",
+    "query_text": "How does Cortex Bank determine the risk tier for high-value wire transfers?",
+    "query_class": "conceptual",
+    "relevant_doc_ids": ["risk-scoring-reference"]
+  },
+  {
+    "query_id": "dev-con-02",
+    "query_text": "What are the mandatory steps for filing a suspicious activity report?",
+    "query_class": "conceptual",
+    "relevant_doc_ids": ["policy-011"]
+  },
+  {
+    "query_id": "dev-con-03",
+    "query_text": "How do investigators identify shell company structures used for layering transactions?",
+    "query_class": "conceptual",
+    "relevant_doc_ids": ["sar-103"]
+  },
+  {
+    "query_id": "dev-con-04",
+    "query_text": "What happens when a customer repeatedly deposits cash just under the reporting threshold?",
+    "query_class": "conceptual",
+    "relevant_doc_ids": ["policy-001"]
+  }
+]
