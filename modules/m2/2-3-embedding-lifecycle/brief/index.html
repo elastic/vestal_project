@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 2.3: Embedding lifecycle</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #101C3F; color: #fff; min-height: 100vh; }
+  .deck { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+  .slide { background: #153385; border-radius: 8px; padding: 40px; margin-bottom: 32px; }
+  h1 { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 2rem; font-weight: 700; color: #48EFCF; margin-bottom: 16px; }
+  h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 12px; }
+  p, li { line-height: 1.55; margin-bottom: 8px; }
+  code, pre { font-family: 'Space Mono', monospace; background: #101C3F; padding: 2px 6px; border-radius: 3px; }
+  pre { padding: 16px; margin: 12px 0; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  th, td { border: 1px solid #0B64DD; padding: 8px 12px; text-align: left; }
+  th { background: #0B64DD; }
+  ul { padding-left: 20px; }
+  #status { position: fixed; bottom: 24px; right: 24px; padding: 10px 18px; border-radius: 6px; font-size: 0.875rem; font-family: 'Space Mono', monospace; }
+  .status-waiting { background: #FEC514; color: #000; }
+  .status-ready { background: #48EFCF; color: #000; }
+  .status-failed { background: #FF957D; color: #000; }
+</style>
+</head>
+<body>
+<div class="deck">
+  <div class="slide">
+    <h1>Lab 2.3: Embedding lifecycle</h1>
+    <p>A new embedding model is available. Before it ships, you must benchmark it, cut over without downtime, and raise recall for the queries it still gets wrong.</p>
+  </div>
+  <div class="slide">
+    <h2>The problem</h2>
+    <p>Embedding models improve — but deploying a new one risks regression. Cortex Bank's compliance corpus must stay searchable during the swap.</p>
+    <p>The alias <code>cortex-corpus-live</code> is the indirection layer. You will move it atomically once the candidate is ready.</p>
+  </div>
+  <div class="slide">
+    <h2>What you will do</h2>
+    <ul>
+      <li><strong>Build 1 — Benchmark:</strong> Run held-out queries against both models. Measure nDCG@5 gain and p95 latency.</li>
+      <li><strong>Build 2 — Cut over:</strong> Swap <code>cortex-corpus-live</code> to the candidate index in one atomic <code>_aliases</code> call.</li>
+      <li><strong>Build 3 — Raise recall:</strong> Rewrite the three lowest-scoring queries using query-side rewriting to close remaining recall gaps.</li>
+      <li><strong>Defend:</strong> Justify the deployment decision given the gain, noise band, and latency budget.</li>
+    </ul>
+  </div>
+  <div class="slide">
+    <h2>Deployment decision framework</h2>
+    <table>
+      <tr><th>Condition</th><th>Decision</th></tr>
+      <tr><td>Gain &gt; noise band AND p95 within budget</td><td>Deploy</td></tr>
+      <tr><td>Gain ≤ noise band</td><td>Hold — gain is noise</td></tr>
+      <tr><td>p95 exceeds budget</td><td>Hold — too slow</td></tr>
+      <tr><td>Both conditions fail</td><td>Hold — insufficient and slow</td></tr>
+    </table>
+  </div>
+  <div class="slide">
+    <h2>Key concepts</h2>
+    <ul>
+      <li><strong>nDCG@5</strong> — ranking quality metric; higher is better</li>
+      <li><strong>Noise band (0.03)</strong> — gains below this are measurement noise</li>
+      <li><strong>Atomic alias swap</strong> — <code>remove</code> + <code>add</code> in one request; zero downtime</li>
+      <li><strong>Query-side rewriting</strong> — fix recall without touching the index</li>
+    </ul>
+  </div>
+  <div class="slide">
+    <h2>Select Check to continue</h2>
+    <p>The indicator below turns green when your environment is ready.</p>
+  </div>
+</div>
+<div id="status" class="status-waiting">Provisioning...</div>
+<script>
+  function poll() {
+    fetch('/status.json').then(r => r.json()).then(s => {
+      const el = document.getElementById('status');
+      if (s.ready) {
+        el.className = 'status-ready'; el.textContent = 'Environment ready. Select Check.';
+      } else if (s.error) {
+        el.className = 'status-failed'; el.textContent = 'Provisioning failed during: ' + s.error + '. Stop and restart.';
+      } else {
+        const where = s.step_n ? `step ${s.step_n} of ${s.step_total}, ${s.step}` : 'starting';
+        const mins = s.started ? Math.floor((Date.now()/1000 - s.started)/60) : 0;
+        el.className = 'status-waiting'; el.textContent = `Provisioning: ${where} (${mins} min)`;
+      }
+    }).catch(() => {});
+  }
+  poll(); setInterval(poll, 10000);
+</script>
+</body>
+</html>
