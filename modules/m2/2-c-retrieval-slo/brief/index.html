@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capstone 2.C: Retrieval SLO</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #101C3F; color: #fff; min-height: 100vh; }
+  .deck { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+  .slide { background: #153385; border-radius: 8px; padding: 40px; margin-bottom: 32px; }
+  h1 { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 2rem; font-weight: 700; color: #48EFCF; margin-bottom: 16px; }
+  h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 12px; color: #48EFCF; }
+  p, li { line-height: 1.55; margin-bottom: 8px; }
+  code, pre { font-family: 'Space Mono', monospace; background: #101C3F; padding: 2px 6px; border-radius: 3px; font-size: 0.875rem; }
+  pre { padding: 16px; margin: 12px 0; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  th, td { border: 1px solid #0B64DD; padding: 8px 12px; text-align: left; }
+  th { background: #0B64DD; }
+  ul { padding-left: 20px; }
+  .label { display: inline-block; font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 3px; margin-right: 6px; font-family: 'Space Mono', monospace; }
+  .artifact  { background: #6B46C1; }
+  .measured  { background: #0B64DD; }
+  .behavior  { background: #059669; }
+  .defend    { background: #B45309; }
+  #status { position: fixed; bottom: 24px; right: 24px; padding: 10px 18px; border-radius: 6px; font-size: 0.875rem; font-family: 'Space Mono', monospace; }
+  .status-waiting { background: #FEC514; color: #000; }
+  .status-ready   { background: #48EFCF; color: #000; }
+  .status-failed  { background: #FF957D; color: #000; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <div class="slide">
+    <h1>Capstone 2.C: Retrieval SLO</h1>
+    <p>Cortex Bank's compliance assistant Tina has a retrieval service-level objective. Today's pipeline doesn't meet it. You decide which lever to pull — or how many — and defend your choice.</p>
+    <p>This is an open-ended capstone. There is no single correct answer.</p>
+  </div>
+
+  <div class="slide">
+    <h2>The problem</h2>
+    <p>The current index uses <strong>200-token fixed-size chunks with no overlap</strong>. Risk tables, procedure lists, and multi-part thresholds are split mid-row. Whatever is not in the same 200-token window cannot be retrieved together.</p>
+    <p>The result: nDCG@10 on 25 labeled analyst queries lands around <strong>0.50</strong>. Tina answers only <strong>2 of 5</strong> two-value compliance questions correctly. The SLO requires 0.80 and 4 of 5.</p>
+  </div>
+
+  <div class="slide">
+    <h2>The SLO</h2>
+    <table>
+      <tr><th>Metric</th><th>Current</th><th>Target</th></tr>
+      <tr><td>nDCG@10 (25 graded queries)</td><td>~0.50</td><td><strong>≥ 0.80</strong></td></tr>
+      <tr><td>p95 retrieval latency</td><td>—</td><td><strong>≤ 800 ms</strong></td></tr>
+      <tr><td>Index store size</td><td>baseline</td><td><strong>≤ 1.5× baseline</strong></td></tr>
+      <tr><td>Tina two-value questions</td><td>2 / 5</td><td><strong>≥ 4 / 5</strong></td></tr>
+    </table>
+    <p>You have 15 labeled dev queries and 3 Tina questions to self-evaluate before submitting. The grading set is different.</p>
+  </div>
+
+  <div class="slide">
+    <h2>The five levers</h2>
+    <table>
+      <tr><th>Lever</th><th>What changes</th><th>When to use it</th></tr>
+      <tr><td><strong>Re-chunk</strong></td><td>Create a new index with heading-aware or unit-preserving chunks; cut alias over</td><td>Tables or lists are split — retrieval ceiling is structural</td></tr>
+      <tr><td><strong>Hybrid</strong></td><td>Add BM25 (<code>body_text</code>) via RRF alongside dense</td><td>Exact-match queries miss because dense ranking varies</td></tr>
+      <tr><td><strong>Rerank</strong></td><td>Add <code>text_similarity_reranker</code> on top of hybrid</td><td>Recall is OK but top-1 is wrong — reranking fixes order</td></tr>
+      <tr><td><strong>Tune</strong></td><td>Change <code>index_options</code> (e.g. BBQ quantization)</td><td>Index is near the vector memory budget</td></tr>
+      <tr><td><strong>Rewrite</strong></td><td>HyDE or query expansion before search; trace in <code>.traces/capstone-rewrite.jsonl</code></td><td>Vocabulary gap — queries don't share words with documents</td></tr>
+    </table>
+    <p>Levers can be combined. The store-size constraint (1.5×) means you can't add arbitrarily more data.</p>
+  </div>
+
+  <div class="slide">
+    <h2>What you will do</h2>
+    <ul>
+      <li><strong>Diagnose:</strong> Run <code>python3 /home/elastic/submit.py</code> with the starting retriever.json to see the baseline on your dev set</li>
+      <li><strong>Improve:</strong> Edit <code>/home/elastic/retriever.json</code> and/or re-chunk into a new index and cut the alias over</li>
+      <li><strong>Evaluate:</strong> Re-run <code>submit.py</code> — iterate until the dev set score is above 0.80</li>
+      <li><strong>Defend:</strong> Run <code>python3 /home/elastic/defend.py</code> to record your Q1/Q2/Q3 answers, then click Check</li>
+    </ul>
+  </div>
+
+  <div class="slide">
+    <h2>Grading criteria</h2>
+    <p><span class="label artifact">ARTIFACT</span> <code>cortex-corpus-live</code> alias resolves; <code>retriever.json</code> is valid; embedding model unchanged</p>
+    <p><span class="label measured">MEASURED</span> nDCG@10 ≥ 0.80 on 25 heldout queries; p95 ≤ 800 ms; store ≤ 1.5× baseline</p>
+    <p><span class="label behavior">BEHAVIOR</span> Tina's top-5 context contains the gold answer for ≥ 4 of 5 heldout questions</p>
+    <p><span class="label defend">DEFEND</span> Q1/Q2 lever claims match observed state; Q3 from closed list</p>
+    <p style="margin-top: 12px;"><strong>Tier 75</strong> (minimum passing): ARTIFACT + MEASURED + BEHAVIOR. DEFEND is additional credit.</p>
+  </div>
+
+  <div class="slide">
+    <h2>Defend questions</h2>
+    <p><strong>Q1 — Primary lever:</strong> Which lever had the highest impact on your nDCG@10 gain?<br>
+    <em>Options: re-chunk / hybrid / rerank / tune / rewrite</em></p>
+    <p><strong>Q2 — Second lever:</strong> Did you apply a second lever, or was one enough?<br>
+    <em>Options: same list, or none</em></p>
+    <p><strong>Q3 — Why:</strong> What was the root cause of the weak baseline that your primary lever addressed?</p>
+    <p>The check verifies Q1 and Q2 against the observed live configuration. A claimed lever that is not detectable in the index or retriever template fails.</p>
+  </div>
+
+  <div class="slide">
+    <h2>Select Check to continue</h2>
+    <p>The indicator below turns green when your environment is ready. The starting corpus takes about 10–12 minutes to build.</p>
+  </div>
+
+</div>
+<div id="status" class="status-waiting">Provisioning...</div>
+<script>
+  function poll() {
+    fetch('/status.json').then(r => r.json()).then(s => {
+      const el = document.getElementById('status');
+      if (s.ready) {
+        el.className = 'status-ready'; el.textContent = 'Environment ready. Select Check.';
+      } else if (s.error) {
+        el.className = 'status-failed'; el.textContent = 'Provisioning failed during: ' + s.error + '. Stop and restart.';
+      } else {
+        const where = s.step_n ? `step ${s.step_n} of ${s.step_total}, ${s.step}` : 'starting';
+        const mins = s.started ? Math.floor((Date.now()/1000 - s.started)/60) : 0;
+        el.className = 'status-waiting'; el.textContent = `Provisioning: ${where} (${mins} min)`;
+      }
+    }).catch(() => {});
+  }
+  poll(); setInterval(poll, 10000);
+</script>
+</body>
+</html>
