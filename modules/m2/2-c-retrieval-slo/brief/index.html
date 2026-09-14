@@ -48,12 +48,11 @@
     <h2>The SLO</h2>
     <table>
       <tr><th>Metric</th><th>Current</th><th>Target</th></tr>
-      <tr><td>nDCG@10 (25 graded queries)</td><td>~0.50</td><td><strong>≥ 0.80</strong></td></tr>
+      <tr><td>Tina two-value questions</td><td>2 / 5</td><td><strong>≥ 3 / 5</strong></td></tr>
       <tr><td>p95 retrieval latency</td><td>—</td><td><strong>≤ 800 ms</strong></td></tr>
       <tr><td>Index store size</td><td>baseline</td><td><strong>≤ 1.5× baseline</strong></td></tr>
-      <tr><td>Tina two-value questions</td><td>2 / 5</td><td><strong>≥ 4 / 5</strong></td></tr>
     </table>
-    <p>You have 15 labeled dev queries and 3 Tina questions to self-evaluate before submitting. The grading set is different.</p>
+    <p>You have 15 labeled dev queries and 3 Tina questions to self-evaluate before submitting. The grading set uses 25 queries and 5 Tina questions. The starting index scores about 0.90 nDCG@10 (document-level retrieval is already decent) but Tina can only find 2 of 5 specific compliance thresholds because those answers live in tables that fixed chunking splits apart.</p>
   </div>
 
   <div class="slide">
@@ -82,10 +81,10 @@
   <div class="slide">
     <h2>Grading criteria</h2>
     <p><span class="label artifact">ARTIFACT</span> <code>cortex-corpus-live</code> alias resolves; <code>retriever.json</code> is valid; embedding model unchanged</p>
-    <p><span class="label measured">MEASURED</span> nDCG@10 ≥ 0.80 on 25 heldout queries; p95 ≤ 800 ms; store ≤ 1.5× baseline</p>
-    <p><span class="label behavior">BEHAVIOR</span> Tina's top-5 context contains the gold answer for ≥ 4 of 5 heldout questions</p>
+    <p><span class="label measured">MEASURED</span> p95 ≤ 800 ms; store ≤ 1.5× baseline (nDCG@10 logged as a metric)</p>
+    <p><span class="label behavior">BEHAVIOR</span> Tina's top-5 context contains the gold answer for ≥ 3 of 5 heldout compliance questions</p>
     <p><span class="label defend">DEFEND</span> Q1/Q2 lever claims match observed state; Q3 from closed list</p>
-    <p style="margin-top: 12px;"><strong>Tier 75</strong> (minimum passing): ARTIFACT + MEASURED + BEHAVIOR. DEFEND is additional credit.</p>
+    <p style="margin-top: 12px;"><strong>Minimum passing</strong>: ARTIFACT + MEASURED + BEHAVIOR (Tina ≥ 3/5). DEFEND is additional credit.</p>
   </div>
 
   <div class="slide">
