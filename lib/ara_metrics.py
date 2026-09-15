@@ -258,9 +258,33 @@ def _build_query(text: str, k: int, inference_id: str | None) -> dict:
 
 # ── Relevance metrics ─────────────────────────────────────────────────────────
 
-def precision_at_k(results: list[dict], queries: list[dict], k: int = 10) -> float:
-    """Macro-averaged precision@k over all queries."""
-    relevance = {q["query_id"]: set(q["relevant_ids"]) for q in queries}
+def precision_at_k(
+    results: list[dict],
+    queries: list[dict],
+    k: int = 10,
+    gold_field: str = "relevant_ids",
+) -> float:
+    """Macro-averaged precision@k over all queries.
+
+    Args:
+        results:    List of result dicts with ``query_id`` and ``retrieved_ids``.
+        queries:    List of query dicts with ``query_id`` and relevance field.
+        k:          Cutoff depth.
+        gold_field: Which field in each query dict holds the gold set.
+                    ``"relevant_ids"``         — document-level (default, backward-compatible).
+                    ``"relevant_passage_ids"`` — passage-level: a result is a hit if its
+                                                  ``doc_id`` or ``section_id`` is in the gold set.
+
+    M3 pedagogical purpose:
+        Track 3.2 introduces passage-level retrieval.  The check script calls
+        this function with ``gold_field="relevant_passage_ids"`` to grade whether
+        learners retrieved the right passage, not just the right document.
+    """
+    if gold_field == "relevant_passage_ids":
+        relevance = {q["query_id"]: set(q.get("relevant_passage_ids", [])) for q in queries}
+    else:
+        relevance = {q["query_id"]: set(q.get("relevant_ids", [])) for q in queries}
+
     scores = []
     for r in results:
         rel = relevance.get(r["query_id"], set())
@@ -334,14 +358,57 @@ def p95(results: list[dict]) -> float:
 
 # ── Token counting ────────────────────────────────────────────────────────────
 
-def count_tokens_approx(text: str) -> int:
-    """Very rough token count (words * 1.3) — use only for sanity checks."""
+def token_count(text: str) -> int:
+    """Count tokens in text using a simple word-boundary approximation.
+
+    Uses ``len(text.split()) * 1.3`` as a fast approximation consistent with
+    ~100–200 word text blocks.  For precise token counts, use the model's
+    tokenizer — this function is for budget-checking, not billing.
+
+    M3 pedagogical purpose:
+        ara_pack and check scripts both call this so the budget check the
+        learner sees in the notebook matches what the grader measures.  Using
+        a shared approximation keeps the two in sync without requiring a
+        tokenizer dependency.
+
+    Returns:
+        int — estimated token count.
+    """
     return int(len(text.split()) * 1.3)
+
+
+def count_tokens_approx(text: str) -> int:
+    """Very rough token count (words * 1.3) — use only for sanity checks.
+
+    Alias for token_count; kept for backward compatibility.
+    """
+    return token_count(text)
 
 
 def count_tokens_messages(messages: list[dict]) -> int:
     """Approximate token count across a list of OpenAI-style message dicts."""
     return sum(count_tokens_approx(m.get("content", "")) for m in messages)
+
+
+def context_fit(packed: str, budget: int) -> bool:
+    """Return True if the packed context is within the token budget.
+
+    Uses ``token_count`` for consistency with ``ara_pack.pack_context`` so that
+    the check script's budget test matches what the learner measures in the
+    notebook.
+
+    M3 pedagogical purpose:
+        Check scripts in track 3.3 call this to verify the learner's
+        pack_context output actually fits in the declared budget.
+
+    Args:
+        packed: The packed context string to measure.
+        budget: Maximum allowed token count.
+
+    Returns:
+        bool — True if token_count(packed) <= budget.
+    """
+    return token_count(packed) <= budget
 
 
 # ── Evaluation set helpers ────────────────────────────────────────────────────

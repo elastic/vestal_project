@@ -25,5 +25,20 @@ from tina.tools import ToolRegistry
 from tina.loop import react_loop
 from tina.memory import MemoryStore
 from tina.rag import rag_answer, load_retriever
+from tina.strategy_router import strategy_router
+from tina.guardrails import GUARDRAIL_HOOKS, validate_output, confidence_fallback, scope_check
 
-__all__ = ["llm_client", "es_client", "ToolRegistry", "react_loop", "MemoryStore", "rag_answer", "load_retriever"]
+__all__ = [
+    "llm_client",
+    "es_client",
+    "ToolRegistry",
+    "react_loop",
+    "MemoryStore",
+    "rag_answer",
+    "load_retriever",
+    "strategy_router",
+    "GUARDRAIL_HOOKS",
+    "validate_output",
+    "confidence_fallback",
+    "scope_check",
+]
