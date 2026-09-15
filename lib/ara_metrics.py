@@ -359,22 +359,25 @@ def p95(results: list[dict]) -> float:
 # ── Token counting ────────────────────────────────────────────────────────────
 
 def token_count(text: str) -> int:
-    """Count tokens in text using a simple word-boundary approximation.
+    """Count tokens in text using cl100k_base (tiktoken) when available.
 
-    Uses ``len(text.split()) * 1.3`` as a fast approximation consistent with
-    ~100–200 word text blocks.  For precise token counts, use the model's
-    tokenizer — this function is for budget-checking, not billing.
+    Uses tiktoken's cl100k_base encoding (GPT-4 / text-embedding-3 vocabulary),
+    falling back to ``len(text.split()) * 1.3`` if tiktoken is not installed.
 
-    M3 pedagogical purpose:
-        ara_pack and check scripts both call this so the budget check the
-        learner sees in the notebook matches what the grader measures.  Using
-        a shared approximation keeps the two in sync without requiring a
-        tokenizer dependency.
+    M3 corpus bucket labels (1k, 3k, 8k, 20k, 40k) were measured with cl100k_base.
+    The learner's notebook and the check script must agree on these counts, so both
+    call this function.  Installing tiktoken in the track's venv is required for
+    bucket measurements to be accurate.
 
     Returns:
-        int — estimated token count.
+        int — token count.
     """
-    return int(len(text.split()) * 1.3)
+    try:
+        import tiktoken
+        enc = tiktoken.get_encoding("cl100k_base")
+        return len(enc.encode(text))
+    except ImportError:
+        return int(len(text.split()) * 1.3)
 
 
 def count_tokens_approx(text: str) -> int:
