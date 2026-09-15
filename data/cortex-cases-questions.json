@@ -1,0 +1,1820 @@
+[
+  {
+    "question_id": "q-case-001",
+    "text": "When reviewing accounts with a pattern of closely-timed, just-below-threshold cash deposits, what was the total amount deposited by Limestone Industrial Supply Inc.?",
+    "intent_label": "structuring",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "structuring",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-structuring-001"
+    ],
+    "gold_literal": "$1,546,407.46",
+    "gold_literals": [
+      "$1,546,407.46"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-structuring-001",
+      "case-structuring-002",
+      "case-structuring-003",
+      "case-structuring-004",
+      "case-structuring-005",
+      "case-structuring-006",
+      "case-structuring-007",
+      "case-structuring-008",
+      "case-structuring-009",
+      "case-structuring-010",
+      "case-structuring-011",
+      "case-structuring-012",
+      "case-structuring-013",
+      "case-structuring-014",
+      "case-structuring-015",
+      "case-structuring-016",
+      "case-structuring-017",
+      "case-structuring-018",
+      "case-structuring-019",
+      "case-structuring-020",
+      "case-structuring-021",
+      "case-structuring-022",
+      "case-structuring-023",
+      "case-structuring-024"
+    ]
+  },
+  {
+    "question_id": "q-case-002",
+    "text": "Among the files involving large, unverified outbound transfers initiated after a change in payment instructions, what was the exact amount diverted from Westmarch Imports Holdings Ltd.?",
+    "intent_label": "wire_fraud",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "wire_fraud",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-wire-fraud-002"
+    ],
+    "gold_literal": "$4,110,251.43",
+    "gold_literals": [
+      "$4,110,251.43"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-wire-fraud-001",
+      "case-wire-fraud-002",
+      "case-wire-fraud-003",
+      "case-wire-fraud-004",
+      "case-wire-fraud-005",
+      "case-wire-fraud-006",
+      "case-wire-fraud-007",
+      "case-wire-fraud-008",
+      "case-wire-fraud-009",
+      "case-wire-fraud-010",
+      "case-wire-fraud-011",
+      "case-wire-fraud-012",
+      "case-wire-fraud-013",
+      "case-wire-fraud-014",
+      "case-wire-fraud-015",
+      "case-wire-fraud-016",
+      "case-wire-fraud-017",
+      "case-wire-fraud-018",
+      "case-wire-fraud-019",
+      "case-wire-fraud-020",
+      "case-wire-fraud-021",
+      "case-wire-fraud-022",
+      "case-wire-fraud-023",
+      "case-wire-fraud-024"
+    ]
+  },
+  {
+    "question_id": "q-case-003",
+    "text": "For the memos detailing trade shipments routed through high-risk transshipment hubs, what is the total value of the transactions involving Aperture Produce Trading Co.?",
+    "intent_label": "sanctions",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "sanctions",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-sanctions-003"
+    ],
+    "gold_literal": "$387,177.94",
+    "gold_literals": [
+      "$387,177.94"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-sanctions-001",
+      "case-sanctions-002",
+      "case-sanctions-003",
+      "case-sanctions-004",
+      "case-sanctions-005",
+      "case-sanctions-006",
+      "case-sanctions-007",
+      "case-sanctions-008",
+      "case-sanctions-009",
+      "case-sanctions-010",
+      "case-sanctions-011",
+      "case-sanctions-012",
+      "case-sanctions-013",
+      "case-sanctions-014",
+      "case-sanctions-015",
+      "case-sanctions-016",
+      "case-sanctions-017",
+      "case-sanctions-018",
+      "case-sanctions-019",
+      "case-sanctions-020",
+      "case-sanctions-021",
+      "case-sanctions-022",
+      "case-sanctions-023",
+      "case-sanctions-024"
+    ]
+  },
+  {
+    "question_id": "q-case-004",
+    "text": "Looking at the reports concerning missing or incomplete customer information files, what was the total transaction volume for Larkfield Commodities Inc. during the period in question?",
+    "intent_label": "kyc_gap",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "kyc_gap",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-kyc-gap-004"
+    ],
+    "gold_literal": "$2,211,089.56",
+    "gold_literals": [
+      "$2,211,089.56"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-kyc-gap-001",
+      "case-kyc-gap-002",
+      "case-kyc-gap-003",
+      "case-kyc-gap-004",
+      "case-kyc-gap-005",
+      "case-kyc-gap-006",
+      "case-kyc-gap-007",
+      "case-kyc-gap-008",
+      "case-kyc-gap-009",
+      "case-kyc-gap-010",
+      "case-kyc-gap-011",
+      "case-kyc-gap-012",
+      "case-kyc-gap-013",
+      "case-kyc-gap-014",
+      "case-kyc-gap-015",
+      "case-kyc-gap-016",
+      "case-kyc-gap-017",
+      "case-kyc-gap-018",
+      "case-kyc-gap-019",
+      "case-kyc-gap-020",
+      "case-kyc-gap-021",
+      "case-kyc-gap-022",
+      "case-kyc-gap-023",
+      "case-kyc-gap-024"
+    ]
+  },
+  {
+    "question_id": "q-case-005",
+    "text": "In the cases describing uncharacteristic withdrawals directed by an accompanying third party, what was the total amount withdrawn from Lorcan Macallister's accounts?",
+    "intent_label": "elder_exploitation",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "elder_exploitation",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-elder-exploitation-005"
+    ],
+    "gold_literal": "$436,807.57",
+    "gold_literals": [
+      "$436,807.57"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-elder-exploitation-001",
+      "case-elder-exploitation-002",
+      "case-elder-exploitation-003",
+      "case-elder-exploitation-004",
+      "case-elder-exploitation-005",
+      "case-elder-exploitation-006",
+      "case-elder-exploitation-007",
+      "case-elder-exploitation-008",
+      "case-elder-exploitation-009",
+      "case-elder-exploitation-010",
+      "case-elder-exploitation-011",
+      "case-elder-exploitation-012",
+      "case-elder-exploitation-013",
+      "case-elder-exploitation-014",
+      "case-elder-exploitation-015",
+      "case-elder-exploitation-016",
+      "case-elder-exploitation-017",
+      "case-elder-exploitation-018",
+      "case-elder-exploitation-019",
+      "case-elder-exploitation-020",
+      "case-elder-exploitation-021",
+      "case-elder-exploitation-022",
+      "case-elder-exploitation-023",
+      "case-elder-exploitation-024"
+    ]
+  },
+  {
+    "question_id": "q-case-006",
+    "text": "When examining instances of frequent cash deposits designed to avoid reporting limits, what was the total amount deposited by Philippa Rosenthal across multiple branches?",
+    "intent_label": "structuring",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "structuring",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-structuring-007"
+    ],
+    "gold_literal": "$319,601.19",
+    "gold_literals": [
+      "$319,601.19"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-structuring-001",
+      "case-structuring-002",
+      "case-structuring-003",
+      "case-structuring-004",
+      "case-structuring-005",
+      "case-structuring-006",
+      "case-structuring-007",
+      "case-structuring-008",
+      "case-structuring-009",
+      "case-structuring-010",
+      "case-structuring-011",
+      "case-structuring-012",
+      "case-structuring-013",
+      "case-structuring-014",
+      "case-structuring-015",
+      "case-structuring-016",
+      "case-structuring-017",
+      "case-structuring-018",
+      "case-structuring-019",
+      "case-structuring-020",
+      "case-structuring-021",
+      "case-structuring-022",
+      "case-structuring-023",
+      "case-structuring-024"
+    ]
+  },
+  {
+    "question_id": "q-case-007",
+    "text": "Among the investigations into large outbound transfers that were unexpectedly diverted, what was the specific amount involved in the Lanternhill Machinery Enterprises LLC incident?",
+    "intent_label": "wire_fraud",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "wire_fraud",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-wire-fraud-008"
+    ],
+    "gold_literal": "$794,235.02",
+    "gold_literals": [
+      "$794,235.02"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-wire-fraud-001",
+      "case-wire-fraud-002",
+      "case-wire-fraud-003",
+      "case-wire-fraud-004",
+      "case-wire-fraud-005",
+      "case-wire-fraud-006",
+      "case-wire-fraud-007",
+      "case-wire-fraud-008",
+      "case-wire-fraud-009",
+      "case-wire-fraud-010",
+      "case-wire-fraud-011",
+      "case-wire-fraud-012",
+      "case-wire-fraud-013",
+      "case-wire-fraud-014",
+      "case-wire-fraud-015",
+      "case-wire-fraud-016",
+      "case-wire-fraud-017",
+      "case-wire-fraud-018",
+      "case-wire-fraud-019",
+      "case-wire-fraud-020",
+      "case-wire-fraud-021",
+      "case-wire-fraud-022",
+      "case-wire-fraud-023",
+      "case-wire-fraud-024"
+    ]
+  },
+  {
+    "question_id": "q-case-008",
+    "text": "For the reviews highlighting conflicting shipping documentation and trade finance remittances, what was the total value of the transactions flagged for Nadia Quintanilla?",
+    "intent_label": "sanctions",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "sanctions",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-sanctions-009"
+    ],
+    "gold_literal": "$74,006.70",
+    "gold_literals": [
+      "$74,006.70"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-sanctions-001",
+      "case-sanctions-002",
+      "case-sanctions-003",
+      "case-sanctions-004",
+      "case-sanctions-005",
+      "case-sanctions-006",
+      "case-sanctions-007",
+      "case-sanctions-008",
+      "case-sanctions-009",
+      "case-sanctions-010",
+      "case-sanctions-011",
+      "case-sanctions-012",
+      "case-sanctions-013",
+      "case-sanctions-014",
+      "case-sanctions-015",
+      "case-sanctions-016",
+      "case-sanctions-017",
+      "case-sanctions-018",
+      "case-sanctions-019",
+      "case-sanctions-020",
+      "case-sanctions-021",
+      "case-sanctions-022",
+      "case-sanctions-023",
+      "case-sanctions-024"
+    ]
+  },
+  {
+    "question_id": "q-case-009",
+    "text": "Looking across accounts with missing onboarding information, what was the unverified initial funding amount deposited by Zephyrine Underhill?",
+    "intent_label": "kyc_gap",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "kyc_gap",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-kyc-gap-010"
+    ],
+    "gold_literal": "$423,031.43",
+    "gold_literals": [
+      "$423,031.43"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-kyc-gap-001",
+      "case-kyc-gap-002",
+      "case-kyc-gap-003",
+      "case-kyc-gap-004",
+      "case-kyc-gap-005",
+      "case-kyc-gap-006",
+      "case-kyc-gap-007",
+      "case-kyc-gap-008",
+      "case-kyc-gap-009",
+      "case-kyc-gap-010",
+      "case-kyc-gap-011",
+      "case-kyc-gap-012",
+      "case-kyc-gap-013",
+      "case-kyc-gap-014",
+      "case-kyc-gap-015",
+      "case-kyc-gap-016",
+      "case-kyc-gap-017",
+      "case-kyc-gap-018",
+      "case-kyc-gap-019",
+      "case-kyc-gap-020",
+      "case-kyc-gap-021",
+      "case-kyc-gap-022",
+      "case-kyc-gap-023",
+      "case-kyc-gap-024"
+    ]
+  },
+  {
+    "question_id": "q-case-010",
+    "text": "When reviewing cases of vulnerable customers making unusual accompanied withdrawals, what is the total amount of cash withdrawn by Xiomara Marchetti?",
+    "intent_label": "elder_exploitation",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "elder_exploitation",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-elder-exploitation-011"
+    ],
+    "gold_literal": "$251,585.73",
+    "gold_literals": [
+      "$251,585.73"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-elder-exploitation-001",
+      "case-elder-exploitation-002",
+      "case-elder-exploitation-003",
+      "case-elder-exploitation-004",
+      "case-elder-exploitation-005",
+      "case-elder-exploitation-006",
+      "case-elder-exploitation-007",
+      "case-elder-exploitation-008",
+      "case-elder-exploitation-009",
+      "case-elder-exploitation-010",
+      "case-elder-exploitation-011",
+      "case-elder-exploitation-012",
+      "case-elder-exploitation-013",
+      "case-elder-exploitation-014",
+      "case-elder-exploitation-015",
+      "case-elder-exploitation-016",
+      "case-elder-exploitation-017",
+      "case-elder-exploitation-018",
+      "case-elder-exploitation-019",
+      "case-elder-exploitation-020",
+      "case-elder-exploitation-021",
+      "case-elder-exploitation-022",
+      "case-elder-exploitation-023",
+      "case-elder-exploitation-024"
+    ]
+  },
+  {
+    "question_id": "q-case-011",
+    "text": "Among the medium and high risk cases involving customers making frequent cash deposits just under reporting thresholds, what was the total deposited by Waterstone Metals Partners LP?",
+    "intent_label": "structuring",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "structuring",
+      "risk_tier": [
+        "medium",
+        "high"
+      ],
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-structuring-019"
+    ],
+    "gold_literal": "$537,426.53",
+    "gold_literals": [
+      "$537,426.53"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-structuring-009",
+      "case-structuring-010",
+      "case-structuring-011",
+      "case-structuring-012",
+      "case-structuring-013",
+      "case-structuring-014",
+      "case-structuring-015",
+      "case-structuring-016",
+      "case-structuring-017",
+      "case-structuring-018",
+      "case-structuring-019",
+      "case-structuring-020",
+      "case-structuring-021",
+      "case-structuring-022",
+      "case-structuring-023",
+      "case-structuring-024"
+    ]
+  },
+  {
+    "question_id": "q-case-012",
+    "text": "For low and medium risk cases involving unauthorized transfers to unknown vendors, what was the exact amount transferred from Gabriel Fitzgerald's account?",
+    "intent_label": "wire_fraud",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "wire_fraud",
+      "risk_tier": [
+        "low",
+        "medium"
+      ],
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-wire-fraud-014"
+    ],
+    "gold_literal": "$277,408.98",
+    "gold_literals": [
+      "$277,408.98"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-wire-fraud-001",
+      "case-wire-fraud-002",
+      "case-wire-fraud-003",
+      "case-wire-fraud-004",
+      "case-wire-fraud-005",
+      "case-wire-fraud-006",
+      "case-wire-fraud-007",
+      "case-wire-fraud-008",
+      "case-wire-fraud-009",
+      "case-wire-fraud-010",
+      "case-wire-fraud-011",
+      "case-wire-fraud-012",
+      "case-wire-fraud-013",
+      "case-wire-fraud-014",
+      "case-wire-fraud-015",
+      "case-wire-fraud-016"
+    ]
+  },
+  {
+    "question_id": "q-case-013",
+    "text": "In medium and high risk cases involving transfers to potentially restricted entities, what was the total value of the wires originated by Westmarch Exports Inc.?",
+    "intent_label": "sanctions",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "sanctions",
+      "risk_tier": [
+        "medium",
+        "high"
+      ],
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-sanctions-022"
+    ],
+    "gold_literal": "$2,543,658.78",
+    "gold_literals": [
+      "$2,543,658.78"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-sanctions-009",
+      "case-sanctions-010",
+      "case-sanctions-011",
+      "case-sanctions-012",
+      "case-sanctions-013",
+      "case-sanctions-014",
+      "case-sanctions-015",
+      "case-sanctions-016",
+      "case-sanctions-017",
+      "case-sanctions-018",
+      "case-sanctions-019",
+      "case-sanctions-020",
+      "case-sanctions-021",
+      "case-sanctions-022",
+      "case-sanctions-023",
+      "case-sanctions-024"
+    ]
+  },
+  {
+    "question_id": "q-case-014",
+    "text": "Within low and medium risk files lacking complete customer information, what is the total value of ongoing transactions for Silverthorn Metals Group LLC?",
+    "intent_label": "kyc_gap",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "kyc_gap",
+      "risk_tier": [
+        "low",
+        "medium"
+      ],
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-kyc-gap-016"
+    ],
+    "gold_literal": "$2,109,452.19",
+    "gold_literals": [
+      "$2,109,452.19"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-kyc-gap-001",
+      "case-kyc-gap-002",
+      "case-kyc-gap-003",
+      "case-kyc-gap-004",
+      "case-kyc-gap-005",
+      "case-kyc-gap-006",
+      "case-kyc-gap-007",
+      "case-kyc-gap-008",
+      "case-kyc-gap-009",
+      "case-kyc-gap-010",
+      "case-kyc-gap-011",
+      "case-kyc-gap-012",
+      "case-kyc-gap-013",
+      "case-kyc-gap-014",
+      "case-kyc-gap-015",
+      "case-kyc-gap-016"
+    ]
+  },
+  {
+    "question_id": "q-case-015",
+    "text": "Reviewing medium and high risk situations where vulnerable customers have sudden withdrawals directed by new signers, what is the total amount withdrawn from Anders Quintanilla's account?",
+    "intent_label": "elder_exploitation",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "elder_exploitation",
+      "risk_tier": [
+        "medium",
+        "high"
+      ],
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-elder-exploitation-024"
+    ],
+    "gold_literal": "$474,187.33",
+    "gold_literals": [
+      "$474,187.33"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-elder-exploitation-009",
+      "case-elder-exploitation-010",
+      "case-elder-exploitation-011",
+      "case-elder-exploitation-012",
+      "case-elder-exploitation-013",
+      "case-elder-exploitation-014",
+      "case-elder-exploitation-015",
+      "case-elder-exploitation-016",
+      "case-elder-exploitation-017",
+      "case-elder-exploitation-018",
+      "case-elder-exploitation-019",
+      "case-elder-exploitation-020",
+      "case-elder-exploitation-021",
+      "case-elder-exploitation-022",
+      "case-elder-exploitation-023",
+      "case-elder-exploitation-024"
+    ]
+  },
+  {
+    "question_id": "q-case-016",
+    "text": "When examining accounts with sustained high-volume cash deposits kept under reporting limits, what was the total amount subsequently transferred by Wheatfield Commodities Enterprises LLC?",
+    "intent_label": "structuring",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "structuring",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-structuring-018"
+    ],
+    "gold_literal": "$2,248,270.16",
+    "gold_literals": [
+      "$2,248,270.16"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-structuring-001",
+      "case-structuring-002",
+      "case-structuring-003",
+      "case-structuring-004",
+      "case-structuring-005",
+      "case-structuring-006",
+      "case-structuring-007",
+      "case-structuring-008",
+      "case-structuring-009",
+      "case-structuring-010",
+      "case-structuring-011",
+      "case-structuring-012",
+      "case-structuring-013",
+      "case-structuring-014",
+      "case-structuring-015",
+      "case-structuring-016",
+      "case-structuring-017",
+      "case-structuring-018",
+      "case-structuring-019",
+      "case-structuring-020",
+      "case-structuring-021",
+      "case-structuring-022",
+      "case-structuring-023",
+      "case-structuring-024"
+    ]
+  },
+  {
+    "question_id": "q-case-017",
+    "text": "For accounts showing beneficiary mismatches and control overrides opened since June 2023, what was the total outbound transfer amount flagged for Xiomara Kaminski?",
+    "intent_label": "wire_fraud",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "wire_fraud",
+      "risk_tier": null,
+      "date_from": "2023-06-01",
+      "date_to": "2025-12-31"
+    },
+    "gold_doc_ids": [
+      "case-wire-fraud-021"
+    ],
+    "gold_literal": "$143,300.55",
+    "gold_literals": [
+      "$143,300.55"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-wire-fraud-001",
+      "case-wire-fraud-002",
+      "case-wire-fraud-003",
+      "case-wire-fraud-004",
+      "case-wire-fraud-005",
+      "case-wire-fraud-006",
+      "case-wire-fraud-007",
+      "case-wire-fraud-008",
+      "case-wire-fraud-009",
+      "case-wire-fraud-010",
+      "case-wire-fraud-011",
+      "case-wire-fraud-012",
+      "case-wire-fraud-013",
+      "case-wire-fraud-014",
+      "case-wire-fraud-015",
+      "case-wire-fraud-017",
+      "case-wire-fraud-018",
+      "case-wire-fraud-019",
+      "case-wire-fraud-020",
+      "case-wire-fraud-021",
+      "case-wire-fraud-022",
+      "case-wire-fraud-023",
+      "case-wire-fraud-024"
+    ]
+  },
+  {
+    "question_id": "q-case-018",
+    "text": "Among accounts with international outgoing wires and shipping document discrepancies, what was the total value of the transactions identified for Xiomara Ashworth?",
+    "intent_label": "sanctions",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "sanctions",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-sanctions-020"
+    ],
+    "gold_literal": "$386,930.54",
+    "gold_literals": [
+      "$386,930.54"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-sanctions-001",
+      "case-sanctions-002",
+      "case-sanctions-003",
+      "case-sanctions-004",
+      "case-sanctions-005",
+      "case-sanctions-006",
+      "case-sanctions-007",
+      "case-sanctions-008",
+      "case-sanctions-009",
+      "case-sanctions-010",
+      "case-sanctions-011",
+      "case-sanctions-012",
+      "case-sanctions-013",
+      "case-sanctions-014",
+      "case-sanctions-015",
+      "case-sanctions-016",
+      "case-sanctions-017",
+      "case-sanctions-018",
+      "case-sanctions-019",
+      "case-sanctions-020",
+      "case-sanctions-021",
+      "case-sanctions-022",
+      "case-sanctions-023",
+      "case-sanctions-024"
+    ]
+  },
+  {
+    "question_id": "q-case-019",
+    "text": "Considering accounts opened since June 2023 with unverified funding and documentary exceptions, what was the total amount associated with the Beatriz Kirkpatrick account?",
+    "intent_label": "kyc_gap",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "kyc_gap",
+      "risk_tier": null,
+      "date_from": "2023-06-01",
+      "date_to": "2025-12-31"
+    },
+    "gold_doc_ids": [
+      "case-kyc-gap-024"
+    ],
+    "gold_literal": "$248,855.20",
+    "gold_literals": [
+      "$248,855.20"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-kyc-gap-001",
+      "case-kyc-gap-003",
+      "case-kyc-gap-004",
+      "case-kyc-gap-005",
+      "case-kyc-gap-006",
+      "case-kyc-gap-007",
+      "case-kyc-gap-008",
+      "case-kyc-gap-009",
+      "case-kyc-gap-010",
+      "case-kyc-gap-011",
+      "case-kyc-gap-012",
+      "case-kyc-gap-013",
+      "case-kyc-gap-014",
+      "case-kyc-gap-015",
+      "case-kyc-gap-016",
+      "case-kyc-gap-017",
+      "case-kyc-gap-019",
+      "case-kyc-gap-020",
+      "case-kyc-gap-021",
+      "case-kyc-gap-022",
+      "case-kyc-gap-023",
+      "case-kyc-gap-024"
+    ]
+  },
+  {
+    "question_id": "q-case-020",
+    "text": "Looking at accounts opened between 2023 and 2024 showing uncharacteristic withdrawals directed by an accompanying party, what was the total withdrawal amount for Zephyrine Larkspur?",
+    "intent_label": "elder_exploitation",
+    "retrieval_pattern": "advanced",
+    "intent": {
+      "case_type": "elder_exploitation",
+      "risk_tier": null,
+      "date_from": "2023-01-01",
+      "date_to": "2024-12-31"
+    },
+    "gold_doc_ids": [
+      "case-elder-exploitation-014"
+    ],
+    "gold_literal": "$257,254.23",
+    "gold_literals": [
+      "$257,254.23"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-elder-exploitation-001",
+      "case-elder-exploitation-003",
+      "case-elder-exploitation-004",
+      "case-elder-exploitation-007",
+      "case-elder-exploitation-008",
+      "case-elder-exploitation-010",
+      "case-elder-exploitation-011",
+      "case-elder-exploitation-012",
+      "case-elder-exploitation-014",
+      "case-elder-exploitation-015",
+      "case-elder-exploitation-016",
+      "case-elder-exploitation-017",
+      "case-elder-exploitation-020",
+      "case-elder-exploitation-024"
+    ]
+  },
+  {
+    "question_id": "q-case-021",
+    "text": "What was the total amount of frequent deposits made just below reporting limits across multiple locations by Bluewater Ventures Holdings Ltd.?",
+    "intent_label": "structuring",
+    "retrieval_pattern": "naive",
+    "intent": {
+      "case_type": "structuring",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-structuring-002"
+    ],
+    "gold_literal": "$2,178,207.89",
+    "gold_literals": [
+      "$2,178,207.89"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-structuring-001",
+      "case-structuring-002",
+      "case-structuring-003",
+      "case-structuring-004",
+      "case-structuring-005",
+      "case-structuring-006",
+      "case-structuring-007",
+      "case-structuring-008",
+      "case-structuring-009",
+      "case-structuring-010",
+      "case-structuring-011",
+      "case-structuring-012",
+      "case-structuring-013",
+      "case-structuring-014",
+      "case-structuring-015",
+      "case-structuring-016",
+      "case-structuring-017",
+      "case-structuring-018",
+      "case-structuring-019",
+      "case-structuring-020",
+      "case-structuring-021",
+      "case-structuring-022",
+      "case-structuring-023",
+      "case-structuring-024"
+    ]
+  },
+  {
+    "question_id": "q-case-022",
+    "text": "What was the amount of the urgent outbound wire request by Nikolai Chanthavong that involved a beneficiary mismatch and lookalike domain?",
+    "intent_label": "wire_fraud",
+    "retrieval_pattern": "naive",
+    "intent": {
+      "case_type": "wire_fraud",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-wire-fraud-003"
+    ],
+    "gold_literal": "$101,339.37",
+    "gold_literals": [
+      "$101,339.37"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-wire-fraud-001",
+      "case-wire-fraud-002",
+      "case-wire-fraud-003",
+      "case-wire-fraud-004",
+      "case-wire-fraud-005",
+      "case-wire-fraud-006",
+      "case-wire-fraud-007",
+      "case-wire-fraud-008",
+      "case-wire-fraud-009",
+      "case-wire-fraud-010",
+      "case-wire-fraud-011",
+      "case-wire-fraud-012",
+      "case-wire-fraud-013",
+      "case-wire-fraud-014",
+      "case-wire-fraud-015",
+      "case-wire-fraud-016",
+      "case-wire-fraud-017",
+      "case-wire-fraud-018",
+      "case-wire-fraud-019",
+      "case-wire-fraud-020",
+      "case-wire-fraud-021",
+      "case-wire-fraud-022",
+      "case-wire-fraud-023",
+      "case-wire-fraud-024"
+    ]
+  },
+  {
+    "question_id": "q-case-023",
+    "text": "What was the total value of the wire transfer activity reviewed for Cardinal Distribution Enterprises LLC?",
+    "intent_label": "sanctions",
+    "retrieval_pattern": "naive",
+    "intent": {
+      "case_type": "sanctions",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-sanctions-004"
+    ],
+    "gold_literal": "$922,109.44",
+    "gold_literals": [
+      "$922,109.44"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-sanctions-001",
+      "case-sanctions-002",
+      "case-sanctions-003",
+      "case-sanctions-004",
+      "case-sanctions-005",
+      "case-sanctions-006",
+      "case-sanctions-007",
+      "case-sanctions-008",
+      "case-sanctions-009",
+      "case-sanctions-010",
+      "case-sanctions-011",
+      "case-sanctions-012",
+      "case-sanctions-013",
+      "case-sanctions-014",
+      "case-sanctions-015",
+      "case-sanctions-016",
+      "case-sanctions-017",
+      "case-sanctions-018",
+      "case-sanctions-019",
+      "case-sanctions-020",
+      "case-sanctions-021",
+      "case-sanctions-022",
+      "case-sanctions-023",
+      "case-sanctions-024"
+    ]
+  },
+  {
+    "question_id": "q-case-024",
+    "text": "What was the total amount associated with the documentary exception expiration on the Windlass Imports LLC account?",
+    "intent_label": "kyc_gap",
+    "retrieval_pattern": "naive",
+    "intent": {
+      "case_type": "kyc_gap",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-kyc-gap-005"
+    ],
+    "gold_literal": "$3,657,752.65",
+    "gold_literals": [
+      "$3,657,752.65"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-kyc-gap-001",
+      "case-kyc-gap-002",
+      "case-kyc-gap-003",
+      "case-kyc-gap-004",
+      "case-kyc-gap-005",
+      "case-kyc-gap-006",
+      "case-kyc-gap-007",
+      "case-kyc-gap-008",
+      "case-kyc-gap-009",
+      "case-kyc-gap-010",
+      "case-kyc-gap-011",
+      "case-kyc-gap-012",
+      "case-kyc-gap-013",
+      "case-kyc-gap-014",
+      "case-kyc-gap-015",
+      "case-kyc-gap-016",
+      "case-kyc-gap-017",
+      "case-kyc-gap-018",
+      "case-kyc-gap-019",
+      "case-kyc-gap-020",
+      "case-kyc-gap-021",
+      "case-kyc-gap-022",
+      "case-kyc-gap-023",
+      "case-kyc-gap-024"
+    ]
+  },
+  {
+    "question_id": "q-case-025",
+    "text": "What was the total value of the unusual withdrawals and third-party directed transfers on Adrian Lindqvist's account?",
+    "intent_label": "elder_exploitation",
+    "retrieval_pattern": "naive",
+    "intent": {
+      "case_type": "elder_exploitation",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-elder-exploitation-006"
+    ],
+    "gold_literal": "$403,735.08",
+    "gold_literals": [
+      "$403,735.08"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-elder-exploitation-001",
+      "case-elder-exploitation-002",
+      "case-elder-exploitation-003",
+      "case-elder-exploitation-004",
+      "case-elder-exploitation-005",
+      "case-elder-exploitation-006",
+      "case-elder-exploitation-007",
+      "case-elder-exploitation-008",
+      "case-elder-exploitation-009",
+      "case-elder-exploitation-010",
+      "case-elder-exploitation-011",
+      "case-elder-exploitation-012",
+      "case-elder-exploitation-013",
+      "case-elder-exploitation-014",
+      "case-elder-exploitation-015",
+      "case-elder-exploitation-016",
+      "case-elder-exploitation-017",
+      "case-elder-exploitation-018",
+      "case-elder-exploitation-019",
+      "case-elder-exploitation-020",
+      "case-elder-exploitation-021",
+      "case-elder-exploitation-022",
+      "case-elder-exploitation-023",
+      "case-elder-exploitation-024"
+    ]
+  },
+  {
+    "question_id": "q-case-026",
+    "text": "What is the total sum of the cash deposits made by Osman Rosenthal just before the outbound transfers?",
+    "intent_label": "structuring",
+    "retrieval_pattern": "naive",
+    "intent": {
+      "case_type": "structuring",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-structuring-010"
+    ],
+    "gold_literal": "$140,820.36",
+    "gold_literals": [
+      "$140,820.36"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-structuring-001",
+      "case-structuring-002",
+      "case-structuring-003",
+      "case-structuring-004",
+      "case-structuring-005",
+      "case-structuring-006",
+      "case-structuring-007",
+      "case-structuring-008",
+      "case-structuring-009",
+      "case-structuring-010",
+      "case-structuring-011",
+      "case-structuring-012",
+      "case-structuring-013",
+      "case-structuring-014",
+      "case-structuring-015",
+      "case-structuring-016",
+      "case-structuring-017",
+      "case-structuring-018",
+      "case-structuring-019",
+      "case-structuring-020",
+      "case-structuring-021",
+      "case-structuring-022",
+      "case-structuring-023",
+      "case-structuring-024"
+    ]
+  },
+  {
+    "question_id": "q-case-027",
+    "text": "What was the exact amount of the large outbound transfer for Orchard Gate Management Partners LP that bypassed dual approval?",
+    "intent_label": "wire_fraud",
+    "retrieval_pattern": "naive",
+    "intent": {
+      "case_type": "wire_fraud",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-wire-fraud-011"
+    ],
+    "gold_literal": "$3,813,461.30",
+    "gold_literals": [
+      "$3,813,461.30"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-wire-fraud-001",
+      "case-wire-fraud-002",
+      "case-wire-fraud-003",
+      "case-wire-fraud-004",
+      "case-wire-fraud-005",
+      "case-wire-fraud-006",
+      "case-wire-fraud-007",
+      "case-wire-fraud-008",
+      "case-wire-fraud-009",
+      "case-wire-fraud-010",
+      "case-wire-fraud-011",
+      "case-wire-fraud-012",
+      "case-wire-fraud-013",
+      "case-wire-fraud-014",
+      "case-wire-fraud-015",
+      "case-wire-fraud-016",
+      "case-wire-fraud-017",
+      "case-wire-fraud-018",
+      "case-wire-fraud-019",
+      "case-wire-fraud-020",
+      "case-wire-fraud-021",
+      "case-wire-fraud-022",
+      "case-wire-fraud-023",
+      "case-wire-fraud-024"
+    ]
+  },
+  {
+    "question_id": "q-case-028",
+    "text": "What is the total value of the counterparty invoices under review for Driftwood Management Trading Co.?",
+    "intent_label": "sanctions",
+    "retrieval_pattern": "naive",
+    "intent": {
+      "case_type": "sanctions",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-sanctions-012"
+    ],
+    "gold_literal": "$637,269.76",
+    "gold_literals": [
+      "$637,269.76"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-sanctions-001",
+      "case-sanctions-002",
+      "case-sanctions-003",
+      "case-sanctions-004",
+      "case-sanctions-005",
+      "case-sanctions-006",
+      "case-sanctions-007",
+      "case-sanctions-008",
+      "case-sanctions-009",
+      "case-sanctions-010",
+      "case-sanctions-011",
+      "case-sanctions-012",
+      "case-sanctions-013",
+      "case-sanctions-014",
+      "case-sanctions-015",
+      "case-sanctions-016",
+      "case-sanctions-017",
+      "case-sanctions-018",
+      "case-sanctions-019",
+      "case-sanctions-020",
+      "case-sanctions-021",
+      "case-sanctions-022",
+      "case-sanctions-023",
+      "case-sanctions-024"
+    ]
+  },
+  {
+    "question_id": "q-case-029",
+    "text": "What was the total amount involved in the unverified initial funding and subsequent account activity for Jasper Petrosyan?",
+    "intent_label": "kyc_gap",
+    "retrieval_pattern": "naive",
+    "intent": {
+      "case_type": "kyc_gap",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-kyc-gap-013"
+    ],
+    "gold_literal": "$65,773.84",
+    "gold_literals": [
+      "$65,773.84"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-kyc-gap-001",
+      "case-kyc-gap-002",
+      "case-kyc-gap-003",
+      "case-kyc-gap-004",
+      "case-kyc-gap-005",
+      "case-kyc-gap-006",
+      "case-kyc-gap-007",
+      "case-kyc-gap-008",
+      "case-kyc-gap-009",
+      "case-kyc-gap-010",
+      "case-kyc-gap-011",
+      "case-kyc-gap-012",
+      "case-kyc-gap-013",
+      "case-kyc-gap-014",
+      "case-kyc-gap-015",
+      "case-kyc-gap-016",
+      "case-kyc-gap-017",
+      "case-kyc-gap-018",
+      "case-kyc-gap-019",
+      "case-kyc-gap-020",
+      "case-kyc-gap-021",
+      "case-kyc-gap-022",
+      "case-kyc-gap-023",
+      "case-kyc-gap-024"
+    ]
+  },
+  {
+    "question_id": "q-case-030",
+    "text": "What was the total value of the unusual sequence of large branch cash withdrawals made by Beatriz Fairweather?",
+    "intent_label": "elder_exploitation",
+    "retrieval_pattern": "naive",
+    "intent": {
+      "case_type": "elder_exploitation",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-elder-exploitation-015"
+    ],
+    "gold_literal": "$312,053.09",
+    "gold_literals": [
+      "$312,053.09"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-elder-exploitation-001",
+      "case-elder-exploitation-002",
+      "case-elder-exploitation-003",
+      "case-elder-exploitation-004",
+      "case-elder-exploitation-005",
+      "case-elder-exploitation-006",
+      "case-elder-exploitation-007",
+      "case-elder-exploitation-008",
+      "case-elder-exploitation-009",
+      "case-elder-exploitation-010",
+      "case-elder-exploitation-011",
+      "case-elder-exploitation-012",
+      "case-elder-exploitation-013",
+      "case-elder-exploitation-014",
+      "case-elder-exploitation-015",
+      "case-elder-exploitation-016",
+      "case-elder-exploitation-017",
+      "case-elder-exploitation-018",
+      "case-elder-exploitation-019",
+      "case-elder-exploitation-020",
+      "case-elder-exploitation-021",
+      "case-elder-exploitation-022",
+      "case-elder-exploitation-023",
+      "case-elder-exploitation-024"
+    ]
+  },
+  {
+    "question_id": "q-case-031",
+    "text": "What is the total sum of the currency deposits placed across multiple branches by Oakhurst Logistics LLC?",
+    "intent_label": "structuring",
+    "retrieval_pattern": "naive",
+    "intent": {
+      "case_type": "structuring",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-structuring-017"
+    ],
+    "gold_literal": "$1,640,021.35",
+    "gold_literals": [
+      "$1,640,021.35"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-structuring-001",
+      "case-structuring-002",
+      "case-structuring-003",
+      "case-structuring-004",
+      "case-structuring-005",
+      "case-structuring-006",
+      "case-structuring-007",
+      "case-structuring-008",
+      "case-structuring-009",
+      "case-structuring-010",
+      "case-structuring-011",
+      "case-structuring-012",
+      "case-structuring-013",
+      "case-structuring-014",
+      "case-structuring-015",
+      "case-structuring-016",
+      "case-structuring-017",
+      "case-structuring-018",
+      "case-structuring-019",
+      "case-structuring-020",
+      "case-structuring-021",
+      "case-structuring-022",
+      "case-structuring-023",
+      "case-structuring-024"
+    ]
+  },
+  {
+    "question_id": "q-case-032",
+    "text": "What was the exact amount of the misdirected outbound transfer resulting from compromised instructions for Damaris Grimaldi?",
+    "intent_label": "wire_fraud",
+    "retrieval_pattern": "naive",
+    "intent": {
+      "case_type": "wire_fraud",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-wire-fraud-019"
+    ],
+    "gold_literal": "$308,003.57",
+    "gold_literals": [
+      "$308,003.57"
+    ],
+    "hop": "single",
+    "relevant_doc_ids": [
+      "case-wire-fraud-001",
+      "case-wire-fraud-002",
+      "case-wire-fraud-003",
+      "case-wire-fraud-004",
+      "case-wire-fraud-005",
+      "case-wire-fraud-006",
+      "case-wire-fraud-007",
+      "case-wire-fraud-008",
+      "case-wire-fraud-009",
+      "case-wire-fraud-010",
+      "case-wire-fraud-011",
+      "case-wire-fraud-012",
+      "case-wire-fraud-013",
+      "case-wire-fraud-014",
+      "case-wire-fraud-015",
+      "case-wire-fraud-016",
+      "case-wire-fraud-017",
+      "case-wire-fraud-018",
+      "case-wire-fraud-019",
+      "case-wire-fraud-020",
+      "case-wire-fraud-021",
+      "case-wire-fraud-022",
+      "case-wire-fraud-023",
+      "case-wire-fraud-024"
+    ]
+  },
+  {
+    "question_id": "q-case-033",
+    "text": "What is the combined value of the cash deposits made by Harriet Oyelaran and the similar deposits made by Wheatfield Commodities Enterprises LLC?",
+    "intent_label": "structuring",
+    "retrieval_pattern": "agentic",
+    "intent": {
+      "case_type": "structuring",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-structuring-023",
+      "case-structuring-018"
+    ],
+    "gold_literal": "$207,594.74",
+    "gold_literals": [
+      "$207,594.74",
+      "$2,248,270.16"
+    ],
+    "hop": "multi",
+    "relevant_doc_ids": [
+      "case-structuring-001",
+      "case-structuring-002",
+      "case-structuring-003",
+      "case-structuring-004",
+      "case-structuring-005",
+      "case-structuring-006",
+      "case-structuring-007",
+      "case-structuring-008",
+      "case-structuring-009",
+      "case-structuring-010",
+      "case-structuring-011",
+      "case-structuring-012",
+      "case-structuring-013",
+      "case-structuring-014",
+      "case-structuring-015",
+      "case-structuring-016",
+      "case-structuring-017",
+      "case-structuring-018",
+      "case-structuring-019",
+      "case-structuring-020",
+      "case-structuring-021",
+      "case-structuring-022",
+      "case-structuring-023",
+      "case-structuring-024"
+    ]
+  },
+  {
+    "question_id": "q-case-034",
+    "text": "How much was the large outbound transfer sent by Nadia Calloway, and what was the total value of the transfers sent by Westmarch Imports Holdings Ltd.?",
+    "intent_label": "wire_fraud",
+    "retrieval_pattern": "agentic",
+    "intent": {
+      "case_type": "wire_fraud",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-wire-fraud-024",
+      "case-wire-fraud-002"
+    ],
+    "gold_literal": "$141,562.60",
+    "gold_literals": [
+      "$141,562.60",
+      "$4,110,251.43"
+    ],
+    "hop": "multi",
+    "relevant_doc_ids": [
+      "case-wire-fraud-001",
+      "case-wire-fraud-002",
+      "case-wire-fraud-003",
+      "case-wire-fraud-004",
+      "case-wire-fraud-005",
+      "case-wire-fraud-006",
+      "case-wire-fraud-007",
+      "case-wire-fraud-008",
+      "case-wire-fraud-009",
+      "case-wire-fraud-010",
+      "case-wire-fraud-011",
+      "case-wire-fraud-012",
+      "case-wire-fraud-013",
+      "case-wire-fraud-014",
+      "case-wire-fraud-015",
+      "case-wire-fraud-016",
+      "case-wire-fraud-017",
+      "case-wire-fraud-018",
+      "case-wire-fraud-019",
+      "case-wire-fraud-020",
+      "case-wire-fraud-021",
+      "case-wire-fraud-022",
+      "case-wire-fraud-023",
+      "case-wire-fraud-024"
+    ]
+  },
+  {
+    "question_id": "q-case-035",
+    "text": "What was the total value of the international wire transfers sent by Ironwood Metals Corp., and how much did Nadia Quintanilla transfer internationally?",
+    "intent_label": "sanctions",
+    "retrieval_pattern": "agentic",
+    "intent": {
+      "case_type": "sanctions",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-sanctions-023",
+      "case-sanctions-009"
+    ],
+    "gold_literal": "$1,909,763.06",
+    "gold_literals": [
+      "$1,909,763.06",
+      "$74,006.70"
+    ],
+    "hop": "multi",
+    "relevant_doc_ids": [
+      "case-sanctions-001",
+      "case-sanctions-002",
+      "case-sanctions-003",
+      "case-sanctions-004",
+      "case-sanctions-005",
+      "case-sanctions-006",
+      "case-sanctions-007",
+      "case-sanctions-008",
+      "case-sanctions-009",
+      "case-sanctions-010",
+      "case-sanctions-011",
+      "case-sanctions-012",
+      "case-sanctions-013",
+      "case-sanctions-014",
+      "case-sanctions-015",
+      "case-sanctions-016",
+      "case-sanctions-017",
+      "case-sanctions-018",
+      "case-sanctions-019",
+      "case-sanctions-020",
+      "case-sanctions-021",
+      "case-sanctions-022",
+      "case-sanctions-023",
+      "case-sanctions-024"
+    ]
+  },
+  {
+    "question_id": "q-case-036",
+    "text": "What was the initial deposit amount when Damaris Fitzgerald established her account, and what was the initial deposit for Silverthorn Metals Group LLC?",
+    "intent_label": "kyc_gap",
+    "retrieval_pattern": "agentic",
+    "intent": {
+      "case_type": "kyc_gap",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-kyc-gap-023",
+      "case-kyc-gap-016"
+    ],
+    "gold_literal": "$120,469.19",
+    "gold_literals": [
+      "$120,469.19",
+      "$2,109,452.19"
+    ],
+    "hop": "multi",
+    "relevant_doc_ids": [
+      "case-kyc-gap-001",
+      "case-kyc-gap-002",
+      "case-kyc-gap-003",
+      "case-kyc-gap-004",
+      "case-kyc-gap-005",
+      "case-kyc-gap-006",
+      "case-kyc-gap-007",
+      "case-kyc-gap-008",
+      "case-kyc-gap-009",
+      "case-kyc-gap-010",
+      "case-kyc-gap-011",
+      "case-kyc-gap-012",
+      "case-kyc-gap-013",
+      "case-kyc-gap-014",
+      "case-kyc-gap-015",
+      "case-kyc-gap-016",
+      "case-kyc-gap-017",
+      "case-kyc-gap-018",
+      "case-kyc-gap-019",
+      "case-kyc-gap-020",
+      "case-kyc-gap-021",
+      "case-kyc-gap-022",
+      "case-kyc-gap-023",
+      "case-kyc-gap-024"
+    ]
+  },
+  {
+    "question_id": "q-case-037",
+    "text": "What is the total amount of the uncharacteristic withdrawals made by Adrian Balogun, and how much did Anders Quintanilla withdraw under similar circumstances?",
+    "intent_label": "elder_exploitation",
+    "retrieval_pattern": "agentic",
+    "intent": {
+      "case_type": "elder_exploitation",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-elder-exploitation-001",
+      "case-elder-exploitation-024"
+    ],
+    "gold_literal": "$443,415.04",
+    "gold_literals": [
+      "$443,415.04",
+      "$474,187.33"
+    ],
+    "hop": "multi",
+    "relevant_doc_ids": [
+      "case-elder-exploitation-001",
+      "case-elder-exploitation-002",
+      "case-elder-exploitation-003",
+      "case-elder-exploitation-004",
+      "case-elder-exploitation-005",
+      "case-elder-exploitation-006",
+      "case-elder-exploitation-007",
+      "case-elder-exploitation-008",
+      "case-elder-exploitation-009",
+      "case-elder-exploitation-010",
+      "case-elder-exploitation-011",
+      "case-elder-exploitation-012",
+      "case-elder-exploitation-013",
+      "case-elder-exploitation-014",
+      "case-elder-exploitation-015",
+      "case-elder-exploitation-016",
+      "case-elder-exploitation-017",
+      "case-elder-exploitation-018",
+      "case-elder-exploitation-019",
+      "case-elder-exploitation-020",
+      "case-elder-exploitation-021",
+      "case-elder-exploitation-022",
+      "case-elder-exploitation-023",
+      "case-elder-exploitation-024"
+    ]
+  },
+  {
+    "question_id": "q-case-038",
+    "text": "What is the total value of the cash deposits made by Marblehead Freight Enterprises LLC, and how much did Philippa Rosenthal deposit in cash?",
+    "intent_label": "structuring",
+    "retrieval_pattern": "agentic",
+    "intent": {
+      "case_type": "structuring",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-structuring-009",
+      "case-structuring-007"
+    ],
+    "gold_literal": "$4,012,900.54",
+    "gold_literals": [
+      "$4,012,900.54",
+      "$319,601.19"
+    ],
+    "hop": "multi",
+    "relevant_doc_ids": [
+      "case-structuring-001",
+      "case-structuring-002",
+      "case-structuring-003",
+      "case-structuring-004",
+      "case-structuring-005",
+      "case-structuring-006",
+      "case-structuring-007",
+      "case-structuring-008",
+      "case-structuring-009",
+      "case-structuring-010",
+      "case-structuring-011",
+      "case-structuring-012",
+      "case-structuring-013",
+      "case-structuring-014",
+      "case-structuring-015",
+      "case-structuring-016",
+      "case-structuring-017",
+      "case-structuring-018",
+      "case-structuring-019",
+      "case-structuring-020",
+      "case-structuring-021",
+      "case-structuring-022",
+      "case-structuring-023",
+      "case-structuring-024"
+    ]
+  },
+  {
+    "question_id": "q-case-039",
+    "text": "How much did Gabriel Jankowski wire to an unfamiliar counterparty, and what was the value of the similar transfer authorized by Camila Abernathy?",
+    "intent_label": "wire_fraud",
+    "retrieval_pattern": "agentic",
+    "intent": {
+      "case_type": "wire_fraud",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-wire-fraud-010",
+      "case-wire-fraud-015"
+    ],
+    "gold_literal": "$134,892.51",
+    "gold_literals": [
+      "$134,892.51",
+      "$428,346.65"
+    ],
+    "hop": "multi",
+    "relevant_doc_ids": [
+      "case-wire-fraud-001",
+      "case-wire-fraud-002",
+      "case-wire-fraud-003",
+      "case-wire-fraud-004",
+      "case-wire-fraud-005",
+      "case-wire-fraud-006",
+      "case-wire-fraud-007",
+      "case-wire-fraud-008",
+      "case-wire-fraud-009",
+      "case-wire-fraud-010",
+      "case-wire-fraud-011",
+      "case-wire-fraud-012",
+      "case-wire-fraud-013",
+      "case-wire-fraud-014",
+      "case-wire-fraud-015",
+      "case-wire-fraud-016",
+      "case-wire-fraud-017",
+      "case-wire-fraud-018",
+      "case-wire-fraud-019",
+      "case-wire-fraud-020",
+      "case-wire-fraud-021",
+      "case-wire-fraud-022",
+      "case-wire-fraud-023",
+      "case-wire-fraud-024"
+    ]
+  },
+  {
+    "question_id": "q-case-040",
+    "text": "What was the total value of the international wire activity by Amara Zimmerman, and how much did Westmarch Exports Inc. transfer internationally?",
+    "intent_label": "sanctions",
+    "retrieval_pattern": "agentic",
+    "intent": {
+      "case_type": "sanctions",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "gold_doc_ids": [
+      "case-sanctions-008",
+      "case-sanctions-022"
+    ],
+    "gold_literal": "$337,654.09",
+    "gold_literals": [
+      "$337,654.09",
+      "$2,543,658.78"
+    ],
+    "hop": "multi",
+    "relevant_doc_ids": [
+      "case-sanctions-001",
+      "case-sanctions-002",
+      "case-sanctions-003",
+      "case-sanctions-004",
+      "case-sanctions-005",
+      "case-sanctions-006",
+      "case-sanctions-007",
+      "case-sanctions-008",
+      "case-sanctions-009",
+      "case-sanctions-010",
+      "case-sanctions-011",
+      "case-sanctions-012",
+      "case-sanctions-013",
+      "case-sanctions-014",
+      "case-sanctions-015",
+      "case-sanctions-016",
+      "case-sanctions-017",
+      "case-sanctions-018",
+      "case-sanctions-019",
+      "case-sanctions-020",
+      "case-sanctions-021",
+      "case-sanctions-022",
+      "case-sanctions-023",
+      "case-sanctions-024"
+    ]
+  }
+]

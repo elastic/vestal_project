@@ -1,0 +1,1192 @@
+[
+  {
+    "doc_id": "inv-001",
+    "report_id": "inv-001",
+    "subject_name": "Rudolpho Castellanos",
+    "outcome": "closed_no_action",
+    "date_opened": "2024-11-15",
+    "summary": "On November 11, 2024, Cortex Bank and Trust closed an investigation into a business email compromise targeting Rudolpho Castellanos. The customer was deceived into sending a wire transfer of $464,164.87 to a fraudulent beneficiary, Quarrystone Exports Enterprises LLC, instead of the intended vendor. The investigation concluded that the customer was a victim of wire fraud and closed the case with no action.",
+    "answers_questions": [
+      "What was the amount of the fraudulent wire transfer?",
+      "Who was the intended vendor for the payment?",
+      "Who was the fraudulent beneficiary?",
+      "What type of fraud was perpetrated against the customer?",
+      "What was the disposition of the investigation?"
+    ],
+    "key_entities": [
+      "Rudolpho Castellanos",
+      "Quarrystone Exports Enterprises LLC",
+      "Obsidian Holdings Trading Co.",
+      "Aperture Freight Holdings Ltd."
+    ],
+    "topics": [
+      "business_email_compromise",
+      "wire_fraud",
+      "funds_recovery",
+      "lookalike_domain"
+    ],
+    "amounts": [
+      "$464,164.87",
+      "$51,058.14",
+      "$413,106.73"
+    ],
+    "dates": [
+      "2024-11-15",
+      "2024-09-23",
+      "2024-09-19",
+      "2024-08-22",
+      "2024-07-24",
+      "2024-07-26",
+      "2024-07-30",
+      "2024-11-11"
+    ],
+    "token_count": 84
+  },
+  {
+    "doc_id": "inv-002",
+    "report_id": "inv-002",
+    "subject_name": "Fairmount Logistics Trading Co.",
+    "outcome": "referred_to_fincen",
+    "date_opened": "2024-12-06",
+    "summary": "On November 26, 2024, Fairmount Logistics Trading Co. initiated a $1,590,970.21 outbound wire transfer intended for Obsidian Metals Partners LP. The customer was deceived by a business email compromise utilizing a lookalike domain and urgency tactics, causing them to bypass internal controls and send the funds to an unintended beneficiary, Falcon Crest Equipment Enterprises LLC. Cortex Bank and Trust has referred the matter to FinCEN as suspected wire fraud.",
+    "answers_questions": [
+      "What was the amount of the diverted wire transfer?",
+      "Who was the intended beneficiary of the funds?",
+      "Who was the actual recipient of the fraudulent wire?",
+      "What deception tactic was used to induce the payment?",
+      "How much of the diverted funds were successfully frozen?",
+      "Why did the customer bypass their internal dual-approval controls?"
+    ],
+    "key_entities": [
+      "Fairmount Logistics Trading Co.",
+      "Obsidian Metals Partners LP",
+      "Falcon Crest Equipment Enterprises LLC",
+      "Cedarline Exports Holdings Ltd."
+    ],
+    "topics": [
+      "wire_fraud",
+      "business_email_compromise",
+      "lookalike_domain",
+      "funds_recovery",
+      "internal_controls_bypass"
+    ],
+    "amounts": [
+      "$1,590,970.21",
+      "$461,381.36",
+      "$1,129,588.85"
+    ],
+    "dates": [
+      "2024-12-06",
+      "2024-11-12",
+      "2024-11-07",
+      "2024-08-12",
+      "2024-12-09",
+      "2024-10-02",
+      "2024-11-08",
+      "2024-09-25",
+      "2024-11-26"
+    ],
+    "token_count": 93
+  },
+  {
+    "doc_id": "inv-003",
+    "report_id": "inv-003",
+    "subject_name": "Fieldstone Exports Group LLC",
+    "outcome": "criminal_referral",
+    "date_opened": "2024-08-21",
+    "summary": "On August 14, 2024, the Cortex Bank and Trust Financial Intelligence Unit determined that a wire transfer of $1,184,300.40 from Fieldstone Exports Group LLC was the result of a business email compromise scheme. The funds were fraudulently diverted to a beneficiary account held by Highfield Industrial Supply LLC, rather than the intended vendor. The investigation concluded that the incident warrants a criminal referral.",
+    "answers_questions": [
+      "What was the amount of the fraudulent wire transfer?",
+      "Who was the victim of the business email compromise?",
+      "Who was the intended beneficiary of the funds?",
+      "Who was the actual beneficiary of the diverted funds?",
+      "What was the date of the criminal referral determination?"
+    ],
+    "key_entities": [
+      "Fieldstone Exports Group LLC",
+      "Highfield Industrial Supply LLC",
+      "Emberline Commodities Group LLC",
+      "Harborview Textiles LLC"
+    ],
+    "topics": [
+      "business_email_compromise",
+      "wire_fraud",
+      "criminal_referral",
+      "funds_recovery",
+      "lookalike_domain"
+    ],
+    "amounts": [
+      "$1,184,300.40",
+      "$236,860.08",
+      "$947,440.32"
+    ],
+    "dates": [
+      "2024-08-21",
+      "2024-05-16",
+      "2024-05-14",
+      "2024-05-02",
+      "2024-08-27",
+      "2024-07-03",
+      "2024-05-20",
+      "2024-05-03",
+      "2024-05-08",
+      "2024-05-30",
+      "2024-08-14"
+    ],
+    "token_count": 84
+  },
+  {
+    "doc_id": "inv-004",
+    "report_id": "inv-004",
+    "subject_name": "Bluewater Equipment Inc.",
+    "outcome": "ongoing",
+    "date_opened": "2024-10-02",
+    "summary": "On July 10, 2024, Bluewater Equipment Inc. initiated a wire transfer of $1,728,111.71 intended for a vendor, Obsidian Marine Services LLC, but the funds were fraudulently diverted to Riverbend Management Enterprises LLC due to a business email compromise. The bank initiated a recall request, resulting in a partial recovery of $397,465.69, leaving a residual loss of $1,330,646.02. The fraudulent nature of the transfer was conclusively established on September 17, 2024, and the investigation remains ongoing.",
+    "answers_questions": [
+      "Who was the victim of the wire fraud?",
+      "What was the total amount of the fraudulent wire transfer?",
+      "Who was the intended recipient of the funds?",
+      "Who was the actual beneficiary of the diverted funds?",
+      "How much of the fraudulent transfer was recovered?",
+      "What was the method used to deceive the customer?"
+    ],
+    "key_entities": [
+      "Bluewater Equipment Inc.",
+      "Obsidian Marine Services LLC",
+      "Riverbend Management Enterprises LLC",
+      "Clearspan Freight Corp."
+    ],
+    "topics": [
+      "wire_fraud",
+      "business_email_compromise",
+      "funds_recovery",
+      "shell_company"
+    ],
+    "amounts": [
+      "$1,728,111.71",
+      "$397,465.69",
+      "$1,330,646.02"
+    ],
+    "dates": [
+      "2024-10-02",
+      "2024-07-11",
+      "2024-07-10",
+      "2024-07-03",
+      "2024-05-20",
+      "2024-09-23",
+      "2024-08-12",
+      "2024-05-30",
+      "2024-06-13",
+      "2024-07-17",
+      "2024-07-31",
+      "2024-09-17"
+    ],
+    "token_count": 119
+  },
+  {
+    "doc_id": "inv-005",
+    "report_id": "inv-005",
+    "subject_name": "Ephraim Eriksson",
+    "outcome": "closed_no_action",
+    "date_opened": "2024-08-22",
+    "summary": "On August 16, 2024, Ephraim Eriksson initiated a wire transfer of $104,055.79 after receiving fraudulent payment instructions via a lookalike email domain. The funds were diverted to a new beneficiary, Beacon Machinery Corp., in a business email compromise scheme. The investigation was closed with no action as the customer was determined to be the victim of the fraud.",
+    "answers_questions": [
+      "Who was the victim of the wire fraud?",
+      "What was the amount of the diverted funds?",
+      "Who was the intended beneficiary of the wire transfer?",
+      "When did the fraudulent wire transfer occur?",
+      "How much of the diverted funds were recovered?"
+    ],
+    "key_entities": [
+      "Ephraim Eriksson",
+      "Beacon Machinery Corp.",
+      "Pinnacle Ridge Freight Holdings Ltd.",
+      "Vantage Point Imports Enterprises LLC"
+    ],
+    "topics": [
+      "wire_fraud",
+      "business_email_compromise",
+      "lookalike_domain",
+      "funds_recovery"
+    ],
+    "amounts": [
+      "$104,055.79",
+      "$32,257.29",
+      "$71,798.50",
+      "$10,000",
+      "$3,000"
+    ],
+    "dates": [
+      "2024-08-22",
+      "2024-08-09",
+      "2024-04-24",
+      "2024-09-02",
+      "2024-05-21",
+      "2024-05-17",
+      "2024-05-14",
+      "2024-04-26",
+      "2024-05-28",
+      "2024-06-07",
+      "2023-05-09",
+      "2024-06-18",
+      "2024-08-16"
+    ],
+    "token_count": 78
+  },
+  {
+    "doc_id": "inv-006",
+    "report_id": "inv-006",
+    "subject_name": "Adrian Wolcott",
+    "outcome": "referred_to_fincen",
+    "date_opened": "2024-09-25",
+    "summary": "On September 9, 2024, Cortex Bank and Trust concluded an investigation into a business email compromise targeting Adrian Wolcott. The customer was deceived into sending a wire transfer of $236,220.57 to a fraudulent beneficiary account held by Orchard Gate Metals LLC. The bank referred the matter to FinCEN after determining the funds were diverted through deceptive email communications.",
+    "answers_questions": [
+      "Who was the victim of the wire fraud?",
+      "What was the amount of the diverted wire transfer?",
+      "Which entity received the fraudulent funds?",
+      "How was the customer deceived into sending the payment?",
+      "What control did the customer bypass due to the urgent email?",
+      "What is the disposition of the investigation?"
+    ],
+    "key_entities": [
+      "Adrian Wolcott",
+      "Orchard Gate Metals LLC",
+      "Ardent Exports Trading Co.",
+      "Limestone Consulting Trading Co.",
+      "Cortex Bank and Trust"
+    ],
+    "topics": [
+      "wire_fraud",
+      "business_email_compromise",
+      "funds_recovery",
+      "shell_company",
+      "structured_withdrawals"
+    ],
+    "amounts": [
+      "$236,220.57",
+      "$21,259.85",
+      "$214,960.72",
+      "$10,000"
+    ],
+    "dates": [
+      "2024-09-25",
+      "2024-08-19",
+      "2024-07-31",
+      "2024-07-30",
+      "2024-07-24",
+      "2024-07-17",
+      "2024-06-18",
+      "2024-05-30",
+      "2024-05-31",
+      "2023-05-14",
+      "2024-05-29",
+      "2024-09-09"
+    ],
+    "token_count": 74
+  },
+  {
+    "doc_id": "inv-007",
+    "report_id": "inv-007",
+    "subject_name": "Limestone Capital Group LLC",
+    "outcome": "criminal_referral",
+    "date_opened": "2024-09-18",
+    "summary": "Limestone Capital Group LLC was the victim of a business email compromise targeting a scheduled capital call. On September 6, 2024, the customer notified Cortex Bank and Trust that a wire transfer of $3,552,197.05 intended for Obsidian Capital Partners LP was fraudulent. The funds were diverted to an account held by Aperture Capital LLC, resulting in a residual loss of $3,090,411.43.",
+    "answers_questions": [
+      "What was the total amount diverted in the wire fraud?",
+      "Who was the intended beneficiary of the wire transfer?",
+      "Which entity received the fraudulent funds?",
+      "How much of the diverted funds was Cortex Bank and Trust able to recover?",
+      "What was the disposition of the investigation?"
+    ],
+    "key_entities": [
+      "Limestone Capital Group LLC",
+      "Obsidian Capital Partners LP",
+      "Aperture Capital LLC",
+      "Pinnacle Ridge Management Group LLC"
+    ],
+    "topics": [
+      "wire_fraud",
+      "business_email_compromise",
+      "capital_call",
+      "criminal_referral"
+    ],
+    "amounts": [
+      "$3,552,197.05",
+      "$461,785.62",
+      "$3,090,411.43"
+    ],
+    "dates": [
+      "2024-09-18",
+      "2024-08-21",
+      "2024-05-21",
+      "2024-09-02",
+      "2024-05-22",
+      "2024-05-30",
+      "2024-06-07",
+      "2024-06-14",
+      "2024-06-25",
+      "2024-06-28",
+      "2024-07-10",
+      "2024-09-06"
+    ],
+    "token_count": 87
+  },
+  {
+    "doc_id": "inv-008",
+    "report_id": "inv-008",
+    "subject_name": "Westmarch Distribution Inc.",
+    "outcome": "ongoing",
+    "date_opened": "2024-11-06",
+    "summary": "Westmarch Distribution Inc. fell victim to a business email compromise scheme, resulting in a fraudulent wire transfer. On October 25, 2024, the customer bypassed internal controls due to urgency language in a spoofed email and transferred funds to a new account. The investigation confirmed that $3,863,579.20 was diverted to Saltmarsh Produce Corp. instead of the intended vendor.",
+    "answers_questions": [
+      "What is the total amount of the fraudulent wire transfer?",
+      "Who was the intended beneficiary of the wire transfer?",
+      "When did the fraudulent wire transfer occur?",
+      "What type of fraud was perpetrated against the customer?",
+      "Were any of the diverted funds recovered?"
+    ],
+    "key_entities": [
+      "Westmarch Distribution Inc.",
+      "Saltmarsh Produce Corp.",
+      "Vantage Point Trading Inc.",
+      "Harborview Management LLC"
+    ],
+    "topics": [
+      "business_email_compromise",
+      "wire_fraud",
+      "funds_tracing",
+      "vendor_impersonation",
+      "dual_approval_bypass"
+    ],
+    "amounts": [
+      "$3,863,579.20",
+      "$1,081,802.18",
+      "$2,781,777.02"
+    ],
+    "dates": [
+      "2024-11-06",
+      "2024-10-07",
+      "2024-07-02",
+      "2024-10-29",
+      "2024-07-25",
+      "2024-07-30",
+      "2024-08-26",
+      "2024-08-27",
+      "2024-09-02",
+      "2024-09-10",
+      "2024-09-20",
+      "2024-09-11",
+      "2024-10-25"
+    ],
+    "token_count": 80
+  },
+  {
+    "doc_id": "inv-009",
+    "report_id": "inv-009",
+    "subject_name": "Magnus Hallstrom",
+    "outcome": "closed_no_action",
+    "date_opened": "2024-09-20",
+    "summary": "On September 12, 2024, Magnus Hallstrom received fraudulent email instructions to wire funds to a new beneficiary. The customer initiated a wire transfer of $377,393.20 to Cardinal Textiles LLC, which was determined to be induced by deception. The investigation concluded that the funds were diverted to an unauthorized beneficiary, and the case was closed without further action.",
+    "answers_questions": [
+      "Who was the customer involved in the wire fraud investigation?",
+      "What was the amount of the diverted wire transfer?",
+      "Who was the intended beneficiary of the wire transfer?",
+      "When did the customer receive the fraudulent email instructions?",
+      "What was the disposition of the investigation?"
+    ],
+    "key_entities": [
+      "Magnus Hallstrom",
+      "Cardinal Textiles LLC",
+      "Kestrel Fabrication Group LLC",
+      "Glenhaven Management Partners LP",
+      "Cortex Bank and Trust"
+    ],
+    "topics": [
+      "wire_fraud",
+      "business_email_compromise",
+      "lookalike_domain",
+      "funds_tracing",
+      "unauthorized_beneficiary"
+    ],
+    "amounts": [
+      "$377,393.20",
+      "$105,670.10",
+      "$271,723.10"
+    ],
+    "dates": [
+      "2024-09-20",
+      "2024-09-13",
+      "2024-08-13",
+      "2024-05-21",
+      "2024-09-19",
+      "2024-08-19",
+      "2024-05-31",
+      "2024-09-12"
+    ],
+    "token_count": 74
+  },
+  {
+    "doc_id": "inv-010",
+    "report_id": "inv-010",
+    "subject_name": "Solveig Petrosyan",
+    "outcome": "referred_to_fincen",
+    "date_opened": "2024-09-03",
+    "summary": "On May 20, 2024, Cortex Bank and Trust customer Solveig Petrosyan initiated a wire transfer of $143,940.24 after receiving fraudulent payment instructions via email from a lookalike domain. The investigation determined that the funds were diverted to Mapleford Holdings Partners LP due to a business email compromise scheme. Following a review by the compliance committee, the matter was referred to FinCEN on August 30, 2024.",
+    "answers_questions": [
+      "Who was the customer involved in the wire fraud?",
+      "What was the amount of the diverted wire transfer?",
+      "Who was the intended beneficiary of the funds?",
+      "How was the customer deceived into changing the payment instructions?",
+      "Were any of the diverted funds recovered?",
+      "What was the final disposition of the investigation?"
+    ],
+    "key_entities": [
+      "Solveig Petrosyan",
+      "Mapleford Holdings Partners LP",
+      "Kestrel Imports Holdings Ltd.",
+      "Millpond Distribution Corp."
+    ],
+    "topics": [
+      "wire_fraud",
+      "business_email_compromise",
+      "funds_recovery",
+      "lookalike_domain"
+    ],
+    "amounts": [
+      "$143,940.24",
+      "$46,060.88",
+      "$97,879.36"
+    ],
+    "dates": [
+      "2024-09-03",
+      "2024-05-21",
+      "2024-05-20",
+      "2024-05-06",
+      "2024-08-22",
+      "2024-05-28",
+      "2024-05-27",
+      "2024-05-23",
+      "2024-06-11",
+      "2024-07-12",
+      "2024-07-26",
+      "2024-08-30"
+    ],
+    "token_count": 91
+  },
+  {
+    "doc_id": "inv-011",
+    "report_id": "inv-011",
+    "subject_name": "Greystone Commodities Group LLC",
+    "outcome": "criminal_referral",
+    "date_opened": "2024-04-26",
+    "summary": "On April 16, 2024, Greystone Commodities Group LLC initiated a wire transfer of $3,687,955.67 to Cornerstone Commodities LLC after receiving fraudulent payment instructions via a lookalike email domain. The customer bypassed internal controls due to urgency language in the email, resulting in the funds being sent to an unintended beneficiary. Cortex Bank and Trust recovered $700,711.58, but the customer suffered a residual loss of $2,987,244.09, leading to a criminal referral.",
+    "answers_questions": [
+      "What was the total amount of the fraudulent wire transfer?",
+      "Who was the intended beneficiary of the wire transfer?",
+      "How were the fraudulent payment instructions communicated to the customer?",
+      "Why did the customer bypass their internal dual-approval controls?",
+      "How much of the diverted funds was successfully recovered?",
+      "What is the final disposition of this investigation?"
+    ],
+    "key_entities": [
+      "Greystone Commodities Group LLC",
+      "Cornerstone Commodities LLC",
+      "Kestrel Trading Trading Co.",
+      "Mapleford Industrial Supply Inc."
+    ],
+    "topics": [
+      "wire_fraud",
+      "business_email_compromise",
+      "lookalike_domain",
+      "criminal_referral"
+    ],
+    "amounts": [
+      "$3,687,955.67",
+      "$700,711.58",
+      "$2,987,244.09"
+    ],
+    "dates": [
+      "2024-04-26",
+      "2024-01-25",
+      "2024-01-16",
+      "2024-01-02",
+      "2024-05-06",
+      "2024-02-26",
+      "2024-02-19",
+      "2024-02-13",
+      "2024-03-04",
+      "2024-01-08",
+      "2024-01-15",
+      "2024-01-18",
+      "2024-04-16"
+    ],
+    "token_count": 107
+  },
+  {
+    "doc_id": "inv-012",
+    "report_id": "inv-012",
+    "subject_name": "Nadia Kaminski",
+    "outcome": "ongoing",
+    "date_opened": "2024-08-07",
+    "summary": "On August 5, 2024, Cortex Bank and Trust confirmed a business email compromise incident involving customer Nadia Kaminski. The customer was deceived by a lookalike domain into initiating a fraudulent wire transfer of $252,830.59 to Falcon Crest Metals Group LLC instead of the intended vendor. The investigation remains ongoing as the bank attempts to recover the remaining funds after a partial freeze by the receiving institution.",
+    "answers_questions": [
+      "Who is the subject of the investigation?",
+      "What was the amount of the fraudulent wire transfer?",
+      "Who was the intended beneficiary of the wire transfer?",
+      "How was the customer deceived into sending the funds?",
+      "What is the current status of the investigation?"
+    ],
+    "key_entities": [
+      "Nadia Kaminski",
+      "Falcon Crest Metals Group LLC",
+      "Emberline Imports Corp.",
+      "Millpond Marine Services Holdings Ltd.",
+      "Cortex Bank and Trust"
+    ],
+    "topics": [
+      "wire_fraud",
+      "business_email_compromise",
+      "lookalike_domain",
+      "funds_recovery"
+    ],
+    "amounts": [
+      "$252,830.59",
+      "$27,811.36",
+      "$225,019.23"
+    ],
+    "dates": [
+      "2024-08-07",
+      "2024-07-23",
+      "2024-07-03",
+      "2024-07-22",
+      "2024-05-21",
+      "2024-05-27",
+      "2024-06-07",
+      "2024-06-11",
+      "2024-06-25",
+      "2024-07-11",
+      "2024-07-25",
+      "2024-08-05"
+    ],
+    "token_count": 83
+  },
+  {
+    "doc_id": "inv-013",
+    "report_id": "inv-013",
+    "subject_name": "Lachlan Zimmerman",
+    "outcome": "closed_no_action",
+    "date_opened": "2024-12-02",
+    "summary": "On November 19, 2024, the investigation concluded that Lachlan Zimmerman was the victim of a business email compromise scheme. The customer was deceived into initiating an outbound wire transfer, resulting in the diverted amount $212,736.55 being sent to Bramblewood Management LLC. The case was closed with no further action as the customer was reimbursed and the receiving institution was notified.",
+    "answers_questions": [
+      "Who was the subject of the investigation?",
+      "What was the total amount diverted?",
+      "Who was the beneficiary of the fraudulent wire transfer?",
+      "What tactic was used to deceive the customer?",
+      "How much of the funds were successfully frozen?",
+      "What was the final disposition of the case?"
+    ],
+    "key_entities": [
+      "Lachlan Zimmerman",
+      "Bramblewood Management LLC",
+      "Obsidian Holdings Partners LP",
+      "Redstone Imports Enterprises LLC",
+      "Cortex Bank and Trust"
+    ],
+    "topics": [
+      "wire_fraud",
+      "business_email_compromise",
+      "lookalike_domain",
+      "social_engineering",
+      "funds_recovery"
+    ],
+    "amounts": [
+      "$212,736.55",
+      "$74,457.79",
+      "$138,278.76"
+    ],
+    "dates": [
+      "2024-12-02",
+      "2024-09-18",
+      "2024-07-30",
+      "2024-12-05",
+      "2024-09-16",
+      "2024-08-09",
+      "2024-08-19",
+      "2024-08-27",
+      "2024-09-02",
+      "2024-10-23",
+      "2024-10-29",
+      "2023-10-02",
+      "2024-11-19"
+    ],
+    "token_count": 79
+  },
+  {
+    "doc_id": "inv-014",
+    "report_id": "inv-014",
+    "subject_name": "Adrian Yarborough",
+    "outcome": "referred_to_fincen",
+    "date_opened": "2024-07-17",
+    "summary": "On July 5, 2024, Cortex Bank and Trust concluded an investigation into a wire fraud incident involving customer Adrian Yarborough. The investigation determined that the customer was deceived by a lookalike email domain into sending $113,070.02 to a fraudulent beneficiary, Mapleford Marine Services Holdings Ltd. The incident resulted in a partial recovery of funds and was subsequently referred to FinCEN.",
+    "answers_questions": [
+      "Who was the victim of the wire fraud?",
+      "What was the name of the fraudulent beneficiary?",
+      "How much money was diverted in the wire fraud?",
+      "What tactic was used to deceive the customer?",
+      "Was any of the diverted money recovered?",
+      "What was the final disposition of the investigation?"
+    ],
+    "key_entities": [
+      "Adrian Yarborough",
+      "Mapleford Marine Services Holdings Ltd.",
+      "Copperfield Equipment Inc.",
+      "Millpond Consulting LLC",
+      "Mapleford Marine Services Ltd."
+    ],
+    "topics": [
+      "wire_fraud",
+      "business_email_compromise",
+      "lookalike_domain",
+      "social_engineering",
+      "funds_recovery"
+    ],
+    "amounts": [
+      "$113,070.02",
+      "$11,307.00",
+      "$101,763.02"
+    ],
+    "dates": [
+      "2024-07-17",
+      "2024-07-03",
+      "2024-03-11",
+      "2024-06-27",
+      "2024-03-12",
+      "2024-03-15",
+      "2024-04-04",
+      "2024-04-11",
+      "2024-05-08",
+      "2024-05-14",
+      "2024-05-17",
+      "2024-04-12",
+      "2023-03-12",
+      "2024-06-28",
+      "2023-05-28",
+      "2024-07-02",
+      "2024-07-05"
+    ],
+    "token_count": 81
+  },
+  {
+    "doc_id": "inv-015",
+    "report_id": "inv-015",
+    "subject_name": "Beatriz Sinclair",
+    "outcome": "criminal_referral",
+    "date_opened": "2024-12-06",
+    "summary": "On November 20, 2024, Cortex Bank and Trust concluded an investigation into a suspected business email compromise involving customer Beatriz Sinclair. The investigation determined that Sinclair was induced by a deceptive email to authorize a wire transfer of $128,222.64 to Vantage Point Metals Trading Co. The bank successfully recovered a portion of the funds, but the customer sustained a residual loss.",
+    "answers_questions": [
+      "Who was the customer involved in the wire fraud?",
+      "What was the total amount of the fraudulent wire transfer?",
+      "Who was the beneficiary of the diverted funds?",
+      "How much of the transferred funds was successfully frozen?",
+      "What was the residual loss to the customer?",
+      "What tactic was used to bypass the customer's internal controls?"
+    ],
+    "key_entities": [
+      "Beatriz Sinclair",
+      "Vantage Point Metals Trading Co.",
+      "Fairmount Holdings Inc.",
+      "Stonebridge Imports Enterprises LLC"
+    ],
+    "topics": [
+      "wire_fraud",
+      "business_email_compromise",
+      "criminal_referral",
+      "funds_recovery",
+      "lookalike_domain"
+    ],
+    "amounts": [
+      "$128,222.64",
+      "$20,515.62",
+      "$107,707.02"
+    ],
+    "dates": [
+      "2024-12-06",
+      "2024-07-29",
+      "2024-12-05",
+      "2024-11-14",
+      "2024-10-30",
+      "2024-08-19",
+      "2024-09-20",
+      "2024-09-25",
+      "2024-10-11",
+      "2024-10-15",
+      "2024-10-17",
+      "2023-09-12",
+      "2024-11-20"
+    ],
+    "token_count": 77
+  },
+  {
+    "doc_id": "inv-016",
+    "report_id": "inv-016",
+    "subject_name": "Marblehead Logistics LLC",
+    "outcome": "ongoing",
+    "date_opened": "2024-05-27",
+    "summary": "On May 24, 2024, Marblehead Logistics LLC was the victim of a business email compromise scheme resulting in a fraudulent wire transfer. The customer was deceived into sending $1,661,068.92 to an unauthorized account, believing they were paying an invoice to Crescent Equipment Inc. A portion of the funds was frozen at the receiving institution, and the investigation remains ongoing.",
+    "answers_questions": [
+      "What was the total amount of the fraudulent wire transfer?",
+      "Who was the intended beneficiary of the wire transfer?",
+      "How was the customer deceived into initiating the transfer?",
+      "Was any portion of the diverted funds recovered?",
+      "Did the bank reimburse the customer for the loss?"
+    ],
+    "key_entities": [
+      "Marblehead Logistics LLC",
+      "Crescent Equipment Inc.",
+      "Crescent Imports Corp.",
+      "Quarrystone Consulting Group LLC"
+    ],
+    "topics": [
+      "business_email_compromise",
+      "wire_fraud",
+      "lookalike_domain",
+      "funds_tracing",
+      "authorized_push_payment_fraud"
+    ],
+    "amounts": [
+      "$1,661,068.92",
+      "$265,771.03",
+      "$1,395,297.89"
+    ],
+    "dates": [
+      "2024-05-27",
+      "2024-05-20",
+      "2024-02-08",
+      "2024-06-06",
+      "2024-03-06",
+      "2024-03-15",
+      "2024-03-25",
+      "2024-03-26",
+      "2024-04-12",
+      "2024-05-08",
+      "2024-05-24"
+    ],
+    "token_count": 77
+  },
+  {
+    "doc_id": "inv-017",
+    "report_id": "inv-017",
+    "subject_name": "Silverthorn Fabrication Group LLC",
+    "outcome": "closed_no_action",
+    "date_opened": "2024-04-17",
+    "summary": "Silverthorn Fabrication Group LLC was the victim of a business email compromise scheme, resulting in a misdirected wire transfer of $574,350.56. The funds were sent to Mapleford Capital Holdings Ltd. after the customer received fraudulent payment instructions from a lookalike domain. On April 5, 2024, the receiving institution confirmed a partial recovery, leaving a residual loss for the customer.",
+    "answers_questions": [
+      "Who was the victim of the business email compromise?",
+      "What was the amount of the fraudulent wire transfer?",
+      "Who was the intended recipient of the funds?",
+      "Who was the actual beneficiary of the fraudulent wire?",
+      "How much money was recovered from the receiving institution?",
+      "What was the residual loss to the customer?"
+    ],
+    "key_entities": [
+      "Silverthorn Fabrication Group LLC",
+      "Mapleford Capital Holdings Ltd.",
+      "Umberfield Machinery Enterprises LLC",
+      "Anvil Ventures Corp."
+    ],
+    "topics": [
+      "business_email_compromise",
+      "wire_fraud",
+      "lookalike_domain",
+      "social_engineering",
+      "partial_recovery"
+    ],
+    "amounts": [
+      "$574,350.56",
+      "$45,948.04",
+      "$528,402.52"
+    ],
+    "dates": [
+      "2024-04-17",
+      "2024-02-05",
+      "2023-12-07",
+      "2024-03-29",
+      "2024-01-18",
+      "2024-01-30",
+      "2024-02-23",
+      "2024-01-19",
+      "2024-01-02",
+      "2024-02-06",
+      "2023-12-15",
+      "2024-01-01",
+      "2024-02-26",
+      "2024-03-05",
+      "2024-03-08",
+      "2024-03-12",
+      "2024-03-15",
+      "2024-04-05"
+    ],
+    "token_count": 83
+  },
+  {
+    "doc_id": "inv-018",
+    "report_id": "inv-018",
+    "subject_name": "Kenji Kaminski",
+    "outcome": "referred_to_fincen",
+    "date_opened": "2024-06-14",
+    "summary": "Kenji Kaminski was the victim of a business email compromise scheme resulting in a fraudulent wire transfer. The customer was deceived by an email using a lookalike domain and urgency language, leading to a diverted amount of $102,259.37 to Larkfield Logistics Enterprises LLC on June 3, 2024. The bank successfully recovered a portion of the funds, but the customer sustained a residual loss.",
+    "answers_questions": [
+      "What was the total amount diverted in the wire fraud?",
+      "Who was the intended beneficiary of the fraudulent wire transfer?",
+      "What date was the wire fraud diversion completed?",
+      "What tactic was used to deceive the customer into sending the funds?",
+      "How much of the diverted funds were successfully recovered?"
+    ],
+    "key_entities": [
+      "Kenji Kaminski",
+      "Larkfield Logistics Enterprises LLC",
+      "Lanternhill Imports Corp.",
+      "Bramblewood Ventures Partners LP"
+    ],
+    "topics": [
+      "business_email_compromise",
+      "wire_fraud",
+      "lookalike_domain",
+      "funds_recovery"
+    ],
+    "amounts": [
+      "$102,259.37",
+      "$17,384.09",
+      "$84,875.28"
+    ],
+    "dates": [
+      "2024-06-14",
+      "2024-04-08",
+      "2024-02-12",
+      "2024-06-18",
+      "2024-02-20",
+      "2024-02-26",
+      "2024-03-19",
+      "2024-03-01",
+      "2024-02-23",
+      "2024-03-29",
+      "2024-04-17",
+      "2024-06-03"
+    ],
+    "token_count": 83
+  },
+  {
+    "doc_id": "inv-019",
+    "report_id": "inv-019",
+    "subject_name": "Xiomara Thackeray",
+    "outcome": "criminal_referral",
+    "date_opened": "2024-08-22",
+    "summary": "On August 6, 2024, Cortex Bank and Trust confirmed a loss related to a business email compromise targeting Xiomara Thackeray. The customer was deceived into sending a wire transfer of $251,647.71 to an unintended beneficiary, Marblehead Fabrication Trading Co., after receiving fraudulent email instructions. The bank initiated a recall and recovered a portion of the funds, but the customer sustained a residual loss.",
+    "answers_questions": [
+      "What was the total amount of the fraudulent wire transfer?",
+      "Who was the intended beneficiary of the wire transfer?",
+      "Who was the actual beneficiary of the fraudulent wire transfer?",
+      "How much of the funds were successfully recovered?",
+      "What was the residual loss to the customer?",
+      "What type of fraud scheme was involved in this case?"
+    ],
+    "key_entities": [
+      "Xiomara Thackeray",
+      "Marblehead Fabrication Trading Co.",
+      "Waterstone Textiles Corp.",
+      "Bramblewood Commodities Inc."
+    ],
+    "topics": [
+      "business_email_compromise",
+      "wire_fraud",
+      "funds_recovery",
+      "criminal_referral"
+    ],
+    "amounts": [
+      "$251,647.71",
+      "$57,878.97",
+      "$193,768.74"
+    ],
+    "dates": [
+      "2024-08-22",
+      "2024-08-20",
+      "2024-05-16",
+      "2024-04-11",
+      "2024-05-17",
+      "2024-04-22",
+      "2024-05-03",
+      "2024-05-06",
+      "2024-05-21",
+      "2024-06-06",
+      "2024-07-02",
+      "2024-08-06"
+    ],
+    "token_count": 85
+  },
+  {
+    "doc_id": "inv-020",
+    "report_id": "inv-020",
+    "subject_name": "Ardent Industrial Supply Partners LP",
+    "outcome": "ongoing",
+    "date_opened": "2024-10-02",
+    "summary": "Ardent Industrial Supply Partners LP fell victim to a business email compromise scheme, resulting in a diverted amount of $1,029,742.58. The fraudulent email, mimicking a known vendor, instructed the customer to send funds to Harborview Logistics Inc. on September 30, 2024. The investigation remains ongoing as the bank attempts to recover the remaining funds.",
+    "answers_questions": [
+      "What was the total amount diverted in the wire fraud?",
+      "Who was the intended beneficiary of the fraudulent wire?",
+      "When did the fraudulent wire transfer occur?",
+      "How much money was successfully frozen by the receiving institution?",
+      "What was the residual loss to Ardent Industrial Supply Partners LP?"
+    ],
+    "key_entities": [
+      "Ardent Industrial Supply Partners LP",
+      "Harborview Logistics Inc.",
+      "Foxglove Exports Enterprises LLC",
+      "Sandpiper Logistics Corp.",
+      "Cortex Bank and Trust"
+    ],
+    "topics": [
+      "business_email_compromise",
+      "wire_fraud",
+      "funds_recovery",
+      "lookalike_domain"
+    ],
+    "amounts": [
+      "$1,029,742.58",
+      "$102,974.26",
+      "$926,768.32"
+    ],
+    "dates": [
+      "2024-10-02",
+      "2024-08-12",
+      "2024-08-01",
+      "2024-06-07",
+      "2024-07-03",
+      "2024-07-29",
+      "2024-08-22",
+      "2024-08-13",
+      "2024-06-10",
+      "2024-06-28",
+      "2023-07-25",
+      "2024-09-30"
+    ],
+    "token_count": 76
+  },
+  {
+    "doc_id": "inv-021",
+    "report_id": "inv-021",
+    "subject_name": "Saltmarsh Equipment LLC",
+    "outcome": "closed_no_action",
+    "date_opened": "2024-07-24",
+    "summary": "On July 18, 2024, Cortex Bank and Trust concluded an investigation into a business email compromise targeting Saltmarsh Equipment LLC. The customer was deceived by a lookalike domain into bypassing internal controls and authorizing a wire transfer of $2,911,781.08 to Aperture Commodities Group LLC. The bank recovered a portion of the funds, but the customer sustained a significant residual loss, and the investigation was closed with no further action.",
+    "answers_questions": [
+      "What was the total amount of the fraudulent wire transfer?",
+      "Who was the intended beneficiary of the wire transfer?",
+      "How did the fraudsters deceive the customer into sending the funds?",
+      "Did the customer bypass any internal controls?",
+      "Was Cortex Bank and Trust able to recover any of the funds?",
+      "What was the final disposition of the investigation?"
+    ],
+    "key_entities": [
+      "Saltmarsh Equipment LLC",
+      "Aperture Commodities Group LLC",
+      "Waterstone Logistics Corp.",
+      "Oakhurst Logistics Enterprises LLC"
+    ],
+    "topics": [
+      "business_email_compromise",
+      "wire_fraud",
+      "lookalike_domain",
+      "bypassed_controls",
+      "partial_recovery"
+    ],
+    "amounts": [
+      "$2,911,781.08",
+      "$465,884.97",
+      "$2,445,896.11"
+    ],
+    "dates": [
+      "2024-07-24",
+      "2024-06-28",
+      "2024-03-25",
+      "2024-07-25",
+      "2024-06-20",
+      "2024-04-01",
+      "2024-04-26",
+      "2024-05-21",
+      "2024-05-27",
+      "2024-06-07",
+      "2024-06-10",
+      "2024-06-27",
+      "2024-07-18"
+    ],
+    "token_count": 93
+  },
+  {
+    "doc_id": "inv-022",
+    "report_id": "inv-022",
+    "subject_name": "Bastion Marine Services Corp.",
+    "outcome": "referred_to_fincen",
+    "date_opened": "2024-07-24",
+    "summary": "Bastion Marine Services Corp. was the victim of a business email compromise scheme that resulted in a fraudulent wire transfer. The customer was deceived into authorizing a payment, with the diverted amount $2,999,227.97 sent to the beneficiary Emberline Management Group LLC. The customer discovered the fraud on July 8, 2024, when the legitimate vendor inquired about the unpaid invoice.",
+    "answers_questions": [
+      "What was the total amount diverted in the wire fraud?",
+      "Who was the intended beneficiary of the fraudulent wire transfer?",
+      "When did the customer realize the funds had been diverted?",
+      "What tactics were used in the business email compromise scheme?",
+      "How much of the diverted funds were successfully frozen and recovered?",
+      "Why did Cortex Bank and Trust decline to reimburse the customer for the residual loss?"
+    ],
+    "key_entities": [
+      "Bastion Marine Services Corp.",
+      "Emberline Management Group LLC",
+      "Hearthstone Exports Inc.",
+      "Wheatfield Ventures LLC",
+      "Cortex Bank and Trust"
+    ],
+    "topics": [
+      "wire_fraud",
+      "business_email_compromise",
+      "funds_tracing",
+      "loss_recovery",
+      "internal_controls"
+    ],
+    "amounts": [
+      "$2,999,227.97",
+      "$629,837.87",
+      "$2,369,390.10"
+    ],
+    "dates": [
+      "2024-07-24",
+      "2024-05-30",
+      "2024-05-23",
+      "2024-03-11",
+      "2024-07-11",
+      "2024-03-18",
+      "2024-03-20",
+      "2024-03-21",
+      "2024-03-25",
+      "2024-03-26",
+      "2024-04-08",
+      "2024-07-08",
+      "2023-05-02"
+    ],
+    "token_count": 81
+  },
+  {
+    "doc_id": "inv-023",
+    "report_id": "inv-023",
+    "subject_name": "Glenhaven Fabrication Inc.",
+    "outcome": "criminal_referral",
+    "date_opened": "2024-11-13",
+    "summary": "On October 31, 2024, Glenhaven Fabrication Inc. initiated a wire transfer of $4,062,937.17 to Tidewater Commodities Holdings Ltd. after receiving fraudulent payment instructions via a lookalike email domain. The customer bypassed internal controls due to the urgency expressed in the deceptive communication. Cortex Bank and Trust secured a partial recovery, but the matter has been referred to law enforcement due to the substantial residual loss.",
+    "answers_questions": [
+      "Who was the victim of the business email compromise?",
+      "What was the amount of the fraudulent wire transfer?",
+      "Who was the unintended beneficiary of the funds?",
+      "When did the fraudulent wire transfer occur?",
+      "How much of the transferred funds was successfully frozen?"
+    ],
+    "key_entities": [
+      "Glenhaven Fabrication Inc.",
+      "Tidewater Commodities Holdings Ltd.",
+      "Anvil Metals Trading Co.",
+      "Umberfield Textiles Group LLC"
+    ],
+    "topics": [
+      "wire_fraud",
+      "business_email_compromise",
+      "lookalike_domain",
+      "criminal_referral"
+    ],
+    "amounts": [
+      "$4,062,937.17",
+      "$1,015,734.29",
+      "$3,047,202.88",
+      "$6,308.00",
+      "$3,754.36",
+      "$706.00",
+      "$6,054.00",
+      "$8,061.00",
+      "$3,418.00",
+      "$28,301.36"
+    ],
+    "dates": [
+      "2024-11-13",
+      "2024-10-09",
+      "2024-07-11",
+      "2024-11-14",
+      "2024-07-23",
+      "2024-07-30",
+      "2024-08-15",
+      "2024-08-20",
+      "2024-08-29",
+      "2024-09-13",
+      "2024-09-23",
+      "2024-10-31",
+      "2024-11-08"
+    ],
+    "token_count": 91
+  },
+  {
+    "doc_id": "inv-024",
+    "report_id": "inv-024",
+    "subject_name": "Wilhelmina Braithwaite",
+    "outcome": "ongoing",
+    "date_opened": "2024-09-13",
+    "summary": "On August 28, 2024, Wilhelmina Braithwaite was the victim of a business email compromise scheme that resulted in a diverted amount of $103,582.40. The customer received a fraudulent invoice from a lookalike domain, directing payment to a new beneficiary instead of the intended vendor, Emberline Imports LLC. A portion of the funds was frozen, but the customer sustained a residual loss of $82,865.92.",
+    "answers_questions": [
+      "Who is the subject of the investigation?",
+      "What was the diverted amount?",
+      "Who was the intended beneficiary of the wire transfer?",
+      "What was the name of the fraudulent beneficiary?",
+      "How much of the diverted funds were recovered?",
+      "What was the residual loss to the customer?"
+    ],
+    "key_entities": [
+      "Wilhelmina Braithwaite",
+      "Emberline Imports LLC",
+      "Falcon Crest Machinery Trading Co.",
+      "Emberline Equipment LLC"
+    ],
+    "topics": [
+      "wire_fraud",
+      "business_email_compromise",
+      "funds_recovery",
+      "lookalike_domain"
+    ],
+    "amounts": [
+      "$103,582.40",
+      "$20,716.48",
+      "$82,865.92",
+      "$654.80",
+      "$5,238.40",
+      "$3,816.05",
+      "$5,937.00",
+      "$1,095.42",
+      "$6,328.00",
+      "$2,037.02",
+      "$4,205.00",
+      "$8,779.44",
+      "$6,014.00",
+      "$44,105.13"
+    ],
+    "dates": [
+      "2024-09-13",
+      "2024-08-08",
+      "2024-07-30",
+      "2024-05-16",
+      "2024-08-23",
+      "2024-06-28",
+      "2024-07-04",
+      "2024-07-11",
+      "2024-07-22",
+      "2024-08-01",
+      "2024-08-26",
+      "2024-08-28",
+      "2024-09-05",
+      "2023-08-06",
+      "2024-09-02"
+    ],
+    "token_count": 92
+  }
+]

@@ -1,0 +1,32 @@
+{
+  "dataset": "cortex-investigations",
+  "generator": "scripts/gen_cortex_m3.py",
+  "generator_version": "1.0.0",
+  "seed": 42,
+  "model": "gemini-3.1-pro-preview",
+  "document_count": 24,
+  "token_stats": {
+    "min": 3245,
+    "max": 5590,
+    "mean": 4663.7,
+    "total": 111928
+  },
+  "synthetic": true,
+  "notes": [
+    "Deviation from 06-rework-M3.md section 8: the spec says two questions per SAR narrative and 16 questions across the investigation reports. This generator emits three per narrative (24 per bucket) and one per report (24 total) because track 3.1 challenge 02 needs 8 public dev questions plus 10 held-out questions per bucket and 8 plus 10 for investigations; the spec's counts are one and two short respectively. Extras are spare, not required.",
+    "Field aliases: SAR records carry both section_id ('sar-NNN-kf', the spec's label for the gold section) and key_finding_section_id (the real passage id in cortex-sar-passages that dev sets and checks reference). Case records carry both filing_date (06 section 4 / the bulk-load file) and date_opened (the Phase 0 task brief), and both case_id and doc_id, with identical values.",
+    "Dev-set query objects carry relevant_ids, relevant_passage_ids, and relevant_doc_ids so they satisfy every gold_field contract in lib/ara_metrics.precision_at_k without the consumer having to remap.",
+    "cortex-cases/cortex-cases.ndjson holds only the six fields track 3.3 challenge 02 maps and bulk-loads (case_id, case_type, risk_tier, filing_date, title, body). Gold literals and contamination labels stay in cases.jsonl so they are never indexed into the learner's index."
+  ],
+  "files": [
+    "investigations.jsonl"
+  ],
+  "outcomes": [
+    "closed_no_action",
+    "criminal_referral",
+    "ongoing",
+    "referred_to_fincen"
+  ],
+  "question_count": 24,
+  "repaired_findings": 0
+}

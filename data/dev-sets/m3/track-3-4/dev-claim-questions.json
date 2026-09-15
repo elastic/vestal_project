@@ -1,0 +1,182 @@
+[
+  {
+    "query_id": "dev-3-4-01",
+    "query_text": "Based on Limestone Industrial Supply Inc.'s activity, did the series of cash deposits warrant a SAR filing according to our structuring red flags?",
+    "relevant_ids": [
+      "case-structuring-001"
+    ],
+    "relevant_doc_ids": [
+      "case-structuring-001"
+    ],
+    "case_type": "structuring",
+    "policy_topic": "structuring red flags",
+    "gold_literal": "$1,546,407.46",
+    "expected_claim_sources": [
+      "cortex-cases",
+      "cortex-policies"
+    ],
+    "note": "A grounded answer carries at least one claim attributable to the memo and at least one attributable to the policy library."
+  },
+  {
+    "query_id": "dev-3-4-02",
+    "query_text": "Did the transaction monitoring system properly flag Vantage Point Fabrication Partners LP's activity for review, or did it bypass our structuring controls?",
+    "relevant_ids": [
+      "case-structuring-013"
+    ],
+    "relevant_doc_ids": [
+      "case-structuring-013"
+    ],
+    "case_type": "structuring",
+    "policy_topic": "transaction monitoring",
+    "gold_literal": "$2,463,162.03",
+    "expected_claim_sources": [
+      "cortex-cases",
+      "cortex-policies"
+    ],
+    "note": "A grounded answer carries at least one claim attributable to the memo and at least one attributable to the policy library."
+  },
+  {
+    "query_id": "dev-3-4-03",
+    "query_text": "Given Séverin Ibarra's account history, which wire transfer red flags should have triggered an escalation before the transfer was processed?",
+    "relevant_ids": [
+      "case-wire-fraud-001"
+    ],
+    "relevant_doc_ids": [
+      "case-wire-fraud-001"
+    ],
+    "case_type": "wire_fraud",
+    "policy_topic": "wire transfer red flags",
+    "gold_literal": "$197,109.80",
+    "expected_claim_sources": [
+      "cortex-cases",
+      "cortex-policies"
+    ],
+    "note": "A grounded answer carries at least one claim attributable to the memo and at least one attributable to the policy library."
+  },
+  {
+    "query_id": "dev-3-4-04",
+    "query_text": "Did Nadia Castellanos's activity mandate a SAR filing under our current policy, and if so, when should it have been escalated?",
+    "relevant_ids": [
+      "case-wire-fraud-013"
+    ],
+    "relevant_doc_ids": [
+      "case-wire-fraud-013"
+    ],
+    "case_type": "wire_fraud",
+    "policy_topic": "escalation",
+    "gold_literal": "$355,842.04",
+    "expected_claim_sources": [
+      "cortex-cases",
+      "cortex-policies"
+    ],
+    "note": "A grounded answer carries at least one claim attributable to the memo and at least one attributable to the policy library."
+  },
+  {
+    "query_id": "dev-3-4-05",
+    "query_text": "Did the sanctions screening software fail to identify the restricted parties involved in Fairmount Trading Enterprises LLC's international transfers?",
+    "relevant_ids": [
+      "case-sanctions-001"
+    ],
+    "relevant_doc_ids": [
+      "case-sanctions-001"
+    ],
+    "case_type": "sanctions",
+    "policy_topic": "sanctions screening",
+    "gold_literal": "$3,276,062.89",
+    "expected_claim_sources": [
+      "cortex-cases",
+      "cortex-policies"
+    ],
+    "note": "A grounded answer carries at least one claim attributable to the memo and at least one attributable to the policy library."
+  },
+  {
+    "query_id": "dev-3-4-06",
+    "query_text": "Under our current sanctions screening policy, what specific control failure allowed Driftwood Textiles Enterprises LLC's transactions to be processed?",
+    "relevant_ids": [
+      "case-sanctions-013"
+    ],
+    "relevant_doc_ids": [
+      "case-sanctions-013"
+    ],
+    "case_type": "sanctions",
+    "policy_topic": "sanctions screening",
+    "gold_literal": "$3,430,562.13",
+    "expected_claim_sources": [
+      "cortex-cases",
+      "cortex-policies"
+    ],
+    "note": "A grounded answer carries at least one claim attributable to the memo and at least one attributable to the policy library."
+  },
+  {
+    "query_id": "dev-3-4-07",
+    "query_text": "Which KYC due diligence procedures were omitted during the onboarding of Anders Castellanos, leading to the unidentified beneficial ownership structure?",
+    "relevant_ids": [
+      "case-kyc-gap-001"
+    ],
+    "relevant_doc_ids": [
+      "case-kyc-gap-001"
+    ],
+    "case_type": "kyc_gap",
+    "policy_topic": "kyc due diligence",
+    "gold_literal": "$361,731.77",
+    "expected_claim_sources": [
+      "cortex-cases",
+      "cortex-policies"
+    ],
+    "note": "A grounded answer carries at least one claim attributable to the memo and at least one attributable to the policy library."
+  },
+  {
+    "query_id": "dev-3-4-08",
+    "query_text": "Did the customer risk assessment for Jasper Petrosyan accurately reflect the risk profile, or did a failure in beneficial ownership verification occur?",
+    "relevant_ids": [
+      "case-kyc-gap-013"
+    ],
+    "relevant_doc_ids": [
+      "case-kyc-gap-013"
+    ],
+    "case_type": "kyc_gap",
+    "policy_topic": "beneficial ownership",
+    "gold_literal": "$65,773.84",
+    "expected_claim_sources": [
+      "cortex-cases",
+      "cortex-policies"
+    ],
+    "note": "A grounded answer carries at least one claim attributable to the memo and at least one attributable to the policy library."
+  },
+  {
+    "query_id": "dev-3-4-09",
+    "query_text": "According to our elder financial exploitation policy, what specific red flags should have prompted a hold on Adrian Balogun's account?",
+    "relevant_ids": [
+      "case-elder-exploitation-001"
+    ],
+    "relevant_doc_ids": [
+      "case-elder-exploitation-001"
+    ],
+    "case_type": "elder_exploitation",
+    "policy_topic": "elder financial exploitation",
+    "gold_literal": "$443,415.04",
+    "expected_claim_sources": [
+      "cortex-cases",
+      "cortex-policies"
+    ],
+    "note": "A grounded answer carries at least one claim attributable to the memo and at least one attributable to the policy library."
+  },
+  {
+    "query_id": "dev-3-4-10",
+    "query_text": "Did Valentina Vandermeer's sudden changes in transaction behavior trigger the required escalation process for suspected elder financial exploitation?",
+    "relevant_ids": [
+      "case-elder-exploitation-013"
+    ],
+    "relevant_doc_ids": [
+      "case-elder-exploitation-013"
+    ],
+    "case_type": "elder_exploitation",
+    "policy_topic": "escalation",
+    "gold_literal": "$215,064.15",
+    "expected_claim_sources": [
+      "cortex-cases",
+      "cortex-policies"
+    ],
+    "note": "A grounded answer carries at least one claim attributable to the memo and at least one attributable to the policy library."
+  }
+]

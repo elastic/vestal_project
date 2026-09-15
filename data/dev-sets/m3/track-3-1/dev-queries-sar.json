@@ -1,0 +1,682 @@
+[
+  {
+    "query_id": "dev-3-1-01",
+    "query_text": "What was the specific amount of the consolidation transfer executed by Isadora Saltonstall to an external entity?",
+    "relevant_ids": [
+      "sar-001-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-001-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-001"
+    ],
+    "bucket": "bucket_1k",
+    "narrative_id": "sar-001",
+    "gold_literal": "$38,212.37",
+    "question_id": "q-sar-001-1"
+  },
+  {
+    "query_id": "dev-3-1-02",
+    "query_text": "In the matter of Dashiell Beaumont, what specific sum was traced to the account of the unintended beneficiary?",
+    "relevant_ids": [
+      "sar-002-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-002-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-002"
+    ],
+    "bucket": "bucket_1k",
+    "narrative_id": "sar-002",
+    "gold_literal": "$384,608.29",
+    "question_id": "q-sar-002-1"
+  },
+  {
+    "query_id": "dev-3-1-03",
+    "query_text": "In the Oriana Delacroix investigation, what was the value of the payment that established the subject was acting as an intermediary for a sanctioned party?",
+    "relevant_ids": [
+      "sar-003-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-003-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-003"
+    ],
+    "bucket": "bucket_1k",
+    "narrative_id": "sar-003",
+    "gold_literal": "$63,957.88",
+    "question_id": "q-sar-003-1"
+  },
+  {
+    "query_id": "dev-3-1-04",
+    "query_text": "What was the amount of the separate sum routed through an unvetted intermediary in the Bramblewood Fabrication Trading Co. case?",
+    "relevant_ids": [
+      "sar-004-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-004-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-004"
+    ],
+    "bucket": "bucket_1k",
+    "narrative_id": "sar-004",
+    "gold_literal": "$1,207,819.34",
+    "question_id": "q-sar-004-1"
+  },
+  {
+    "query_id": "dev-3-1-05",
+    "query_text": "What was the total amount transferred from Sabine Yarborough's account to the receiving account?",
+    "relevant_ids": [
+      "sar-005-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-005-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-005"
+    ],
+    "bucket": "bucket_1k",
+    "narrative_id": "sar-005",
+    "gold_literal": "$418,118.73",
+    "question_id": "q-sar-005-1"
+  },
+  {
+    "query_id": "dev-3-1-06",
+    "query_text": "What was the amount of the wire transfer directed to the undisclosed counterparty in the Kenji Castellanos investigation?",
+    "relevant_ids": [
+      "sar-006-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-006-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-006"
+    ],
+    "bucket": "bucket_1k",
+    "narrative_id": "sar-006",
+    "gold_literal": "$40,326.36",
+    "question_id": "q-sar-006-1"
+  },
+  {
+    "query_id": "dev-3-1-07",
+    "query_text": "What amount of the funds induced from Greystone Ventures Enterprises LLC was successfully interdicted?",
+    "relevant_ids": [
+      "sar-007-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-007-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-007"
+    ],
+    "bucket": "bucket_1k",
+    "narrative_id": "sar-007",
+    "gold_literal": "$952,440.92",
+    "question_id": "q-sar-007-1"
+  },
+  {
+    "query_id": "dev-3-1-08",
+    "query_text": "What was the total value of the diverted funds identified in the investigation concerning Delia Vasquez?",
+    "relevant_ids": [
+      "sar-008-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-008-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-008"
+    ],
+    "bucket": "bucket_1k",
+    "narrative_id": "sar-008",
+    "gold_literal": "$149,382.44",
+    "question_id": "q-sar-008-1"
+  },
+  {
+    "query_id": "dev-3-1-09",
+    "query_text": "What was the amount of the wire transfer credited to holding account 10-33485-9 for Redstone Marine Services Partners LP?",
+    "relevant_ids": [
+      "sar-009-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-009-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-009"
+    ],
+    "bucket": "bucket_3k",
+    "narrative_id": "sar-009",
+    "gold_literal": "$738,669.61",
+    "question_id": "q-sar-009-1"
+  },
+  {
+    "query_id": "dev-3-1-10",
+    "query_text": "What was the aggregate amount of the indirect transfers from Florentina Ravensworth's account to the unrelated third party?",
+    "relevant_ids": [
+      "sar-010-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-010-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-010"
+    ],
+    "bucket": "bucket_3k",
+    "narrative_id": "sar-010",
+    "gold_literal": "$68,001.86",
+    "question_id": "q-sar-010-1"
+  },
+  {
+    "query_id": "dev-3-1-11",
+    "query_text": "What was the total amount of funds associated with Philippa Cromwell that was traced to an unrelated third party?",
+    "relevant_ids": [
+      "sar-011-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-011-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-011"
+    ],
+    "bucket": "bucket_3k",
+    "narrative_id": "sar-011",
+    "gold_literal": "$263,106.37",
+    "question_id": "q-sar-011-1"
+  },
+  {
+    "query_id": "dev-3-1-12",
+    "query_text": "In the matter of Ephraim Balogun, what sum was established as having been transferred onward from the receiving institution's holding account?",
+    "relevant_ids": [
+      "sar-012-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-012-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-012"
+    ],
+    "bucket": "bucket_3k",
+    "narrative_id": "sar-012",
+    "gold_literal": "$335,562.76",
+    "question_id": "q-sar-012-1"
+  },
+  {
+    "query_id": "dev-3-1-13",
+    "query_text": "What was the amount of the unflagged transfer routed from Cornerstone Machinery Enterprises LLC in violation of OFAC regulations?",
+    "relevant_ids": [
+      "sar-013-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-013-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-013"
+    ],
+    "bucket": "bucket_3k",
+    "narrative_id": "sar-013",
+    "gold_literal": "$401,689.43",
+    "question_id": "q-sar-013-1"
+  },
+  {
+    "query_id": "dev-3-1-14",
+    "query_text": "What sum was established as attributable to a previously undisclosed entity in the Granite Point Metals Trading Co. review?",
+    "relevant_ids": [
+      "sar-014-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-014-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-014"
+    ],
+    "bucket": "bucket_3k",
+    "narrative_id": "sar-014",
+    "gold_literal": "$420,800.75",
+    "question_id": "q-sar-014-1"
+  },
+  {
+    "query_id": "dev-3-1-15",
+    "query_text": "What was the total amount transferred from the Cedarline Exports LLC account to the external account identified in the key finding?",
+    "relevant_ids": [
+      "sar-015-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-015-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-015"
+    ],
+    "bucket": "bucket_3k",
+    "narrative_id": "sar-015",
+    "gold_literal": "$2,042,367.48",
+    "question_id": "q-sar-015-1"
+  },
+  {
+    "query_id": "dev-3-1-16",
+    "query_text": "What was the total amount of deposited funds transferred by Quentin Underhill to the external account?",
+    "relevant_ids": [
+      "sar-016-section-4"
+    ],
+    "relevant_passage_ids": [
+      "sar-016-section-4"
+    ],
+    "relevant_doc_ids": [
+      "sar-016"
+    ],
+    "bucket": "bucket_3k",
+    "narrative_id": "sar-016",
+    "gold_literal": "$267,440.25",
+    "question_id": "q-sar-016-1"
+  },
+  {
+    "query_id": "dev-3-1-17",
+    "query_text": "In the matter of Solveig Fontaine, what was the value of the transfer that was misdirected to an unintended beneficiary?",
+    "relevant_ids": [
+      "sar-017-section-7"
+    ],
+    "relevant_passage_ids": [
+      "sar-017-section-7"
+    ],
+    "relevant_doc_ids": [
+      "sar-017"
+    ],
+    "bucket": "bucket_8k",
+    "narrative_id": "sar-017",
+    "gold_literal": "$404,038.31",
+    "question_id": "q-sar-017-1"
+  },
+  {
+    "query_id": "dev-3-1-18",
+    "query_text": "In the investigation of Rafferty Harkness, what was the value of the outgoing wire transfer processed prior to the determination of the counterparty's ownership?",
+    "relevant_ids": [
+      "sar-018-section-7"
+    ],
+    "relevant_passage_ids": [
+      "sar-018-section-7"
+    ],
+    "relevant_doc_ids": [
+      "sar-018"
+    ],
+    "bucket": "bucket_8k",
+    "narrative_id": "sar-018",
+    "gold_literal": "$84,666.09",
+    "question_id": "q-sar-018-1"
+  },
+  {
+    "query_id": "dev-3-1-19",
+    "query_text": "What was the total amount transferred from the Slateford Imports Group LLC account on November 4, 2024?",
+    "relevant_ids": [
+      "sar-019-section-7"
+    ],
+    "relevant_passage_ids": [
+      "sar-019-section-7"
+    ],
+    "relevant_doc_ids": [
+      "sar-019"
+    ],
+    "bucket": "bucket_8k",
+    "narrative_id": "sar-019",
+    "gold_literal": "$1,682,277.72",
+    "question_id": "q-sar-019-1"
+  },
+  {
+    "query_id": "dev-3-1-20",
+    "query_text": "What was the total consolidated sum transferred out of the Ironwood Ventures Corp. account to the external receiving account?",
+    "relevant_ids": [
+      "sar-020-section-7"
+    ],
+    "relevant_passage_ids": [
+      "sar-020-section-7"
+    ],
+    "relevant_doc_ids": [
+      "sar-020"
+    ],
+    "bucket": "bucket_8k",
+    "narrative_id": "sar-020",
+    "gold_literal": "$2,348,958.48",
+    "question_id": "q-sar-020-1"
+  },
+  {
+    "query_id": "dev-3-1-21",
+    "query_text": "In the investigation of Elowen Oyelaran, what specific sum was identified as being aggregated and transferred to a third party?",
+    "relevant_ids": [
+      "sar-021-section-7"
+    ],
+    "relevant_passage_ids": [
+      "sar-021-section-7"
+    ],
+    "relevant_doc_ids": [
+      "sar-021"
+    ],
+    "bucket": "bucket_8k",
+    "narrative_id": "sar-021",
+    "gold_literal": "$286,886.50",
+    "question_id": "q-sar-021-1"
+  },
+  {
+    "query_id": "dev-3-1-22",
+    "query_text": "What was the amount of the inbound wire transfer credited to Alina Eriksson's account?",
+    "relevant_ids": [
+      "sar-022-section-7"
+    ],
+    "relevant_passage_ids": [
+      "sar-022-section-7"
+    ],
+    "relevant_doc_ids": [
+      "sar-022"
+    ],
+    "bucket": "bucket_8k",
+    "narrative_id": "sar-022",
+    "gold_literal": "$125,879.73",
+    "question_id": "q-sar-022-1"
+  },
+  {
+    "query_id": "dev-3-1-23",
+    "query_text": "What sum was deposited into holding account 25-87913-9 that was attributed to a sanctioned individual in the investigation of Silverthorn Metals Enterprises LLC?",
+    "relevant_ids": [
+      "sar-023-section-7"
+    ],
+    "relevant_passage_ids": [
+      "sar-023-section-7"
+    ],
+    "relevant_doc_ids": [
+      "sar-023"
+    ],
+    "bucket": "bucket_8k",
+    "narrative_id": "sar-023",
+    "gold_literal": "$222,383.52",
+    "question_id": "q-sar-023-1"
+  },
+  {
+    "query_id": "dev-3-1-24",
+    "query_text": "What was the amount of the transfer from Dashiell Pemberton's account to account 89-84319-9?",
+    "relevant_ids": [
+      "sar-024-section-7"
+    ],
+    "relevant_passage_ids": [
+      "sar-024-section-7"
+    ],
+    "relevant_doc_ids": [
+      "sar-024"
+    ],
+    "bucket": "bucket_8k",
+    "narrative_id": "sar-024",
+    "gold_literal": "$158,495.74",
+    "question_id": "q-sar-024-1"
+  },
+  {
+    "query_id": "dev-3-1-25",
+    "query_text": "What sum was transferred from the operating account of Slateford Produce Enterprises LLC to an offshore entity?",
+    "relevant_ids": [
+      "sar-025-section-14"
+    ],
+    "relevant_passage_ids": [
+      "sar-025-section-14"
+    ],
+    "relevant_doc_ids": [
+      "sar-025"
+    ],
+    "bucket": "bucket_20k",
+    "narrative_id": "sar-025",
+    "gold_literal": "$1,661,844.24",
+    "question_id": "q-sar-025-1"
+  },
+  {
+    "query_id": "dev-3-1-26",
+    "query_text": "What was the total amount of funds directed to a single external party from the account associated with Marisol Wolcott?",
+    "relevant_ids": [
+      "sar-026-section-14"
+    ],
+    "relevant_passage_ids": [
+      "sar-026-section-14"
+    ],
+    "relevant_doc_ids": [
+      "sar-026"
+    ],
+    "bucket": "bucket_20k",
+    "narrative_id": "sar-026",
+    "gold_literal": "$279,272.56",
+    "question_id": "q-sar-026-1"
+  },
+  {
+    "query_id": "dev-3-1-27",
+    "query_text": "What was the total amount of funds credited to the Summit Gate Produce Enterprises LLC account from the undisclosed counterparty?",
+    "relevant_ids": [
+      "sar-027-section-14"
+    ],
+    "relevant_passage_ids": [
+      "sar-027-section-14"
+    ],
+    "relevant_doc_ids": [
+      "sar-027"
+    ],
+    "bucket": "bucket_20k",
+    "narrative_id": "sar-027",
+    "gold_literal": "$981,952.31",
+    "question_id": "q-sar-027-1"
+  },
+  {
+    "query_id": "dev-3-1-28",
+    "query_text": "What sum was directed to the account identified during the review of Greystone Management Trading Co.'s transaction?",
+    "relevant_ids": [
+      "sar-028-section-14"
+    ],
+    "relevant_passage_ids": [
+      "sar-028-section-14"
+    ],
+    "relevant_doc_ids": [
+      "sar-028"
+    ],
+    "bucket": "bucket_20k",
+    "narrative_id": "sar-028",
+    "gold_literal": "$265,816.90",
+    "question_id": "q-sar-028-1"
+  },
+  {
+    "query_id": "dev-3-1-29",
+    "query_text": "What amount was transferred from Fairmount Freight Partners LP to Obsidian Produce Holdings Ltd.?",
+    "relevant_ids": [
+      "sar-029-section-14"
+    ],
+    "relevant_passage_ids": [
+      "sar-029-section-14"
+    ],
+    "relevant_doc_ids": [
+      "sar-029"
+    ],
+    "bucket": "bucket_20k",
+    "narrative_id": "sar-029",
+    "gold_literal": "$590,913.12",
+    "question_id": "q-sar-029-1"
+  },
+  {
+    "query_id": "dev-3-1-30",
+    "query_text": "What was the amount of the previously uncharacterized transfer from Glenhaven Marine Services LLC?",
+    "relevant_ids": [
+      "sar-030-section-14"
+    ],
+    "relevant_passage_ids": [
+      "sar-030-section-14"
+    ],
+    "relevant_doc_ids": [
+      "sar-030"
+    ],
+    "bucket": "bucket_20k",
+    "narrative_id": "sar-030",
+    "gold_literal": "$601,316.78",
+    "question_id": "q-sar-030-1"
+  },
+  {
+    "query_id": "dev-3-1-31",
+    "query_text": "What was the amount of the wire transfer sent from Stonebridge Commodities Inc. on October 3, 2024?",
+    "relevant_ids": [
+      "sar-031-section-14"
+    ],
+    "relevant_passage_ids": [
+      "sar-031-section-14"
+    ],
+    "relevant_doc_ids": [
+      "sar-031"
+    ],
+    "bucket": "bucket_20k",
+    "narrative_id": "sar-031",
+    "gold_literal": "$125,977.94",
+    "question_id": "q-sar-031-1"
+  },
+  {
+    "query_id": "dev-3-1-32",
+    "query_text": "What was the total amount remitted from the Hearthstone Marine Services Inc. account in the determinative finding?",
+    "relevant_ids": [
+      "sar-032-section-14"
+    ],
+    "relevant_passage_ids": [
+      "sar-032-section-14"
+    ],
+    "relevant_doc_ids": [
+      "sar-032"
+    ],
+    "bucket": "bucket_20k",
+    "narrative_id": "sar-032",
+    "gold_literal": "$2,306,290.85",
+    "question_id": "q-sar-032-1"
+  },
+  {
+    "query_id": "dev-3-1-33",
+    "query_text": "In the investigation of Emberline Marine Services Holdings Ltd., what was the total sum established as attributable to the undisclosed party?",
+    "relevant_ids": [
+      "sar-033-section-21"
+    ],
+    "relevant_passage_ids": [
+      "sar-033-section-21"
+    ],
+    "relevant_doc_ids": [
+      "sar-033"
+    ],
+    "bucket": "bucket_40k",
+    "narrative_id": "sar-033",
+    "gold_literal": "$2,173,619.78",
+    "question_id": "q-sar-033-1"
+  },
+  {
+    "query_id": "dev-3-1-34",
+    "query_text": "What sum was transferred to an entity related to the investigation involving Rosalind Fairweather?",
+    "relevant_ids": [
+      "sar-034-section-21"
+    ],
+    "relevant_passage_ids": [
+      "sar-034-section-21"
+    ],
+    "relevant_doc_ids": [
+      "sar-034"
+    ],
+    "bucket": "bucket_40k",
+    "narrative_id": "sar-034",
+    "gold_literal": "$2,064,036.01",
+    "question_id": "q-sar-034-1"
+  },
+  {
+    "query_id": "dev-3-1-35",
+    "query_text": "What was the aggregate sum established as trust liquidation proceeds related to the unusual activity in the account of Aperture Equipment Group LLC?",
+    "relevant_ids": [
+      "sar-035-section-21"
+    ],
+    "relevant_passage_ids": [
+      "sar-035-section-21"
+    ],
+    "relevant_doc_ids": [
+      "sar-035"
+    ],
+    "bucket": "bucket_40k",
+    "narrative_id": "sar-035",
+    "gold_literal": "$1,366,783.98",
+    "question_id": "q-sar-035-1"
+  },
+  {
+    "query_id": "dev-3-1-36",
+    "query_text": "What was the total amount of the consolidated transfer that Beatriz Zimmerman directed to an external account?",
+    "relevant_ids": [
+      "sar-036-section-21"
+    ],
+    "relevant_passage_ids": [
+      "sar-036-section-21"
+    ],
+    "relevant_doc_ids": [
+      "sar-036"
+    ],
+    "bucket": "bucket_40k",
+    "narrative_id": "sar-036",
+    "gold_literal": "$465,028.48",
+    "question_id": "q-sar-036-1"
+  },
+  {
+    "query_id": "dev-3-1-37",
+    "query_text": "In the case involving Lorcan Hawthorne, what was the specific amount traced to the external entity?",
+    "relevant_ids": [
+      "sar-037-section-21"
+    ],
+    "relevant_passage_ids": [
+      "sar-037-section-21"
+    ],
+    "relevant_doc_ids": [
+      "sar-037"
+    ],
+    "bucket": "bucket_40k",
+    "narrative_id": "sar-037",
+    "gold_literal": "$2,263,757.50",
+    "question_id": "q-sar-037-1"
+  },
+  {
+    "query_id": "dev-3-1-38",
+    "query_text": "What was the total amount of the consolidated transfer executed from the Bluewater Freight LLC operating account?",
+    "relevant_ids": [
+      "sar-038-section-21"
+    ],
+    "relevant_passage_ids": [
+      "sar-038-section-21"
+    ],
+    "relevant_doc_ids": [
+      "sar-038"
+    ],
+    "bucket": "bucket_40k",
+    "narrative_id": "sar-038",
+    "gold_literal": "$2,024,287.71",
+    "question_id": "q-sar-038-1"
+  },
+  {
+    "query_id": "dev-3-1-39",
+    "query_text": "What was the amount of the undocumented funds transfer credited to the Summit Gate Fabrication Inc. operating account?",
+    "relevant_ids": [
+      "sar-039-section-21"
+    ],
+    "relevant_passage_ids": [
+      "sar-039-section-21"
+    ],
+    "relevant_doc_ids": [
+      "sar-039"
+    ],
+    "bucket": "bucket_40k",
+    "narrative_id": "sar-039",
+    "gold_literal": "$1,673,542.86",
+    "question_id": "q-sar-039-1"
+  },
+  {
+    "query_id": "dev-3-1-40",
+    "query_text": "What was the amount of the transfer the unidentified male attempted to direct from Kirsten Larkspur's account?",
+    "relevant_ids": [
+      "sar-040-section-21"
+    ],
+    "relevant_passage_ids": [
+      "sar-040-section-21"
+    ],
+    "relevant_doc_ids": [
+      "sar-040"
+    ],
+    "bucket": "bucket_40k",
+    "narrative_id": "sar-040",
+    "gold_literal": "$205,138.84",
+    "question_id": "q-sar-040-1"
+  }
+]

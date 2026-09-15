@@ -1,0 +1,106 @@
+[
+  {
+    "query_id": "dev-3-1-inv-01",
+    "query_text": "According to the findings, what was the amount of the outbound wire transfer initiated by Rudolpho Castellanos that was established as diverted?",
+    "relevant_ids": [
+      "inv-001"
+    ],
+    "relevant_doc_ids": [
+      "inv-001"
+    ],
+    "gold_literal": "$464,164.87",
+    "question_id": "q-inv-001-1",
+    "outcome": "closed_no_action"
+  },
+  {
+    "query_id": "dev-3-1-inv-02",
+    "query_text": "What was the amount of the outbound wire transfer that Fairmount Logistics Trading Co. was induced to originate?",
+    "relevant_ids": [
+      "inv-002"
+    ],
+    "relevant_doc_ids": [
+      "inv-002"
+    ],
+    "gold_literal": "$1,590,970.21",
+    "question_id": "q-inv-002-1",
+    "outcome": "referred_to_fincen"
+  },
+  {
+    "query_id": "dev-3-1-inv-03",
+    "query_text": "What was the total amount established as diverted from the Fieldstone Exports Group LLC account?",
+    "relevant_ids": [
+      "inv-003"
+    ],
+    "relevant_doc_ids": [
+      "inv-003"
+    ],
+    "gold_literal": "$1,184,300.40",
+    "question_id": "q-inv-003-1",
+    "outcome": "criminal_referral"
+  },
+  {
+    "query_id": "dev-3-1-inv-04",
+    "query_text": "What was the amount of the fraudulent wire transfer initiated by Bluewater Equipment Inc.?",
+    "relevant_ids": [
+      "inv-004"
+    ],
+    "relevant_doc_ids": [
+      "inv-004"
+    ],
+    "gold_literal": "$1,728,111.71",
+    "question_id": "q-inv-004-1",
+    "outcome": "ongoing"
+  },
+  {
+    "query_id": "dev-3-1-inv-05",
+    "query_text": "According to the findings, what was the total amount diverted from Ephraim Eriksson's account?",
+    "relevant_ids": [
+      "inv-005"
+    ],
+    "relevant_doc_ids": [
+      "inv-005"
+    ],
+    "gold_literal": "$104,055.79",
+    "question_id": "q-inv-005-1",
+    "outcome": "closed_no_action"
+  },
+  {
+    "query_id": "dev-3-1-inv-06",
+    "query_text": "What was the total sum established as diverted from Adrian Wolcott's account?",
+    "relevant_ids": [
+      "inv-006"
+    ],
+    "relevant_doc_ids": [
+      "inv-006"
+    ],
+    "gold_literal": "$236,220.57",
+    "question_id": "q-inv-006-1",
+    "outcome": "referred_to_fincen"
+  },
+  {
+    "query_id": "dev-3-1-inv-07",
+    "query_text": "What sum was established as diverted from Limestone Capital Group LLC?",
+    "relevant_ids": [
+      "inv-007"
+    ],
+    "relevant_doc_ids": [
+      "inv-007"
+    ],
+    "gold_literal": "$3,552,197.05",
+    "question_id": "q-inv-007-1",
+    "outcome": "criminal_referral"
+  },
+  {
+    "query_id": "dev-3-1-inv-08",
+    "query_text": "Based on the findings, what was the total amount diverted from the Westmarch Distribution Inc. account?",
+    "relevant_ids": [
+      "inv-008"
+    ],
+    "relevant_doc_ids": [
+      "inv-008"
+    ],
+    "gold_literal": "$3,863,579.20",
+    "question_id": "q-inv-008-1",
+    "outcome": "ongoing"
+  }
+]
