@@ -263,6 +263,7 @@ def main() -> None:
         if reason_key:
             entry["reason"] = reason_key
         decision[q["id"]] = entry
+        decision.setdefault("answers", []).append({"question_id": q["id"], **entry})
 
     DECISION_FILE.parent.mkdir(parents=True, exist_ok=True)
     DECISION_FILE.write_text(json.dumps(decision, indent=2))
