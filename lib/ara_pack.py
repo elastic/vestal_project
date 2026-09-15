@@ -180,12 +180,12 @@ def pack_context(
         A single string containing the packed context, newline-separated.
     """
     completion_id = os.environ.get("ARA_INFERENCE_COMPLETION_ID", "cortex-generation")
-    rerank_id = os.environ.get("ARA_INFERENCE_RERANK_ID", "")
+    rerank_id = os.environ.get("ARA_RERANK_ID", "")  # spec 06 §1: ARA_RERANK_ID
 
     if strategy == "rerank_top_n":
         if not rerank_id:
             raise EnvironmentError(
-                "ARA_INFERENCE_RERANK_ID must be set to use strategy 'rerank_top_n'."
+                "ARA_RERANK_ID must be set to use strategy 'rerank_top_n'."
             )
         # Conservative estimate: start with all results, rerank, take top-n=len
         ranked = rerank_top_n(results, query, n=len(results), rerank_id=rerank_id)
