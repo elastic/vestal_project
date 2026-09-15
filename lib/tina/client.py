@@ -56,3 +56,14 @@ def model_strong() -> str:
             "ARA_MODEL_STRONG is not set. Run the harness setup cell or source /home/elastic/env."
         )
     return val
+
+
+def cost_usd(usage: dict, tier: str) -> float:
+    """Compute USD cost for one request from token counts and env price vars.
+
+    Reads ARA_PRICE_{TIER}_IN and ARA_PRICE_{TIER}_OUT from environment
+    (USD per million tokens). Returns total cost in USD.
+    """
+    price_in  = float(os.environ[f'ARA_PRICE_{tier.upper()}_IN'])  / 1e6
+    price_out = float(os.environ[f'ARA_PRICE_{tier.upper()}_OUT']) / 1e6
+    return usage.get('prompt_tokens', 0) * price_in + usage.get('completion_tokens', 0) * price_out
