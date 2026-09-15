@@ -67,18 +67,17 @@ def rerank_top_n(
         body={
             "query": query,
             "input": input_texts,
-            "task_type": "rerank",
         },
     )
 
-    # resp["rerank"] is a list of {"index": int, "score": float, "text": str}
+    # resp["rerank"] is a list of {"index": int, "relevance_score": float}
     rerank_entries: list[dict[str, Any]] = resp.get("rerank", [])
-    ranked = sorted(rerank_entries, key=lambda x: x["score"], reverse=True)[:n]
+    ranked = sorted(rerank_entries, key=lambda x: x["relevance_score"], reverse=True)[:n]
 
     annotated = []
     for entry in ranked:
         orig = dict(results[entry["index"]])
-        orig["rerank_score"] = entry["score"]
+        orig["rerank_score"] = entry["relevance_score"]
         annotated.append(orig)
 
     return annotated
@@ -131,7 +130,6 @@ def summarize_first(
                 inference_id=completion_id,
                 body={
                     "input": prompt,
-                    "task_type": "completion",
                     "task_settings": {"temperature": 0},
                 },
             )

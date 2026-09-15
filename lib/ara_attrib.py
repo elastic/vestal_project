@@ -126,7 +126,6 @@ def support(claim: str, passage: str, completion_id: str) -> str:
             inference_id=completion_id,
             body={
                 "input": prompt,
-                "task_type": "completion",
                 "task_settings": {"temperature": 0},
             },
         )
