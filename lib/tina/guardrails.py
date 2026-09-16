@@ -74,7 +74,6 @@ def validate_output(answer: str, context: str, completion_id: str) -> tuple[bool
                 inference_id=completion_id,
                 body={
                     "input": prompt,
-                    "task_type": "completion",
                     "task_settings": {"temperature": 0},
                 },
             )
