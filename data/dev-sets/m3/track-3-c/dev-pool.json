@@ -1,0 +1,1190 @@
+[
+  {
+    "query_id": "dev-3-c-pol-01",
+    "query_text": "What is the secondary rolling three-day cash deposit threshold that Cortex Bank and Trust sets for structuring detection?",
+    "query_class": "policy",
+    "gold_literal": "twenty-two thousand dollars",
+    "relevant_ids": [
+      "policy-001",
+      "policy-003",
+      "policy-005"
+    ],
+    "gold_doc_ids": [
+      "policy-001"
+    ],
+    "index": "cortex-policies",
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "relevant_unit_count": 14
+  },
+  {
+    "query_id": "dev-3-c-pol-02",
+    "query_text": "When a suspicious transaction has occurred but the perpetrator is unknown, what reporting threshold applies at Cortex Bank and Trust?",
+    "query_class": "policy",
+    "gold_literal": "seven thousand five hundred dollars",
+    "relevant_ids": [
+      "policy-001",
+      "policy-003",
+      "policy-011"
+    ],
+    "gold_doc_ids": [
+      "policy-003"
+    ],
+    "index": "cortex-policies",
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "relevant_unit_count": 14
+  },
+  {
+    "query_id": "dev-3-c-pol-03",
+    "query_text": "Above what single transaction value does Cortex Bank and Trust apply an automated systemic halt and a manual review by the alert disposition team?",
+    "query_class": "policy",
+    "gold_literal": "forty-two thousand five hundred dollars",
+    "relevant_ids": [
+      "policy-002",
+      "policy-004",
+      "policy-008"
+    ],
+    "gold_doc_ids": [
+      "policy-002"
+    ],
+    "index": "cortex-policies",
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "relevant_unit_count": 15
+  },
+  {
+    "query_id": "dev-3-c-pol-04",
+    "query_text": "How long does Cortex Bank and Trust allow for completing beneficial ownership verification after an account is opened?",
+    "query_class": "policy",
+    "gold_literal": "fourteen business days",
+    "relevant_ids": [
+      "policy-002",
+      "policy-004",
+      "policy-008"
+    ],
+    "gold_doc_ids": [
+      "policy-004"
+    ],
+    "index": "cortex-policies",
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "relevant_unit_count": 15
+  },
+  {
+    "query_id": "dev-3-c-pol-05",
+    "query_text": "For retail accounts, what cumulative value of seven or more incoming electronic transfers in a rolling forty-eight-hour period raises an automated velocity alert?",
+    "query_class": "policy",
+    "gold_literal": "twelve thousand five hundred dollars",
+    "relevant_ids": [
+      "policy-001",
+      "policy-005",
+      "policy-009"
+    ],
+    "gold_doc_ids": [
+      "policy-005"
+    ],
+    "index": "cortex-policies",
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "relevant_unit_count": 14
+  },
+  {
+    "query_id": "dev-3-c-pol-06",
+    "query_text": "For high-risk jurisdictions, what match probability does the geographic screening threshold require before an automatic bypass is triggered?",
+    "query_class": "policy",
+    "gold_literal": "eighty-five percent",
+    "relevant_ids": [
+      "policy-006",
+      "policy-009",
+      "policy-015"
+    ],
+    "gold_doc_ids": [
+      "policy-006"
+    ],
+    "index": "cortex-policies",
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "relevant_unit_count": 15
+  },
+  {
+    "query_id": "dev-3-c-pol-07",
+    "query_text": "What size of randomized sample of no-file recommendations does the escalation committee at Cortex Bank and Trust review?",
+    "query_class": "policy",
+    "gold_literal": "ten percent",
+    "relevant_ids": [
+      "policy-007",
+      "policy-011",
+      "policy-013"
+    ],
+    "gold_doc_ids": [
+      "policy-007"
+    ],
+    "index": "cortex-policies",
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "relevant_unit_count": 15
+  },
+  {
+    "query_id": "dev-3-c-pol-08",
+    "query_text": "What aggregate of multiple cash deposits inside a rolling three-day period triggers a structuring alert in ongoing transaction monitoring?",
+    "query_class": "policy",
+    "gold_literal": "eight thousand five hundred dollars",
+    "relevant_ids": [
+      "policy-005",
+      "policy-006",
+      "policy-009"
+    ],
+    "gold_doc_ids": [
+      "policy-009"
+    ],
+    "index": "cortex-policies",
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "relevant_unit_count": 14
+  },
+  {
+    "query_id": "dev-3-c-pol-09",
+    "query_text": "How long does the business line have to offboard a vendor and transition services once a vendor relationship is terminated?",
+    "query_class": "policy",
+    "gold_literal": "forty-five days",
+    "relevant_ids": [
+      "policy-010",
+      "policy-012",
+      "policy-018"
+    ],
+    "gold_doc_ids": [
+      "policy-010"
+    ],
+    "index": "cortex-policies",
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "relevant_unit_count": 15
+  },
+  {
+    "query_id": "dev-3-c-pol-10",
+    "query_text": "What retention period applies to accounts designated high-risk under the internal risk scoring matrix?",
+    "query_class": "policy",
+    "gold_literal": "twelve years",
+    "relevant_ids": [
+      "policy-010",
+      "policy-012",
+      "policy-013"
+    ],
+    "gold_doc_ids": [
+      "policy-012"
+    ],
+    "index": "cortex-policies",
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "relevant_unit_count": 15
+  },
+  {
+    "query_id": "dev-3-c-case-01",
+    "query_text": "Across the structuring files, what aggregate cash volume did Obsidian Fabrication Trading Co. deposit during the review period?",
+    "query_class": "case",
+    "gold_literal": "$2,949,228.69",
+    "relevant_ids": [
+      "case-structuring-001",
+      "case-structuring-002",
+      "case-structuring-003",
+      "case-structuring-004",
+      "case-structuring-005",
+      "case-structuring-006",
+      "case-structuring-007",
+      "case-structuring-008",
+      "case-structuring-009",
+      "case-structuring-010",
+      "case-structuring-011",
+      "case-structuring-012",
+      "case-structuring-013",
+      "case-structuring-014",
+      "case-structuring-015",
+      "case-structuring-016",
+      "case-structuring-017",
+      "case-structuring-018",
+      "case-structuring-019",
+      "case-structuring-020",
+      "case-structuring-021",
+      "case-structuring-022",
+      "case-structuring-023",
+      "case-structuring-024"
+    ],
+    "gold_doc_ids": [
+      "case-structuring-021"
+    ],
+    "index": "cortex-cases",
+    "intent": {
+      "case_type": "structuring",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "intent_label": "case_type",
+    "relevant_unit_count": 24
+  },
+  {
+    "query_id": "dev-3-c-case-02",
+    "query_text": "Across the wire fraud files, what residual loss was determined for Westmarch Imports Holdings Ltd.?",
+    "query_class": "case",
+    "gold_literal": "$3,164,893.60",
+    "relevant_ids": [
+      "case-wire-fraud-001",
+      "case-wire-fraud-002",
+      "case-wire-fraud-003",
+      "case-wire-fraud-004",
+      "case-wire-fraud-005",
+      "case-wire-fraud-006",
+      "case-wire-fraud-007",
+      "case-wire-fraud-008",
+      "case-wire-fraud-009",
+      "case-wire-fraud-010",
+      "case-wire-fraud-011",
+      "case-wire-fraud-012",
+      "case-wire-fraud-013",
+      "case-wire-fraud-014",
+      "case-wire-fraud-015",
+      "case-wire-fraud-016",
+      "case-wire-fraud-017",
+      "case-wire-fraud-018",
+      "case-wire-fraud-019",
+      "case-wire-fraud-020",
+      "case-wire-fraud-021",
+      "case-wire-fraud-022",
+      "case-wire-fraud-023",
+      "case-wire-fraud-024"
+    ],
+    "gold_doc_ids": [
+      "case-wire-fraud-002"
+    ],
+    "index": "cortex-cases",
+    "intent": {
+      "case_type": "wire_fraud",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "intent_label": "case_type",
+    "relevant_unit_count": 24
+  },
+  {
+    "query_id": "dev-3-c-case-03",
+    "query_text": "Across the sanctions files, what declared shipment value appeared in the trade documents for Driftwood Textiles Enterprises LLC?",
+    "query_class": "case",
+    "gold_literal": "$554,887.61",
+    "relevant_ids": [
+      "case-sanctions-001",
+      "case-sanctions-002",
+      "case-sanctions-003",
+      "case-sanctions-004",
+      "case-sanctions-005",
+      "case-sanctions-006",
+      "case-sanctions-007",
+      "case-sanctions-008",
+      "case-sanctions-009",
+      "case-sanctions-010",
+      "case-sanctions-011",
+      "case-sanctions-012",
+      "case-sanctions-013",
+      "case-sanctions-014",
+      "case-sanctions-015",
+      "case-sanctions-016",
+      "case-sanctions-017",
+      "case-sanctions-018",
+      "case-sanctions-019",
+      "case-sanctions-020",
+      "case-sanctions-021",
+      "case-sanctions-022",
+      "case-sanctions-023",
+      "case-sanctions-024"
+    ],
+    "gold_doc_ids": [
+      "case-sanctions-013"
+    ],
+    "index": "cortex-cases",
+    "intent": {
+      "case_type": "sanctions",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "intent_label": "case_type",
+    "relevant_unit_count": 24
+  },
+  {
+    "query_id": "dev-3-c-case-04",
+    "query_text": "Across the customer due diligence gap files, what was the largest single transaction with no source-of-funds evidence for Emberline Textiles Trading Co.?",
+    "query_class": "case",
+    "gold_literal": "$440,408.85",
+    "relevant_ids": [
+      "case-kyc-gap-001",
+      "case-kyc-gap-002",
+      "case-kyc-gap-003",
+      "case-kyc-gap-004",
+      "case-kyc-gap-005",
+      "case-kyc-gap-006",
+      "case-kyc-gap-007",
+      "case-kyc-gap-008",
+      "case-kyc-gap-009",
+      "case-kyc-gap-010",
+      "case-kyc-gap-011",
+      "case-kyc-gap-012",
+      "case-kyc-gap-013",
+      "case-kyc-gap-014",
+      "case-kyc-gap-015",
+      "case-kyc-gap-016",
+      "case-kyc-gap-017",
+      "case-kyc-gap-018",
+      "case-kyc-gap-019",
+      "case-kyc-gap-020",
+      "case-kyc-gap-021",
+      "case-kyc-gap-022",
+      "case-kyc-gap-023",
+      "case-kyc-gap-024"
+    ],
+    "gold_doc_ids": [
+      "case-kyc-gap-007"
+    ],
+    "index": "cortex-cases",
+    "intent": {
+      "case_type": "kyc_gap",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "intent_label": "case_type",
+    "relevant_unit_count": 24
+  },
+  {
+    "query_id": "dev-3-c-case-05",
+    "query_text": "Across the elder exploitation files, what balance remained in the account of Valentina Vandermeer after the withdrawals?",
+    "query_class": "case",
+    "gold_literal": "$178,576.45",
+    "relevant_ids": [
+      "case-elder-exploitation-001",
+      "case-elder-exploitation-002",
+      "case-elder-exploitation-003",
+      "case-elder-exploitation-004",
+      "case-elder-exploitation-005",
+      "case-elder-exploitation-006",
+      "case-elder-exploitation-007",
+      "case-elder-exploitation-008",
+      "case-elder-exploitation-009",
+      "case-elder-exploitation-010",
+      "case-elder-exploitation-011",
+      "case-elder-exploitation-012",
+      "case-elder-exploitation-013",
+      "case-elder-exploitation-014",
+      "case-elder-exploitation-015",
+      "case-elder-exploitation-016",
+      "case-elder-exploitation-017",
+      "case-elder-exploitation-018",
+      "case-elder-exploitation-019",
+      "case-elder-exploitation-020",
+      "case-elder-exploitation-021",
+      "case-elder-exploitation-022",
+      "case-elder-exploitation-023",
+      "case-elder-exploitation-024"
+    ],
+    "gold_doc_ids": [
+      "case-elder-exploitation-013"
+    ],
+    "index": "cortex-cases",
+    "intent": {
+      "case_type": "elder_exploitation",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "intent_label": "case_type",
+    "relevant_unit_count": 24
+  },
+  {
+    "query_id": "dev-3-c-case-06",
+    "query_text": "Among the high risk tier files, how much of the transferred funds was frozen by the receiving bank in the Xiomara Kaminski matter?",
+    "query_class": "case",
+    "gold_literal": "$50,155.19",
+    "relevant_ids": [
+      "case-elder-exploitation-017",
+      "case-elder-exploitation-018",
+      "case-elder-exploitation-019",
+      "case-elder-exploitation-020",
+      "case-elder-exploitation-021",
+      "case-elder-exploitation-022",
+      "case-elder-exploitation-023",
+      "case-elder-exploitation-024",
+      "case-kyc-gap-017",
+      "case-kyc-gap-018",
+      "case-kyc-gap-019",
+      "case-kyc-gap-020",
+      "case-kyc-gap-021",
+      "case-kyc-gap-022",
+      "case-kyc-gap-023",
+      "case-kyc-gap-024",
+      "case-sanctions-017",
+      "case-sanctions-018",
+      "case-sanctions-019",
+      "case-sanctions-020",
+      "case-sanctions-021",
+      "case-sanctions-022",
+      "case-sanctions-023",
+      "case-sanctions-024",
+      "case-structuring-017",
+      "case-structuring-018",
+      "case-structuring-019",
+      "case-structuring-020",
+      "case-structuring-021",
+      "case-structuring-022",
+      "case-structuring-023",
+      "case-structuring-024",
+      "case-wire-fraud-017",
+      "case-wire-fraud-018",
+      "case-wire-fraud-019",
+      "case-wire-fraud-020",
+      "case-wire-fraud-021",
+      "case-wire-fraud-022",
+      "case-wire-fraud-023",
+      "case-wire-fraud-024"
+    ],
+    "gold_doc_ids": [
+      "case-wire-fraud-021"
+    ],
+    "index": "cortex-cases",
+    "intent": {
+      "case_type": null,
+      "risk_tier": "high",
+      "date_from": null,
+      "date_to": null
+    },
+    "intent_label": "risk_tier",
+    "relevant_unit_count": 40
+  },
+  {
+    "query_id": "dev-3-c-case-07",
+    "query_text": "Among the medium risk tier files, what balance was held when the file deficiency was identified for Zephyrine Underhill?",
+    "query_class": "case",
+    "gold_literal": "$143,615.16",
+    "relevant_ids": [
+      "case-elder-exploitation-009",
+      "case-elder-exploitation-010",
+      "case-elder-exploitation-011",
+      "case-elder-exploitation-012",
+      "case-elder-exploitation-013",
+      "case-elder-exploitation-014",
+      "case-elder-exploitation-015",
+      "case-elder-exploitation-016",
+      "case-kyc-gap-009",
+      "case-kyc-gap-010",
+      "case-kyc-gap-011",
+      "case-kyc-gap-012",
+      "case-kyc-gap-013",
+      "case-kyc-gap-014",
+      "case-kyc-gap-015",
+      "case-kyc-gap-016",
+      "case-sanctions-009",
+      "case-sanctions-010",
+      "case-sanctions-011",
+      "case-sanctions-012",
+      "case-sanctions-013",
+      "case-sanctions-014",
+      "case-sanctions-015",
+      "case-sanctions-016",
+      "case-structuring-009",
+      "case-structuring-010",
+      "case-structuring-011",
+      "case-structuring-012",
+      "case-structuring-013",
+      "case-structuring-014",
+      "case-structuring-015",
+      "case-structuring-016",
+      "case-wire-fraud-009",
+      "case-wire-fraud-010",
+      "case-wire-fraud-011",
+      "case-wire-fraud-012",
+      "case-wire-fraud-013",
+      "case-wire-fraud-014",
+      "case-wire-fraud-015",
+      "case-wire-fraud-016"
+    ],
+    "gold_doc_ids": [
+      "case-kyc-gap-010"
+    ],
+    "index": "cortex-cases",
+    "intent": {
+      "case_type": null,
+      "risk_tier": "medium",
+      "date_from": null,
+      "date_to": null
+    },
+    "intent_label": "risk_tier",
+    "relevant_unit_count": 40
+  },
+  {
+    "query_id": "dev-3-c-case-08",
+    "query_text": "Among the low risk tier files, what balance does Cyrus Pemberton retain following the withdrawals?",
+    "query_class": "case",
+    "gold_literal": "$116,091.00",
+    "relevant_ids": [
+      "case-elder-exploitation-001",
+      "case-elder-exploitation-002",
+      "case-elder-exploitation-003",
+      "case-elder-exploitation-004",
+      "case-elder-exploitation-005",
+      "case-elder-exploitation-006",
+      "case-elder-exploitation-007",
+      "case-elder-exploitation-008",
+      "case-kyc-gap-001",
+      "case-kyc-gap-002",
+      "case-kyc-gap-003",
+      "case-kyc-gap-004",
+      "case-kyc-gap-005",
+      "case-kyc-gap-006",
+      "case-kyc-gap-007",
+      "case-kyc-gap-008",
+      "case-sanctions-001",
+      "case-sanctions-002",
+      "case-sanctions-003",
+      "case-sanctions-004",
+      "case-sanctions-005",
+      "case-sanctions-006",
+      "case-sanctions-007",
+      "case-sanctions-008",
+      "case-structuring-001",
+      "case-structuring-002",
+      "case-structuring-003",
+      "case-structuring-004",
+      "case-structuring-005",
+      "case-structuring-006",
+      "case-structuring-007",
+      "case-structuring-008",
+      "case-wire-fraud-001",
+      "case-wire-fraud-002",
+      "case-wire-fraud-003",
+      "case-wire-fraud-004",
+      "case-wire-fraud-005",
+      "case-wire-fraud-006",
+      "case-wire-fraud-007",
+      "case-wire-fraud-008"
+    ],
+    "gold_doc_ids": [
+      "case-elder-exploitation-002"
+    ],
+    "index": "cortex-cases",
+    "intent": {
+      "case_type": null,
+      "risk_tier": "low",
+      "date_from": null,
+      "date_to": null
+    },
+    "intent_label": "risk_tier",
+    "relevant_unit_count": 40
+  },
+  {
+    "query_id": "dev-3-c-case-09",
+    "query_text": "Among the files filed in the second quarter of 2025, what aggregate value of screened transactions was under review for Pinnacle Ridge Consulting Holdings Ltd?",
+    "query_class": "case",
+    "gold_literal": "$2,330,278.42",
+    "relevant_ids": [
+      "case-elder-exploitation-002",
+      "case-elder-exploitation-005",
+      "case-elder-exploitation-013",
+      "case-elder-exploitation-018",
+      "case-elder-exploitation-021",
+      "case-elder-exploitation-022",
+      "case-elder-exploitation-023",
+      "case-kyc-gap-001",
+      "case-kyc-gap-004",
+      "case-kyc-gap-010",
+      "case-kyc-gap-013",
+      "case-kyc-gap-019",
+      "case-kyc-gap-021",
+      "case-sanctions-001",
+      "case-sanctions-004",
+      "case-sanctions-005",
+      "case-sanctions-010",
+      "case-sanctions-014",
+      "case-sanctions-022",
+      "case-structuring-001",
+      "case-structuring-007",
+      "case-structuring-008",
+      "case-structuring-017",
+      "case-structuring-019",
+      "case-structuring-021",
+      "case-structuring-022",
+      "case-structuring-024",
+      "case-wire-fraud-004",
+      "case-wire-fraud-009",
+      "case-wire-fraud-010",
+      "case-wire-fraud-011",
+      "case-wire-fraud-012",
+      "case-wire-fraud-017",
+      "case-wire-fraud-022",
+      "case-wire-fraud-023"
+    ],
+    "gold_doc_ids": [
+      "case-sanctions-005"
+    ],
+    "index": "cortex-cases",
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": "2025-04-01",
+      "date_to": "2025-06-30"
+    },
+    "intent_label": "date_range",
+    "relevant_unit_count": 35
+  },
+  {
+    "query_id": "dev-3-c-case-10",
+    "query_text": "Among the files filed during 2023, what was the largest outbound transfer initiated by Imani Sinclair?",
+    "query_class": "case",
+    "gold_literal": "$142,400.94",
+    "relevant_ids": [
+      "case-elder-exploitation-001",
+      "case-elder-exploitation-003",
+      "case-elder-exploitation-004",
+      "case-elder-exploitation-007",
+      "case-elder-exploitation-008",
+      "case-elder-exploitation-010",
+      "case-elder-exploitation-011",
+      "case-elder-exploitation-012",
+      "case-elder-exploitation-014",
+      "case-elder-exploitation-015",
+      "case-elder-exploitation-016",
+      "case-elder-exploitation-020",
+      "case-elder-exploitation-024",
+      "case-kyc-gap-002",
+      "case-kyc-gap-007",
+      "case-kyc-gap-009",
+      "case-kyc-gap-015",
+      "case-kyc-gap-016",
+      "case-kyc-gap-018",
+      "case-sanctions-002",
+      "case-sanctions-006",
+      "case-sanctions-007",
+      "case-sanctions-011",
+      "case-sanctions-013",
+      "case-sanctions-016",
+      "case-sanctions-018",
+      "case-sanctions-019",
+      "case-sanctions-023",
+      "case-structuring-002",
+      "case-structuring-003",
+      "case-structuring-005",
+      "case-structuring-013",
+      "case-structuring-014",
+      "case-structuring-015",
+      "case-structuring-016",
+      "case-structuring-018",
+      "case-structuring-023",
+      "case-wire-fraud-001",
+      "case-wire-fraud-002",
+      "case-wire-fraud-006",
+      "case-wire-fraud-014",
+      "case-wire-fraud-015",
+      "case-wire-fraud-016"
+    ],
+    "gold_doc_ids": [
+      "case-structuring-003"
+    ],
+    "index": "cortex-cases",
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": "2023-01-01",
+      "date_to": "2023-12-31"
+    },
+    "intent_label": "date_range",
+    "relevant_unit_count": 43
+  },
+  {
+    "query_id": "dev-3-c-sar-01",
+    "query_text": "Who controlled the external wallet that the interdicted funds from Greystone Ventures Enterprises LLC were intended for?",
+    "query_class": "sar",
+    "gold_literal": "Camila Dalrymple",
+    "relevant_ids": [
+      "sar-002",
+      "sar-007",
+      "sar-012",
+      "sar-017",
+      "sar-022",
+      "sar-027",
+      "sar-032",
+      "sar-037"
+    ],
+    "gold_doc_ids": [
+      "sar-007-section-4"
+    ],
+    "index": "cortex-sar-passages",
+    "intent": {
+      "case_type": "wire_fraud",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "narrative_id": "sar-007",
+    "bucket": "bucket_1k",
+    "relevant_unit_count": 108
+  },
+  {
+    "query_id": "dev-3-c-sar-02",
+    "query_text": "Who was identified as the beneficiary of the receiving account in the Delia Vasquez case?",
+    "query_class": "sar",
+    "gold_literal": "Fenwick Eriksson",
+    "relevant_ids": [
+      "sar-003",
+      "sar-008",
+      "sar-013",
+      "sar-018",
+      "sar-023",
+      "sar-028",
+      "sar-033",
+      "sar-038"
+    ],
+    "gold_doc_ids": [
+      "sar-008-section-4"
+    ],
+    "index": "cortex-sar-passages",
+    "intent": {
+      "case_type": "sanctions",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "narrative_id": "sar-008",
+    "bucket": "bucket_1k",
+    "relevant_unit_count": 118
+  },
+  {
+    "query_id": "dev-3-c-sar-03",
+    "query_text": "Which entity held the external account that received the significant transfer of funds from Cedarline Exports LLC?",
+    "query_class": "sar",
+    "gold_literal": "Cardinal Commodities Group LLC",
+    "relevant_ids": [
+      "sar-005",
+      "sar-010",
+      "sar-015",
+      "sar-020",
+      "sar-025",
+      "sar-030",
+      "sar-035",
+      "sar-040"
+    ],
+    "gold_doc_ids": [
+      "sar-015-section-4"
+    ],
+    "index": "cortex-sar-passages",
+    "intent": {
+      "case_type": "elder_exploitation",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "narrative_id": "sar-015",
+    "bucket": "bucket_3k",
+    "relevant_unit_count": 127
+  },
+  {
+    "query_id": "dev-3-c-sar-04",
+    "query_text": "Who held the external account that received the transferred funds from Quentin Underhill?",
+    "query_class": "sar",
+    "gold_literal": "Alina Balogun",
+    "relevant_ids": [
+      "sar-001",
+      "sar-006",
+      "sar-011",
+      "sar-016",
+      "sar-021",
+      "sar-026",
+      "sar-031",
+      "sar-036"
+    ],
+    "gold_doc_ids": [
+      "sar-016-section-4"
+    ],
+    "index": "cortex-sar-passages",
+    "intent": {
+      "case_type": "structuring",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "narrative_id": "sar-016",
+    "bucket": "bucket_3k",
+    "relevant_unit_count": 103
+  },
+  {
+    "query_id": "dev-3-c-sar-05",
+    "query_text": "Who was identified as the originator of the inbound transfer to Alina Eriksson's account?",
+    "query_class": "sar",
+    "gold_literal": "Emberline Imports Partners LP",
+    "relevant_ids": [
+      "sar-002",
+      "sar-007",
+      "sar-012",
+      "sar-017",
+      "sar-022",
+      "sar-027",
+      "sar-032",
+      "sar-037"
+    ],
+    "gold_doc_ids": [
+      "sar-022-section-7"
+    ],
+    "index": "cortex-sar-passages",
+    "intent": {
+      "case_type": "wire_fraud",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "narrative_id": "sar-022",
+    "bucket": "bucket_8k",
+    "relevant_unit_count": 108
+  },
+  {
+    "query_id": "dev-3-c-sar-06",
+    "query_text": "To which entity was the significant transfer from Glenhaven Marine Services LLC directed?",
+    "query_class": "sar",
+    "gold_literal": "Kestrel Textiles LLC",
+    "relevant_ids": [
+      "sar-005",
+      "sar-010",
+      "sar-015",
+      "sar-020",
+      "sar-025",
+      "sar-030",
+      "sar-035",
+      "sar-040"
+    ],
+    "gold_doc_ids": [
+      "sar-030-section-14"
+    ],
+    "index": "cortex-sar-passages",
+    "intent": {
+      "case_type": "elder_exploitation",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "narrative_id": "sar-030",
+    "bucket": "bucket_20k",
+    "relevant_unit_count": 127
+  },
+  {
+    "query_id": "dev-3-c-sar-07",
+    "query_text": "To which entity were the funds from the Hearthstone Marine Services Inc. account transferred?",
+    "query_class": "sar",
+    "gold_literal": "Falcon Crest Marine Services Trading Co.",
+    "relevant_ids": [
+      "sar-002",
+      "sar-007",
+      "sar-012",
+      "sar-017",
+      "sar-022",
+      "sar-027",
+      "sar-032",
+      "sar-037"
+    ],
+    "gold_doc_ids": [
+      "sar-032-section-14"
+    ],
+    "index": "cortex-sar-passages",
+    "intent": {
+      "case_type": "wire_fraud",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "narrative_id": "sar-032",
+    "bucket": "bucket_20k",
+    "relevant_unit_count": 108
+  },
+  {
+    "query_id": "dev-3-c-sar-08",
+    "query_text": "Which entity originated the large, undocumented wire transfer to Summit Gate Fabrication Inc.?",
+    "query_class": "sar",
+    "gold_literal": "Clearspan Management Group LLC",
+    "relevant_ids": [
+      "sar-004",
+      "sar-009",
+      "sar-014",
+      "sar-019",
+      "sar-024",
+      "sar-029",
+      "sar-034",
+      "sar-039"
+    ],
+    "gold_doc_ids": [
+      "sar-039-section-21"
+    ],
+    "index": "cortex-sar-passages",
+    "intent": {
+      "case_type": "kyc_gap",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "narrative_id": "sar-039",
+    "bucket": "bucket_40k",
+    "relevant_unit_count": 117
+  },
+  {
+    "query_id": "dev-3-c-sar-09",
+    "query_text": "What entity held the external account that the unidentified male attempted to fund from Kirsten Larkspur's account?",
+    "query_class": "sar",
+    "gold_literal": "Ironwood Marine Services Group LLC",
+    "relevant_ids": [
+      "sar-005",
+      "sar-010",
+      "sar-015",
+      "sar-020",
+      "sar-025",
+      "sar-030",
+      "sar-035",
+      "sar-040"
+    ],
+    "gold_doc_ids": [
+      "sar-040-section-21"
+    ],
+    "index": "cortex-sar-passages",
+    "intent": {
+      "case_type": "elder_exploitation",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "narrative_id": "sar-040",
+    "bucket": "bucket_40k",
+    "relevant_unit_count": 127
+  },
+  {
+    "query_id": "dev-3-c-sar-10",
+    "query_text": "On what date did the analyst establish the status of the funds induced from Greystone Ventures Enterprises LLC?",
+    "query_class": "sar",
+    "gold_literal": "April 3, 2024",
+    "relevant_ids": [
+      "sar-002",
+      "sar-007",
+      "sar-012",
+      "sar-017",
+      "sar-022",
+      "sar-027",
+      "sar-032",
+      "sar-037"
+    ],
+    "gold_doc_ids": [
+      "sar-007-section-4"
+    ],
+    "index": "cortex-sar-passages",
+    "intent": {
+      "case_type": "wire_fraud",
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "narrative_id": "sar-007",
+    "bucket": "bucket_1k",
+    "relevant_unit_count": 108
+  },
+  {
+    "query_id": "dev-3-c-una-01",
+    "query_text": "What aggregate cash volume did Bramblewick Freight Holdings Ltd. deposit during its review period?",
+    "query_class": "unanswerable",
+    "gold_literal": null,
+    "relevant_ids": [],
+    "gold_doc_ids": [],
+    "index": null,
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "unanswerable_kind": "absent_entity"
+  },
+  {
+    "query_id": "dev-3-c-una-02",
+    "query_text": "What residual loss was recorded in the Marrowgate Shipping Partners LP wire fraud matter?",
+    "query_class": "unanswerable",
+    "gold_literal": null,
+    "relevant_ids": [],
+    "gold_doc_ids": [],
+    "index": null,
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "unanswerable_kind": "absent_entity"
+  },
+  {
+    "query_id": "dev-3-c-una-03",
+    "query_text": "Which case file records an aggregate screened transaction value of $7,412,996.77?",
+    "query_class": "unanswerable",
+    "gold_literal": null,
+    "relevant_ids": [],
+    "gold_doc_ids": [],
+    "index": null,
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "unanswerable_kind": "absent_amount"
+  },
+  {
+    "query_id": "dev-3-c-una-04",
+    "query_text": "Which case file records a remaining account balance of $9,003,551.28?",
+    "query_class": "unanswerable",
+    "gold_literal": null,
+    "relevant_ids": [],
+    "gold_doc_ids": [],
+    "index": null,
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "unanswerable_kind": "absent_amount"
+  },
+  {
+    "query_id": "dev-3-c-una-05",
+    "query_text": "How many days does Cortex Bank and Trust allow for filing a currency transaction report on a cash-equivalent instrument purchase?",
+    "query_class": "unanswerable",
+    "gold_literal": null,
+    "relevant_ids": [],
+    "gold_doc_ids": [],
+    "index": null,
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "unanswerable_kind": "absent_rule"
+  },
+  {
+    "query_id": "dev-3-c-una-06",
+    "query_text": "What penalty did the regulator impose on Cortex Bank and Trust at its most recent examination?",
+    "query_class": "unanswerable",
+    "gold_literal": null,
+    "relevant_ids": [],
+    "gold_doc_ids": [],
+    "index": null,
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "unanswerable_kind": "absent_rule"
+  },
+  {
+    "query_id": "dev-3-c-una-07",
+    "query_text": "What is the current thirty-year fixed mortgage rate, and should the customer refinance this month?",
+    "query_class": "unanswerable",
+    "gold_literal": null,
+    "relevant_ids": [],
+    "gold_doc_ids": [],
+    "index": null,
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "unanswerable_kind": "out_of_domain"
+  },
+  {
+    "query_id": "dev-3-c-una-08",
+    "query_text": "What was the closing share price of the bank at the end of the last quarter?",
+    "query_class": "unanswerable",
+    "gold_literal": null,
+    "relevant_ids": [],
+    "gold_doc_ids": [],
+    "index": null,
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "unanswerable_kind": "out_of_domain"
+  },
+  {
+    "query_id": "dev-3-c-una-09",
+    "query_text": "How much notice must an employee give before resigning from the compliance unit?",
+    "query_class": "unanswerable",
+    "gold_literal": null,
+    "relevant_ids": [],
+    "gold_doc_ids": [],
+    "index": null,
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "unanswerable_kind": "out_of_domain"
+  },
+  {
+    "query_id": "dev-3-c-una-10",
+    "query_text": "Which supplier provides the automated teller machine hardware used across the branch network?",
+    "query_class": "unanswerable",
+    "gold_literal": null,
+    "relevant_ids": [],
+    "gold_doc_ids": [],
+    "index": null,
+    "intent": {
+      "case_type": null,
+      "risk_tier": null,
+      "date_from": null,
+      "date_to": null
+    },
+    "unanswerable_kind": "out_of_domain"
+  }
+]
