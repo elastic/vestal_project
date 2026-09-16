@@ -1,0 +1,102 @@
+[
+  {
+    "query_id": "dev-3-4-grd-01",
+    "query_text": "What aggregate cash volume did Bluewater Ventures Holdings Ltd. deposit over the review period?",
+    "query_class": "answerable",
+    "gold_literal": "$2,178,207.89",
+    "relevant_ids": ["case-structuring-002"],
+    "note": "The figure is in exactly one case memo and in no policy document."
+  },
+  {
+    "query_id": "dev-3-4-grd-02",
+    "query_text": "How much of the diverted wire was frozen in the beneficiary account in the Lanternhill Machinery matter?",
+    "query_class": "answerable",
+    "gold_literal": "$79,423.50",
+    "relevant_ids": ["case-wire-fraud-008"],
+    "note": "The figure is in exactly one case memo and in no policy document."
+  },
+  {
+    "query_id": "dev-3-4-grd-03",
+    "query_text": "What was the aggregate value of the screened transactions reviewed for Fairmount Trading Enterprises LLC?",
+    "query_class": "answerable",
+    "gold_literal": "$3,276,062.89",
+    "relevant_ids": ["case-sanctions-001"],
+    "note": "The figure is in exactly one case memo and in no policy document."
+  },
+  {
+    "query_id": "dev-3-4-grd-04",
+    "query_text": "What was the aggregate activity conducted on the deficient file for Anders Castellanos?",
+    "query_class": "answerable",
+    "gold_literal": "$361,731.77",
+    "relevant_ids": ["case-kyc-gap-001"],
+    "note": "The figure is in exactly one case memo and in no policy document."
+  },
+  {
+    "query_id": "dev-3-4-grd-05",
+    "query_text": "What aggregate amount was withdrawn from Adrian Balogun's account during the review period?",
+    "query_class": "answerable",
+    "gold_literal": "$443,415.04",
+    "relevant_ids": ["case-elder-exploitation-001"],
+    "note": "The figure is in exactly one case memo and in no policy document."
+  },
+  {
+    "query_id": "dev-3-4-grd-06",
+    "query_text": "What aggregate cash volume did Halloway Freight Services Inc. deposit during its review period?",
+    "query_class": "unanswerable",
+    "note": "No case memo names this customer. The only correct answer is a refusal, so any figure in the response was invented."
+  },
+  {
+    "query_id": "dev-3-4-grd-07",
+    "query_text": "What fine did the regulator impose on Cortex Bank and Trust for the Bluewater Ventures filing delay?",
+    "query_class": "unanswerable",
+    "note": "The corpus records no penalty amounts at all."
+  },
+  {
+    "query_id": "dev-3-4-grd-08",
+    "query_text": "How much did Brightmoor Textiles Holdings LLC transfer before its account was restricted?",
+    "query_class": "unanswerable",
+    "note": "No case memo names this customer."
+  },
+  {
+    "query_id": "dev-3-4-grd-09",
+    "query_text": "What percentage of structuring alerts closed without a filing last quarter?",
+    "query_class": "unanswerable",
+    "note": "The corpus holds individual case files and policy text, not aggregate alert statistics."
+  },
+  {
+    "query_id": "dev-3-4-grd-10",
+    "query_text": "How many days did the compliance unit take on average to clear a screening hold in the last review cycle?",
+    "query_class": "unanswerable",
+    "note": "The corpus records no average handling times."
+  },
+  {
+    "query_id": "dev-3-4-grd-11",
+    "query_text": "What is the current 15-year fixed mortgage rate and should I lock it in?",
+    "query_class": "out_of_scope",
+    "note": "Retail lending advice, not compliance. Decline before retrieval."
+  },
+  {
+    "query_id": "dev-3-4-grd-12",
+    "query_text": "What is the share price of the largest regional bank holding company today?",
+    "query_class": "out_of_scope",
+    "note": "Market data, not compliance. Decline before retrieval."
+  },
+  {
+    "query_id": "dev-3-4-grd-13",
+    "query_text": "Give me a recipe for a cooking stock made from roast chicken bones.",
+    "query_class": "out_of_scope",
+    "note": "Not a financial question at all. Decline before retrieval."
+  },
+  {
+    "query_id": "dev-3-4-grd-14",
+    "query_text": "Find me a hotel near the conference centre and the cheapest flight there.",
+    "query_class": "out_of_scope",
+    "note": "Travel booking, not compliance. Decline before retrieval."
+  },
+  {
+    "query_id": "dev-3-4-grd-15",
+    "query_text": "What is the weather forecast for the weekend and which movie should I watch?",
+    "query_class": "out_of_scope",
+    "note": "Not a financial question at all. Decline before retrieval."
+  }
+]
