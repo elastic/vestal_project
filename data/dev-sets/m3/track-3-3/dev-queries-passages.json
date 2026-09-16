@@ -1,0 +1,92 @@
+[
+  {
+    "query_id": "dev-3-3-pass-01",
+    "query_text": "What was the aggregate sum established as trust liquidation proceeds related to the unusual activity in the account of Aperture Equipment Group LLC?",
+    "set": "B",
+    "index": "cortex-sar-passages",
+    "relevant_ids": [
+      "sar-035-section-21"
+    ],
+    "gold_doc_ids": [
+      "sar-035-section-21"
+    ],
+    "gold_literal": "$1,366,783.98",
+    "narrative_id": "sar-035",
+    "bucket": "bucket_40k"
+  },
+  {
+    "query_id": "dev-3-3-pass-02",
+    "query_text": "What was the total amount of the consolidated transfer that Beatriz Zimmerman directed to an external account?",
+    "set": "B",
+    "index": "cortex-sar-passages",
+    "relevant_ids": [
+      "sar-036-section-21"
+    ],
+    "gold_doc_ids": [
+      "sar-036-section-21"
+    ],
+    "gold_literal": "$465,028.48",
+    "narrative_id": "sar-036",
+    "bucket": "bucket_40k"
+  },
+  {
+    "query_id": "dev-3-3-pass-03",
+    "query_text": "In the case involving Lorcan Hawthorne, what was the specific amount traced to the external entity?",
+    "set": "B",
+    "index": "cortex-sar-passages",
+    "relevant_ids": [
+      "sar-037-section-21"
+    ],
+    "gold_doc_ids": [
+      "sar-037-section-21"
+    ],
+    "gold_literal": "$2,263,757.50",
+    "narrative_id": "sar-037",
+    "bucket": "bucket_40k"
+  },
+  {
+    "query_id": "dev-3-3-pass-04",
+    "query_text": "What was the total amount of the consolidated transfer executed from the Bluewater Freight LLC operating account?",
+    "set": "B",
+    "index": "cortex-sar-passages",
+    "relevant_ids": [
+      "sar-038-section-21"
+    ],
+    "gold_doc_ids": [
+      "sar-038-section-21"
+    ],
+    "gold_literal": "$2,024,287.71",
+    "narrative_id": "sar-038",
+    "bucket": "bucket_40k"
+  },
+  {
+    "query_id": "dev-3-3-pass-05",
+    "query_text": "What was the amount of the undocumented funds transfer credited to the Summit Gate Fabrication Inc. operating account?",
+    "set": "B",
+    "index": "cortex-sar-passages",
+    "relevant_ids": [
+      "sar-039-section-21"
+    ],
+    "gold_doc_ids": [
+      "sar-039-section-21"
+    ],
+    "gold_literal": "$1,673,542.86",
+    "narrative_id": "sar-039",
+    "bucket": "bucket_40k"
+  },
+  {
+    "query_id": "dev-3-3-pass-06",
+    "query_text": "What was the amount of the transfer the unidentified male attempted to direct from Kirsten Larkspur's account?",
+    "set": "B",
+    "index": "cortex-sar-passages",
+    "relevant_ids": [
+      "sar-040-section-21"
+    ],
+    "gold_doc_ids": [
+      "sar-040-section-21"
+    ],
+    "gold_literal": "$205,138.84",
+    "narrative_id": "sar-040",
+    "bucket": "bucket_40k"
+  }
+]
