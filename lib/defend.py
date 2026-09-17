@@ -25,6 +25,7 @@ import math
 import os
 import pathlib
 import sys
+import random
 
 QUESTIONS_FILE = pathlib.Path("/home/elastic/defend/questions.json")
 VARIANT_FILE   = pathlib.Path("/home/elastic/defend/variant.json")
@@ -149,7 +150,20 @@ def load_questions_new(raw: dict, results: dict, env: dict, seed: int) -> list[d
                 context_lines.append(f"  Your {k.replace('_', ' ')}: {val}")
 
         choices = render_choices(q.get("choices", []), results, env, seed)
+        
+        # Apply seeded shuffle if requested
+        if q.get("shuffle") == "seed" and seed is not None:
+            shuffled_choices = list(choices)
+            random.Random(seed).shuffle(shuffled_choices)
+            choices = shuffled_choices
+        
         reasons = q.get("reasons", [])
+        
+        # Apply seeded shuffle to reasons if requested
+        if q.get("shuffle") == "seed" and seed is not None and reasons:
+            shuffled_reasons = list(reasons)
+            random.Random(seed).shuffle(shuffled_reasons)
+            reasons = shuffled_reasons
 
         qs.append({
             "id": q["id"],
