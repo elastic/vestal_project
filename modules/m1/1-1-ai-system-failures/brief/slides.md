@@ -52,7 +52,7 @@ User: What is the CTR threshold?
 Response from embedding endpoint:
 [0.023, -0.451, 0.887, 0.112,
  -0.334, 0.556, 0.091, ...]
-(768 floats - not an answer)
+(1024 floats - not an answer)
   </div>
 </div>
 <div class="col-text">
