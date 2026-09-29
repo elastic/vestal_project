@@ -1,0 +1,11 @@
+{
+  "queries": [
+    {"id": "dcq-01", "text": "What ownership percentage makes someone a beneficial owner of a legal entity customer?", "expected": "miss"},
+    {"id": "dcq-02", "text": "At Cortex Bank, what share of ownership makes a person a beneficial owner of a legal entity customer?", "expected": "hit"},
+    {"id": "dcq-03", "text": "How often are high-risk customers re-reviewed at Cortex Bank?", "expected": "miss"},
+    {"id": "dcq-04", "text": "What is the periodic review frequency for high-risk customer accounts?", "expected": "hit"},
+    {"id": "dcq-05", "text": "What records must Cortex Bank keep for an international wire transfer?", "expected": "near_miss"},
+    {"id": "dcq-06", "text": "What documents does Cortex Bank accept to verify a beneficial owner's identity?", "expected": "near_miss"}
+  ],
+  "note": "miss = first time the question is asked; hit = a paraphrase of an earlier question; near_miss = same compliance domain, different question, must not be answered from the cache."
+}
