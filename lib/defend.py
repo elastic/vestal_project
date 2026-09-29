@@ -86,6 +86,23 @@ def seed_from_variant() -> int:
     return int(hashlib.md5(sid.encode()).hexdigest(), 16) % 3
 
 
+def _lookup(results: dict, key: str):
+    """Return a result value by flat key, or by dotted path into nested result
+    dicts (for example fast.field_accuracy). None when absent."""
+    if key in results:
+        return results[key]
+    cur = results
+    for part in key.split("."):
+        if not isinstance(cur, dict) or part not in cur:
+            return None
+        cur = cur[part]
+    return cur
+
+
+def _metric_label(key: str) -> str:
+    return key.replace(".", " ").replace("_", " ")
+
+
 # ── Formula evaluation ────────────────────────────────────────────────────────
 
 def _eval_formula(formula: str, results: dict, env: dict) -> int | float | str | None:
@@ -160,9 +177,9 @@ def load_questions_new(raw: dict, results: dict, env: dict, seed: int) -> list[d
         context_keys = q.get("context_from_results") or []
         context_lines = []
         for k in context_keys:
-            val = results.get(k)
+            val = _lookup(results, k)
             if val is not None:
-                context_lines.append(f"  Your {k.replace('_', ' ')}: {val}")
+                context_lines.append(f"  Your {_metric_label(k)}: {val}")
 
         choices = render_choices(q.get("choices", []), results, env, seed)
         # 18 S5: choices shuffle by the sandbox seed so the right one has no fixed position;
@@ -188,9 +205,9 @@ def load_questions_old(raw: list, results: dict) -> list[dict]:
     for q in raw:
         context_lines = []
         for metric in q.get("show_metrics", []):
-            val = results.get(metric)
+            val = _lookup(results, metric)
             if val is not None:
-                context_lines.append(f"  Your {metric.replace('_', ' ')}: {val}")
+                context_lines.append(f"  Your {_metric_label(metric)}: {val}")
         choices = [{"key": c["key"], "label": c["label"], "value": c["label"]}
                    for c in q.get("choices", [])]
         qs.append({
@@ -274,7 +291,7 @@ def main() -> None:
     print("Defend: your measurements, your call")
     print("=" * 60)
     print("Answer based on what you measured in this track.")
-    if any(q.get("context_from_results") for q in questions):
+    if any(q["context_lines"] for q in questions):
         print("Your numbers are shown next to each question.")
     print("Another learner's answer may be wrong for you.")
 
