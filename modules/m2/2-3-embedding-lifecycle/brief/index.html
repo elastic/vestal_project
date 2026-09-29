@@ -38,29 +38,32 @@
   <div class="slide">
     <h2>What you will do</h2>
     <ul>
-      <li><strong>Build 1 — Benchmark:</strong> Run held-out queries against both models. Measure nDCG@5 gain and p95 latency.</li>
-      <li><strong>Build 2 — Cut over:</strong> Swap <code>cortex-corpus-live</code> to the candidate index in one atomic <code>_aliases</code> call.</li>
-      <li><strong>Build 3 — Raise recall:</strong> Rewrite the three lowest-scoring queries using query-side rewriting to close remaining recall gaps.</li>
-      <li><strong>Defend:</strong> Justify the deployment decision given the gain, noise band, and latency budget.</li>
+      <li><strong>Build 1 — Benchmark:</strong> Write a labelled benchmark of at least 12 queries covering every document type. The check measures nDCG@5 and p95 latency on both models.</li>
+      <li><strong>Build 2 — Cut over:</strong> Swap <code>cortex-corpus-live</code> to the candidate index in one atomic <code>_aliases</code> call, with no failed or empty search.</li>
+      <li><strong>Build 3 — Raise recall:</strong> Write <code>rewrite()</code> so that at least 8 of 13 queries keyword search misses today find their target.</li>
+      <li><strong>Defend:</strong> Decide whether to keep the cutover or roll it back, given the gain, noise band, and latency budget.</li>
     </ul>
   </div>
   <div class="slide">
     <h2>Deployment decision framework</h2>
     <table>
-      <tr><th>Condition</th><th>Decision</th></tr>
-      <tr><td>Gain &gt; noise band AND p95 within budget</td><td>Deploy</td></tr>
-      <tr><td>Gain ≤ noise band</td><td>Hold — gain is noise</td></tr>
-      <tr><td>p95 exceeds budget</td><td>Hold — too slow</td></tr>
-      <tr><td>Both conditions fail</td><td>Hold — insufficient and slow</td></tr>
+      <tr><th>Gain over current</th><th>Candidate p95</th><th>Decision</th></tr>
+      <tr><td>More than 0.02</td><td>Within budget</td><td>Keep the cutover</td></tr>
+      <tr><td>0.02 or less</td><td>Within budget</td><td>Roll back: no real gain</td></tr>
+      <tr><td>More than 0.02</td><td>Over budget</td><td>Roll back: too slow</td></tr>
+      <tr><td>0.02 or less</td><td>Over budget</td><td>Roll back: both</td></tr>
     </table>
   </div>
   <div class="slide">
     <h2>Key concepts</h2>
     <ul>
       <li><strong>nDCG@5</strong> — ranking quality metric; higher is better</li>
-      <li><strong>Noise band (0.03)</strong> — gains below this are measurement noise</li>
+      <li><strong>Noise band (0.02)</strong> — gains below this are measurement noise</li>
       <li><strong>Atomic alias swap</strong> — <code>remove</code> + <code>add</code> in one request; zero downtime</li>
       <li><strong>Query-side rewriting</strong> — fix recall without touching the index</li>
+      <li><strong>HyDE</strong> — ask a model for the passage that would answer the query, then search with that passage</li>
+      <li><strong><code>cortex-generation</code></strong> — Tina's completion endpoint, pinned in lab 2.1: <code>es.inference.inference(inference_id="cortex-generation", task_type="completion", body={"input": prompt})["completion"][0]["result"]</code></li>
+      <li><strong><code>llm_client()</code></strong> — the same models through an OpenAI-style client: <code>from tina.client import llm_client, model_fast</code>, then <code>llm_client().chat.completions.create(model=model_fast(), messages=[{"role": "user", "content": prompt}]).choices[0].message.content</code></li>
     </ul>
   </div>
   <div class="slide">

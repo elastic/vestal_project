@@ -1,0 +1,50 @@
+[
+  {
+    "query_id": "dev-01",
+    "query_text": "money moved around to hide where it came from",
+    "target_doc_id": "sar-103",
+    "relevant_ids": [
+      "sar-103"
+    ]
+  },
+  {
+    "query_id": "dev-02",
+    "query_text": "when funds flow through several companies before reaching a final destination",
+    "target_doc_id": "sar-103",
+    "relevant_ids": [
+      "sar-103"
+    ]
+  },
+  {
+    "query_id": "dev-03",
+    "query_text": "a trucking company where nobody will say who actually owns it",
+    "target_doc_id": "sar-106",
+    "relevant_ids": [
+      "sar-106"
+    ]
+  },
+  {
+    "query_id": "dev-04",
+    "query_text": "money that moves between countries through a trusted broker without anything crossing the border",
+    "target_doc_id": "sar-116",
+    "relevant_ids": [
+      "sar-116"
+    ]
+  },
+  {
+    "query_id": "dev-05",
+    "query_text": "when to close a customer's account because of laundering worries",
+    "target_doc_id": "policy-018",
+    "relevant_ids": [
+      "policy-018"
+    ]
+  },
+  {
+    "query_id": "dev-06",
+    "query_text": "stopping fake emails from tricking staff into paying",
+    "target_doc_id": "policy-017",
+    "relevant_ids": [
+      "policy-017"
+    ]
+  }
+]
