@@ -35,14 +35,14 @@
       <tr><td>BM25</td><td>Exact keyword match — wins on identifier queries</td></tr>
       <tr><td>Dense semantic</td><td>Meaning over keywords</td></tr>
       <tr><td>Hybrid (RRF)</td><td>Balances both without a reranker</td></tr>
-      <tr><td>Hybrid + rerank</td><td>Best ranking quality; adds latency</td></tr>
+      <tr><td>Hybrid + rerank</td><td>Often the strongest ranking, but adds latency; measure it on your corpus</td></tr>
     </table>
   </div>
   <div class="slide">
     <h2>What you will do</h2>
     <ul>
       <li><strong>Build 1 — Retriever bench:</strong> Implement all 4 strategies. Measure nDCG@5 and BM25 identifier MRR.</li>
-      <li><strong>Build 2 — Tune the vector index:</strong> Calculate a valid <code>m</code> for BBQ quantization within your seeded RAM budget.</li>
+      <li><strong>Build 2 — Tune the vector index:</strong> Calculate the largest <code>m</code> for BBQ quantization that fits your seeded RAM budget.</li>
       <li><strong>Defend:</strong> Justify which retriever ships as Tina's default given your latency budget.</li>
     </ul>
   </div>

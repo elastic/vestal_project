@@ -67,7 +67,7 @@
 
   <div class="slide">
     <h2>Grading criteria</h2>
-    <p><span class="label artifact">ARTIFACT</span> <code>cortex-corpus-live</code> alias resolves; <code>retriever.json</code> is valid; embedding model unchanged</p>
+    <p><span class="label artifact">ARTIFACT</span> <code>cortex-corpus-live</code> alias resolves; <code>retriever.json</code> is valid and runs against it; embedding model unchanged; <code>body_text</code> mapped as text</p>
     <p><span class="label measured">MEASURED</span> p95 ≤ 800 ms; chunk count ≤ 1.5× baseline (nDCG@10 logged as a diagnostic)</p>
     <p><span class="label behavior">BEHAVIOR</span> One chunk in Tina's top 5 holds the whole answer for ≥ 3 of 4 held-out policy questions and ≥ 3 of 4 case questions; no top 5 over 4,000 tokens</p>
     <p><span class="label defend">DEFEND</span> Q1 and Q3 match the diagnosis; Q2 matches your live configuration</p>
