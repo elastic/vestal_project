@@ -27,7 +27,7 @@ Tina: The Currency Transaction Report (CTR)
 <div class="col-right">
   <h2 class="slide-heading">The problem</h2>
   <p class="slide-body">Tina answered confidently. She consulted no source. The threshold is <strong>$10,000</strong> from policy-003. Cortex files reports on the wrong transactions.</p>
-  <p class="slide-body">You will see this yourself in Build 1, stage 1.</p>
+  <p class="slide-body">You will see this yourself in Build 2, stage 1.</p>
 </div>
 
 ---
