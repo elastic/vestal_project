@@ -21,11 +21,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import random
 import math
 import os
 import pathlib
 import sys
-import random
 
 QUESTIONS_FILE = pathlib.Path("/home/elastic/defend/questions.json")
 VARIANT_FILE   = pathlib.Path("/home/elastic/defend/variant.json")
@@ -51,7 +51,8 @@ def load_results() -> dict:
 
 def load_env() -> dict:
     env = {}
-    env_path = pathlib.Path("/home/elastic/env")
+    # the learner runs this as elastic; solves import it as root, which reads only /opt/ara/env (T20)
+    env_path = pathlib.Path("/opt/ara/env" if os.geteuid() == 0 else "/home/elastic/env")
     if env_path.exists():
         for line in env_path.read_text().splitlines():
             line = line.strip()
@@ -59,6 +60,20 @@ def load_env() -> dict:
                 k, v = line.split("=", 1)
                 env[k.strip()] = v.strip()
     return env
+
+
+def shuffle_seed() -> int:
+    """Per-sandbox seed for choice order (G4). seed_mod has only 2-3 values, so it would give
+    every learner one of 2-3 orders. Grading is by value, so order never affects the grade."""
+    for src in ("/etc/machine-id",):
+        try:
+            mid = pathlib.Path(src).read_text().strip()
+        except Exception:
+            continue
+        if mid:  # an empty machine-id (common in images) would give every sandbox one order
+            return int(hashlib.md5(mid.encode()).hexdigest(), 16)
+    import socket
+    return int(hashlib.md5(socket.gethostname().encode()).hexdigest(), 16)
 
 
 def seed_from_variant() -> int:
@@ -150,20 +165,12 @@ def load_questions_new(raw: dict, results: dict, env: dict, seed: int) -> list[d
                 context_lines.append(f"  Your {k.replace('_', ' ')}: {val}")
 
         choices = render_choices(q.get("choices", []), results, env, seed)
-        
-        # Apply seeded shuffle if requested
-        if q.get("shuffle") == "seed" and seed is not None:
-            shuffled_choices = list(choices)
-            random.Random(seed).shuffle(shuffled_choices)
-            choices = shuffled_choices
-        
+        # 18 S5: choices shuffle by the sandbox seed so the right one has no fixed position;
+        # reasons are never shuffled.
+        if q.get("shuffle") == "seed":
+            choices = list(choices)
+            random.Random(shuffle_seed() + int(hashlib.md5(q["id"].encode()).hexdigest(), 16) % 1000).shuffle(choices)
         reasons = q.get("reasons", [])
-        
-        # Apply seeded shuffle to reasons if requested
-        if q.get("shuffle") == "seed" and seed is not None and reasons:
-            shuffled_reasons = list(reasons)
-            random.Random(seed).shuffle(shuffled_reasons)
-            reasons = shuffled_reasons
 
         qs.append({
             "id": q["id"],
@@ -264,10 +271,11 @@ def main() -> None:
     questions = load_all(results, env, seed)
 
     print()
-    print("Defend — your measurements, your call")
+    print("Defend: your measurements, your call")
     print("=" * 60)
     print("Answer based on what you measured in this track.")
-    print("Your numbers are shown next to each question.")
+    if any(q.get("context_from_results") for q in questions):
+        print("Your numbers are shown next to each question.")
     print("Another learner's answer may be wrong for you.")
 
     decision: dict = {}

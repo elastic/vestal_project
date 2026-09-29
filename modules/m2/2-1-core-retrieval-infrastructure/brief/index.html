@@ -50,18 +50,23 @@
   </div>
   <div class="slide">
     <h2>Decision rule</h2>
+    <p>Take the first row that applies.</p>
     <table>
-      <tr><th>New document type</th><th>Chunking rule</th></tr>
-      <tr><td>Numbered procedure manuals (40+ pages)</td><td>Unit-preserving</td></tr>
-      <tr><td>One-paragraph alert notes</td><td>Whole-document</td></tr>
-      <tr><td>Fee schedules (tables)</td><td>Unit-preserving</td></tr>
+      <tr><th>When</th><th>Chunking rule</th></tr>
+      <tr><td>The document is shorter than one chunk</td><td>One chunk per document</td></tr>
+      <tr><td>A structured unit runs longer than one chunk</td><td>Preserve whole units</td></tr>
+      <tr><td>Long prose with headings and no oversize unit</td><td>Split at headings</td></tr>
+      <tr><td>Uniform prose with nothing structured to protect</td><td>Fixed 512-token windows</td></tr>
     </table>
   </div>
   <div class="slide">
     <h2>What done looks like</h2>
     <ul>
       <li>Median chunk: at most <strong>512 tokens</strong></li>
-      <li>precision@5: at least <strong>0.80</strong></li>
+      <li>Structured units kept whole: at least <strong>3 of 4</strong></li>
+      <li>Procedure questions with the whole answer in one chunk of the top 5: at least <strong>3 of 5</strong></li>
+      <li>Policy questions with the whole answer in one chunk of the top 5: at least <strong>4 of 6</strong></li>
+      <li>No question's top 5 over Tina's <strong>4,000-token</strong> budget</li>
       <li><code>cortex-corpus-live</code> resolves to <code>cortex-corpus</code></li>
       <li><code>cortex-generation</code> exists, pinned to the platform model</li>
     </ul>

@@ -66,12 +66,13 @@ def chunk_heading_aware(doc: dict, max_tokens: int = 512) -> list[Chunk]:
         if not part:
             continue
         words = part.split()
-        if len(words) <= max_tokens:
+        max_words = int(max_tokens / 1.3)  # approximate tokens, as chunk_fixed and Chunk.token_count count them (N17)
+        if len(words) <= max_words:
             chunks.append(_make_chunk(doc, part, idx))
         else:
             # Overflow: split into fixed windows
-            for j in range(0, len(words), max_tokens):
-                window = words[j : j + max_tokens]
+            for j in range(0, len(words), max_words):
+                window = words[j : j + max_words]
                 chunks.append(_make_chunk(doc, " ".join(window), idx * 1000 + j))
     return chunks or [_make_chunk(doc, body, 0)]
 

@@ -1,0 +1,20 @@
+[
+ {"query_id": "dev-p1", "class": "procedure", "relevant_ids": ["wire-fraud-205"],
+  "query_text": "In the Jenkins mortgage refinance fraud, when did the clients start working with the title company, and what did Cortex's FIU do once the fraud was reported?",
+  "required_strings": ["September 15, 2023", "Case FIU-2023-09-1442"]},
+ {"query_id": "dev-p2", "class": "procedure", "relevant_ids": ["wire-fraud-203"],
+  "query_text": "What actions did Cortex take to resolve the Apex Financial wire fraud, from recovering funds to changing policy?",
+  "required_strings": ["repatriate the frozen $32,500.00", "Risk Management Committee has initiated a protocol update"]},
+ {"query_id": "dev-p3", "class": "procedure", "relevant_ids": ["sar-117"],
+  "query_text": "Which indicators showed the MV Atlantic Star bills of lading were fraudulent?",
+  "required_strings": ["Vessel Discrepancy", "Template Duplication"]},
+ {"query_id": "dev-c1", "class": "policy", "relevant_ids": ["policy-002"],
+  "query_text": "How often must high-risk KYC profiles be refreshed, and how long are KYC records kept after the relationship ends?",
+  "required_strings": ["every nine months", "minimum period of eight years"]},
+ {"query_id": "dev-c2", "class": "policy", "relevant_ids": ["policy-005"],
+  "query_text": "What transaction velocity triggers an alert on a retail account, and on a commercial account?",
+  "required_strings": ["seven or more distinct incoming electronic transfers", "more than fifteen transactions per week"]},
+ {"query_id": "dev-c3", "class": "policy", "relevant_ids": ["policy-008"],
+  "query_text": "Which customer risk scores count as Low, Medium and High risk, and what overrides the score?",
+  "required_strings": ["between zero and three hundred forty-nine", "Politically Exposed Person"]}
+]

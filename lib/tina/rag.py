@@ -15,10 +15,12 @@ from pathlib import Path
 from typing import Any
 
 
+# S8 (G15): `match` on the semantic_text field, as ara_metrics uses after G2; the legacy
+# `semantic` query is gone from every grader.
 _DEFAULT_RETRIEVER = {
     "retriever": {
         "standard": {
-            "query": {"semantic": {"field": "body", "query": "{query_text}"}}
+            "query": {"match": {"body": "{query_text}"}}
         }
     }
 }
@@ -63,7 +65,7 @@ def rag_answer(
     retriever = load_retriever(retriever_path)
 
     # ── Retrieval ──────────────────────────────────────────────────────────────
-    body_str = json.dumps(retriever).replace("{query_text}", query)
+    body_str = json.dumps(retriever).replace("{query_text}", json.dumps(query)[1:-1])  # G1: JSON-escape
     body = json.loads(body_str)
 
     t0 = time.perf_counter()

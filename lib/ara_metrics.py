@@ -82,12 +82,20 @@ def run_queries_with_template(
 
     for _ in range(n_passes):
         for q in queries:
-            body_str = json.dumps(query_template).replace("{query_text}", q["query_text"])
+            body_str = json.dumps(query_template).replace("{query_text}", json.dumps(q["query_text"])[1:-1])  # G1: JSON-escape
             body = json.loads(body_str)
             if "retriever" not in body and "query" not in body:
                 body = {"query": body}
+            body["size"] = k  # a template copied from Dev Tools may carry its own size
+            src = body.get("_source")
+            if src is False or isinstance(src, str):
+                body["_source"] = ["doc_id"] if src is False else [src, "doc_id"]
+            elif isinstance(src, list) and "doc_id" not in src:
+                body["_source"] = src + ["doc_id"]
+            elif isinstance(src, dict) and src.get("includes") and "doc_id" not in src["includes"]:
+                src["includes"] = list(src["includes"]) + ["doc_id"]
             t0 = time.perf_counter()
-            resp = es.search(index=index, body=body, size=k)
+            resp = es.search(index=index, body=body)
             latency_ms = (time.perf_counter() - t0) * 1000
             retrieved = [
                 hit.get("_source", {}).get("doc_id") or hit["_id"]
@@ -120,7 +128,7 @@ def retriever_bm25(field: str = "body_text") -> dict:
 
 def retriever_dense(field: str = "body") -> dict:
     """Dense semantic retriever template using semantic_text field."""
-    return {"retriever": {"standard": {"query": {"semantic": {"field": field, "query": "{query_text}"}}}}}
+    return {"retriever": {"standard": {"query": {"match": {field: "{query_text}"}}}}}
 
 
 def retriever_hybrid_rrf(
@@ -135,7 +143,7 @@ def retriever_hybrid_rrf(
             "rrf": {
                 "retrievers": [
                     {"standard": {"query": {"match": {text_field: "{query_text}"}}}},
-                    {"standard": {"query": {"semantic": {"field": semantic_field, "query": "{query_text}"}}}},
+                    {"standard": {"query": {"match": {semantic_field: "{query_text}"}}}},
                 ],
                 "rank_window_size": rank_window_size,
                 "rank_constant": rank_constant,
@@ -159,7 +167,7 @@ def retriever_hybrid_rerank(
                     "rrf": {
                         "retrievers": [
                             {"standard": {"query": {"match": {text_field: "{query_text}"}}}},
-                            {"standard": {"query": {"semantic": {"field": semantic_field, "query": "{query_text}"}}}},
+                            {"standard": {"query": {"match": {semantic_field: "{query_text}"}}}},
                         ],
                         "rank_window_size": rank_window_size,
                         "rank_constant": rank_constant,
@@ -176,15 +184,26 @@ def retriever_hybrid_rerank(
 # ── HNSW memory budget ────────────────────────────────────────────────────────
 
 def hnsw_budget(n_vectors: int, dims: int, m: int, quantization: str = "float32") -> int:
-    """Estimate RAM bytes for an HNSW index.
+    """Estimate off-heap RAM bytes for an HNSW index, by the Elastic docs formula
+    ("Tune approximate kNN search", Estimate off-heap RAM): vector bytes plus the graph.
 
-    quantization: "float32" (4 bytes/dim), "int8" (1 byte/dim), "bbq" (~0.125 byte/dim).
-    Graph overhead: approximately 2 * m * 4 bytes per vector (HNSW bidirectional links).
+    Per vector, the vectors kept in RAM take
+      float32: dims * 4            bfloat16: dims * 2
+      int8:    dims + 16           int4:     ceil(dims / 2) + 16
+      bbq:     ceil(dims / 64) * 8 + 14
+    and the HNSW graph takes 4 * m bytes. At 1024 dims, bbq is dims / 8 + 14 = 142 bytes.
+    (Fork fix G7, N21: the earlier version counted bbq at dims / 8 and the graph at 8 * m.)
     """
-    bytes_per_dim = {"float32": 4.0, "int8": 1.0, "bbq": 0.125}.get(quantization, 4.0)
-    vector_bytes = n_vectors * dims * bytes_per_dim
-    graph_bytes = n_vectors * m * 2 * 4  # 2m edges, 4 bytes each (pointer size)
-    return int(vector_bytes + graph_bytes)
+    per_vector = {
+        "float32": dims * 4,
+        "bfloat16": dims * 2,
+        "int8": dims + 16,
+        "int4": -(-dims // 2) + 16,
+        "bbq": -(-dims // 64) * 8 + 14,
+    }
+    if quantization not in per_vector:
+        raise ValueError(f"quantization must be one of {sorted(per_vector)}, not {quantization!r}")
+    return n_vectors * (per_vector[quantization] + 4 * m)
 
 
 # ── Alias probe ───────────────────────────────────────────────────────────────
@@ -247,16 +266,24 @@ def _build_query(text: str, k: int, inference_id: str | None) -> dict:
     if inference_id:
         return {
             "query": {
-                "semantic": {
-                    "field": "body_semantic",
-                    "query": text,
-                }
+                "match": {"body_semantic": text}  # S8: match on the semantic_text field
             }
         }
     return {"query": {"match": {"body": text}}}
 
 
 # ── Relevance metrics ─────────────────────────────────────────────────────────
+# 09 T18: retrieved ids are de-duplicated (first occurrence kept) before scoring, so a
+# five-chunk single-document result scores as one document. S1: gold sets may be keyed
+# relevant_ids or relevant_doc_ids.
+
+def _gold(q: dict) -> set:
+    return set(q.get("relevant_ids", q.get("relevant_doc_ids", [])))
+
+
+def _dedup(ids: list) -> list:
+    return list(dict.fromkeys(ids))
+
 
 def precision_at_k(
     results: list[dict],
@@ -283,12 +310,12 @@ def precision_at_k(
     if gold_field == "relevant_passage_ids":
         relevance = {q["query_id"]: set(q.get("relevant_passage_ids", [])) for q in queries}
     else:
-        relevance = {q["query_id"]: set(q.get("relevant_ids", [])) for q in queries}
+        relevance = {q["query_id"]: _gold(q) for q in queries}
 
     scores = []
     for r in results:
         rel = relevance.get(r["query_id"], set())
-        retrieved = r["retrieved_ids"][:k]
+        retrieved = _dedup(r["retrieved_ids"])[:k]
         hits = sum(1 for doc_id in retrieved if doc_id in rel)
         scores.append(hits / k)
     return statistics.mean(scores) if scores else 0.0
@@ -296,13 +323,13 @@ def precision_at_k(
 
 def recall_at_k(results: list[dict], queries: list[dict], k: int = 10) -> float:
     """Macro-averaged recall@k over all queries."""
-    relevance = {q["query_id"]: set(q["relevant_ids"]) for q in queries}
+    relevance = {q["query_id"]: _gold(q) for q in queries}
     scores = []
     for r in results:
         rel = relevance.get(r["query_id"], set())
         if not rel:
             continue
-        retrieved = r["retrieved_ids"][:k]
+        retrieved = _dedup(r["retrieved_ids"])[:k]
         hits = sum(1 for doc_id in retrieved if doc_id in rel)
         scores.append(hits / len(rel))
     return statistics.mean(scores) if scores else 0.0
@@ -310,11 +337,11 @@ def recall_at_k(results: list[dict], queries: list[dict], k: int = 10) -> float:
 
 def ndcg_at_k(results: list[dict], queries: list[dict], k: int = 10) -> float:
     """Macro-averaged nDCG@k. Relevance is binary (1 if in relevant_ids, 0 otherwise)."""
-    relevance = {q["query_id"]: set(q["relevant_ids"]) for q in queries}
+    relevance = {q["query_id"]: _gold(q) for q in queries}
     scores = []
     for r in results:
         rel = relevance.get(r["query_id"], set())
-        retrieved = r["retrieved_ids"][:k]
+        retrieved = _dedup(r["retrieved_ids"])[:k]
         dcg = sum(
             (1 / math.log2(i + 2)) for i, doc_id in enumerate(retrieved) if doc_id in rel
         )
@@ -326,12 +353,12 @@ def ndcg_at_k(results: list[dict], queries: list[dict], k: int = 10) -> float:
 
 def mrr(results: list[dict], queries: list[dict]) -> float:
     """Mean reciprocal rank."""
-    relevance = {q["query_id"]: set(q["relevant_ids"]) for q in queries}
+    relevance = {q["query_id"]: _gold(q) for q in queries}
     scores = []
     for r in results:
         rel = relevance.get(r["query_id"], set())
         rr = 0.0
-        for i, doc_id in enumerate(r["retrieved_ids"]):
+        for i, doc_id in enumerate(_dedup(r["retrieved_ids"])):
             if doc_id in rel:
                 rr = 1.0 / (i + 1)
                 break

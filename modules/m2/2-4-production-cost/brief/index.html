@@ -40,16 +40,17 @@
     <ul>
       <li><strong>Build 1 — Query transactions:</strong> Write ES|QL queries to analyse the synthetic transaction log.</li>
       <li><strong>Build 2 — Semantic cache:</strong> Build a similarity-based cache. Tune the threshold to balance hit rate vs. correctness.</li>
-      <li><strong>Build 3 — Route by complexity:</strong> Classify queries as single-hop or multi-hop. Route single-hop to a faster model.</li>
-      <li><strong>Defend:</strong> Calculate daily savings from the cache and justify the routing decision based on accuracy.</li>
+      <li><strong>Build 3 — Route by complexity:</strong> Classify queries as single-hop or multi-part. Route single-hop to a faster model.</li>
+      <li><strong>Defend:</strong> Calculate daily savings from the cache and justify the routing decision from your fast-tier routing recall.</li>
     </ul>
   </div>
   <div class="slide">
     <h2>Cost model</h2>
     <table>
       <tr><th>Lever</th><th>Metric</th><th>Target</th></tr>
-      <tr><td>Semantic cache</td><td>Heldout hit rate</td><td>≥ 0.50</td></tr>
-      <tr><td>Fast-tier routing</td><td>Single-hop accuracy</td><td>≥ 0.80</td></tr>
+      <tr><td>Semantic cache</td><td>Wrong outcomes on 12 held-out queries</td><td>At most 2, and no near-miss served</td></tr>
+      <tr><td>Routing</td><td>Held-out queries routed to their labelled tier</td><td>At least 10 of 12</td></tr>
+      <tr><td>Fast-tier routing</td><td>Routing recall on single-hop queries</td><td>0.8 or higher: route single-hop lookups to the fast tier</td></tr>
     </table>
     <p style="margin-top:12px">Daily savings = <code>floor(volume × hit_rate × cost_per_call / 100)</code></p>
   </div>
@@ -58,7 +59,7 @@
     <ul>
       <li><strong>Semantic cache</strong> — match incoming queries by embedding similarity; serve cached answers above threshold</li>
       <li><strong>Similarity threshold</strong> — too low → near-misses hit (wrong answer); too high → paraphrases miss (wasted calls)</li>
-      <li><strong>Query classification</strong> — single-hop (one fact lookup) vs multi-hop (reasoning across documents)</li>
+      <li><strong>Query classification</strong> — single-hop (one fact lookup) vs multi-part (reasoning across documents)</li>
     </ul>
   </div>
   <div class="slide">

@@ -24,7 +24,7 @@ _TRANSACTION_TYPES = ["wire", "ach", "cash", "check", "crypto"]
 _TYPE_WEIGHTS = [0.3, 0.25, 0.2, 0.15, 0.1]
 
 
-def generate_transactions(seed: str, count: int = 2000) -> list[dict]:
+def generate_transactions(seed: str, count: int = 2000, anchor: datetime | None = None) -> list[dict]:
     """Generate `count` synthetic transactions deterministically from `seed`.
 
     Each document:
@@ -36,13 +36,16 @@ def generate_transactions(seed: str, count: int = 2000) -> list[dict]:
       country: str
       risk_tier: str
       flagged: bool  (True for risk_tier in {high, critical})
-      timestamp: ISO-8601 UTC, spread over 90 days ending at the seed date
+      timestamp: ISO-8601 UTC, spread over the 90 days ending at `anchor`
+
+    18 §2.1 (2.4-3): `anchor` defaults to now (provisioning time), so the dev and
+    held-out windows (30 and 14 days back from NOW()) always contain rows. The seed
+    still decides every other field.
     """
     rng = random.Random(hashlib.md5(seed.encode()).hexdigest())
 
-    # Anchor date derived from seed so different seeds produce different date ranges
-    anchor_ms = int(hashlib.sha256(seed.encode()).hexdigest()[:8], 16)
-    anchor = datetime(2026, 1, 1, tzinfo=timezone.utc) + timedelta(seconds=anchor_ms % (365 * 24 * 3600))
+    if anchor is None:
+        anchor = datetime.now(timezone.utc)
 
     docs = []
     for i in range(count):
@@ -70,7 +73,7 @@ def generate_transactions(seed: str, count: int = 2000) -> list[dict]:
     return docs
 
 
-def index_transactions(es, index: str, seed: str, count: int = 2000) -> dict:
+def index_transactions(es, index: str, seed: str, count: int = 2000, anchor: datetime | None = None) -> dict:
     """Generate and index synthetic transactions. Creates the index if needed."""
     from elasticsearch.helpers import bulk
 
@@ -91,7 +94,7 @@ def index_transactions(es, index: str, seed: str, count: int = 2000) -> dict:
     if not es.indices.exists(index=index):
         es.indices.create(index=index, body=mapping)
 
-    docs = generate_transactions(seed, count)
+    docs = generate_transactions(seed, count, anchor)
 
     def _actions():
         for d in docs:

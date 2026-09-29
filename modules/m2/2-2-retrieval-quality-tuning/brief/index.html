@@ -41,14 +41,20 @@
   <div class="slide">
     <h2>What you will do</h2>
     <ul>
-      <li><strong>Build 1 — Retriever bench:</strong> Implement all 4 strategies. Measure nDCG@5 and BM25 identifier precision.</li>
+      <li><strong>Build 1 — Retriever bench:</strong> Implement all 4 strategies. Measure nDCG@5 and BM25 identifier MRR.</li>
       <li><strong>Build 2 — Tune the vector index:</strong> Calculate a valid <code>m</code> for BBQ quantization within your seeded RAM budget.</li>
       <li><strong>Defend:</strong> Justify which retriever ships as Tina's default given your latency budget.</li>
     </ul>
   </div>
   <div class="slide">
     <h2>Decision rule</h2>
-    <p>Deploy <code>hybrid_rerank</code> when <strong>latency budget ≥ reranker p95</strong>. Otherwise fall back to <code>hybrid</code>.</p>
+    <p>Your own measurements decide each row.</p>
+    <table>
+      <tr><th>Decision</th><th>Rule</th></tr>
+      <tr><td>Default retriever</td><td>The highest nDCG@5 among templates whose p50 fits the budget</td></tr>
+      <tr><td>Exact lookups</td><td>The template with the highest identifier MRR</td></tr>
+      <tr><td>Graph memory</td><td>4 &times; <code>m</code> bytes per vector, times the vector count</td></tr>
+    </table>
   </div>
   <div class="slide">
     <h2>Select Check to continue</h2>
