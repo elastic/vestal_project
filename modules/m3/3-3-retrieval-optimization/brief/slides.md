@@ -17,26 +17,30 @@ minutes: 8 -->
 
 <div class="col-left">
   <div class="terminal-block">
-Q: structuring cases, cash held below the reporting threshold
-
-rank  case_id                   case_type     score
- 1    case-structuring-004      structuring    0.71
- 2    <span class="wrong">case-wire-fraud-001       wire_fraud</span>     0.69
- 3    <span class="wrong">case-wire-fraud-013       wire_fraud</span>     0.68
- 4    case-structuring-011      structuring    0.66
- 5    <span class="wrong">case-wire-fraud-005       wire_fraud</span>     0.64
-
-  why: every wire_fraud memo above contains the phrase
-       "sequential same-day deposits across multiple
-        branches" and "CTR avoidance"
-
-precision@5:  2 / 5  =  <span class="wrong">0.40</span>
+Q: Among the investigations into large outbound
+   transfers that were unexpectedly diverted, what
+   was the specific amount involved in the
+   Lanternhill Machinery Enterprises LLC incident?
+intent: {"case_type": "wire_fraud", "risk_tier": null,
+         "date_from": null, "date_to": null}
+ 1  case-wire-fraud-008    wire_fraud   in gold
+ 2  <span class="wrong">case-sanctions-024     sanctions    WRONG</span>
+ 3  case-wire-fraud-020    wire_fraud   in gold
+ 4  <span class="wrong">case-sanctions-001     sanctions    WRONG</span>
+ 5  <span class="wrong">case-sanctions-007     sanctions    WRONG</span>
+unfiltered precision@10 for this query: <span class="wrong">0.20</span>
   </div>
 </div>
 <div class="col-right">
   <h2 class="slide-heading">The problem</h2>
-  <p class="slide-body">Three of the top five files are the wrong case type. Not because retrieval failed, but because those memos really do discuss structuring. The text cannot tell them apart. The metadata can.</p>
-  <p class="slide-body">You reproduce this in Build 2, then remove it.</p>
+  <p class="slide-body">The cause: the query that produced this ranks on text alone.</p>
+  <div class="terminal-block">
+hybrid RRF
+  match body_text
+  match body (semantic)
+filter  <span class="wrong">none</span>
+  </div>
+  <p class="slide-body">The intent names wire_fraud. Sanctions memos discuss diverted transfers too, so the text cannot tell them apart. The metadata can. You reproduce this in Build 2, then remove it.</p>
 </div>
 
 ---
@@ -222,25 +226,26 @@ what a miss looks like after filtering
   <div class="terminal-block">
 a budget is a hard ceiling on the packed context
 
-  budget            3,000 tokens
-  retrieved         12 memos x ~420  =  5,040
+  budget            4,000 tokens (the smaller one)
+  set B retrieved   5 sections
+                    168 + 1,151 + 1,209 + 1,067 + 1,354
+                    =  4,949 tokens
 
   pack everything
-    sent            5,040 tokens
-    what arrives    the first 3,000, cut mid-memo
-    the cut memo    a figure with no subject
-    Tina's answer   <span class="wrong">confident and wrong</span>
+    sent            <span class="wrong">4,949 tokens, 949 over</span>
+    what arrives    the text up to the cut, mid-section
+    the check       fails the overrun
 
-  pack to fit
-    sent            2,870 tokens
-    what arrives    7 whole memos
-    what is lost    5 memos you chose to drop
+  pack to fit, in rank order
+    measure each section before adding it
+    skip one that does not fit
+    sent            at most 4,000 tokens
   </div>
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Context budgets</h2>
   <p class="slide-body">Overrunning a budget is not a slightly larger bill. It is a truncated prompt, and the truncation lands wherever the text happened to end.</p>
-  <p class="slide-body">Two budgets are seeded for your sandbox. The smaller one is a real constraint.</p>
+  <p class="slide-body">Two budgets are seeded for your sandbox: 4,000 and 12,000 tokens. The smaller one is a real constraint.</p>
 </div>
 
 ---
@@ -249,26 +254,23 @@ a budget is a hard ceiling on the packed context
 
 <div class="col-diagram">
   <div class="terminal-block">
-<span style="color:var(--yellow);">SET A  many short results</span>     <span style="color:var(--yellow);">SET B  few long results</span>
-12 memos x ~420 tokens       3 sections x ~1,300 tokens
-relevant end to end          one relevant span each
+<span style="color:var(--yellow);">SET A  short memos</span>            <span style="color:var(--yellow);">SET B  long sections</span>
+3 memos, about 400 tokens     5 sections, 168 to 1,354
+1,182 tokens in all           4,949 tokens in all
+fits either budget whole      overruns 4,000
 
-rerank_top_n                 rerank_top_n
-  score, take whole            score, take whole
-  7 memos fit                  2 sections fit
-  gold ranked high             gold span in section 3
-  retention <span style="color:var(--teal);">high</span>              retention <span class="wrong">at risk</span>
+rerank_top_n                  rerank_top_n
+  score, take whole             score, take whole
+  until the budget is full      until the budget is full
 
-summarize_first              summarize_first
-  compress 12 to 225 each      compress 3 to 800 each
-  all 12 fit                   all 3 fit
-  short memos lose detail      the span survives
-  retention <span class="wrong">at risk</span>            retention <span style="color:var(--teal);">high</span>
+summarize_first               summarize_first
+  compress each, then pack      compress each, then pack
+  all fit                       all fit, detail can drop
   </div>
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Two shapes, two strategies</h2>
-  <p class="slide-body">Neither strategy is better. Each one matches a shape of result set, and the budget decides how sharply.</p>
+  <p class="slide-body">The shape of the result set decides how much each strategy has to give up. A set that fits the budget whole loses nothing to either.</p>
   <p class="slide-body">Build 3 runs all eight combinations so the answer is measured on your corpus, not assumed.</p>
 </div>
 

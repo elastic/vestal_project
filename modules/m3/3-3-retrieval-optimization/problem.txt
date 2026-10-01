@@ -1,0 +1,10 @@
+# Captured 2026-10-01, participant 2nx0n9d57sle, Build 2 start state:
+# unfiltered hybrid RRF (match on body_text and on body), no filter clauses.
+Q: Among the investigations into large outbound transfers that were unexpectedly diverted, what was the specific amount involved in the Lanternhill Machinery Enterprises LLC incident?
+intent: {"case_type": "wire_fraud", "risk_tier": null, "date_from": null, "date_to": null}
+ 1  case-wire-fraud-008          wire_fraud           in gold
+ 2  case-sanctions-024           sanctions            WRONG
+ 3  case-wire-fraud-020          wire_fraud           in gold
+ 4  case-sanctions-001           sanctions            WRONG
+ 5  case-sanctions-007           sanctions            WRONG
+unfiltered precision@10 for this query: 0.20
