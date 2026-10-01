@@ -82,7 +82,8 @@ def seed_from_variant() -> int:
             return int(json.loads(VARIANT_FILE.read_text()).get("seed_mod", 0))
         except Exception:
             pass
-    sid = os.environ.get("INSTRUQT_SANDBOX_ID", "default")
+    # Instruqt sets INSTRUQT_PARTICIPANT_ID and _SANDBOX_ID; INSTRUQT_SANDBOX_ID is never set.
+    sid = os.environ.get("INSTRUQT_PARTICIPANT_ID") or os.environ.get("_SANDBOX_ID") or "default"
     return int(hashlib.md5(sid.encode()).hexdigest(), 16) % 3
 
 
