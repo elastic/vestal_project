@@ -13,6 +13,7 @@ minutes: 8 -->
 ---
 
 <!-- layout: problem -->
+<!-- problem -->
 
 <div class="col-left">
   <div class="terminal-block">
@@ -142,16 +143,12 @@ the test, in order:
   kyc_gap              24     x 3 risk tiers
   elder_exploitation   24     x filing dates over 3 years
 
-unfiltered precision@10, typed query
+precision@10, held-out queries
+(case type, risk tier, date window, combined)
 
-  relevant by type      24 / 120
-  lexical and semantic signal lifts it
-  measured baseline     <span class="wrong">~0.50</span>
-
-filtered to the named type
-
-  candidate set         24 documents
-  every hit in scope    <span style="color:var(--teal);">~1.00</span>
+  unfiltered hybrid     <span class="wrong">0.505</span>
+  reference filters     <span style="color:var(--teal);">1.000</span>
+  one clause per constraint
   </div>
 </div>
 <div class="col-text">
@@ -282,13 +279,12 @@ summarize_first              summarize_first
 
 <h2 class="slide-heading">Decision rules</h2>
 <table class="rule-table">
-  <tr><th>Question</th><th>Answer</th><th>Because</th></tr>
-  <tr><td>Which field is the facet</td><td>The coded field, as keyword</td><td>A term clause selects it exactly</td></tr>
-  <tr><td>Many short results</td><td>rerank_top_n</td><td>Order decides what survives</td></tr>
-  <tr><td>Few long results</td><td>summarize_first</td><td>Compression keeps a span per document</td></tr>
-  <tr><td>What moved precision</td><td>The clause you recorded</td><td>The mapping fingerprint did not change</td></tr>
+  <tr><th>Question</th><th>When</th><th>Answer</th></tr>
+  <tr><td>Q1</td><td>A clause selects the field exactly, one bucket per value</td><td>That field, as keyword. Never free text</td></tr>
+  <tr><td>Q2</td><td>Set B retention values at the smaller budget differ by under 0.05</td><td>Tie</td></tr>
+  <tr><td>Q2</td><td>Otherwise</td><td>The higher strategy</td></tr>
+  <tr><td>Q3</td><td>Mapping fingerprint held through Build 2</td><td>The filter clauses your run recorded</td></tr>
 </table>
-<p class="rule-caption">Free text is never a facet. A frozen mapping rules out re-indexing.</p>
 
 ---
 
@@ -297,16 +293,16 @@ summarize_first              summarize_first
 <h2 class="slide-heading" style="color:var(--white);">What done looks like</h2>
 <div class="done-row">
   <div class="done-item">
-    <span class="big-number">120</span>
-    <span class="big-number-label">memos mapped and loaded<br>5 case type buckets</span>
+    <span class="big-number">5</span>
+    <span class="big-number-label">case type buckets<br>from your mapping</span>
   </div>
   <div class="done-item">
     <span class="big-number">0.80</span>
-    <span class="big-number-label">filtered precision at 10<br>on 20 held-out queries</span>
+    <span class="big-number-label">filtered precision at 10<br>on held-out queries</span>
   </div>
   <div class="done-item">
-    <span class="big-number">8</span>
-    <span class="big-number-label">packing combinations run<br>no budget overrun</span>
+    <span class="big-number">0.80</span>
+    <span class="big-number-label">gold retention on held-out questions<br>no budget overrun</span>
   </div>
 </div>
 <p class="rule-caption" style="color:var(--dark-grey);">The mapping fingerprint from Build 1 has to still match when Build 2 is graded.</p>
