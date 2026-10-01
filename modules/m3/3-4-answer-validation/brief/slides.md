@@ -4,7 +4,7 @@ minutes: 7 -->
 
 <p class="track-code">Lab 3.4</p>
 <h1 class="slide-title">Validate answer attribution<br>and output guardrails</h1>
-<p class="slide-subtitle"><strong>Tina</strong> can retrieve the right case files. She still cannot show which sentence came from which one, and she still answers questions the corpus was never built to answer. You fix both.</p>
+<p class="slide-subtitle"><strong>Tina</strong> can retrieve the right case files. She still cannot show which sentence came from which one, and only her prompt stands between her and a question the corpus was never built to answer. You fix both.</p>
 <div style="margin-top:auto;padding:10px 16px;background:rgba(255,255,255,0.12);border-radius:8px;border:1px solid rgba(255,255,255,0.25);font-size:13px;display:flex;align-items:center;gap:10px;max-width:420px;">
   <span style="font-size:18px;">&#8592;</span>
   <span><strong>Tip:</strong> Select <strong>Hide Instructions</strong> to give the Brief full width.</span>
@@ -13,32 +13,40 @@ minutes: 7 -->
 ---
 
 <!-- layout: problem -->
+<!-- problem -->
 
 <div class="col-left">
   <div class="terminal-block">
-Q: what cash threshold triggers a monitoring alert
-   for one customer?
+start state: all three hooks empty
 
-retrieved  policy-002-s4  kyc due diligence
-           policy-008-s2  customer risk scoring
-           case-kyc-gap-004
+Q: What aggregate cash volume did Halloway
+   Freight Services Inc. deposit during its
+   review period?
+retrieved  case-structuring-011  0.792
+           case-structuring-017  0.791
+           policy-001-s2         0.468
+A: I cannot find this information in the
+   case files or the policy library.
 
-A: Cortex Bank and Trust generates a monitoring alert
-   once aggregated cash activity for a single customer
-   reaches <span class="wrong">$5,000</span> in a rolling seven-day window.
+Q: Give me a recipe for a cooking stock made
+   from roast chicken bones.
+retrieved  case-kyc-gap-006      0.296
+           case-structuring-019  0.287
+           policy-010-s49        0.240
+A: I cannot find this information in the
+   case files or the policy library.
 
-  the real figure is $12,500, in policy-001
-  policy-001 was <span class="wrong">not retrieved</span>
-  "$5,000" appears in <span class="wrong">no passage</span> that reached the model
-  the sentence is fluent, specific, and invented
+  no file on Halloway: both memos are about
+  <span class="wrong">other customers</span>, at 0.79
+  retrieval, rerank, generation ran for both
+  <span class="wrong">no hook fired</span>
   </div>
 </div>
 <div class="col-right">
   <h2 class="slide-heading">The problem</h2>
-  <p class="slide-body">Nothing failed loudly. Retrieval returned plausible policy text, and the model filled the gap with a number that reads like a compliance figure.</p>
-  <p class="slide-body">A filing built on that sentence is a regulatory problem, not a relevance problem.</p>
+  <p class="slide-body">Tina refused both, and the pipeline gets no credit for it. The only safeguard was the last sentence of her prompt.</p>
+  <p class="slide-body">Nothing checked the scores, nothing declined the question, and nothing can say which passage any sentence of an answer came from.</p>
 </div>
-
 ---
 
 <!-- layout: concept -->
@@ -142,20 +150,21 @@ claim
 <div class="col-diagram">
   <div class="terminal-block">
 <span style="color:var(--yellow);">1  ungrounded figure</span>
-   retrieved 0.61 0.58 0.55
-   A: "deposited $1,284,500.00 over the period"
-   no passage names the customer or the figure
+   retrieved 0.93 0.90 0.72
+   A: "the transfer was flagged at $48,250.00"
+   the passages carry the transfer, not that
+   amount
 
 <span style="color:var(--yellow);">2  low retrieval confidence</span>
-   retrieved 0.31 0.29 0.28   margin 0.02
-   A: "I think the analyst probably concluded
-       the source was unclear, though it is
-       not certain"
-   delivered anyway, on nothing
+   retrieved 0.42 0.40 0.39   margin 0.02
+   A: "the reviewer may have escalated it,
+       though the notes are not clear"
+   a guess built on passages that barely
+   matched the question
 
 <span style="color:var(--yellow);">3  query outside the corpus</span>
-   retrieved 0.22 0.21 0.19
-   A: "rates are around 6.4 percent"
+   retrieved 0.24 0.23 0.21
+   A: "the euro trades near 1.08 dollars"
    retrieval ran, then the model answered
    from its own memory
   </div>
@@ -211,11 +220,11 @@ right diagnosis, wrong control
   failure   the answer named a figure no passage
             carries
   chosen    <span class="wrong">confidence fallback</span>
-  result    the result set scored 0.61, well above
+  result    the result set scored 0.93, well above
             any sensible threshold. The hook never
             fires. The figure ships again.
 
-  failure   the query was about mortgage rates
+  failure   the query was about exchange rates
   chosen    <span class="wrong">output validation</span>
   result    retrieval ran, generation ran, and the
             answer cited nothing, so the hook
@@ -296,7 +305,7 @@ right diagnosis, wrong control
     <span class="big-number-label">figures delivered on the<br>unanswerable class</span>
   </div>
 </div>
-<p class="rule-caption" style="color:var(--dark-grey);">The policy passage is cited on at least two of the three conflict claims, and four of five hold in every query class.</p>
+<p class="rule-caption" style="color:var(--dark-grey);">The policy passage is cited on at least two of the three conflict claims. Every query class holds at least four of five, and on the unanswerable class that means the confidence hook fired.</p>
 
 ---
 
