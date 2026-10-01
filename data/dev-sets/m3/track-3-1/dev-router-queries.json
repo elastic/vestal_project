@@ -1,0 +1,134 @@
+[
+  {
+    "query_id": "dev-3-1-router-01",
+    "query_text": "What does Cortex Bank's policy say about escalating an alert to the compliance officer?",
+    "features": {
+      "has_filter_intent": false,
+      "asks_for_figure": false,
+      "multi_hop": false,
+      "has_case_id": false
+    },
+    "expected_strategy": "naive"
+  },
+  {
+    "query_id": "dev-3-1-router-02",
+    "query_text": "Summarize Cortex Bank's approach to ongoing monitoring of business accounts.",
+    "features": {
+      "has_filter_intent": false,
+      "asks_for_figure": false,
+      "multi_hop": false,
+      "has_case_id": false
+    },
+    "expected_strategy": "naive"
+  },
+  {
+    "query_id": "dev-3-1-router-03",
+    "query_text": "What is the purpose of the enhanced due diligence review at Cortex Bank?",
+    "features": {
+      "has_filter_intent": false,
+      "asks_for_figure": false,
+      "multi_hop": false,
+      "has_case_id": false
+    },
+    "expected_strategy": "naive"
+  },
+  {
+    "query_id": "dev-3-1-router-04",
+    "query_text": "What dollar amount triggers a Currency Transaction Report at Cortex Bank?",
+    "features": {
+      "has_filter_intent": false,
+      "asks_for_figure": true,
+      "multi_hop": false,
+      "has_case_id": false
+    },
+    "expected_strategy": "advanced"
+  },
+  {
+    "query_id": "dev-3-1-router-05",
+    "query_text": "How many years must Cortex Bank retain SAR supporting documentation?",
+    "features": {
+      "has_filter_intent": false,
+      "asks_for_figure": true,
+      "multi_hop": false,
+      "has_case_id": false
+    },
+    "expected_strategy": "advanced"
+  },
+  {
+    "query_id": "dev-3-1-router-06",
+    "query_text": "List the kyc cases with risk_tier medium opened in 2024.",
+    "features": {
+      "has_filter_intent": true,
+      "asks_for_figure": false,
+      "multi_hop": false,
+      "has_case_id": false
+    },
+    "expected_strategy": "advanced"
+  },
+  {
+    "query_id": "dev-3-1-router-07",
+    "query_text": "What was the total amount flagged across the high-risk sanctions cases?",
+    "features": {
+      "has_filter_intent": true,
+      "asks_for_figure": true,
+      "multi_hop": false,
+      "has_case_id": false
+    },
+    "expected_strategy": "advanced"
+  },
+  {
+    "query_id": "dev-3-1-router-08",
+    "query_text": "Show the elder_exploitation cases opened in the second half of 2024.",
+    "features": {
+      "has_filter_intent": true,
+      "asks_for_figure": false,
+      "multi_hop": false,
+      "has_case_id": false
+    },
+    "expected_strategy": "advanced"
+  },
+  {
+    "query_id": "dev-3-1-router-09",
+    "query_text": "What amount was transferred in investigation FIU-WIRE-2401, and who received it?",
+    "features": {
+      "has_filter_intent": false,
+      "asks_for_figure": true,
+      "multi_hop": false,
+      "has_case_id": true
+    },
+    "expected_strategy": "agentic"
+  },
+  {
+    "query_id": "dev-3-1-router-10",
+    "query_text": "Compare the outcomes of the two structuring investigations that were referred to FinCEN.",
+    "features": {
+      "has_filter_intent": true,
+      "asks_for_figure": false,
+      "multi_hop": true,
+      "has_case_id": false
+    },
+    "expected_strategy": "agentic"
+  },
+  {
+    "query_id": "dev-3-1-router-11",
+    "query_text": "Which of the two wire fraud investigations opened in November involved the larger amount, and by how much?",
+    "features": {
+      "has_filter_intent": true,
+      "asks_for_figure": true,
+      "multi_hop": true,
+      "has_case_id": false
+    },
+    "expected_strategy": "agentic"
+  },
+  {
+    "query_id": "dev-3-1-router-12",
+    "query_text": "Investigation FIU-WIRE-2401 and the Bluewater Equipment investigation: what outcome did each reach?",
+    "features": {
+      "has_filter_intent": false,
+      "asks_for_figure": false,
+      "multi_hop": true,
+      "has_case_id": true
+    },
+    "expected_strategy": "agentic"
+  }
+]

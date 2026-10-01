@@ -114,7 +114,7 @@ prec
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Tokens are the other axis</h2>
-  <p class="slide-body">Precision falls. Token cost rises. Neither depends on which model you call. Your <strong>break bucket</strong> is the smallest bucket that fails both tests, precision under the floor and tokens over the budget.</p>
+  <p class="slide-body">Precision falls. Token cost rises. Neither depends on which model you call. Your <strong>break bucket</strong> is the smallest bucket that fails either test: precision under the floor, or tokens over the budget.</p>
   <p class="slide-body">Your budget is seeded. A different budget can move the break bucket.</p>
 </div>
 
@@ -163,14 +163,14 @@ all of it                   "dates":            [..]
                             "topics":           [..] }
 -----------------------   -------------------------
 8 questions, top 3        8 questions, top 3
-38,900 tokens             780 tokens      <span style="color:var(--yellow);">-98%</span>
-precision 0.62            precision 0.84  <span style="color:var(--yellow);">+0.22</span>
+tokens sent               about 98% fewer <span style="color:var(--yellow);">cheaper</span>
+precision                 measure it      <span style="color:var(--yellow);">?</span>
   </div>
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Query the extraction, not the report</h2>
-  <p class="slide-body">The extraction runs once, offline. Every question after that reads structured facts instead of prose. Precision rises, tokens fall.</p>
-  <p class="slide-body"><strong>Knowledge Indicators</strong> is the product form that builds these records from your corpus.</p>
+  <p class="slide-body">The extraction runs once, offline. Later questions read facts, not prose, so tokens fall sharply. Whether precision rises depends on the corpus: Build 1 measures both.</p>
+  <p class="slide-body"><strong>Knowledge Indicators</strong> builds these records from your corpus.</p>
   <div style="padding:10px 14px;background:rgba(254,197,20,0.15);border-left:3px solid var(--yellow);border-radius:6px;font-size:14px;line-height:1.5;">
     &#9888;&#65039; Knowledge Indicators are in preview. This lab uses an offline GA index to teach the same pattern.
   </div>
@@ -185,22 +185,20 @@ precision 0.62            precision 0.84  <span style="color:var(--yellow);">+0.
 strategy_router(query, features)
   returns  naive | advanced | agentic
 
-features the harness extracts:
-  has_filter_intent     "tier 3 sanctions cases"
-  asks_specific_figure  "what amount was wired"
-  needs_multiple_docs   "which two reports share.."
-  mentions_case_id      "case CB-2024-0417"
+features on every query:
+  has_filter_intent  "tier 3 sanctions cases"
+  asks_for_figure    "what amount was wired"
+  multi_hop          "which two reports share.."
+  has_case_id        "case FIU-WIRE-2401"
 
-your routing order:
-  needs_multiple_docs      ->  agentic
-  has_filter_intent or id  ->  advanced
-  otherwise                ->  naive
+one query can carry several.
+your order decides which wins.
   </div>
 </div>
 <div class="col-text">
   <h2 class="slide-heading">The strategy router</h2>
   <p class="slide-body">The harness extracts the features. You write the function that maps them to a strategy.</p>
-  <p class="slide-body">Order matters. Test for a second hop before you test for filters, or an investigation query that also names a case type routes <code>advanced</code> and stops after one search.</p>
+  <p class="slide-body">Order matters. Test for a second hop or a case reference before you test for filters, or an investigation query that also names a case type routes <code>advanced</code> and stops after one search.</p>
 </div>
 
 ---
@@ -222,9 +220,8 @@ Q  "which two reports share the beneficiary?"
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Where Tina picks wrong</h2>
-  <p class="slide-body">Under-routing costs accuracy. On the labelled dev set a wrong strategy drops answer accuracy by <strong>40 points</strong>.</p>
-  <p class="slide-body">Over-routing costs tokens. A single-hop policy lookup sent through the agentic loop spends <strong>3x</strong> the tokens for the same answer.</p>
-  <p class="slide-body">You watch both happen in Build 2.</p>
+  <p class="slide-body">Under-routing costs accuracy: the filter or the second hop never happens, and the answer is wrong or incomplete.</p>
+  <p class="slide-body">Over-routing costs tokens and latency: a single-hop policy lookup sent through the agentic loop pays for searches it does not need.</p>
 </div>
 
 ---
@@ -236,8 +233,8 @@ Q  "which two reports share the beneficiary?"
 <table class="rule-table">
   <tr><th>Characteristic</th><th>Pattern</th><th>Reason</th></tr>
   <tr><td>Single-hop lookup, one document</td><td>naive</td><td>No filter, no second hop</td></tr>
-  <tr><td>Query names type, tier, or date</td><td>advanced</td><td>Metadata clause cuts contamination</td></tr>
-  <tr><td>Facts from two or more documents</td><td>agentic</td><td>Hop two depends on hop one</td></tr>
+  <tr><td>Query names a type, tier or date, or asks for a figure</td><td>advanced</td><td>Metadata clause cuts contamination</td></tr>
+  <tr><td>Facts from two or more documents, or a case reference to follow</td><td>agentic</td><td>Hop two depends on hop one</td></tr>
 </table>
 <p class="rule-caption">agentic is never right for a single-hop lookup. naive is never right where a filter is named.</p>
 
@@ -256,11 +253,11 @@ Q  "which two reports share the beneficiary?"
     <span class="big-number-label">router accuracy on<br>15 held-out queries</span>
   </div>
   <div class="done-item">
-    <span class="big-number">+0.15</span>
-    <span class="big-number-label">fact-index precision<br>tokens 60% lower</span>
+    <span class="big-number">60%</span>
+    <span class="big-number-label">fewer tokens from<br>the fact index</span>
   </div>
 </div>
-<p class="rule-caption" style="color:var(--dark-grey);">Your per-bucket numbers must land within 0.10 precision and 15 percent tokens of the check's.</p>
+<p class="rule-caption" style="color:var(--dark-grey);">Your per-bucket numbers must land within 0.30 precision and 50 percent tokens of the check's, which measures on held-out questions.</p>
 
 ---
 
