@@ -1,0 +1,21 @@
+# Captured 2026-10-01 from a live run of the 3.C start state (participant zf3a7d3a2hhc).
+# Tina's starting pipeline.py, unchanged: one semantic request across all three indices,
+# no filter, every result packed whole (PACK_STRATEGY = "naive"), no attribution, no guard.
+# Command: /home/elastic/.venv/bin/python /home/elastic/submit.py --limit 2 (8 dev questions).
+
+Dev pool results (9s, 8 questions)
+==================================================================
+  precision@10            0.417   (target 0.80 on the held-out set)
+    policy              0.400
+    case                0.150
+    sar                 0.700
+  peak context            9909 tokens   (budget 6000, ceiling per question)
+    policy              2989 tokens on average
+    case                5706 tokens on average
+    sar                 7124 tokens on average
+    unanswerable        9035 tokens on average
+  over budget             5 question(s)   (target zero)
+  gold figure delivered   6/6   (target 14 of 17 held out)
+  unsupported claims      8   (target at most 1)
+  unanswerable guarded    2/2   (target all of them)
+  fabricated figures      0   (target zero, no tolerance)

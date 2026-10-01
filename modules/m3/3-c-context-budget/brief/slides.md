@@ -13,24 +13,31 @@ minutes: 5 -->
 ---
 
 <!-- layout: problem -->
+<!-- problem -->
 
 <div class="col-left">
   <div class="terminal-block">
-Tina today
-  one search across all three indices
-  no filter
-  every result into context, whole
-  no claim tied to a passage
-  no guard on unanswerable questions
+$ submit.py --limit 2     # the start state, unchanged
 
-measured on the dev questions
-  precision@10         <span class="wrong">about 0.45</span>
-  context per question <span class="wrong">over budget</span>
+  precision@10            <span class="wrong">0.417</span>   (target 0.80 on the held-out set)
+    policy              0.400
+    case                <span class="wrong">0.150</span>
+    sar                 0.700
+  peak context            <span class="wrong">9909 tokens</span>   (budget 6000, ceiling per question)
+  over budget             <span class="wrong">5 question(s)</span>   (target zero)
+  unsupported claims      <span class="wrong">8</span>   (target at most 1)
   </div>
 </div>
 <div class="col-right">
   <h2 class="slide-heading">The problem</h2>
-  <p class="slide-body">Tina searches every index the same way and sends every result whole. Precision is low and the context runs over budget.</p>
+  <div class="terminal-block">
+# pipeline.py, as it ships
+route:  H.ALL_INDEXES, semantic, size 10
+filter: none
+PACK_STRATEGY = "naive"
+attribute, guard: return nothing
+  </div>
+  <p class="slide-body">Tina's own dev run, before any change. One search across all three indices, every result packed whole, no claim tied to a passage.</p>
 </div>
 
 ---
@@ -72,7 +79,6 @@ a declined answer      analyst looks it up     cheap
 ---
 
 <!-- layout: rule -->
-<!-- rule -->
 
 <h2 class="slide-heading">The SLO: retrieval and context</h2>
 <table class="rule-table">
@@ -86,7 +92,6 @@ a declined answer      analyst looks it up     cheap
 ---
 
 <!-- layout: rule -->
-<!-- rule -->
 
 <h2 class="slide-heading">The SLO: answers</h2>
 <table class="rule-table">
@@ -99,13 +104,26 @@ a declined answer      analyst looks it up     cheap
 
 ---
 
+<!-- layout: rule -->
+<!-- rule -->
+
+<h2 class="slide-heading">Decision rule</h2>
+<table class="rule-table">
+  <tr><th>Question</th><th>Read</th><th>The answer</th></tr>
+  <tr><td>Q1: lever that moved precision most</td><td><code>lever deltas (precision)</code></td><td>Largest delta; packing, attribution and guardrails count as one. None clears 0.005: no lever</td></tr>
+  <tr><td>Q2: class with the most context</td><td>averages under <code>peak context</code></td><td>Largest average. All three within 5%: no class</td></tr>
+</table>
+<p class="rule-caption">Your own measurements decide each row.</p>
+
+---
+
 <!-- layout: done -->
 
 <h2 class="slide-heading" style="color:var(--white);">What done looks like</h2>
 <div class="done-row">
   <div class="done-item">
     <span class="big-number">0.80</span>
-    <span class="big-number-label">precision@10 on<br>20 held-out questions</span>
+    <span class="big-number-label">precision@10 on<br>17 answerable questions</span>
   </div>
   <div class="done-item">
     <span class="big-number">14/17</span>
