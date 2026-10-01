@@ -1,0 +1,9 @@
+{
+  "name": "rtest-r6-plugin",
+  "version": "0.1.0",
+  "description": "Test plugin for ARA M4 research: citation format and case memo skills for the fictional Cortex financial firm.",
+  "author": {
+    "name": "Jeff Vestal",
+    "email": "jeff.vestal@elastic.co"
+  }
+}
