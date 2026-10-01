@@ -140,16 +140,16 @@ Turn 3, Analyst: Is <span class="wrong">that</span> reportable?
 <h2 class="slide-heading" style="color:var(--white);">What done looks like</h2>
 <div class="done-row">
   <div class="done-item">
-    <span class="big-number">3</span>
-    <span class="big-number-label">turns resolved<br>at temperature 0</span>
+    <span class="big-number">1</span>
+    <span class="big-number-label">turn 3 answer naming<br>the customer and $10,000</span>
   </div>
   <div class="done-item">
     <span class="big-number">3</span>
     <span class="big-number-label">documents in<br>cortex-tina-memory</span>
   </div>
   <div class="done-item">
-    <span class="big-number">1</span>
-    <span class="big-number-label">posture choice<br>with matching reason</span>
+    <span class="big-number">3</span>
+    <span class="big-number-label">Defend answers<br>with matching reasons</span>
   </div>
 </div>
 
