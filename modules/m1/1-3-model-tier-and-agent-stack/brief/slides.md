@@ -138,9 +138,8 @@ Tina: The Currency Transaction Report (CTR)
    "required": ["query"]}}
 
 <span class="label"># Elasticsearch query it runs</span>
-{"query": {"semantic": {
-  "field": "body_semantic",
-  "query": "CTR threshold cash deposit"}}}
+{"query": {"match": {
+  "body_semantic": "CTR threshold cash deposit"}}}
   </div>
 </div>
 <div class="col-text">
@@ -173,17 +172,13 @@ Tina: The Currency Transaction Report (CTR)
 
 <h2 class="slide-heading">Decision rule</h2>
 <table class="rule-table">
-  <tr><th>Tier selection</th><th>Stage gap</th></tr>
-  <tr class="correct">
-    <td>Satisfies constraint <em>and</em> accuracy floor</td>
-    <td>Read from your trace; match stage description</td>
-  </tr>
-  <tr>
-    <td>Both satisfy it: choose the one meeting the floor</td>
-    <td>S1: no source &bull; S2: cannot re-query &bull; S3: one shot</td>
-  </tr>
+  <tr><th>Your constraint</th><th>Choose</th></tr>
+  <tr><td>Data residency</td><td>Strong tier: fast has no EU region</td></tr>
+  <tr><td>Cost ceiling $0.40 per 1,000, floor 90%</td><td>Under the ceiling; if both, meets the floor; if both, cheaper</td></tr>
+  <tr><td>Accuracy floor 92%</td><td>Meets the floor; if both, cheaper; if neither, more accurate</td></tr>
+  <tr><td>Stage gaps</td><td>What the stage before could not do, per your traces</td></tr>
 </table>
-<p class="rule-caption">The Defend grades against your own measurements, not a fixed key.</p>
+<p class="rule-caption">Your own measurements decide each row.</p>
 
 ---
 
