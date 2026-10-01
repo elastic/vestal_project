@@ -1,0 +1,17 @@
+Q: In the investigation of Emberline Marine Services Holdings Ltd., what was the total sum established as attributable to the undisclosed party?
+
+WHOLE NARRATIVES, top 3
+  1. sar-033   37,109 tokens   <== holds the answer
+  2. sar-040   37,115 tokens
+  3. sar-039   37,106 tokens
+  sent 111,330 tokens; the answer is section 'Key Finding', 187 tokens = 0.2%
+
+PASSAGES, top 5
+  1. sar-033 Key Finding                          187   <== the answer
+  2. sar-033 Customer Due Diligence File Review 1,217
+  3. sar-033 Related Party Network Analysis     1,418
+  4. sar-033 Internal Escalation and Committee  1,232
+  5. sar-033 Activity Overview                  1,073
+  sent 5,127 tokens
+
+Captured 2026-10-01 from a live 3.1 sandbox (participant tyyv77ygycv9, assets m3-assets) by capture_problem.py, dev question dev-3-1-33. Start state: match on the semantic_text field body, top 3 whole narratives and top 5 passages.

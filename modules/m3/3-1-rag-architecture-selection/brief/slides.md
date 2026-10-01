@@ -4,7 +4,7 @@ minutes: 8 -->
 
 <p class="track-code">Lab 3.1</p>
 <h1 class="slide-title">Select and justify<br>a RAG architecture</h1>
-<p class="slide-subtitle"><strong>Tina</strong> is Cortex Bank and Trust's compliance assistant. One question against a 40,000-token SAR narrative wastes 99.5 percent of her context. You measure where that breaks, then make her choose a strategy per query.</p>
+<p class="slide-subtitle"><strong>Tina</strong> is Cortex Bank and Trust's compliance assistant. One question about a 37,000-token narrative sends her 111,330 tokens; 187 hold the answer. You measure where that breaks, then make her choose a strategy per query.</p>
 <div style="margin-top:auto;padding:10px 16px;background:rgba(255,255,255,0.12);border-radius:8px;border:1px solid rgba(255,255,255,0.25);font-size:13px;display:flex;align-items:center;gap:10px;max-width:420px;">
   <span style="font-size:18px;">&#8592;</span>
   <span><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</span>
@@ -13,29 +13,29 @@ minutes: 8 -->
 ---
 
 <!-- layout: problem -->
+<!-- problem -->
 
 <div class="col-left">
   <div class="terminal-block">
-Q: which account originated the structuring pattern?
+Q: In the investigation of Emberline Marine
+   Services Holdings Ltd., what was the total sum
+   established as attributable to the undisclosed
+   party?
 
-sar-2024-0417   retrieved whole        40,218 tokens
-  sec 1  Filing institution ........... 1,240
-  sec 2  Subject identification ....... 2,980
-  sec 3  Account history ............. 11,470
-  sec 4  Transaction detail .......... 13,806
-  sec 5  Related parties .............. 4,102
-  sec 6  Prior filings ................ 2,820
-  sec 7  Analyst notes ................ 2,493
-<span style="color:var(--yellow);">  sec 8  Key finding ..................... 187  &lt;== the answer</span>
-  sec 9  Attachments .................. 1,120
+WHOLE NARRATIVES, top 3
+  1. sar-033   37,109 tokens  <span style="color:var(--yellow);">&lt;== holds the answer</span>
+  2. sar-040   37,115 tokens
+  3. sar-039   37,106 tokens
+  sent 111,330 tokens
 
-signal in context:  187 / 40,218  =  <span class="wrong">0.5%</span>
+the answer: section 'Key Finding', 187 tokens
+signal in context:  187 / 111,330  =  <span class="wrong">0.2%</span>
   </div>
 </div>
 <div class="col-right">
   <h2 class="slide-heading">The problem</h2>
-  <p class="slide-body">One question. <strong>40,218 tokens</strong> sent. <strong>187</strong> of them hold the answer. Tina pays for the other 99.5 percent, and section 8 falls out of context before she reads it.</p>
-  <p class="slide-body">You reproduce this in Build 1, across five narrative lengths.</p>
+  <p class="slide-body">Tina found the right narrative, first of three. She was sent <strong>111,330 tokens</strong> to answer a question that <strong>187</strong> of them answer.</p>
+  <p class="slide-body">A live run against this lab's start state. You measure the same thing in Build 1, at five narrative lengths.</p>
 </div>
 
 ---
@@ -71,27 +71,22 @@ agentic
 
 <div class="col-diagram">
   <div class="terminal-block">
-"did the gold section reach the model"
-whole-document retrieval, top 3 narratives
+a bucket breaks on either gate
 
-prec
-1.0 | *--*
-    |     \
-.75 |......\................. <span class="wrong">floor</span>
-    |       *
-0.6 |        \
-    |          *--*
-0.4 |
-    +-+--+--+--+--+
-     1k 3k 8k 20k 40k   tokens per narrative
+  precision   did the gold narrative reach the top 3?
+              below 0.75            ->  <span class="wrong">broken</span>
 
-<span class="label">illustration only; your curve is your own</span>
+  tokens      what the top 3 cost, per question
+              over your budget      ->  <span class="wrong">broken</span>
+
+  break bucket   the first bucket, shortest first,
+                 that fails either gate
   </div>
 </div>
 <div class="col-text">
   <h2 class="slide-heading">The haystack problem</h2>
-  <p class="slide-body">Retrieval quality is not a property of your retriever alone. It is a property of your retriever and your document length. A whole-document retriever that works at 1k has retrieved a haystack at 40k.</p>
-  <p class="slide-body">Build 1 plots this curve on your corpus, in five length buckets.</p>
+  <p class="slide-body">A whole-document retriever can find the right narrative and still fail. Every question pays for every token of every narrative it retrieves, and one section holds the answer.</p>
+  <p class="slide-body">Build 1 measures both gates at five narrative lengths, from about 1,000 to about 40,000 tokens.</p>
 </div>
 
 ---
@@ -100,22 +95,19 @@ prec
 
 <div class="col-diagram">
   <div class="terminal-block">
-       precision, falls        tokens sent, rises
-  1k   ###############  0.95   ##  1,900
-  3k   ##############   0.90   ####  5,700
-  8k   ###########      0.68   ######  15,200
- 20k   ########         0.48   ##########  38,400
- 40k   ######           0.38   ##############  74,100
-                   :               :
-              0.75 floor      8,000 budget (seeded)
+a question about a 1k narrative
 
-<span class="label">illustration only; both scales are relative</span>
+  top 3 whole narratives
+    = the 3 most similar narratives in the corpus
+    = of any length
+
+  one of them can be a 40k narrative
   </div>
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Tokens are the other axis</h2>
-  <p class="slide-body">Precision falls. Token cost rises. Neither depends on which model you call. Your <strong>break bucket</strong> is the smallest bucket that fails either test: precision under the floor, or tokens over the budget.</p>
-  <p class="slide-body">Your budget is seeded. A different budget can move the break bucket.</p>
+  <p class="slide-body">Top 3 means three narratives, not three short ones. Retrieval ranks by similarity, not by length, so what a question costs depends on what else in the corpus looks like it.</p>
+  <p class="slide-body">Your token budget per question is seeded, in <code>/home/elastic/constraint.json</code>.</p>
 </div>
 
 ---
@@ -124,26 +116,24 @@ prec
 
 <div class="col-diagram">
   <div class="terminal-block">
-Q: which account originated the structuring pattern?
+same question, same corpus, same retriever
 
-WHOLE DOCUMENTS           PASSAGES
-top 3 narratives          top 5 sections
------------------------   ------------------------
-0417   40,218 tok         0417 sec 8  finding  187
-0390   21,044 tok         0417 sec 4  accounts 512
-0356    8,901 tok         0390 sec 7  pattern  468
-                          0356 sec 2  subject  441
-                          0417 sec 6  priors   502
------------------------   ------------------------
-70,163 tokens sent        2,110 tokens sent
-gold section <span class="wrong">LOST</span>         gold section <span style="color:var(--yellow);">RANK 1</span>
-context truncated         top hit
+WHOLE NARRATIVES, top 3   PASSAGES, top 5
+------------------------  ------------------------------
+sar-033   37,109          sar-033 Key Finding        187 <span style="color:var(--yellow);">&lt;==</span>
+sar-040   37,115          sar-033 Due Diligence    1,217
+sar-039   37,106          sar-033 Related Parties  1,418
+                          sar-033 Escalation       1,232
+                          sar-033 Activity         1,073
+------------------------  ------------------------------
+111,330 tokens sent       5,127 tokens sent
+answer in narrative 1     answer is passage 1
   </div>
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Passages, not documents</h2>
-  <p class="slide-body">Same question, same corpus, same retriever. Only the unit of retrieval changed. Retrieving a document bets that the whole document is relevant. Retrieving a section makes that bet one section at a time.</p>
-  <p class="slide-body">Precision up. Tokens down 97 percent.</p>
+  <p class="slide-body">Only the unit of retrieval changed. Retrieving a document bets that the whole document is relevant. Retrieving a section makes that bet one section at a time.</p>
+  <p class="slide-body">The same answer, for 5 percent of the tokens.</p>
 </div>
 
 ---
@@ -163,7 +153,7 @@ all of it                   "dates":            [..]
                             "topics":           [..] }
 -----------------------   -------------------------
 8 questions, top 3        8 questions, top 3
-tokens sent               about 98% fewer <span style="color:var(--yellow);">cheaper</span>
+tokens sent               a fraction      <span style="color:var(--yellow);">cheaper</span>
 precision                 measure it      <span style="color:var(--yellow);">?</span>
   </div>
 </div>
@@ -210,7 +200,7 @@ your order decides which wins.
 Q  "tier 3 sanctions cases filed this quarter"
    routed   naive        should be   advanced
    got      5 structuring memos mentioning sanctions
-   answer   <span class="wrong">WRONG</span>        tokens      2,410
+   answer   <span class="wrong">WRONG</span>
 
 Q  "which two reports share the beneficiary?"
    routed   advanced     should be   agentic
@@ -230,13 +220,13 @@ Q  "which two reports share the beneficiary?"
 <!-- rule -->
 
 <h2 class="slide-heading">Decision rule</h2>
+<p class="rule-caption">Take the first row that applies.</p>
 <table class="rule-table">
-  <tr><th>Characteristic</th><th>Pattern</th><th>Reason</th></tr>
-  <tr><td>Single-hop lookup, one document</td><td>naive</td><td>No filter, no second hop</td></tr>
-  <tr><td>Query names a type, tier or date, or asks for a figure</td><td>advanced</td><td>Metadata clause cuts contamination</td></tr>
-  <tr><td>Facts from two or more documents, or a case reference to follow</td><td>agentic</td><td>Hop two depends on hop one</td></tr>
+  <tr><th>The request</th><th>Pattern</th></tr>
+  <tr><td>Needs facts from two or more documents, or a case reference to follow</td><td>agentic</td></tr>
+  <tr><td>Names a case type, risk tier or date, or asks for a figure</td><td>advanced</td></tr>
+  <tr><td>A single-hop lookup in one document</td><td>naive</td></tr>
 </table>
-<p class="rule-caption">agentic is never right for a single-hop lookup. naive is never right where a filter is named.</p>
 
 ---
 
