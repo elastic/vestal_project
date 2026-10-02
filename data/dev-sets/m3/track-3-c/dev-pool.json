@@ -155,16 +155,16 @@
   },
   {
     "query_id": "dev-3-c-pol-08",
-    "query_text": "Above what value does an international wire transfer require an automatic secondary review by the central compliance unit?",
+    "query_text": "Above what anticipated annual deposit volume is a politically exposed person escalated to critical risk status?",
     "query_class": "policy",
-    "gold_literal": "twenty-four thousand five hundred dollars",
+    "gold_literal": "two million five hundred thousand dollars",
     "relevant_ids": [
-      "policy-015",
-      "policy-016",
-      "policy-017"
+      "policy-002",
+      "policy-008",
+      "policy-014"
     ],
     "gold_doc_ids": [
-      "policy-015"
+      "policy-014"
     ],
     "index": "cortex-policies",
     "intent": {
