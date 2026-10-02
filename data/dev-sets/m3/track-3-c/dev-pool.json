@@ -89,16 +89,16 @@
   },
   {
     "query_id": "dev-3-c-pol-05",
-    "query_text": "For retail accounts, what cumulative value of seven or more incoming electronic transfers in a rolling forty-eight-hour period raises an automated velocity alert?",
+    "query_text": "What combined value of linked trade finance transactions inside a consecutive thirty-day period triggers an automated secondary valuation check?",
     "query_class": "policy",
-    "gold_literal": "twelve thousand five hundred dollars",
+    "gold_literal": "two million four hundred and fifty thousand dollars",
     "relevant_ids": [
-      "policy-001",
-      "policy-005",
-      "policy-009"
+      "policy-015",
+      "policy-016",
+      "policy-017"
     ],
     "gold_doc_ids": [
-      "policy-005"
+      "policy-016"
     ],
     "index": "cortex-policies",
     "intent": {
@@ -107,7 +107,7 @@
       "date_from": null,
       "date_to": null
     },
-    "relevant_unit_count": 14
+    "relevant_unit_count": 15
   },
   {
     "query_id": "dev-3-c-pol-06",
@@ -155,16 +155,16 @@
   },
   {
     "query_id": "dev-3-c-pol-08",
-    "query_text": "What aggregate of multiple cash deposits inside a rolling three-day period triggers a structuring alert in ongoing transaction monitoring?",
+    "query_text": "Above what value does an international wire transfer require an automatic secondary review by the central compliance unit?",
     "query_class": "policy",
-    "gold_literal": "eight thousand five hundred dollars",
+    "gold_literal": "twenty-four thousand five hundred dollars",
     "relevant_ids": [
-      "policy-005",
-      "policy-006",
-      "policy-009"
+      "policy-015",
+      "policy-016",
+      "policy-017"
     ],
     "gold_doc_ids": [
-      "policy-009"
+      "policy-015"
     ],
     "index": "cortex-policies",
     "intent": {
@@ -173,7 +173,7 @@
       "date_from": null,
       "date_to": null
     },
-    "relevant_unit_count": 14
+    "relevant_unit_count": 15
   },
   {
     "query_id": "dev-3-c-pol-09",

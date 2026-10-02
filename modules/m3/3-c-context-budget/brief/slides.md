@@ -98,9 +98,9 @@ a declined answer      analyst looks it up     cheap
   <tr><th>Target</th><th>Value</th></tr>
   <tr><td>Exact figure in the answer</td><td>at least 14 of 17</td></tr>
   <tr><td>Claims with no passage behind them</td><td>at most 1</td></tr>
-  <tr><td>3 unanswerable questions</td><td>all held back, zero figures</td></tr>
+  <tr><td>3 unanswerable questions</td><td>all held back by a guardrail, zero figures</td></tr>
 </table>
-<p class="rule-caption">The unanswerable row has no tolerance.</p>
+<p class="rule-caption">The unanswerable row has no tolerance. Tina's prompt never tells the model to decline, so the guard decides.</p>
 
 ---
 
@@ -110,10 +110,10 @@ a declined answer      analyst looks it up     cheap
 <h2 class="slide-heading">Decision rule</h2>
 <table class="rule-table">
   <tr><th>Question</th><th>Read</th><th>The answer</th></tr>
-  <tr><td>Q1: lever that moved precision most</td><td><code>lever deltas (precision)</code></td><td>Largest delta; packing, attribution and guardrails count as one. None clears 0.005: no lever</td></tr>
+  <tr><td>Q1: guardrail that held back the most</td><td><code>held back by</code></td><td>Largest count; a tie accepts either. Nothing held back: no guardrail</td></tr>
   <tr><td>Q2: class with the most context</td><td>averages under <code>peak context</code></td><td>Largest average. All three within 5%: no class</td></tr>
 </table>
-<p class="rule-caption">Your own measurements decide each row.</p>
+<p class="rule-caption">Your own measurements decide each row, from a full <code>submit.py</code> run of all 40 dev questions.</p>
 
 ---
 
