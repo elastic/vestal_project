@@ -16,7 +16,7 @@
   },
   {
     "query_id": "dev-3-3-pass-02",
-    "query_text": "What was the total amount of the consolidated transfer that Beatriz Zimmerman directed to an external account?",
+    "query_text": "In the Beatriz Zimmerman SAR, what amount was wired on October 10, 2024 from account 59-11704-9 to Cyrus Cárdenas?",
     "set": "B",
     "index": "cortex-sar-passages",
     "relevant_ids": [
@@ -31,7 +31,7 @@
   },
   {
     "query_id": "dev-3-3-pass-03",
-    "query_text": "In the case involving Lorcan Hawthorne, what was the specific amount traced to the external entity?",
+    "query_text": "In the Lorcan Hawthorne SAR, how much of the induced wire was traced to Oakhurst Management Group LLC at account 89-84110-9?",
     "set": "B",
     "index": "cortex-sar-passages",
     "relevant_ids": [
@@ -46,7 +46,7 @@
   },
   {
     "query_id": "dev-3-3-pass-04",
-    "query_text": "What was the total amount of the consolidated transfer executed from the Bluewater Freight LLC operating account?",
+    "query_text": "In the Bluewater Freight LLC SAR, what consolidated transfer went on October 18, 2024 to Crescent Textiles Group LLC at account 76-64981-9?",
     "set": "B",
     "index": "cortex-sar-passages",
     "relevant_ids": [
