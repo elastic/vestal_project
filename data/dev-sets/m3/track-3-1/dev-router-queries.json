@@ -130,5 +130,27 @@
       "has_case_id": true
     },
     "expected_strategy": "agentic"
+  },
+  {
+    "query_id": "dev-3-1-router-13",
+    "query_text": "Case reference sar-031: what did the follow-up investigation conclude?",
+    "features": {
+      "has_filter_intent": false,
+      "asks_for_figure": false,
+      "multi_hop": false,
+      "has_case_id": true
+    },
+    "expected_strategy": "agentic"
+  },
+  {
+    "query_id": "dev-3-1-router-14",
+    "query_text": "Pull the report for investigation inv-2024-0117 and list the accounts it froze.",
+    "features": {
+      "has_filter_intent": false,
+      "asks_for_figure": false,
+      "multi_hop": false,
+      "has_case_id": true
+    },
+    "expected_strategy": "agentic"
   }
 ]

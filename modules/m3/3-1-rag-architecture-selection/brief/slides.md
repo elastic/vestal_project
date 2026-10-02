@@ -81,6 +81,7 @@ a bucket breaks on either gate
 
   break bucket   the first bucket, shortest first,
                  that fails either gate
+                 none, if no bucket fails
   </div>
 </div>
 <div class="col-text">
@@ -159,7 +160,7 @@ precision                 measure it      <span style="color:var(--yellow);">?</
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Query the extraction, not the report</h2>
-  <p class="slide-body">The extraction runs once, offline. Later questions read facts, not prose, so tokens fall sharply. Whether precision rises depends on the corpus: Build 1 measures both.</p>
+  <p class="slide-body">The extraction runs once, offline. Questions then read facts, not prose, so tokens fall sharply. Precision can fall too; Cortex's limit is <code>max_fact_precision_loss</code> in <code>constraint.json</code>.</p>
   <p class="slide-body"><strong>Knowledge Indicators</strong> builds these records from your corpus.</p>
   <div style="padding:10px 14px;background:rgba(254,197,20,0.15);border-left:3px solid var(--yellow);border-radius:6px;font-size:14px;line-height:1.5;">
     &#9888;&#65039; Knowledge Indicators are in preview. This lab uses an offline GA index to teach the same pattern.
@@ -188,7 +189,7 @@ your order decides which wins.
 <div class="col-text">
   <h2 class="slide-heading">The strategy router</h2>
   <p class="slide-body">The harness extracts the features. You write the function that maps them to a strategy.</p>
-  <p class="slide-body">Order matters. Test for a second hop or a case reference before you test for filters, or an investigation query that also names a case type routes <code>advanced</code> and stops after one search.</p>
+  <p class="slide-body">Order matters when a query carries more than one feature. Tina's current router gets some of those wrong; the dev set shows which.</p>
 </div>
 
 ---

@@ -123,6 +123,15 @@ def test_strategy_router_advanced():
     assert result == "advanced"
 
 
+def test_strategy_router_ships_filter_first():
+    # Lab 3.1 Build 2: Tina's shipped router checks filters and figures first, so a
+    # multi-hop query that asks for a figure goes to advanced. The learner fixes the order.
+    from tina.strategy_router import strategy_router
+    result = strategy_router("compare the amounts", {"multi_hop": True, "has_filter_intent": False,
+                                                     "asks_for_figure": True, "has_case_id": False})
+    assert result == "advanced"
+
+
 def test_strategy_router_naive():
     from tina.strategy_router import strategy_router
     result = strategy_router("tell me about compliance", {"multi_hop": False, "has_filter_intent": False,
