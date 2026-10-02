@@ -19,13 +19,15 @@ minutes: 5 -->
   <div class="terminal-block">
 $ submit.py --limit 2     # the start state, unchanged
 
-  precision@10            <span class="wrong">0.417</span>   (target 0.80 on the held-out set)
+  precision@10            <span class="wrong">0.400</span>   (target 0.80 on the held-out set)
     policy              0.400
     case                <span class="wrong">0.150</span>
-    sar                 0.700
+    sar                 0.650
   peak context            <span class="wrong">9909 tokens</span>   (budget 6000, ceiling per question)
   over budget             <span class="wrong">5 question(s)</span>   (target zero)
-  unsupported claims      <span class="wrong">8</span>   (target at most 1)
+  unsupported claims      <span class="wrong">9</span>   (target at most 1)
+  unanswerable held back  <span class="wrong">0/2</span>   (target all of them)
+  fabricated figures      <span class="wrong">1</span>   (target zero, no tolerance)
   </div>
 </div>
 <div class="col-right">
@@ -37,7 +39,7 @@ filter: none
 PACK_STRATEGY = "naive"
 attribute, guard: return nothing
   </div>
-  <p class="slide-body">Tina's own dev run, before any change. One search across all three indices, every result packed whole, no claim tied to a passage.</p>
+  <p class="slide-body">Tina's own dev run, before any change. One search across all three indices, every result packed whole, no claim tied to a passage, and nothing held back: on a question about a customer the corpus does not hold, a dollar figure from another file reached the desk.</p>
 </div>
 
 ---
