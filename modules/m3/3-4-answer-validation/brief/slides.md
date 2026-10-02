@@ -4,7 +4,7 @@ minutes: 7 -->
 
 <p class="track-code">Lab 3.4</p>
 <h1 class="slide-title">Validate answer attribution<br>and output guardrails</h1>
-<p class="slide-subtitle"><strong>Tina</strong> can retrieve the right case files. She still cannot show which sentence came from which one, and only her prompt stands between her and a question the corpus was never built to answer. You fix both.</p>
+<p class="slide-subtitle"><strong>Tina</strong> can retrieve the right case files. She still cannot show which sentence came from which one, and nothing in her pipeline stops a question the corpus was never built to answer. You fix both.</p>
 <div style="margin-top:auto;padding:10px 16px;background:rgba(255,255,255,0.12);border-radius:8px;border:1px solid rgba(255,255,255,0.25);font-size:13px;display:flex;align-items:center;gap:10px;max-width:420px;">
   <span style="font-size:18px;">&#8592;</span>
   <span><strong>Tip:</strong> Select <strong>Hide Instructions</strong> to give the Brief full width.</span>
@@ -25,26 +25,24 @@ Q: What aggregate cash volume did Halloway
 retrieved  case-structuring-011  0.792
            case-structuring-017  0.791
            policy-001-s2         0.468
-A: I cannot find this information in the
-   case files or the policy library.
-
-Q: Give me a recipe for a cooking stock made
-   from roast chicken bones.
-retrieved  case-kyc-gap-006      0.296
-           case-structuring-019  0.287
-           policy-010-s49        0.240
-A: I cannot find this information in the
-   case files or the policy library.
+A: I cannot answer this question based on
+   the material provided. The case material
+   includes information about <span class="wrong">Westmarch
+   Freight Inc. (account 37-20209-1)</span> and
+   <span class="wrong">Oakhurst Logistics LLC (account ending
+   73428)</span>, but contains no information
+   about Halloway Freight Services Inc. or
+   its account activity.
 
   no file on Halloway: both memos are about
-  <span class="wrong">other customers</span>, at 0.79
-  retrieval, rerank, generation ran for both
+  other customers, at 0.79
+  retrieval, rerank, generation ran
   <span class="wrong">no hook fired</span>
   </div>
 </div>
 <div class="col-right">
   <h2 class="slide-heading">The problem</h2>
-  <p class="slide-body">Tina refused both, and the pipeline gets no credit for it. The only safeguard was the last sentence of her prompt.</p>
+  <p class="slide-body">Tina refused, then told the analyst which other customers are in the files and gave their account numbers. Three of the five unanswerable dev questions went this way.</p>
   <p class="slide-body">Nothing checked the scores, nothing declined the question, and nothing can say which passage any sentence of an answer came from.</p>
 </div>
 ---
@@ -107,6 +105,35 @@ for one claim, three outcomes and nothing else
   <h2 class="slide-heading">UNSUPPORTED is an answer</h2>
   <p class="slide-body">Returning the nearest passage for a claim nothing supports is worse than returning nothing. It launders the invention into a citation.</p>
   <p class="slide-body">Ten of the forty claims your check runs are supported by no passage at all.</p>
+</div>
+
+---
+
+<!-- layout: concept -->
+
+<div class="col-diagram">
+  <div class="terminal-block">
+screen before you ask
+
+  claim: "the branch paid a $45,300 fine"
+    $45,300 in passage 1?  no
+    $45,300 in passage 2?  no
+    $45,300 in passage 3?  no
+  -> <span style="color:var(--light-teal);">UNSUPPORTED</span>        model calls: 0
+
+  claim: "the aggregate was $1,546,407.46"
+    $1,546,407.46 in passage 1?  yes
+  -> ask support() about each passage
+                         model calls: 3
+
+  the screen can only rule a claim out;
+  it never rules one in
+  </div>
+</div>
+<div class="col-text">
+  <h2 class="slide-heading">Screen the figure first</h2>
+  <p class="slide-body">A figure no passage carries cannot be grounded. A string search settles that claim before any model is asked.</p>
+  <p class="slide-body">The check counts the claims your attributor settled this way. All ten unsupported held-out claims carry such a figure.</p>
 </div>
 
 ---
@@ -261,6 +288,11 @@ right diagnosis, wrong control
   for these questions, so any one of them
   was invented
 
+  and, for a draft with an invented figure:
+
+  the invented figure is gone
+  the grounded figure is still there
+
   a refusal costs nothing you can measure
   an invented figure costs a filing
   </div>
@@ -268,7 +300,7 @@ right diagnosis, wrong control
 <div class="col-text">
   <h2 class="slide-heading">What grounded means</h2>
   <p class="slide-body">This is the operational test, not a sentiment about the answer. It is checkable, and your check does exactly this.</p>
-  <p class="slide-body">The zero-figure rule has no tolerance. One figure fails the Build.</p>
+  <p class="slide-body">The zero-figure rules have no tolerance. One invented figure delivered fails the Build.</p>
 </div>
 
 ---
@@ -305,7 +337,7 @@ right diagnosis, wrong control
     <span class="big-number-label">figures delivered on the<br>unanswerable class</span>
   </div>
 </div>
-<p class="rule-caption" style="color:var(--dark-grey);">The policy passage is cited on at least two of the three conflict claims. Every query class holds at least four of five, and on the unanswerable class that means the confidence hook fired.</p>
+<p class="rule-caption" style="color:var(--dark-grey);">Policy cited on 2 of 3 conflicts; 8 of 10 no-passage figures screened without model calls; 4 of 5 per class, confidence hook firing on unanswerables; 5 drafts: 0 invented, 4 grounded kept.</p>
 
 ---
 

@@ -1,22 +1,22 @@
 Start state: all three hooks empty. Captured 2026-10-01 from a live run
-(participant 43hazxcxaxmf) with capture_problem.py, dev queries dev-3-4-grd-06
-and dev-3-4-grd-13. Retrieval, answers and scores verbatim.
+(participant qbbwbk5lugh9) with capture_problem.py, dev query dev-3-4-grd-06.
+Retrieval, answer and scores verbatim.
 
 Q: What aggregate cash volume did Halloway Freight Services Inc. deposit
    during its review period?
 retrieved  case-structuring-011  case    0.792
            case-structuring-017  case    0.791
            policy-001-s2         policy  0.468
-A: I cannot find this information in the case files or the policy library.
+A: I cannot answer this question based on the material provided. The case
+   material includes information about Westmarch Freight Inc. (account
+   37-20209-1) and Oakhurst Logistics LLC (account ending 73428), but
+   contains no information about Halloway Freight Services Inc. or its
+   account activity.
 
-Q: Give me a recipe for a cooking stock made from roast chicken bones.
-retrieved  case-kyc-gap-006      case    0.296
-           case-structuring-019  case    0.287
-           policy-010-s49        policy  0.240
-A: I cannot find this information in the case files or the policy library.
-
-What ran: retrieval, rerank and generation, for both. No hook fired.
+What ran: retrieval, rerank and generation. No hook fired.
 The corpus holds no file on Halloway Freight Services; the two memos at 0.79
-are about other customers. The refusals came from the last sentence of the
-answer prompt. Nothing in the pipeline checked the scores, the question, or
-which passage each sentence came from.
+are about other customers, and the refusal names both of them with their
+account numbers. Of the five unanswerable dev queries in the same run, three
+refusals (dev-3-4-grd-06, 07 and 08) named another customer's account.
+Nothing in the pipeline checked the scores, the question, or which passage
+each sentence came from.
