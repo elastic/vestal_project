@@ -112,7 +112,7 @@ Policy-003:  threshold=10000, direction="at or above"
 </div>
 <div class="col-text">
   <h2 class="slide-heading">What fine-tuning changes</h2>
-  <p class="slide-body">Fine-tuning bakes updated knowledge into the model's weights. The data pipeline, training run, and evaluation cycle take days. Suitable when the update cadence is low and the propagation window is acceptable.</p>
+  <p class="slide-body">Fine-tuning changes the model's weights. The data pipeline, training run, and evaluation cycle take days. It suits behaviour that changes rarely, such as a fixed output format or defined terms, which retrieved text does not enforce.</p>
 </div>
 
 ---
@@ -121,15 +121,15 @@ Policy-003:  threshold=10000, direction="at or above"
 
 <div class="col-diagram">
   <table class="rule-table" style="font-size:14px;">
-    <tr><th>Cadence</th><th>Approach</th></tr>
-    <tr class="correct"><td>Weekly updates</td><td>Retrieval - propagates in seconds</td></tr>
-    <tr><td>Annual updates</td><td>Depends on your measured latency</td></tr>
+    <tr><th>What changes</th><th>What keeps up</th></tr>
+    <tr class="correct"><td>Policy values</td><td>Retrieval: seconds per update</td></tr>
+    <tr><td>Behaviour: format, defined terms</td><td>Fine-tuning</td></tr>
   </table>
-  <p style="font-size:12px;color:var(--dark-grey);margin-top:8px;">Propagation time is the deciding variable.</p>
+  <p style="font-size:12px;color:var(--dark-grey);margin-top:8px;">Values come from retrieval either way.</p>
 </div>
 <div class="col-text">
-  <h2 class="slide-heading">Propagation time is the deciding variable</h2>
-  <p class="slide-body">Your sandbox has a seeded change cadence. Measure how fast your pipeline propagates a policy update, then decide whether retrieval keeps pace. You will be given one cadence.</p>
+  <h2 class="slide-heading">Knowledge or behaviour</h2>
+  <p class="slide-body">Your sandbox has one Cortex requirement. Measure how fast a policy update reaches an answer, then decide whether retrieval alone meets it.</p>
 </div>
 
 ---
@@ -171,12 +171,11 @@ Policy-003:  threshold=10000, direction="at or above"
 
 <h2 class="slide-heading">Decision rule</h2>
 <table class="rule-table">
-  <tr><th>Cadence</th><th>Propagation latency</th><th>Approach</th></tr>
-  <tr class="correct"><td>Weekly</td><td>Any</td><td>Retrieval</td></tr>
-  <tr><td>Annual</td><td>Under 60 s</td><td>Retrieval</td></tr>
-  <tr><td>Annual</td><td>Over 60 s</td><td>Fine-tuning + retrieval</td></tr>
+  <tr><th>Requirement</th><th>Approach</th></tr>
+  <tr class="correct"><td>Weekly policy changes</td><td>Retrieval</td></tr>
+  <tr><td>Yearly policy changes and a fixed decision format</td><td>Fine-tuning + retrieval</td></tr>
 </table>
-<p class="rule-caption">Your Defend answers derive from your seeded cadence and your measured propagation latency.</p>
+<p class="rule-caption">Your Defend answers follow the requirement seeded for your sandbox; your measured propagation latency is the evidence.</p>
 
 ---
 
@@ -189,8 +188,8 @@ Policy-003:  threshold=10000, direction="at or above"
     <span class="big-number-label">planted errors caught<br>0 false positives</span>
   </div>
   <div class="done-item">
-    <span class="big-number">≥0.50</span>
-    <span class="big-number-label">precision@3 on<br>5 held-out queries</span>
+    <span class="big-number">≥0.60</span>
+    <span class="big-number-label">precision@3 on 10 held-out<br>queries, 0 not yet in effect</span>
   </div>
   <div class="done-item">
     <span class="big-number">✓</span>
