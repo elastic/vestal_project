@@ -14,19 +14,23 @@
 
 <div class="col-left">
   <div class="terminal-block">
-User: What is Cortex Bank's CTR threshold,
-      and is a $9,500 cash deposit reportable?
+User: What is Cortex Bank's internal threshold
+      for filing a Suspicious Activity Report
+      when the suspect is known, and is a
+      $4,000 suspicious transfer by a known
+      customer reportable?
 
-Tina: The Currency Transaction Report (CTR)
-      threshold is typically $5,000 for cash
-      deposits. A $9,500 deposit would
-      <span class="wrong">likely be reportable</span> depending on
-      your institution's policies.
+Tina: Cortex Bank's internal threshold for
+      filing a Suspicious Activity Report (SAR)
+      when the suspect is known is <span class="wrong">$5,000</span>.
+      A single $4,000 suspicious transfer by a
+      known customer would generally <span class="wrong">not</span> meet
+      the monetary ...
   </div>
 </div>
 <div class="col-right">
   <h2 class="slide-heading">The problem</h2>
-  <p class="slide-body">Tina answered confidently. She consulted no source. The threshold is <strong>$10,000</strong> from policy-003. Cortex files reports on the wrong transactions.</p>
+  <p class="slide-body">Tina answered confidently from her training: $5,000 is the federal figure. She consulted no source. Cortex's own threshold is <strong>$3,500</strong>, in policy-003, so this $4,000 transfer must be reported. Cortex would miss the filing.</p>
   <p class="slide-body">You will see this yourself in Build 2, stage 1.</p>
 </div>
 
@@ -47,11 +51,11 @@ Tina: The Currency Transaction Report (CTR)
 <!-- layout: concept -->
 
 <div class="col-diagram">
-  <img src="img/tier-constraints.svg" alt="Three Cortex constraints: data residency, cost ceiling, accuracy floor - each rules out a different tier" style="max-width:100%;max-height:340px;">
+  <img src="img/tier-constraints.svg" alt="Three Cortex constraints: data residency, a cost ceiling and a latency ceiling. Each sandbox gets one." style="max-width:100%;max-height:340px;">
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Choose by constraint, not by benchmark</h2>
-  <p class="slide-body">Cortex has three possible constraints: a <strong>data-residency</strong> rule, a <strong>cost ceiling</strong> per 1,000 requests, and an <strong>accuracy floor</strong> on structured output. Each rules out a different tier. You will be given one. Measure both, then decide.</p>
+  <p class="slide-body">Cortex has three possible constraints: a <strong>data-residency</strong> rule, a <strong>cost ceiling</strong> per 1,000 requests, and a <strong>latency ceiling</strong> on median (p50) response time. You will be given one. Residency is a rule; the ceilings are decided by what you measure. Do not assume the tier names tell you which is faster.</p>
 </div>
 
 ---
@@ -112,7 +116,7 @@ Tina: The Currency Transaction Report (CTR)
 {"role": "assistant",
  "tool_calls": [{"id": "call_abc",
    "function": {"name": "search_policies",
-     "arguments": "{\"query\": \"CTR threshold\"}"}}]}
+     "arguments": "{\"query\": \"SAR threshold known suspect\"}"}}]}
 
 <span class="label"># your dispatch returns:</span>
 {"role": "tool", "tool_call_id": "call_abc",
@@ -139,7 +143,7 @@ Tina: The Currency Transaction Report (CTR)
 
 <span class="label"># Elasticsearch query it runs</span>
 {"query": {"match": {
-  "body_semantic": "CTR threshold cash deposit"}}}
+  "body_semantic": "SAR threshold known suspect"}}}
   </div>
 </div>
 <div class="col-text">
@@ -174,8 +178,8 @@ Tina: The Currency Transaction Report (CTR)
 <table class="rule-table">
   <tr><th>Your constraint</th><th>Choose</th></tr>
   <tr><td>Data residency</td><td>Strong tier: fast has no EU region</td></tr>
-  <tr><td>Cost ceiling $0.40 per 1,000, floor 90%</td><td>Under the ceiling; if both, meets the floor; if both, cheaper</td></tr>
-  <tr><td>Accuracy floor 92%</td><td>Meets the floor; if both, cheaper; if neither, more accurate</td></tr>
+  <tr><td>Cost ceiling $0.40 per 1,000</td><td>Under the ceiling; if both or neither, cheaper</td></tr>
+  <tr><td>Latency ceiling 1,650 ms p50</td><td>Under the ceiling; if both, cheaper; if neither, faster</td></tr>
   <tr><td>Stage gaps</td><td>What the stage before could not do, per your traces</td></tr>
 </table>
 <p class="rule-caption">Your own measurements decide each row.</p>
