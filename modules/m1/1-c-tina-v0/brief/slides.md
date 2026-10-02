@@ -42,7 +42,7 @@ Tina: ...triggers a structuring alert when
 
 <div class="col-text">
   <h2 class="slide-heading">The scenario</h2>
-  <p class="slide-body">Analysts will ask Tina questions that each need two facts from <strong>two different policies</strong> in <code>cortex-policies</code>. The harness has a tool registry and a ReAct loop, with no tools registered. Cortex pays for every token, the strong tier costs more, and an analyst must see which policy each fact came from.</p>
+  <p class="slide-body">Analysts will ask Tina questions that each need two facts from <strong>two different policies</strong> in <code>cortex-policies</code>. The harness has a tool registry and a ReAct loop. The notebook's starter <code>search_policies</code> runs the search; you decide what it gives the model. Cortex pays for every token, and an analyst must see which policy each fact came from.</p>
 </div>
 
 ---
