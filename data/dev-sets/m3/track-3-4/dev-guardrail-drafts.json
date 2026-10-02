@@ -1,0 +1,132 @@
+[
+  {
+    "draft_id": "dev-3-4-drf-01",
+    "query_text": "What aggregate cash volume did Summit Gate Holdings Corp. deposit, and when was the report filed?",
+    "passages": [
+      {
+        "passage_id": "case-structuring-015",
+        "source_type": "case",
+        "text": "The analysis of the customer's account activity over the six-month review period revealed a sustained pattern of deposits designed to remain below the $10,000 currency transaction reporting threshold. The aggregate cash volume deposited during the review period by this customer reached $2,286,081.46. This total was achieved through numerous individual transactions clustered between $5,016.70 and $798.90."
+      },
+      {
+        "passage_id": "case-structuring-022",
+        "source_type": "case",
+        "text": "Analysis of the account activity over the review period revealed aggregate cash deposits totalling $389,761.24. The deposits were consistently clustered in amounts ranging from $8,736.64 to $2,879.75."
+      },
+      {
+        "passage_id": "policy-001-s2",
+        "source_type": "policy",
+        "text": "The cash monitoring system alerts an analyst when aggregated cash activity for one customer reaches $12,500 across all accounts in a seven-day rolling window."
+      }
+    ],
+    "answer": "The aggregate cash volume deposited on the Summit Gate Holdings account during the review period reached $2,286,081.46. The bank filed its report 41 days after the first alert.",
+    "gold_literal": "$2,286,081.46",
+    "invented": [
+      "41 days"
+    ]
+  },
+  {
+    "draft_id": "dev-3-4-drf-02",
+    "query_text": "How large was the fraudulent wire from Ardent Imports Trading Co., and how much did the recall recover?",
+    "passages": [
+      {
+        "passage_id": "case-wire-fraud-007",
+        "source_type": "case",
+        "text": "The beneficiary name provided in the fraudulent instructions did not match the name of the invoicing vendor. The amount of the fraudulent outbound wire was $739,534.05. Upon discovery of the discrepancy, Cortex Bank and Trust initiated a recall request through the wire network."
+      },
+      {
+        "passage_id": "case-wire-fraud-014",
+        "source_type": "case",
+        "text": "The beneficiary name on the transfer instructions did not correspond to the invoicing vendor. Based on these factors, the reviewing analyst determined that the $277,408.98 transfer from the customer's account was induced by deception."
+      },
+      {
+        "passage_id": "policy-015-s3",
+        "source_type": "policy",
+        "text": "A primary indicator of potential illicit activity is a wire transfer that lacks a clear, legitimate economic or business purpose."
+      }
+    ],
+    "answer": "The fraudulent outbound wire on the Ardent Imports account was $739,534.05. The recall request recovered $212,400.00 of the funds.",
+    "gold_literal": "$739,534.05",
+    "invented": [
+      "$212,400.00"
+    ]
+  },
+  {
+    "draft_id": "dev-3-4-drf-03",
+    "query_text": "What was the aggregate value of the screened transactions for Aperture Produce Trading Co., and how many shipments went through the hub?",
+    "passages": [
+      {
+        "passage_id": "case-sanctions-003",
+        "source_type": "case",
+        "text": "Subsequent analysis of the customer's transaction history revealed an aggregate value of screened transactions under review totaling $387,177.94 over the preceding six months. While previous transactions did not trigger automated alerts, a manual review of historical trade documents identified a consistent pattern of utilizing the same transshipment hub."
+      },
+      {
+        "passage_id": "case-sanctions-016",
+        "source_type": "case",
+        "text": "Analysis of the account history revealed a pattern of international wire transfers associated with the importation of goods, with the aggregate value of the screened transactions under review totaling $200,703.45."
+      },
+      {
+        "passage_id": "policy-006-s2",
+        "source_type": "policy",
+        "text": "All payment fields, including originator, beneficiary, intermediary institutions, and free-text remittance information, must be subjected to systemic screening against designated sanctions lists."
+      }
+    ],
+    "answer": "The aggregate value of screened transactions under review on the Aperture Produce account totaled $387,177.94. About 35% of the shipments passed through the transshipment hub.",
+    "gold_literal": "$387,177.94",
+    "invented": [
+      "35%"
+    ]
+  },
+  {
+    "draft_id": "dev-3-4-drf-04",
+    "query_text": "What activity was conducted on Lorcan Whitlock's deficient file, and how long was the exception open?",
+    "passages": [
+      {
+        "passage_id": "case-kyc-gap-002",
+        "source_type": "case",
+        "text": "The analysis of account activity revealed that the aggregate activity conducted on the deficient file was $411,192.89. The transactions observed were not supported by the information available in the customer profile, which lacked essential details such as occupation and source of wealth."
+      },
+      {
+        "passage_id": "case-kyc-gap-017",
+        "source_type": "case",
+        "text": "Over the period that the file was deficient, the aggregate activity conducted on the account totaled $210,721.50. This volume of activity is inconsistent with the unverified status of the customer file."
+      },
+      {
+        "passage_id": "policy-002-s3",
+        "source_type": "policy",
+        "text": "Every customer is assigned a dynamic risk rating of Low, Standard, or High."
+      }
+    ],
+    "answer": "The aggregate activity conducted on Lorcan Whitlock's deficient file was $411,192.89. The documentary exception stayed open for 120 days.",
+    "gold_literal": "$411,192.89",
+    "invented": [
+      "120 days"
+    ]
+  },
+  {
+    "draft_id": "dev-3-4-drf-05",
+    "query_text": "How much was withdrawn from Lorcan Macallister's account during the review period, and where did the money go?",
+    "passages": [
+      {
+        "passage_id": "case-elder-exploitation-005",
+        "source_type": "case",
+        "text": "The analysis focused on the sudden shift in transactional behaviour and the presence of the third party directing the movement of funds. The aggregate amount withdrawn during the review period was $436,807.57. This activity is consistent with a scenario where an individual has acquired influence over an older accountholder's finances."
+      },
+      {
+        "passage_id": "case-elder-exploitation-011",
+        "source_type": "case",
+        "text": "Over this period, the aggregate amount withdrawn from the account was $251,585.73."
+      },
+      {
+        "passage_id": "policy-009-s2",
+        "source_type": "policy",
+        "text": "This review encompasses an examination of the customer profile, historical transaction records, and source of wealth declarations."
+      }
+    ],
+    "answer": "The aggregate amount withdrawn from Lorcan Macallister's account during the review period was $436,807.57. A further $58,400.00 was moved by wire to the third party.",
+    "gold_literal": "$436,807.57",
+    "invented": [
+      "$58,400.00"
+    ]
+  }
+]
