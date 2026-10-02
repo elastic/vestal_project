@@ -227,17 +227,17 @@ what a miss looks like after filtering
 a budget is a hard ceiling on the packed context
 
   budget            4,000 tokens (the smaller one)
-  set B retrieved   5 sections
-                    168 + 1,151 + 1,209 + 1,067 + 1,354
-                    =  4,949 tokens
+  set B retrieved   5 passages
+                    3,850 + 1,151 + 1,067 + 1,354 + 1,126
+                    =  8,548 tokens
 
   pack everything
-    sent            <span class="wrong">4,949 tokens, 949 over</span>
-    what arrives    the text up to the cut, mid-section
+    sent            <span class="wrong">8,548 tokens, 4,548 over</span>
+    what arrives    the text up to the cut, mid-passage
     the check       fails the overrun
 
   pack to fit, in rank order
-    measure each section before adding it
+    measure each passage before adding it
     skip one that does not fit
     sent            at most 4,000 tokens
   </div>
@@ -254,9 +254,9 @@ a budget is a hard ceiling on the packed context
 
 <div class="col-diagram">
   <div class="terminal-block">
-<span style="color:var(--yellow);">SET A  short memos</span>            <span style="color:var(--yellow);">SET B  long sections</span>
-3 memos, about 400 tokens     5 sections, 168 to 1,354
-1,182 tokens in all           4,949 tokens in all
+<span style="color:var(--yellow);">SET A  short memos</span>            <span style="color:var(--yellow);">SET B  long passages</span>
+3 memos, about 400 tokens     5 passages, 1,067 to 3,850
+1,182 tokens in all           8,548 tokens in all
 fits either budget whole      overruns 4,000
 
 rerank_top_n                  rerank_top_n
