@@ -239,12 +239,16 @@ TINA_ALIAS = "cortex-corpus-live"
 TINA_TOP_K = 5
 
 
-def tina_answer(es, proxy, model, query, timeout=None):
+def tina_answer(es, proxy, model, query, deadline=None):
     """Answer one question on Tina's path. Retrieval and prompt are tina.rag.rag_answer's
     (match on body, top 5, documents as "[doc_id] title\nbody"); generation goes through the
     LLM proxy with the given tier model, since rag_answer's route B has one model only.
-    Returns (answer, retrieved doc ids)."""
-    resp = es.search(index=TINA_ALIAS, query={"match": {"body": query}}, size=TINA_TOP_K)
+    deadline is a time.monotonic() value: the search and the generation call each time out
+    at it, so no call outlives the caller's budget. Returns (answer, retrieved doc ids)."""
+    import time as _t
+    left = lambda: max(0.5, deadline - _t.monotonic()) if deadline else None
+    search = es.options(request_timeout=left()) if deadline else es
+    resp = search.search(index=TINA_ALIAS, query={"match": {"body": query}}, size=TINA_TOP_K)
     ids, parts = [], []
     for hit in resp["hits"]["hits"]:
         src = hit.get("_source", {})
@@ -259,7 +263,7 @@ def tina_answer(es, proxy, model, query, timeout=None):
         f"Documents:\n{context}\n\n"
         f"Question: {query}\nAnswer:"
     )
-    kw = {"timeout": timeout} if timeout else {}
+    kw = {"timeout": left()} if deadline else {}
     r = proxy.chat.completions.create(model=model, messages=[{"role": "user", "content": prompt}],
                                       temperature=0, **kw)
     return (r.choices[0].message.content or "") if r.choices else "", ids
@@ -277,16 +281,19 @@ def answer_all(es, proxy, model, questions, pool=12, budget_s=30.0):
     """Answer and grade every question in a bounded pool. A question with no "gold" is answered
     but not graded. Returns one record per question, in input order:
       {id, text, answer, retrieved, latency_s, correct (None if ungraded or failed), facts, error}
-    A call still running when budget_s runs out is recorded with error "timeout"."""
+    Every search and generation call times out at budget_s from the start, so the pool's
+    threads end by then too (they would otherwise hold the process open at exit); a question
+    not answered by then is recorded with error "timeout"."""
     import concurrent.futures as cf
     import time as _t
-    t0 = _t.monotonic()
+    end = _t.monotonic() + budget_s
 
     def one(q):
         t = _t.monotonic()
-        left = max(1.0, budget_s - (t - t0))
+        if t >= end:
+            raise TimeoutError
         try:
-            ans, ids = tina_answer(es, proxy, model, q["text"], timeout=left)
+            ans, ids = tina_answer(es, proxy, model, q["text"], deadline=end)
         except Exception as e:
             return {"id": q["id"], "text": q["text"], "answer": "", "retrieved": [], "latency_s": round(_t.monotonic() - t, 1),
                     "correct": None, "facts": 0, "error": f"{type(e).__name__}: {str(e)[:150]}"}
@@ -296,10 +303,10 @@ def answer_all(es, proxy, model, questions, pool=12, budget_s=30.0):
 
     ex = cf.ThreadPoolExecutor(max_workers=max(1, pool))
     futs = [ex.submit(one, q) for q in questions]
-    cf.wait(futs, timeout=budget_s)
+    cf.wait(futs, timeout=budget_s + 1)
     out = []
     for q, f in zip(questions, futs):
-        if f.done():
+        if f.done() and f.exception() is None:
             out.append(f.result())
         else:
             f.cancel()
