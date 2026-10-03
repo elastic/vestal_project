@@ -31,9 +31,14 @@
     <p>Every LLM call costs money. You will measure that cost, reduce it with a semantic cache, and route cheaper queries to a fast model tier — without sacrificing answer quality.</p>
   </div>
   <div class="slide">
+    <!-- problem -->
     <h2>The problem</h2>
-    <p>Cortex Bank's compliance assistant handles thousands of queries per day. Many are near-duplicates. Generating a fresh answer for each one is expensive and slow.</p>
-    <p>Two levers reduce cost: <strong>caching</strong> (skip generation for seen questions) and <strong>routing</strong> (send simple questions to cheaper models).</p>
+    <p>Before the cache, Tina pays for the same question twice. Two paraphrases from this lab's start state:</p>
+    <pre>generation call 1852 ms | How long must Cortex Bank keep
+                          customer identification records?
+generation call 2148 ms | What is the retention period for
+                          CIP records at Cortex Bank?</pre>
+    <p>Both ask about the same records, and each paid for its own generation call. Every call is billed, and most of Tina's questions are lookups a cheaper model could answer.</p>
   </div>
   <div class="slide">
     <h2>What you will do</h2>
@@ -45,14 +50,18 @@
     </ul>
   </div>
   <div class="slide">
-    <h2>Cost model</h2>
+    <!-- rule -->
+    <h2>Decision rule</h2>
+    <p>Take the first row that applies.</p>
     <table>
-      <tr><th>Lever</th><th>Metric</th><th>Target</th></tr>
-      <tr><td>Semantic cache</td><td>Wrong outcomes on 12 held-out queries</td><td>At most 2, and no near-miss served</td></tr>
-      <tr><td>Routing</td><td>Held-out queries routed to their labelled tier</td><td>At least 10 of 12</td></tr>
-      <tr><td>Fast-tier routing</td><td>Routing recall on single-hop queries</td><td>0.8 or higher: route single-hop lookups to the fast tier</td></tr>
+      <tr><th>When</th><th>Then</th></tr>
+      <tr><td>A query paraphrases one already answered</td><td>Serve the cached answer; no generation call</td></tr>
+      <tr><td>Same domain, different question (a near-miss)</td><td>Miss and generate</td></tr>
+      <tr><td>Fast-tier routing recall on single-hop questions is 0.8 or higher</td><td>Route single-hop lookups to the fast tier</td></tr>
+      <tr><td>Recall below 0.8</td><td>Route nothing to the fast tier</td></tr>
+      <tr><td>Always</td><td>Multi-part analysis goes to the strong tier</td></tr>
     </table>
-    <p style="margin-top:12px">Daily savings = <code>floor(volume × hit_rate × cost_per_call / 100)</code></p>
+    <p style="margin-top:12px">Daily savings = <code>floor(daily volume × hit rate × cost per call in cents / 100)</code></p>
   </div>
   <div class="slide">
     <h2>Key concepts</h2>
@@ -60,6 +69,15 @@
       <li><strong>Semantic cache</strong> — match incoming queries by embedding similarity; serve cached answers above threshold</li>
       <li><strong>Similarity threshold</strong> — too low → near-misses hit (wrong answer); too high → paraphrases miss (wasted calls)</li>
       <li><strong>Query classification</strong> — single-hop (one fact lookup) vs multi-part (reasoning across documents)</li>
+    </ul>
+  </div>
+  <div class="slide">
+    <h2>What done looks like</h2>
+    <ul>
+      <li>ES|QL: all <strong>3</strong> queries return the reference rows; sums within <strong>0.1%</strong></li>
+      <li>Cache: at most <strong>2 of 12</strong> outcomes wrong, <strong>0</strong> near-misses served, one document per miss</li>
+      <li>Router: at least <strong>11 of 12</strong> to the right tier, the env model per tier, one live fast-tier call</li>
+      <li>Defend: Q1 within <strong>$1</strong>; Q2 and Q3 follow from your recall and the <strong>0.8</strong> bar</li>
     </ul>
   </div>
   <div class="slide">
