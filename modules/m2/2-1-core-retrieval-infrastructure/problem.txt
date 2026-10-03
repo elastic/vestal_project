@@ -1,0 +1,7 @@
+Q: What does the risk-scoring deadline schedule say about Tier 5 accounts?
+
+rag_answer(es, question, "cortex-corpus-live", completion_id="cortex-generation")
+
+NotFoundError(404, 'index_not_found_exception', 'no such index [cortex-corpus-live]')
+
+Captured 2026-10-02 from a live 2.1 sandbox (participant z6l13auy90bz, test copy ara-p2-2-1-v0, assets vestal_project m2-v13) by a probe in the test copy's Build 1 solve, before any index exists. Start state: no cortex-* index or alias; Tina's default retriever, match on body.

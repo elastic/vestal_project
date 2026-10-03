@@ -32,8 +32,11 @@
   </div>
   <div class="slide">
     <h2>The problem</h2>
-    <pre>Error: No semantic index found. cortex-corpus does not exist.</pre>
-    <p>Every question Tina answers from here on depends on the corpus you index in this track.</p>
+    <p>Tina was asked: "What does the risk-scoring deadline schedule say about Tier 5 accounts?"</p>
+    <pre>rag_answer(es, question, "cortex-corpus-live", completion_id="cortex-generation")
+
+NotFoundError(404, 'index_not_found_exception', 'no such index [cortex-corpus-live]')</pre>
+    <p>Tina reads from the alias <code>cortex-corpus-live</code>, and nothing exists behind it yet. Every question she answers from here on depends on the corpus you index in this track.</p>
   </div>
   <div class="slide">
     <h2>Chunking sets the ceiling</h2>
