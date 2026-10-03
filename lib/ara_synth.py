@@ -2,8 +2,9 @@
 ara_synth.py — seeded synthetic transaction generator for ARA track 2.4.
 
 Generates a deterministic set of cortex-transactions documents from a seed
-so every learner on the same sandbox gets the same data, but different sandboxes
-diverge. The seed is the Instruqt sandbox id (passed by provisioning).
+so the same seed always gives the same data and different learners diverge.
+The 2.4 setup passes the seed: INSTRUQT_PARTICIPANT_ID, else
+INSTRUQT_SANDBOX_ID, with a numeric suffix when it re-seeds.
 """
 
 from __future__ import annotations
