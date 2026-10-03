@@ -566,7 +566,7 @@ precision                 measure it      <span style="color:var(--yellow);">?</
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Query the extraction, not the report</h2>
-  <p class="slide-body">The extraction runs once, offline. Questions then read facts, not prose, so tokens fall sharply. Precision can fall too; Cortex's limit is <code>max_fact_precision_loss</code> in <code>constraint.json</code>.</p>
+  <p class="slide-body">The extraction runs once, offline. Questions then read facts, not prose, so tokens fall sharply. It pays if precision holds: within one question of raw reports.</p>
   <p class="slide-body"><strong>Knowledge Indicators</strong> builds these records from your corpus.</p>
   <div style="padding:10px 14px;background:rgba(254,197,20,0.15);border-left:3px solid var(--yellow);border-radius:6px;font-size:14px;line-height:1.5;">
     &#9888;&#65039; Knowledge Indicators are in preview. This lab uses an offline GA index to teach the same pattern.
@@ -636,7 +636,7 @@ Q  "which two reports share the beneficiary?"
   </div>
   <div class="done-item">
     <span class="big-number">60%</span>
-    <span class="big-number-label">fewer tokens from<br>the fact index</span>
+    <span class="big-number-label">fewer tokens from the fact index,<br>precision within one query</span>
   </div>
 </div>
 <p class="rule-caption" style="color:var(--dark-grey);">Your per-bucket numbers must land within 0.30 precision and 50 percent tokens of the check's, which measures on held-out questions.</p>
