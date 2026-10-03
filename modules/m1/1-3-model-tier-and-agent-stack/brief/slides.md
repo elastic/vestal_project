@@ -43,7 +43,7 @@ Tina: Cortex Bank's internal threshold for
 </div>
 <div class="col-text">
   <h2 class="slide-heading">What a tier is</h2>
-  <p class="slide-body">Four axes: <strong>cost</strong> per 1,000 requests, <strong>latency</strong> p50, <strong>capability</strong> on your task, and <strong>deployment constraints</strong> such as data residency or a limit on reply length. A benchmark on the wrong axis picks the wrong tier.</p>
+  <p class="slide-body">Four axes: <strong>cost</strong> per 1,000 requests, <strong>latency</strong> p50, <strong>capability</strong> on your task, and <strong>deployment constraints</strong> such as data residency or a limit on completion tokens per reply. A benchmark on the wrong axis picks the wrong tier.</p>
 </div>
 
 ---
@@ -51,11 +51,11 @@ Tina: Cortex Bank's internal threshold for
 <!-- layout: concept -->
 
 <div class="col-diagram">
-  <img src="img/tier-constraints.svg" alt="Three Cortex constraints: data residency, a cost ceiling and a response-length ceiling. Each sandbox gets one." style="max-width:100%;max-height:340px;">
+  <img src="img/tier-constraints.svg" alt="Three Cortex constraints: data residency, a cost ceiling and a completion-token ceiling. Each sandbox gets one." style="max-width:100%;max-height:340px;">
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Choose by constraint, not by benchmark</h2>
-  <p class="slide-body">Cortex has three possible constraints: a <strong>data-residency</strong> rule, a <strong>cost ceiling</strong> per 1,000 requests, and a <strong>response-length ceiling</strong> on completion tokens per reply. You will be given one. Residency is a rule; the ceilings are decided by what you measure. Completion tokens include any reasoning a model does before it answers.</p>
+  <p class="slide-body">Cortex has three possible constraints: a <strong>data-residency</strong> rule, a <strong>cost ceiling</strong> per 1,000 requests, and a <strong>completion-token ceiling</strong> on completion tokens per reply. You will be given one. Residency is a rule; the ceilings are decided by what you measure. Completion tokens include any reasoning a model does before it answers.</p>
 </div>
 
 ---
@@ -179,7 +179,7 @@ Tina: Cortex Bank's internal threshold for
   <tr><th>Your constraint</th><th>Choose</th></tr>
   <tr><td>Data residency</td><td>Strong tier: fast has no EU region</td></tr>
   <tr><td>Cost ceiling $0.40 per 1,000</td><td>Under the ceiling; if both or neither, cheaper</td></tr>
-  <tr><td>Response-length ceiling 200 completion tokens</td><td>Under the ceiling; if both, cheaper; if neither, fewer tokens</td></tr>
+  <tr><td>Completion-token ceiling 200 per reply</td><td>Under the ceiling; if both, cheaper; if neither, fewer tokens</td></tr>
   <tr><td>Stage gaps</td><td>What the stage before could not do, per your traces</td></tr>
 </table>
 <p class="rule-caption">Your own measurements decide each row.</p>
