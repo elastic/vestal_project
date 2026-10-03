@@ -63,12 +63,15 @@
     <h2>What done looks like</h2>
     <ul>
       <li>Median chunk: at most <strong>512 tokens</strong></li>
+      <li>Largest chunk: at most <strong>2,048 tokens</strong></li>
       <li>Structured units kept whole: at least <strong>3 of 4</strong></li>
       <li>Procedure questions with the whole answer in one chunk of the top 5: at least <strong>3 of 5</strong></li>
       <li>Policy questions with the whole answer in one chunk of the top 5: at least <strong>4 of 6</strong></li>
       <li>No question's top 5 over Tina's <strong>4,000-token</strong> budget</li>
       <li><code>cortex-corpus-live</code> resolves to <code>cortex-corpus</code></li>
       <li><code>cortex-generation</code> exists, pinned to the platform model</li>
+      <li>At least <strong>3</strong> traces, the latest three all through <code>cortex-generation</code></li>
+      <li>At least <strong>2 of 3</strong> held-out questions answered with the value the policy states</li>
     </ul>
   </div>
   <div class="slide">
