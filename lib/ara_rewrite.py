@@ -28,20 +28,47 @@ TAG = "ARA_REWRITE "
 _RUNNER = r'''
 import concurrent.futures, importlib.util, json, socket, ssl, sys, threading, time
 sys.path.insert(0, "/opt/ara/lib")
-# Queries run in parallel, so network use is counted per thread: a model call runs in the
-# thread that called rewrite(), and other queries' calls don't count towards it
+# Queries run in parallel, so network use is counted per query, not per process. Each thread
+# carries the query it works for (owner). A thread that rewrite() starts, or a task it hands to a
+# ThreadPoolExecutor, takes the owner of the code that started or submitted it, so a model call
+# made from rewrite()'s own threads counts for that query.
 _local = threading.local()
+_counts, _lock = {}, threading.Lock()
+def _owner():
+    return getattr(_local, "owner", None)
 def _wrap(cls, name):
     orig = getattr(cls, name, None)
     if orig is None:
         return
     def f(self, *a, **k):
-        _local.calls = getattr(_local, "calls", 0) + 1
+        o = _owner()
+        if o is not None:
+            with _lock:
+                _counts[o] = _counts.get(o, 0) + 1
         return orig(self, *a, **k)
     setattr(cls, name, f)
 for _cls in (socket.socket, ssl.SSLSocket):
     for _name in ("send", "sendall"):
         _wrap(_cls, _name)
+_thread_init, _thread_boot = threading.Thread.__init__, threading.Thread._bootstrap_inner
+def _init(self, *a, **k):
+    _thread_init(self, *a, **k)
+    self._ara_owner = _owner()
+def _boot(self):
+    _local.owner = getattr(self, "_ara_owner", None)
+    return _thread_boot(self)
+threading.Thread.__init__, threading.Thread._bootstrap_inner = _init, _boot
+_submit = concurrent.futures.ThreadPoolExecutor.submit
+def _submit_owned(self, fn, /, *a, **k):
+    o = _owner()
+    def run(*a, **k):
+        prev, _local.owner = _owner(), o
+        try:
+            return fn(*a, **k)
+        finally:
+            _local.owner = prev
+    return _submit(self, run, *a, **k)
+concurrent.futures.ThreadPoolExecutor.submit = _submit_owned
 TAG = "ARA_REWRITE "
 WORKERS = int(sys.argv[2]) if len(sys.argv) > 2 else 8
 try:
@@ -53,7 +80,7 @@ except Exception as e:
     print(TAG + json.dumps({"load_error": repr(e)[:300]}), flush=True)
     sys.exit(0)
 def _one(q):
-    _local.calls = 0
+    _local.owner = q["query_id"]
     t0 = time.perf_counter()
     try:
         out, err = fn(q["query_text"]), None
@@ -64,7 +91,7 @@ def _one(q):
         if err is None:
             err = "rewrite() must return a string or a list of strings, got " + type(out).__name__
         out = None
-    return {"query_id": q["query_id"], "out": out, "network": _local.calls > 0,
+    return {"query_id": q["query_id"], "out": out, "network": _counts.get(q["query_id"], 0) > 0,
             "ms": round(ms, 1), "error": err}
 queries = [json.loads(line) for line in sys.stdin if line.strip()]
 pool = concurrent.futures.ThreadPoolExecutor(max_workers=WORKERS)
