@@ -32,8 +32,18 @@
   </div>
   <div class="slide">
     <h2>The problem</h2>
-    <p>Embedding models improve — but deploying a new one risks regression. Cortex Bank's compliance corpus must stay searchable during the swap.</p>
-    <p>The alias <code>cortex-corpus-live</code> is the indirection layer. You will move it atomically once the candidate is ready.</p>
+    <p>An analyst asks Tina, in their own words:</p>
+    <pre>query:     money moved around to hide where it came from
+target:    sar-103  (shell company layering and ownership obfuscation)
+retrieved: sar-109, sar-105, sar-116, sar-110
+
+Based on the documents provided, several cases describe money being moved
+around to hide its origin:
+
+**Loan Layering** [sar-109]: Vance deposited funds into a CD, then borrowed
+against them via a Line of Credit and immediately wired the proceeds to
+third parties ...</pre>
+    <p>The case that answers it, sar-103, is not in Tina's top 5. The query has none of its words: layering, shell company, ownership. A new embedding model is ready to test, and <code>cortex-corpus-live</code> must stay searchable while you move to it.</p>
   </div>
   <div class="slide">
     <h2>What you will do</h2>
@@ -64,6 +74,18 @@
       <li><strong>HyDE</strong> — ask a model for the passage that would answer the query, then search with that passage</li>
       <li><strong><code>cortex-generation</code></strong> — Tina's completion endpoint, pinned in lab 2.1: <code>es.inference.inference(inference_id="cortex-generation", task_type="completion", body={"input": prompt})["completion"][0]["result"]</code></li>
       <li><strong><code>llm_client()</code></strong> — the same models through an OpenAI-style client: <code>from tina.client import llm_client, model_fast</code>, then <code>llm_client().chat.completions.create(model=model_fast(), messages=[{"role": "user", "content": prompt}]).choices[0].message.content</code></li>
+    </ul>
+  </div>
+  <div class="slide">
+    <h2>What done looks like</h2>
+    <ul>
+      <li>Benchmark set: at least <strong>12</strong> labelled queries, covering <code>policy</code>, <code>sar</code> and <code>wire-fraud</code></li>
+      <li><code>cortex-corpus-candidate</code> embeds with the candidate endpoint</li>
+      <li><code>cortex-corpus-live</code> points only to <code>cortex-corpus-candidate</code>; <code>cortex-corpus</code> is kept</li>
+      <li>Probe during the move: at least <strong>20</strong> samples, <strong>0</strong> failed and <strong>0</strong> empty searches</li>
+      <li>Live index mapping and document count unchanged</li>
+      <li><code>rewrite()</code>: at least <strong>8 of 13</strong> held-out queries keyword search misses find their target in the first <strong>5</strong> documents, all calls within <strong>35 seconds</strong></li>
+      <li>Defend: gains of <strong>0.02</strong> or less are noise; your p95 budget is <strong>300</strong> or <strong>500 ms</strong></li>
     </ul>
   </div>
   <div class="slide">

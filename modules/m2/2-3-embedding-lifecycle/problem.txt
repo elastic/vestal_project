@@ -1,0 +1,15 @@
+Lab 2.3 start-state capture: Tina (tina.rag.rag_answer, n=5) on cortex-corpus, the index
+cortex-corpus-live points to when the track starts. Dev-set query dev-01.
+Captured by the ch02 solve of test track ara-p2-2-3-embedding-lifecycle,
+participant xfcmw126azut, 2026-10-03T03:46:48Z. Answer cut at 700 characters by the capture.
+
+query:     money moved around to hide where it came from
+target:    sar-103  (Shell Company Layering And Ownership Obfuscation)
+retrieved: sar-109, sar-105, sar-116, sar-110
+
+answer:
+Based on the documents provided, several cases describe money being moved around to hide its origin:
+
+**Loan Layering** [sar-109]: Vance deposited funds into a CD, then borrowed against them via a Line of Credit and immediately wired the proceeds to third parties (a Miami real estate escrow account and a Texas automotive dealership). This pattern "is a known money laundering typology used to integrate illicit funds into the financial system by disguising them as legitimate loan proceeds, making the funds appear clean to the receiving real estate and automotive vendors."
+
+**Trade-Based Money Laundering** [sar-105]: Invoiced prices were significantly inflated compared to true market value, whi
