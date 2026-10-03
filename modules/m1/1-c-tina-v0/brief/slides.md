@@ -50,15 +50,6 @@ Tina: ...triggers a structuring alert when
 <!-- layout: concept -->
 
 <div class="col-text">
-  <h2 class="slide-heading">Two policies, two searches</h2>
-  <p class="slide-body">One search for a two-policy question tends to return passages for one fact. Search once per fact. A near miss is the usual failure: a figure from a neighbouring policy, such as a customer rule where the question asks about vendors. Cite the chunk each value came from.</p>
-</div>
-
----
-
-<!-- layout: concept -->
-
-<div class="col-text">
   <h2 class="slide-heading">Three runs per question</h2>
   <p class="slide-body">The same agent can answer a question correctly once and miss it the next time. <code>submit.py</code> runs each question <strong>3 times</strong> on the tier <code>choose_model</code> gives it. The check grades each question on a majority, <strong>2 of 3 runs</strong>, and reports how many runs were correct.</p>
 </div>
@@ -74,12 +65,13 @@ Tina: ...triggers a structuring alert when
     <tr><td>Questions citing each fact's policy, from retrieved chunks only</td><td>3 of 3</td></tr>
     <tr><td>Tool calls per run</td><td>at most 4</td></tr>
     <tr><td>Questions on the fast tier</td><td>at least 1</td></tr>
+    <tr><td>Tokens per pass</td><td>under 9,000</td></tr>
     <tr><td>Tokens per pass (reported, not graded)</td><td>target 5,000</td></tr>
   </table>
 </div>
 <div class="col-text">
   <h2 class="slide-heading">The SLO</h2>
-  <p class="slide-body">Each graded row counts on 2 of a question's 3 runs. The token target is reported, never graded.</p>
+  <p class="slide-body">Graded rows count on 2 of a question's 3 runs. The target is reported only.</p>
 </div>
 
 ---
@@ -88,8 +80,8 @@ Tina: ...triggers a structuring alert when
 <!-- rule -->
 
 <h2 class="slide-heading">Decision rule</h2>
-<p class="slide-body">Name a question that ran on the fast tier. If it was correct in every one of its runs, your numbers support trusting it to the fast tier. If any run missed, it passed on the majority, but your numbers do not support the routing.</p>
-<p class="rule-caption">Check reports each question's correct runs. Your runs decide the answer.</p>
+<p class="slide-body">Trust a question to the fast tier only if it was correct in every run there. Passing on 2 of 3 meets the grade, not the bar for trust, and tokens are a cost, not evidence. Keep those correct every time; move any that missed to the strong tier.</p>
+<p class="rule-caption">Your own runs decide the answer.</p>
 
 ---
 
@@ -102,12 +94,12 @@ Tina: ...triggers a structuring alert when
     <span class="big-number-label">questions correct<br>on 2 of 3 runs each</span>
   </div>
   <div class="done-item">
-    <span class="big-number">4</span>
-    <span class="big-number-label">tool calls at most<br>per run</span>
-  </div>
-  <div class="done-item">
     <span class="big-number">1</span>
     <span class="big-number-label">question at least<br>on the fast tier</span>
+  </div>
+  <div class="done-item">
+    <span class="big-number">9,000</span>
+    <span class="big-number-label">tokens per pass,<br>under this ceiling</span>
   </div>
 </div>
 
