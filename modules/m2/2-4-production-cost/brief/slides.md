@@ -114,13 +114,13 @@ Defend    savings and routing,
 <h2 class="slide-heading">Decision rule</h2>
 <table class="rule-table">
   <tr><th>When</th><th>Then</th></tr>
-  <tr><td>A query paraphrases one already answered</td><td>Serve the cached answer; no generation call</td></tr>
+  <tr><td>A query paraphrases one already answered</td><td>Serve the cached answer</td></tr>
   <tr><td>Same domain, different question (a near-miss)</td><td>Miss and generate</td></tr>
-  <tr><td>Fast-tier routing recall on single-hop questions is 0.8 or higher</td><td>Route single-hop lookups to the fast tier</td></tr>
-  <tr><td>Recall below 0.8</td><td>Route nothing to the fast tier</td></tr>
-  <tr><td>Always</td><td>Multi-part analysis goes to the strong tier</td></tr>
+  <tr><td>Single-hop recall 0.8 or higher, at most 2 of 12 multi-part fast</td><td>Route single-hop to the fast tier</td></tr>
+  <tr><td>Recall below 0.8, or more than 2 multi-part fast</td><td>Route nothing to the fast tier</td></tr>
+  <tr><td>Always</td><td>Multi-part goes to the strong tier</td></tr>
 </table>
-<p class="rule-caption">First match wins. Savings = <code>floor(daily volume × hit rate × cost per call in cents / 100)</code></p>
+<p class="rule-caption">Savings = <code>floor(daily volume × hit rate × cost per call in cents / 100)</code></p>
 
 ---
 
@@ -145,7 +145,7 @@ Defend    savings and routing,
     <span class="big-number-label">Q1 tolerance<br>at your hit rate</span>
   </div>
 </div>
-<p class="rule-caption" style="color:var(--dark-grey);">Also: one document per miss, the env model per tier, a live fast-tier call. Q2 and Q3 use 0.8.</p>
+<p class="rule-caption" style="color:var(--dark-grey);">Also: one document per miss, env model per tier, live fast-tier call; Q2 and Q3 bars 0.8 and 2.</p>
 
 ---
 

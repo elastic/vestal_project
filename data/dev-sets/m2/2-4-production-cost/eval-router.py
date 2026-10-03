@@ -4,7 +4,8 @@ Usage:
   /home/elastic/.venv/bin/python /home/elastic/dev-sets/eval-router.py
 
 Runs your pick_tier on the dev queries exactly as the check runs it on the held-out
-queries (ara_cost.run_learner), and prints the count routed correctly and the fast-tier routing recall on the dev set.
+queries (ara_cost.run_learner), and prints the count routed correctly, the fast-tier routing recall and the multi-part
+queries sent fast, on the dev set.
 """
 import json, pathlib, sys
 sys.path.insert(0, "/opt/ara/lib")
@@ -24,5 +25,8 @@ for q in dev:
 single = [q for q in dev if q["query_type"] == "single_hop"]
 recall = sum(tier.get(q["id"]) == "fast" for q in single) / len(single)
 print(f"\nRouted correctly: {right} of {len(dev)}. The check needs {T['min_correct']} of {T['of']} held-out.")
-print(f"fast_tier_routing_recall (single-hop queries sent to the fast tier): {recall:.2f} on these {len(single)}. "
-      "The check measures it on its own, larger set, and the Defend asks about that figure.")
+multi = [q for q in dev if q["query_type"] != "single_hop"]
+multi_fast = sum(tier.get(q["id"]) == "fast" for q in multi)
+print(f"fast_tier_routing_recall (single-hop queries sent to the fast tier): {recall:.2f} on these {len(single)}.")
+print(f"Multi-part queries sent to the fast tier: {multi_fast} of {len(multi)}.")
+print("The check measures both on its own, larger set, and the Defend asks about those figures.")
