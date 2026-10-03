@@ -61,7 +61,7 @@
       <li><strong>Diagnose:</strong> Run <code>/home/elastic/.venv/bin/python /home/elastic/submit.py</code> before you change anything. It prints the cause of each dev miss: split, or retrieval miss</li>
       <li><strong>Improve:</strong> Edit <code>/home/elastic/retriever.json</code> and/or re-chunk into a new index and cut the alias over</li>
       <li><strong>Evaluate:</strong> Re-run <code>submit.py</code> — iterate until at least 3 of 4 dev questions pass in each class</li>
-      <li><strong>Defend:</strong> Run <code>python3 /opt/ara/lib/defend.py</code> to record your Q1/Q2/Q3 answers, then click Check</li>
+      <li><strong>Defend:</strong> Run <code>python3 /opt/ara/lib/defend.py</code> to record your answers, then select Check</li>
     </ul>
   </div>
 
@@ -70,18 +70,8 @@
     <p><span class="label artifact">ARTIFACT</span> <code>cortex-corpus-live</code> alias resolves; <code>retriever.json</code> is valid and runs against it; embedding model unchanged; <code>body_text</code> mapped as text</p>
     <p><span class="label measured">MEASURED</span> p95 ≤ 800 ms; chunk count ≤ 1.5× baseline (nDCG@10 logged as a diagnostic)</p>
     <p><span class="label behavior">BEHAVIOR</span> One chunk in Tina's top 5 holds the whole answer for ≥ 3 of 4 held-out policy questions and ≥ 3 of 4 case questions; no top 5 over 4,000 tokens</p>
-    <p><span class="label defend">DEFEND</span> Q1 and Q3 match the diagnosis; Q2 matches your live configuration</p>
+    <p><span class="label defend">DEFEND</span> Your answers match the diagnosis and your live configuration</p>
     <p style="margin-top: 12px;"><strong>To pass</strong>: ARTIFACT + MEASURED + BEHAVIOR + DEFEND. All four must pass.</p>
-  </div>
-
-  <div class="slide">
-    <h2>Defend questions</h2>
-    <p><strong>Q1, lever:</strong> Which lever moved Tina's context gate, so that one chunk in her top 5 holds the whole answer?<br>
-    <em>Options: re-chunk / hybrid / rerank / tune</em></p>
-    <p><strong>Q2 — Second lever:</strong> Did you apply a second lever, or was one enough?<br>
-    <em>Options: same list, or none</em></p>
-    <p><strong>Q3, cause:</strong> What was wrong with the starting pipeline that kept Tina's context gate from passing?</p>
-    <p>The check verifies Q2 against your live configuration: a second lever you name must be live, and none is right only when no second lever is live.</p>
   </div>
 
   <div class="slide">
