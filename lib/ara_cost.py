@@ -25,6 +25,7 @@ import datetime as _dt
 import json
 import os
 import pathlib
+import signal
 import subprocess
 import sys
 
@@ -37,7 +38,9 @@ def _thresholds():
 TOLERANCE = _thresholds().get("tolerance_relative", 0.001)   # relative, for float sums
 EDGE_DAYS = _thresholds().get("edge_days", 1)
 LEARNER_PY = "/home/elastic/.venv/bin/python"
-CHILD_TIMEOUT_S = 240
+# Under the checks' 50 s deadline (ara_grade.deadline), so a slow learner module gets this
+# message and is killed with its process group instead of outliving the check.
+CHILD_TIMEOUT_S = 40
 
 
 # ── ES|QL comparison ──────────────────────────────────────────────────────────
@@ -125,11 +128,18 @@ def run_learner(mode, queries, timeout=CHILD_TIMEOUT_S):
     cmd = [LEARNER_PY, __file__, mode]
     if os.geteuid() == 0:
         cmd = ["runuser", "-u", "elastic", "--"] + cmd
+    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                            text=True, cwd="/home/elastic", start_new_session=True)
     try:
-        p = subprocess.run(cmd, input=json.dumps(queries), capture_output=True, text=True,
-                           timeout=timeout, cwd="/home/elastic")
+        out, errout = proc.communicate(json.dumps(queries), timeout=timeout)
     except subprocess.TimeoutExpired:
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except Exception:
+            proc.kill()
+        proc.communicate()
         return [], f"your code did not finish within {timeout} seconds"
+    p = subprocess.CompletedProcess(cmd, proc.returncode, out, errout)
     tag = "ARA-CACHE " if mode == "cache" else "ARA-ROUTE "
     recs = [json.loads(line[len(tag):]) for line in p.stdout.splitlines() if line.startswith(tag)]
     err = None
