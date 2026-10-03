@@ -2,9 +2,9 @@
 
 run_rewrite(queries, path):
     Runs rewrite() from the learner's file in a separate process as the elastic user,
-    one query at a time. For each query it records what rewrite() returned, whether the
-    call made a network request (a model call does, a static synonym list does not),
-    and how long it took.
+    up to `workers` queries at a time. For each query it records what rewrite() returned,
+    whether the call made a network request (a model call does, a static synonym list does
+    not), and how long it took. Results come back as each query finishes.
 
 top_docs(es, index, texts, k=5, field="body"):
     Searches each text with a match query on `field` (default `body`, the semantic_text field), keeps each result's distinct
@@ -26,21 +26,24 @@ PYTHON = "/home/elastic/.venv/bin/python"
 TAG = "ARA_REWRITE "
 
 _RUNNER = r'''
-import importlib.util, json, socket, ssl, sys, time
+import concurrent.futures, importlib.util, json, socket, ssl, sys, threading, time
 sys.path.insert(0, "/opt/ara/lib")
-calls = [0]
+# Queries run in parallel, so network use is counted per thread: a model call runs in the
+# thread that called rewrite(), and other queries' calls don't count towards it
+_local = threading.local()
 def _wrap(cls, name):
     orig = getattr(cls, name, None)
     if orig is None:
         return
     def f(self, *a, **k):
-        calls[0] += 1
+        _local.calls = getattr(_local, "calls", 0) + 1
         return orig(self, *a, **k)
     setattr(cls, name, f)
 for _cls in (socket.socket, ssl.SSLSocket):
     for _name in ("send", "sendall"):
         _wrap(_cls, _name)
 TAG = "ARA_REWRITE "
+WORKERS = int(sys.argv[2]) if len(sys.argv) > 2 else 8
 try:
     spec = importlib.util.spec_from_file_location("learner_rewrite", sys.argv[1])
     mod = importlib.util.module_from_spec(spec)
@@ -49,9 +52,9 @@ try:
 except Exception as e:
     print(TAG + json.dumps({"load_error": repr(e)[:300]}), flush=True)
     sys.exit(0)
-for line in sys.stdin:
-    q = json.loads(line)
-    before, t0 = calls[0], time.perf_counter()
+def _one(q):
+    _local.calls = 0
+    t0 = time.perf_counter()
     try:
         out, err = fn(q["query_text"]), None
     except Exception as e:
@@ -61,8 +64,13 @@ for line in sys.stdin:
         if err is None:
             err = "rewrite() must return a string or a list of strings, got " + type(out).__name__
         out = None
-    print(TAG + json.dumps({"query_id": q["query_id"], "out": out, "network": calls[0] - before > 0,
-                            "ms": round(ms, 1), "error": err}), flush=True)
+    return {"query_id": q["query_id"], "out": out, "network": _local.calls > 0,
+            "ms": round(ms, 1), "error": err}
+queries = [json.loads(line) for line in sys.stdin if line.strip()]
+pool = concurrent.futures.ThreadPoolExecutor(max_workers=WORKERS)
+for fut in concurrent.futures.as_completed([pool.submit(_one, q) for q in queries]):
+    print(TAG + json.dumps(fut.result()), flush=True)
+pool.shutdown(wait=False)
 '''
 
 
@@ -77,9 +85,10 @@ def _env() -> dict:
     return env
 
 
-def run_rewrite(queries: list[dict], path: str = REWRITE_PATH, timeout: int = 600) -> dict:
+def run_rewrite(queries: list[dict], path: str = REWRITE_PATH, timeout: int = 600,
+                workers: int = 8) -> dict:
     """Return {"load_error": str|None, "results": {query_id: {...}}, "timed_out": bool}."""
-    cmd = [PYTHON, "-c", _RUNNER, path]
+    cmd = [PYTHON, "-c", _RUNNER, path, str(workers)]
     if os.geteuid() == 0:
         # absolute path: the child env PATH has no /usr/sbin, where runuser lives
         runuser = shutil.which("runuser") or "/usr/sbin/runuser"
