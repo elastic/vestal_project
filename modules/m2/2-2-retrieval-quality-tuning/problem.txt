@@ -1,0 +1,5 @@
+# Captured 2026-10-02, participant d5y4i5cksz1s, Build 1 start state:
+# the notebook's See it yourself cell on cortex-corpus-live. Tina today = retriever_dense('body').
+# The case number WF-2026-0803A belongs to wire-fraud-202.
+by meaning (Tina today)     168 ms  ['wire-fraud-204', 'wire-fraud-207', 'wire-fraud-202', 'sar-111']
+by exact words               54 ms  ['wire-fraud-202', 'sar-110', 'sar-111', 'sar-113', 'sar-109']
