@@ -168,7 +168,7 @@ Defend    which retriever ships,
     <span class="big-number-label">largest nDCG@5 change<br>after tuning</span>
   </div>
 </div>
-<p class="rule-caption" style="color:var(--dark-grey);">The check measures on held-out questions, so its numbers can differ from the notebook's.</p>
+<p class="rule-caption" style="color:var(--dark-grey);">Every template must also return documents for every question and reach nDCG@5 0.4. The check measures on held-out questions, so its numbers can differ from the notebook's.</p>
 
 ---
 
