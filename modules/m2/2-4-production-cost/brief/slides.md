@@ -103,7 +103,7 @@ Defend    savings and routing,
 </div>
 <div class="col-text">
   <h2 class="slide-heading">In this track</h2>
-  <p class="slide-body">Each Build check runs your code on queries it holds out. The Defend reads the hit rate the cache check measured and the fast-tier routing recall the router check measured.</p>
+  <p class="slide-body">Each Build check runs your code on queries it holds out. The Defend reads the hit rate the cache check measured and the fast-tier answer accuracy the router check measured.</p>
 </div>
 
 ---
@@ -116,8 +116,8 @@ Defend    savings and routing,
   <tr><th>When</th><th>Then</th></tr>
   <tr><td>A query paraphrases one already answered</td><td>Serve the cached answer; no generation call</td></tr>
   <tr><td>Same domain, different question (a near-miss)</td><td>Miss and generate</td></tr>
-  <tr><td>Fast-tier routing recall on single-hop questions is 0.8 or higher</td><td>Route single-hop lookups to the fast tier</td></tr>
-  <tr><td>Recall below 0.8</td><td>Route nothing to the fast tier</td></tr>
+  <tr><td>Fast-tier answer accuracy is 0.8 or higher</td><td>Route single-hop lookups to the fast tier</td></tr>
+  <tr><td>Below 0.8, or nothing sent fast</td><td>Route nothing to the fast tier</td></tr>
   <tr><td>Always</td><td>Multi-part analysis goes to the strong tier</td></tr>
 </table>
 <p class="rule-caption">First match wins. Savings = <code>floor(daily volume × hit rate × cost per call in cents / 100)</code></p>
@@ -145,7 +145,7 @@ Defend    savings and routing,
     <span class="big-number-label">Q1 tolerance<br>at your hit rate</span>
   </div>
 </div>
-<p class="rule-caption" style="color:var(--dark-grey);">Also: one document per miss, the env model per tier, a live fast-tier call. Q2 and Q3 use 0.8.</p>
+<p class="rule-caption" style="color:var(--dark-grey);">Also: one document per miss, the env model per tier, a live fast-tier call. Q2 and Q3: fast-tier accuracy, 0.8.</p>
 
 ---
 

@@ -18,6 +18,11 @@ tagged lines back:
   cache   imports /home/elastic/cortex_cache.py; for each query calls cache_lookup,
           and on a miss cache_store(query, <stub answer>). Prints ARA-CACHE lines.
   router  imports /home/elastic/router.py; prints ARA-ROUTE lines with pick_tier(q).
+
+Fast-tier answer accuracy (Build 3, read by the Defend): answer_all() answers each question
+the way Tina does (tina_answer: top 5 from cortex-corpus-live, rag_answer's prompt,
+temperature 0) with one model, in a bounded thread pool, and grade_answer() checks each
+answer against gold facts. The check and the notebook's Dispatch cell both call them.
 """
 from __future__ import annotations
 
@@ -25,6 +30,7 @@ import datetime as _dt
 import json
 import os
 import pathlib
+import re
 import signal
 import subprocess
 import sys
@@ -225,6 +231,82 @@ def score_sequence(records, queries):
             "misses": misses, "hits": hits,
             # share of all calls in the sequence the cache answered: what the savings formula needs
             "hit_rate": round(hits / len(queries), 3) if queries else 0.0}
+
+
+# ── Fast-tier answer accuracy ─────────────────────────────────────────────────
+
+TINA_ALIAS = "cortex-corpus-live"
+TINA_TOP_K = 5
+
+
+def tina_answer(es, proxy, model, query, timeout=None):
+    """Answer one question on Tina's path. Retrieval and prompt are tina.rag.rag_answer's
+    (match on body, top 5, documents as "[doc_id] title\nbody"); generation goes through the
+    LLM proxy with the given tier model, since rag_answer's route B has one model only.
+    Returns (answer, retrieved doc ids)."""
+    resp = es.search(index=TINA_ALIAS, query={"match": {"body": query}}, size=TINA_TOP_K)
+    ids, parts = [], []
+    for hit in resp["hits"]["hits"]:
+        src = hit.get("_source", {})
+        doc_id = src.get("doc_id") or hit["_id"]
+        ids.append(doc_id)
+        parts.append(f"[{doc_id}] {src.get('title', '')}\n{src.get('body_text') or src.get('body', '')}")
+    context = "\n\n---\n\n".join(parts)
+    prompt = (
+        "You are Tina, a compliance assistant at Cortex Bank and Trust. "
+        "Answer the analyst's question using only the provided documents. "
+        "Cite each document you use by its id in brackets, e.g. [policy-003].\n\n"
+        f"Documents:\n{context}\n\n"
+        f"Question: {query}\nAnswer:"
+    )
+    kw = {"timeout": timeout} if timeout else {}
+    r = proxy.chat.completions.create(model=model, messages=[{"role": "user", "content": prompt}],
+                                      temperature=0, **kw)
+    return (r.choices[0].message.content or "") if r.choices else "", ids
+
+
+def grade_answer(answer, gold):
+    """gold is a list of facts; each fact is a list of alternative regexes (case-insensitive).
+    An answer is correct when every fact matches. Returns (correct, facts matched)."""
+    text = " ".join(str(answer).split())
+    hits = sum(any(re.search(p, text, re.I) for p in fact) for fact in gold)
+    return hits == len(gold), hits
+
+
+def answer_all(es, proxy, model, questions, pool=12, budget_s=30.0):
+    """Answer and grade every question in a bounded pool. A question with no "gold" is answered
+    but not graded. Returns one record per question, in input order:
+      {id, text, answer, retrieved, latency_s, correct (None if ungraded or failed), facts, error}
+    A call still running when budget_s runs out is recorded with error "timeout"."""
+    import concurrent.futures as cf
+    import time as _t
+    t0 = _t.monotonic()
+
+    def one(q):
+        t = _t.monotonic()
+        left = max(1.0, budget_s - (t - t0))
+        try:
+            ans, ids = tina_answer(es, proxy, model, q["text"], timeout=left)
+        except Exception as e:
+            return {"id": q["id"], "text": q["text"], "answer": "", "retrieved": [], "latency_s": round(_t.monotonic() - t, 1),
+                    "correct": None, "facts": 0, "error": f"{type(e).__name__}: {str(e)[:150]}"}
+        ok, hits = grade_answer(ans, q["gold"]) if q.get("gold") else (None, 0)
+        return {"id": q["id"], "text": q["text"], "answer": ans, "retrieved": ids, "latency_s": round(_t.monotonic() - t, 1),
+                "correct": ok, "facts": hits, "error": None}
+
+    ex = cf.ThreadPoolExecutor(max_workers=max(1, pool))
+    futs = [ex.submit(one, q) for q in questions]
+    cf.wait(futs, timeout=budget_s)
+    out = []
+    for q, f in zip(questions, futs):
+        if f.done():
+            out.append(f.result())
+        else:
+            f.cancel()
+            out.append({"id": q["id"], "text": q["text"], "answer": "", "retrieved": [], "latency_s": None,
+                        "correct": None, "facts": 0, "error": "timeout"})
+    ex.shutdown(wait=False, cancel_futures=True)
+    return out
 
 
 if __name__ == "__main__":
