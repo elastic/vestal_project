@@ -188,7 +188,7 @@ Policy-003:  threshold=10000, direction="at or above"
     <span class="big-number-label">planted errors caught<br>0 false positives</span>
   </div>
   <div class="done-item">
-    <span class="big-number">≥0.60</span>
+    <span class="big-number">≥0.80</span>
     <span class="big-number-label">precision@3 on 10 held-out<br>queries, 0 not yet in effect</span>
   </div>
   <div class="done-item">
