@@ -19,11 +19,11 @@ minutes: 8 -->
   <div class="terminal-block">
 Tina today, no cache
 
-generation call 1852 ms
+generation call 2477 ms
   How long must Cortex Bank keep
   customer identification records?
 
-generation call 2148 ms
+generation call 2205 ms
   What is the retention period for
   CIP records at Cortex Bank?
 

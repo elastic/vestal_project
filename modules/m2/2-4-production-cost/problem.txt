@@ -1,7 +1,7 @@
 # Lab 2.4 start state: no cache. Two paraphrases of one question, each a full generation call.
-# Captured 2026-10-02 by the ch03 solve (PROBLEM lines), test participant wwgbwknsgg5x,
+# Captured 2026-10-03 by the ch03 solve (PROBLEM lines), test participant 2ab9eutciwdz, corpus after 2aa2859,
 # rag_answer over cortex-corpus-live with completion endpoint cortex-generation. Answers cut at 200 characters.
-generation call 1852 ms | How long must Cortex Bank keep customer identification records?
-  answer: Based on the provided documents, Cortex Bank and Trust must keep customer identification records for different periods depending on the context: 1. **For Know Your Customer records (including identifi
-generation call 2148 ms | What is the retention period for CIP records at Cortex Bank?
-  answer: Based on the provided documents, the retention period for CIP (Customer Identification Program) records at Cortex Bank and Trust varies depending on the type of record: **General CIP Records:** A mini
+generation call 2477 ms | How long must Cortex Bank keep customer identification records?
+  answer: Based on the provided documents, Cortex Bank and Trust must keep customer identification records for different retention periods depending on the context: 1. **General KYC records (8 years):** All Kno
+generation call 2205 ms | What is the retention period for CIP records at Cortex Bank?
+  answer: Based on the provided documents, the retention period for CIP (Customer Identification Program) records at Cortex Bank and Trust varies depending on the document type and circumstances: 1. **Beneficia
