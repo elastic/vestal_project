@@ -133,7 +133,7 @@ screen before you ask
 <div class="col-text">
   <h2 class="slide-heading">Screen the figure first</h2>
   <p class="slide-body">A figure no passage carries cannot be grounded. A string search settles that claim before any model is asked.</p>
-  <p class="slide-body">The check counts the claims your attributor settled this way. All ten unsupported held-out claims carry such a figure.</p>
+  <p class="slide-body">The check reports how many claims your attributor settled this way. It does not grade the count: the screen saves model calls, it does not change a verdict.</p>
 </div>
 
 ---
@@ -337,7 +337,7 @@ right diagnosis, wrong control
     <span class="big-number-label">figures delivered on the<br>unanswerable class</span>
   </div>
 </div>
-<p class="rule-caption" style="color:var(--dark-grey);">Policy cited on 2 of 3 conflicts; 8 of 10 no-passage figures screened without model calls; 4 of 5 per class, confidence hook firing on unanswerables; 5 drafts: 0 invented, 4 grounded kept.</p>
+<p class="rule-caption" style="color:var(--dark-grey);">Policy cited on 2 of 3 conflicts; 8 of 10 no-passage figures screened without model calls (reported, not graded); 4 of 5 per class, confidence hook firing on unanswerables; 5 drafts: 0 invented, 4 grounded kept.</p>
 
 ---
 
