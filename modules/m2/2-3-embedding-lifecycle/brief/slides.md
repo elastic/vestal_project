@@ -92,20 +92,24 @@ POST _aliases
 
 <div class="col-diagram">
   <div class="terminal-block">
-HyDE: ask a model for the passage that
-would answer the query, then search with it
+# cortex-generation
+es.inference.inference(
+    inference_id="cortex-generation",
+    task_type="completion",
+    body={"input": prompt},
+)["completion"][0]["result"]
 
-cortex-generation   es.inference.inference(
-                      inference_id="cortex-generation",
-                      task_type="completion", ...)
-
-llm_client()        from tina.client import
-                      llm_client, model_fast
+# llm_client()
+from tina.client import llm_client, model_fast
+llm_client().chat.completions.create(
+    model=model_fast(),
+    messages=[{"role": "user", "content": prompt}],
+).choices[0].message.content
   </div>
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Fix recall at query time</h2>
-  <p class="slide-body">Re-embedding is not the only fix. <code>rewrite()</code> changes what Tina searches with, and the index stays as it is.</p>
+  <p class="slide-body">Re-embedding is not the only fix. <code>rewrite()</code> changes what Tina searches with, and the index stays as it is. HyDE asks a model for the passage that would answer the query, then searches with that passage.</p>
   <p class="slide-body">A model call costs time on every query. A static synonym list costs upkeep.</p>
 </div>
 
