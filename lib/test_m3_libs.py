@@ -205,6 +205,67 @@ def test_import_ara_pack():
     import ara_pack  # noqa: F401
 
 
+class _FakeInference:
+    """es.inference stand-in: fails `fail` times with `exc`, then answers."""
+
+    def __init__(self, fail, exc):
+        self.fail, self.exc, self.calls = fail, exc, 0
+
+    def inference(self, **kwargs):
+        self.calls += 1
+        if self.calls <= self.fail:
+            raise self.exc
+        return {"completion": [{"result": "summary"}]}
+
+
+class _FakeES:
+    def __init__(self, inference):
+        self.inference = inference
+
+
+def _summarize_with(fake):
+    import ara_pack
+    saved = (ara_pack.es_client, ara_pack.REMOTE_BACKOFF_S)
+    ara_pack.es_client, ara_pack.REMOTE_BACKOFF_S = (lambda: _FakeES(fake)), (0, 0)
+    try:
+        return ara_pack.summarize_first([{"text": "a long passage"}], "q", "completion", 50)
+    finally:
+        ara_pack.es_client, ara_pack.REMOTE_BACKOFF_S = saved
+
+
+def test_summarize_first_retries_then_raises():
+    """Principle 8: an outage is retried twice, then raised; never the original text."""
+    import ara_pack
+    fake = _FakeInference(3, ConnectionError("Connection timed out"))
+    try:
+        _summarize_with(fake)
+    except ara_pack.RemoteCallFailed:
+        pass
+    else:
+        raise AssertionError("summarize_first returned instead of raising")
+    assert fake.calls == 3, fake.calls
+
+
+def test_summarize_first_recovers_on_retry():
+    fake = _FakeInference(2, ConnectionError("Connection reset"))
+    out = _summarize_with(fake)
+    assert out[0]["body"] == "summary" and fake.calls == 3
+
+
+def test_summarize_first_raises_rejected_request_at_once():
+    class Rejected(Exception):
+        status_code = 400
+
+    fake = _FakeInference(5, Rejected("bad request"))
+    try:
+        _summarize_with(fake)
+    except Rejected:
+        pass
+    else:
+        raise AssertionError("a 400 was not raised")
+    assert fake.calls == 1, fake.calls
+
+
 def test_import_ara_attrib():
     import ara_attrib  # noqa: F401
 

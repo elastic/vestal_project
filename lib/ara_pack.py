@@ -20,10 +20,72 @@ No ARA_MODEL_FAST/STRONG. No hardcoded model names.
 from __future__ import annotations
 
 import os
+import sys
+import threading
+import time
 from typing import Any
 
 from ara_metrics import token_count
 from tina.client import es_client
+
+# Every remote call here is retried twice with a short backoff, then the error is
+# raised (grading standard 09 principle 8). Nothing falls back to other input: a
+# summary that could not be made is an error, not the original passage, so the
+# notebook table and the Check see the same failure.
+REMOTE_ATTEMPTS = 3
+REMOTE_BACKOFF_S = (1.5, 3.0)
+
+# At most this many inference calls in flight from one process. The Check runs the
+# learner's packer for several questions at once, and summarize_first makes one
+# completion call per candidate, so an unbounded burst can draw 429s.
+MAX_CONCURRENT_INFERENCE = 8
+_INFERENCE_SLOTS = threading.BoundedSemaphore(MAX_CONCURRENT_INFERENCE)
+
+
+class RemoteCallFailed(RuntimeError):
+    """An inference call still failed after its retries. Raised, never swallowed."""
+
+
+def is_remote_failure(exc: Exception) -> bool:
+    """True for an outage: no response at all, a rate limit, an auth failure, or a 5xx.
+
+    A request the endpoint rejected (any other 4xx) is not an outage: it is raised at
+    once, unchanged, because retrying the same request cannot fix it.
+    """
+    status = getattr(exc, "status_code", None)
+    if status is None:
+        status = getattr(getattr(exc, "meta", None), "status", None)
+    if isinstance(status, int):
+        return status in (401, 403, 408, 429) or status >= 500
+    # No HTTP status: the request never got an answer (refused, reset, timed out).
+    try:
+        from elastic_transport import TransportError
+    except Exception:  # noqa: BLE001
+        TransportError = OSError  # noqa: N806
+    return isinstance(exc, (TransportError, OSError, TimeoutError))
+
+
+def _inference(es, label: str, **kwargs):
+    """One inference call with two retries; raises RemoteCallFailed after the last."""
+    last: Exception | None = None
+    for attempt in range(REMOTE_ATTEMPTS):
+        try:
+            with _INFERENCE_SLOTS:
+                return es.inference.inference(**kwargs)
+        except Exception as exc:  # noqa: BLE001 - outages are retried, then raised
+            if not is_remote_failure(exc):
+                raise
+            last = exc
+            if attempt < REMOTE_ATTEMPTS - 1:
+                wait = REMOTE_BACKOFF_S[min(attempt, len(REMOTE_BACKOFF_S) - 1)]
+                print(f"[ara_pack] {label} call failed ({type(exc).__name__}); "
+                      f"retry {attempt + 1} of {REMOTE_ATTEMPTS - 1} in {wait:.0f} s",
+                      file=sys.stderr, flush=True)
+                time.sleep(wait)
+    raise RemoteCallFailed(
+        f"{label} endpoint unreachable after {REMOTE_ATTEMPTS} attempts "
+        f"({type(last).__name__}: {str(last)[:160]}). Wait a moment and run it again."
+    ) from last
 
 
 # ── Strategy 1: Rerank ────────────────────────────────────────────────────────
@@ -45,6 +107,8 @@ def rerank_top_n(
     Returns the top-n results in ranked order, each with an added
     ``rerank_score`` field.  Uses the Elasticsearch _inference API.
 
+    A failed rerank call is retried twice, then raises ``RemoteCallFailed``.
+
     Args:
         results:   Retrieved passage dicts (must contain ``text`` or ``body``).
         query:     The user query to score relevance against.
@@ -62,7 +126,8 @@ def rerank_top_n(
     # Build the passage list expected by the inference rerank API
     input_texts = [r.get("text") or r.get("body", "") for r in results]
 
-    resp = es.inference.inference(
+    resp = _inference(
+        es, "rerank",
         inference_id=rerank_id,
         body={
             "query": query,
@@ -103,6 +168,10 @@ def summarize_first(
     Returns the results list with each result's ``body`` replaced by the summary.
     Temperature 0 (deterministic output for reproducibility in graded labs).
 
+    A completion that fails is retried twice, then ``RemoteCallFailed`` is raised.
+    The original passage is never used in place of a summary: that would hand the
+    packer a 4,000-token passage it has to skip or cut, and lose the figure in it.
+
     Args:
         results:         Retrieved passage dicts (``text`` or ``body`` field).
         query:           The user query — summary should stay relevant to it.
@@ -125,18 +194,15 @@ def summarize_first(
             f"focusing only on information relevant to this question: {query}\n\n"
             f"Passage:\n{source_text}\n\nSummary:"
         )
-        try:
-            resp = es.inference.inference(
-                inference_id=completion_id,
-                body={
-                    "input": prompt,
-                    "task_settings": {"temperature": 0},
-                },
-            )
-            summary = resp["completion"][0]["result"]
-        except Exception as exc:
-            print(f"[ara_pack.summarize_first] warning: completion failed, using original text. {exc}")
-            summary = source_text
+        resp = _inference(
+            es, "completion",
+            inference_id=completion_id,
+            body={
+                "input": prompt,
+                "task_settings": {"temperature": 0},
+            },
+        )
+        summary = resp["completion"][0]["result"]
 
         new_r = dict(r)
         new_r["body"] = summary
