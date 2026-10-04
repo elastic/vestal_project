@@ -327,6 +327,23 @@ body { background: var(--developer-blue); display: flex; flex-direction: column;
 .done-item { display: flex; flex-direction: column; align-items: center; gap: var(--s-2); }
 .done-item .big-number { white-space: nowrap; }
 
+/* ── Short panes (Instruqt's slide panel on a small laptop): same content, tighter spacing ── */
+@media (max-height: 640px) {
+  .slide[data-layout="rule"] { gap: var(--s-3); }
+  .slide[data-layout="rule"] .slide-heading { margin-bottom: 0; }
+  .rule-table { font-size: 15px; line-height: 1.35; }
+  .rule-table th, .rule-table td { padding: var(--s-2) var(--s-4); }
+  .rule-caption { margin-top: 0; }
+  .terminal-block { line-height: 1.45; padding: var(--s-4); }
+  .slide-body { line-height: 1.4; }
+}
+@media (max-height: 540px) {
+  .rule-table { font-size: 14px; line-height: 1.25; }
+  .rule-table th, .rule-table td { padding: var(--s-1) var(--s-3); }
+  .slide-body { font-size: 14px; }
+  .terminal-block { font-size: 11px; }
+}
+
 /* ── Narrow panes (Instruqt with instructions open, or a phone): same content, tighter type ── */
 @media (max-width: 600px) {
   .slide-body code, .col-text code, .col-right code { white-space: normal; overflow-wrap: anywhere; }
@@ -336,6 +353,9 @@ body { background: var(--developer-blue); display: flex; flex-direction: column;
   .rule-table th, .rule-table td { padding: var(--s-2) var(--s-3); }
   .slide[data-layout="problem"] { gap: var(--s-5); }
   .slide[data-layout="concept"] { gap: var(--s-4); }
+  .slide[data-layout="done"] { gap: var(--s-4); }
+  .done-row { gap: var(--s-3) var(--s-5); }
+  .done-item .big-number { font-size: 34px; }
 }
 
 /* ── Status indicator ── */
