@@ -90,9 +90,6 @@ OUT_OF_SCOPE_MESSAGE = (
 # submit.py and the Defend count the questions each one held back.
 HOOKS = ("scope_check", "confidence_fallback", "validate_output")
 
-REMOTE_ERRORS = ("connection", "timeout", "timed out", "unauthorized", "authentication",
-                 "502", "503", "504", "429", "rate limit")
-
 _TRACE_LOCK = threading.Lock()
 _CLIENT = None
 
@@ -163,11 +160,72 @@ def unwrap(resp):
     return resp.body if hasattr(resp, "body") else resp
 
 
-def is_remote_error(exc: Exception) -> bool:
-    if isinstance(exc, RemoteUnavailable):
+def _http_status(exc: BaseException):
+    """The HTTP status an exception carries, or None when there was no response."""
+    for value in (getattr(exc, "status_code", None),
+                  getattr(getattr(exc, "meta", None), "status", None),
+                  getattr(getattr(exc, "response", None), "status_code", None)):
+        if isinstance(value, int) and not isinstance(value, bool):
+            return value
+    try:
+        from urllib.error import HTTPError
+        if isinstance(exc, HTTPError) and isinstance(exc.code, int):
+            return exc.code
+    except Exception:  # noqa: BLE001
+        pass
+    return None
+
+
+def _no_response(exc: BaseException) -> bool:
+    """A connection that failed: refused, reset, dropped, or never made.
+
+    A timeout on its own is not counted here: the harness's own calls retry a timeout
+    and then raise RemoteUnavailable, so a bare timeout came from the caller's code.
+    """
+    if isinstance(exc, ConnectionError):
         return True
-    text = str(exc).lower()
-    return any(marker in text for marker in REMOTE_ERRORS)
+    import importlib
+    for module, names in (("elastic_transport", ("ConnectionError",)),
+                          ("requests.exceptions", ("ConnectionError",)),
+                          ("httpx", ("NetworkError",)),
+                          ("urllib3.exceptions", ("NewConnectionError", "ProtocolError"))):
+        try:
+            mod = importlib.import_module(module)
+        except Exception:  # noqa: BLE001 - library not installed
+            continue
+        kinds = tuple(k for k in (getattr(mod, n, None) for n in names) if isinstance(k, type))
+        if kinds and isinstance(exc, kinds):
+            return True
+    try:
+        from urllib.error import HTTPError, URLError
+        if isinstance(exc, URLError) and not isinstance(exc, HTTPError):
+            return not isinstance(getattr(exc, "reason", None), TimeoutError)
+    except Exception:  # noqa: BLE001
+        pass
+    return False
+
+
+def is_remote_error(exc: BaseException) -> bool:
+    """True when an error is an outage, judged by its type and HTTP status, never its text.
+
+    An outage is RemoteUnavailable (a harness call that still failed after its retries),
+    an HTTP 401, 403, 408, 429 or 5xx, or a connection that failed. Any other error,
+    whatever its message says, is the code's own. The error it was raised from or during
+    counts too, so wrapping an outage in another exception keeps it an outage.
+    """
+    seen: set[int] = set()
+    while exc is not None and id(exc) not in seen:
+        seen.add(id(exc))
+        if isinstance(exc, RemoteUnavailable):
+            return True
+        status = _http_status(exc)
+        if status is not None:
+            if status in (401, 403, 408, 429) or status >= 500:
+                return True
+        elif _no_response(exc):
+            return True
+        exc = exc.__cause__ or exc.__context__
+    return False
 
 
 def trace(record: dict) -> None:
