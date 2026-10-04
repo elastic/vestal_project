@@ -77,7 +77,7 @@ MRR      1 / rank of the case asked for
          rank 1 -> 1.0   rank 2 -> 0.5
          not in the top 5 -> 0
 
-p50      median latency over three passes
+p50      median latency over the questions
   </div>
 </div>
 <div class="col-text">
