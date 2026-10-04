@@ -31,6 +31,7 @@ import json
 import os
 import pathlib
 import re
+import shutil
 import signal
 import subprocess
 import sys
@@ -84,6 +85,9 @@ def compare(es, kind, learner_query, params=None):
     except Exception as e:
         return False, f"the query did not run: {str(e)[:160]}"
     ref, _ = _rows(es, REFERENCE[kind], params)
+    if not ref:  # an empty reference would let an empty answer pass
+        return False, ("the reference query returned no rows on these parameters, so there is nothing to compare. "
+                       "This is a provisioning problem, not your query: stop the track and start it again")
     if kind == "filter":
         need = {"@timestamp", "amount"}
         if not need <= set(cols):
@@ -133,7 +137,8 @@ def run_learner(mode, queries, timeout=CHILD_TIMEOUT_S):
     """Run the learner's module as `elastic`. Returns (records, error_or_None)."""
     cmd = [LEARNER_PY, __file__, mode]
     if os.geteuid() == 0:
-        cmd = ["runuser", "-u", "elastic", "--"] + cmd
+        # absolute path: a child or cron PATH may lack /usr/sbin, where runuser lives (as in ara_rewrite)
+        cmd = [shutil.which("runuser") or "/usr/sbin/runuser", "-u", "elastic", "--"] + cmd
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                             text=True, cwd="/home/elastic", start_new_session=True)
     try:
@@ -277,29 +282,33 @@ def grade_answer(answer, gold):
     return hits == len(gold), hits
 
 
-def answer_all(es, proxy, model, questions, pool=12, budget_s=30.0):
+def answer_all(es, proxy, model, questions, pool=12, budget_s=30.0, retries=0):
     """Answer and grade every question in a bounded pool. A question with no "gold" is answered
     but not graded. Returns one record per question, in input order:
       {id, text, answer, retrieved, latency_s, correct (None if ungraded or failed), facts, error}
     Every search and generation call times out at budget_s from the start, so the pool's
     threads end by then too (they would otherwise hold the process open at exit); a question
-    not answered by then is recorded with error "timeout"."""
+    not answered by then is recorded with error "timeout". A failed call is tried again up
+    to `retries` times while the budget lasts; "attempts" records how many calls it took."""
     import concurrent.futures as cf
     import time as _t
     end = _t.monotonic() + budget_s
 
     def one(q):
         t = _t.monotonic()
-        if t >= end:
-            raise TimeoutError
-        try:
-            ans, ids = tina_answer(es, proxy, model, q["text"], deadline=end)
-        except Exception as e:
-            return {"id": q["id"], "text": q["text"], "answer": "", "retrieved": [], "latency_s": round(_t.monotonic() - t, 1),
-                    "correct": None, "facts": 0, "error": f"{type(e).__name__}: {str(e)[:150]}"}
-        ok, hits = grade_answer(ans, q["gold"]) if q.get("gold") else (None, 0)
-        return {"id": q["id"], "text": q["text"], "answer": ans, "retrieved": ids, "latency_s": round(_t.monotonic() - t, 1),
-                "correct": ok, "facts": hits, "error": None}
+        err, n = "timeout", 0
+        while n <= retries and _t.monotonic() < end:
+            n += 1
+            try:
+                ans, ids = tina_answer(es, proxy, model, q["text"], deadline=end)
+            except Exception as e:
+                err = f"{type(e).__name__}: {str(e)[:150]}"
+                continue
+            ok, hits = grade_answer(ans, q["gold"]) if q.get("gold") else (None, 0)
+            return {"id": q["id"], "text": q["text"], "answer": ans, "retrieved": ids, "latency_s": round(_t.monotonic() - t, 1),
+                    "correct": ok, "facts": hits, "error": None, "attempts": n}
+        return {"id": q["id"], "text": q["text"], "answer": "", "retrieved": [], "latency_s": round(_t.monotonic() - t, 1),
+                "correct": None, "facts": 0, "error": err, "attempts": n}
 
     ex = cf.ThreadPoolExecutor(max_workers=max(1, pool))
     futs = [ex.submit(one, q) for q in questions]
@@ -311,7 +320,7 @@ def answer_all(es, proxy, model, questions, pool=12, budget_s=30.0):
         else:
             f.cancel()
             out.append({"id": q["id"], "text": q["text"], "answer": "", "retrieved": [], "latency_s": None,
-                        "correct": None, "facts": 0, "error": "timeout"})
+                        "correct": None, "facts": 0, "error": "timeout", "attempts": 0})
     ex.shutdown(wait=False, cancel_futures=True)
     return out
 
