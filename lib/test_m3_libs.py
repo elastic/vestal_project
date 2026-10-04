@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import sys
 import os
+import pathlib
 
 # Ensure lib/ is on the path when run directly
 sys.path.insert(0, os.path.dirname(__file__))
@@ -318,3 +319,58 @@ if __name__ == "__main__":
             failed += 1
     print(f"\n{passed} passed, {failed} failed")
     sys.exit(1 if failed else 0)
+
+
+# ── 3.4 dev attribution set and score_attribution ─────────────────────────────
+
+_DEV_ATTR = pathlib.Path(__file__).resolve().parent.parent / "data/dev-sets/m3/track-3-4/dev-attribution-answers.json"
+
+
+def _dev_attr():
+    import json
+    return json.loads(_DEV_ATTR.read_text())
+
+
+def test_dev_attribution_labels_consistent():
+    """Each label is backed by the passage text: a supported claim's passage carries
+    it, an UNSUPPORTED claim is carried by none, and claims split as the harness does."""
+    from ara_attrib import split_claims
+    records = _dev_attr()
+    totals = {"supported": 0, "unsupported": 0, "conflict": 0}
+    for r in records:
+        assert split_claims(r["answer_text"]) == r["claims"], r["answer_id"]
+        ids = {p["passage_id"] for p in r["passages"]}
+        for i, _claim in enumerate(r["claims"]):
+            expected = r["expected_attribution"][f"claim_{i}"]
+            carriers = [p for p in r["passages"] if i in p["supports_claims"]]
+            if expected == "UNSUPPORTED":
+                totals["unsupported"] += 1
+                assert not carriers, (r["answer_id"], i)
+            else:
+                totals["supported"] += 1
+                assert expected in ids and any(p["passage_id"] == expected for p in carriers)
+                if len(carriers) > 1:
+                    totals["conflict"] += 1
+                    assert next(p for p in r["passages"] if p["passage_id"] == expected)["source_type"] == "policy"
+    assert totals == {"supported": 12, "unsupported": 4, "conflict": 2}, totals
+
+
+def test_score_attribution_matches_labels():
+    import ara_attrib
+    records = _dev_attr()
+    key = {tuple(r["claims"]): r["expected_attribution"] for r in records}
+
+    def oracle(claims, passages):
+        assert all("supports_claims" not in p for p in passages)  # labels stay out of reach
+        return {i: key[tuple(claims)][f"claim_{i}"] for i in range(len(claims))}
+
+    s = ara_attrib.score_attribution(records, oracle)
+    assert s["supported_accuracy"] == 1.0 and s["unsupported_recall"] == 1.0
+    assert s["conflict"]["total"] == 2 and s["conflict"]["policy_passage"] == 2
+
+    def first_passage(claims, passages):  # never UNSUPPORTED, memo first on conflicts
+        return [passages[0]["passage_id"] for _ in claims]
+
+    s = ara_attrib.score_attribution(records, first_passage)
+    assert s["unsupported_recall"] == 0.0 and not s["returned_any_unsupported"]
+    assert s["conflict"]["memo_passage"] == 2

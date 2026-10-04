@@ -13,6 +13,7 @@ Public items:
   attribution_record    — full attribution run returning a structured dict
   remote_call           — one Elasticsearch or inference call, retried twice on an
                           outage, then raised (the 3.4 notebook harnesses use it)
+  score_attribution     — the Build 1 check's scoring, run on a labelled dev set
 
 Route B only: all LLM calls use the Elasticsearch _inference API.
 No ARA_MODEL_FAST/STRONG.  No hardcoded model names.
@@ -279,3 +280,99 @@ def attribution_record(
 
 # ── Convenience re-export of _NUMBER_RE for test use ─────────────────────────
 _number_re = _NUMBER_RE
+
+
+# ── Scoring an attributor on labelled answers ─────────────────────────────────
+
+# The keys attribute() is handed. The labels stay out of its reach, as in the check.
+LEARNER_PASSAGE_KEYS = ("passage_id", "source_type", "text", "score")
+
+
+def _normalize_mapping(returned, claim_count: int) -> dict:
+    """Accept dict[int], dict['0'], dict['claim_0'], or a list (the check's rules)."""
+    out: dict = {}
+    if isinstance(returned, dict):
+        for key, value in returned.items():
+            index = None
+            if isinstance(key, int):
+                index = key
+            elif isinstance(key, str):
+                text = key.strip()
+                if text.startswith("claim_"):
+                    text = text[len("claim_"):]
+                if text.isdigit():
+                    index = int(text)
+            if index is not None and 0 <= index < claim_count:
+                out[index] = "UNSUPPORTED" if value is None else str(value)
+    elif isinstance(returned, (list, tuple)):
+        for index, value in enumerate(returned[:claim_count]):
+            if isinstance(value, dict):
+                value = value.get("passage_id") or value.get("attributed_to")
+            out[index] = "UNSUPPORTED" if value is None else str(value)
+    return out
+
+
+def score_attribution(records: list, attribute) -> dict:
+    """Score ``attribute(claims, passages)`` on labelled answers, as the Build 1 check does.
+
+    Each record carries ``claims``, ``passages`` (with ``supports_claims``) and
+    ``expected_attribution``, the shape of the dev set
+    ``dev-attribution-answers.json``. attribute() sees only the passage keys the
+    check hands it. A claim is a conflict claim when more than one passage carries it.
+
+    Returns supported accuracy, unsupported recall, the conflict counts by where the
+    attributor sent each conflict claim, whether UNSUPPORTED was ever returned, and
+    one row per claim.
+    """
+    supported_total = supported_correct = 0
+    unsupported_total = unsupported_correct = 0
+    conflict = {"total": 0, "policy_passage": 0, "memo_passage": 0, "unsupported": 0,
+                "both_passages": 0, "missing": 0, "other": 0}
+    any_unsupported = False
+    rows = []
+    for record in records:
+        claims = list(record["claims"])
+        passages = [{k: p[k] for k in LEARNER_PASSAGE_KEYS if k in p}
+                    for p in record["passages"]]
+        mapping = _normalize_mapping(attribute(claims, passages), len(claims))
+        by_id = {p["passage_id"]: p for p in record["passages"]}
+        for index, claim in enumerate(claims):
+            expected = record["expected_attribution"][f"claim_{index}"]
+            got = mapping.get(index, "")
+            any_unsupported = any_unsupported or got == "UNSUPPORTED"
+            carriers = [pid for pid, p in by_id.items()
+                        if index in (p.get("supports_claims") or [])]
+            is_conflict = expected != "UNSUPPORTED" and len(carriers) > 1
+            if expected == "UNSUPPORTED":
+                unsupported_total += 1
+                unsupported_correct += int(got == "UNSUPPORTED")
+            else:
+                supported_total += 1
+                supported_correct += int(got == expected)
+            if is_conflict:
+                conflict["total"] += 1
+                memo_ids = {pid for pid in carriers if by_id[pid]["source_type"] != "policy"}
+                if got == expected:
+                    conflict["policy_passage"] += 1
+                elif got in memo_ids:
+                    conflict["memo_passage"] += 1
+                elif got == "UNSUPPORTED":
+                    conflict["unsupported"] += 1
+                elif got == "":
+                    conflict["missing"] += 1
+                elif sum(1 for pid in carriers if pid in got) >= 2:
+                    conflict["both_passages"] += 1
+                else:
+                    conflict["other"] += 1
+            rows.append({"answer_id": record.get("answer_id", ""), "claim_index": index,
+                         "claim": claim, "expected": expected, "returned": got,
+                         "conflict": is_conflict})
+    return {
+        "supported_accuracy": supported_correct / max(supported_total, 1),
+        "supported_correct": supported_correct, "supported_total": supported_total,
+        "unsupported_recall": unsupported_correct / max(unsupported_total, 1),
+        "unsupported_correct": unsupported_correct, "unsupported_total": unsupported_total,
+        "conflict": conflict,
+        "returned_any_unsupported": any_unsupported,
+        "per_claim": rows,
+    }

@@ -1,0 +1,185 @@
+[
+ {
+  "answer_id": "dev-3-4-attr-01",
+  "query_text": "How much cash did Philippa Rosenthal deposit, and how fast must the resulting alert be assigned?",
+  "answer_text": "Over the review period, the customer made cash deposits totaling $319,601.19. Alerts must be assigned to a Level One compliance analyst within one business day. A Currency Transaction Report is required for any single transaction involving physical currency that equals or exceeds ten thousand dollars. The customer also received a $41,250.00 cash refund from a correspondent bank.",
+  "claims": [
+   "Over the review period, the customer made cash deposits totaling $319,601.19.",
+   "Alerts must be assigned to a Level One compliance analyst within one business day.",
+   "A Currency Transaction Report is required for any single transaction involving physical currency that equals or exceeds ten thousand dollars.",
+   "The customer also received a $41,250.00 cash refund from a correspondent bank."
+  ],
+  "passages": [
+   {
+    "passage_id": "case-structuring-007",
+    "source_type": "case",
+    "text": "Over the review period, the customer made cash deposits totaling $319,601.19. The deposits were consistently structured in amounts just below the $10,000 currency transaction reporting threshold. The case note records that alerts must be assigned to a Level One compliance analyst within one business day.",
+    "score": 0.95,
+    "supports_claims": [
+     0,
+     1
+    ]
+   },
+   {
+    "passage_id": "policy-009-s3",
+    "source_type": "policy",
+    "text": "When the automated surveillance system identifies activity breaching these parameters, it generates an exception alert routed directly to the Cortex Bank and Trust Financial Intelligence Unit. Alerts must be assigned to a Level One compliance analyst within one business day.",
+    "score": 0.88,
+    "supports_claims": [
+     1
+    ]
+   },
+   {
+    "passage_id": "policy-003-s2",
+    "source_type": "policy",
+    "text": "A Currency Transaction Report is a mandatory filing designed to capture the physical transfer of fiat currency into or out of Cortex Bank and Trust. For the purposes of this policy, Cortex Bank and Trust defines the standard reporting threshold for a Currency Transaction Report as any single transaction involving physical currency that equals or exceeds ten thousand dollars.",
+    "score": 0.81,
+    "supports_claims": [
+     2
+    ]
+   }
+  ],
+  "expected_attribution": {
+   "claim_0": "case-structuring-007",
+   "claim_1": "policy-009-s3",
+   "claim_2": "policy-003-s2",
+   "claim_3": "UNSUPPORTED"
+  }
+ },
+ {
+  "answer_id": "dev-3-4-attr-02",
+  "query_text": "What happened to the Lanternhill Machinery wire, and what must an employee do first when a wire raises a red flag?",
+  "answer_text": "The account sent a single outbound wire transfer of $794,235.02 to a beneficiary not previously associated with the customer. A portion of the funds, totaling $79,423.50, was frozen in the beneficiary account. The employee must first place an administrative hold on the wire transfer, preventing the dispersal of funds. The customer recovered $512,900.00 through a court order.",
+  "claims": [
+   "The account sent a single outbound wire transfer of $794,235.02 to a beneficiary not previously associated with the customer.",
+   "A portion of the funds, totaling $79,423.50, was frozen in the beneficiary account.",
+   "The employee must first place an administrative hold on the wire transfer, preventing the dispersal of funds.",
+   "The customer recovered $512,900.00 through a court order."
+  ],
+  "passages": [
+   {
+    "passage_id": "case-wire-fraud-008",
+    "source_type": "case",
+    "text": "Initial review of the account activity confirmed a single outbound wire transfer in the amount of $794,235.02 to a beneficiary not previously associated with the customer's transaction history. The receiving institution confirmed that a portion of the funds, totaling $79,423.50, was frozen in the beneficiary account.",
+    "score": 0.95,
+    "supports_claims": [
+     0,
+     1
+    ]
+   },
+   {
+    "passage_id": "policy-015-s5",
+    "source_type": "policy",
+    "text": "Upon the identification of any wire transfer red flag, or if a transaction breaches the designated velocity and volume thresholds under suspicious circumstances, Cortex Bank and Trust employees must follow a strict escalation procedure. First, the employee must place an administrative hold on the wire transfer, preventing the dispersal of funds.",
+    "score": 0.88,
+    "supports_claims": [
+     2
+    ]
+   },
+   {
+    "passage_id": "case-wire-fraud-012",
+    "source_type": "case",
+    "text": "This case was initiated following a customer inquiry regarding an unexpected debit. A review of the account activity confirmed an outbound wire transfer in the amount of $437,157.53, executed on the previous business day. The relationship manager noted that the customer appeared distressed and claimed no knowledge of the beneficiary or the transaction.",
+    "score": 0.81,
+    "supports_claims": []
+   }
+  ],
+  "expected_attribution": {
+   "claim_0": "case-wire-fraud-008",
+   "claim_1": "case-wire-fraud-008",
+   "claim_2": "policy-015-s5",
+   "claim_3": "UNSUPPORTED"
+  }
+ },
+ {
+  "answer_id": "dev-3-4-attr-03",
+  "query_text": "How was Stonebridge Distribution's account funded, and what risk ratings does the bank assign?",
+  "answer_text": "The account was first funded by an unverified wire transfer of $377,100.67. Account activity over the preceding twelve months reached an aggregate transaction volume of $1,654,019.52. Every customer is assigned a dynamic risk rating of Low, Standard, or High. The relationship manager closed the account the same week the deficiency was found.",
+  "claims": [
+   "The account was first funded by an unverified wire transfer of $377,100.67.",
+   "Account activity over the preceding twelve months reached an aggregate transaction volume of $1,654,019.52.",
+   "Every customer is assigned a dynamic risk rating of Low, Standard, or High.",
+   "The relationship manager closed the account the same week the deficiency was found."
+  ],
+  "passages": [
+   {
+    "passage_id": "case-kyc-gap-009",
+    "source_type": "case",
+    "text": "The initial funding, an unverified wire transfer of $377,100.67, occurred before the beneficial owner attestation was dated and signed. The analysis of the account activity over the preceding twelve months revealed an aggregate transaction volume of $1,654,019.52 conducted on a file with material deficiencies.",
+    "score": 0.95,
+    "supports_claims": [
+     0,
+     1
+    ]
+   },
+   {
+    "passage_id": "policy-002-s3",
+    "source_type": "policy",
+    "text": "Upon successful identification, Cortex Bank and Trust applies a comprehensive risk-based approach to determine the appropriate level of ongoing due diligence. Every customer is assigned a dynamic risk rating of Low, Standard, or High.",
+    "score": 0.88,
+    "supports_claims": [
+     2
+    ]
+   },
+   {
+    "passage_id": "policy-009-s4",
+    "source_type": "policy",
+    "text": "Should the analyst be unable to establish a legitimate economic rationale, the alert must be escalated to a Level Two senior investigator within five business days.",
+    "score": 0.81,
+    "supports_claims": []
+   }
+  ],
+  "expected_attribution": {
+   "claim_0": "case-kyc-gap-009",
+   "claim_1": "case-kyc-gap-009",
+   "claim_2": "policy-002-s3",
+   "claim_3": "UNSUPPORTED"
+  }
+ },
+ {
+  "answer_id": "dev-3-4-attr-04",
+  "query_text": "What did the Adrian Quintanilla screening review find, and how fast must Tier Two resolve an escalated alert?",
+  "answer_text": "The aggregate value of the screened transactions under review totalled $320,004.87. The Tier Two team has a strict mandate to resolve escalated alerts within four hours for intraday domestic payments. A payment of $162,691.70 was blocked and reported in accordance with regulatory requirements. The counterparty paid a $58,000.00 penalty to the regulator.",
+  "claims": [
+   "The aggregate value of the screened transactions under review totalled $320,004.87.",
+   "The Tier Two team has a strict mandate to resolve escalated alerts within four hours for intraday domestic payments.",
+   "A payment of $162,691.70 was blocked and reported in accordance with regulatory requirements.",
+   "The counterparty paid a $58,000.00 penalty to the regulator."
+  ],
+  "passages": [
+   {
+    "passage_id": "case-sanctions-010",
+    "source_type": "case",
+    "text": "The aggregate value of the screened transactions under review totalled $320,004.87. Consequently, a payment of $162,691.70 was blocked and reported in accordance with regulatory requirements. The case note records that the Tier Two team has a strict mandate to resolve escalated alerts within four hours for intraday domestic payments.",
+    "score": 0.95,
+    "supports_claims": [
+     0,
+     1,
+     2
+    ]
+   },
+   {
+    "passage_id": "policy-006-s5",
+    "source_type": "policy",
+    "text": "Tier Two analysts conduct enhanced due diligence, which may involve requesting additional identifying information from the corresponding financial institution or the Cortex Bank and Trust client originating the transaction. The Tier Two team has a strict mandate to resolve escalated alerts within four hours for intraday domestic payments.",
+    "score": 0.88,
+    "supports_claims": [
+     1
+    ]
+   },
+   {
+    "passage_id": "policy-006-s6",
+    "source_type": "policy",
+    "text": "Upon definitive confirmation of a sanctions match by the Sanctions Officer, Cortex Bank and Trust must execute the appropriate regulatory action. All documentation supporting the decision to block or reject must be retained in the secure corporate repository for a minimum of seven years.",
+    "score": 0.81,
+    "supports_claims": []
+   }
+  ],
+  "expected_attribution": {
+   "claim_0": "case-sanctions-010",
+   "claim_1": "policy-006-s5",
+   "claim_2": "case-sanctions-010",
+   "claim_3": "UNSUPPORTED"
+  }
+ }
+]
