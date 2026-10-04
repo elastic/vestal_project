@@ -151,8 +151,9 @@ claim
 
   case-kyc-gap-018   <span style="color:var(--yellow);">source_type: case</span>
     "the case note records that an exception
-     may stand for no more than thirty days...
-     this one had stood for ninety-four days"
+     may stand for no more than thirty days
+     and must be cleared by the relationship
+     manager"
     -> <span style="color:var(--light-teal);">supports</span>
 
   policy-004-s5      <span style="color:var(--yellow);">source_type: policy</span>

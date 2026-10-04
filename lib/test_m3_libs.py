@@ -270,6 +270,35 @@ def test_import_ara_attrib():
     import ara_attrib  # noqa: F401
 
 
+def _support_with(fake):
+    import ara_attrib
+    import tina.client
+    saved = (tina.client.es_client, ara_attrib.REMOTE_BACKOFF_S)
+    tina.client.es_client, ara_attrib.REMOTE_BACKOFF_S = (lambda: _FakeES(fake)), (0, 0)
+    try:
+        return ara_attrib.support("a claim", "a passage", "completion")
+    finally:
+        tina.client.es_client, ara_attrib.REMOTE_BACKOFF_S = saved
+
+
+def test_support_retries_then_raises():
+    """Principle 8: a failed support() call is raised, never returned as neutral."""
+    import ara_pack
+    fake = _FakeInference(3, ConnectionError("Connection timed out"))
+    try:
+        _support_with(fake)
+    except ara_pack.RemoteCallFailed:
+        pass
+    else:
+        raise AssertionError("support returned a verdict for a failed call")
+    assert fake.calls == 3, fake.calls
+
+
+def test_support_recovers_on_retry():
+    fake = _FakeInference(2, ConnectionError("Connection reset"))
+    assert _support_with(fake) == "neutral" and fake.calls == 3
+
+
 def test_import_ara_metrics():
     import ara_metrics  # noqa: F401
 

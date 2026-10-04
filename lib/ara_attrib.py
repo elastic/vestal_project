@@ -7,10 +7,12 @@ M3 pedagogical purpose:
   know *which* facts are grounded, which are fabricated, and whether numbers
   in the answer actually appear in the retrieved passages.
 
-Three public items:
+Public items:
   split_claims          — deterministic sentence-level claim extractor (no LLM)
   support               — single-claim grounding check via EIS completion
   attribution_record    — full attribution run returning a structured dict
+  remote_call           — one Elasticsearch or inference call, retried twice on an
+                          outage, then raised (the 3.4 notebook harnesses use it)
 
 Route B only: all LLM calls use the Elasticsearch _inference API.
 No ARA_MODEL_FAST/STRONG.  No hardcoded model names.
@@ -20,7 +22,39 @@ from __future__ import annotations
 
 import os
 import re
+import sys
+import time
 from typing import Optional
+
+from ara_pack import REMOTE_ATTEMPTS, REMOTE_BACKOFF_S, RemoteCallFailed, is_remote_failure
+
+
+def remote_call(label: str, fn, *args, **kwargs):
+    """Call ``fn(*args, **kwargs)``: two retries with a short backoff on an outage.
+
+    Grading standard 09 principle 8, as the 3.4 checks apply it: a call that still
+    fails raises ``RemoteCallFailed``, and a request the endpoint rejected (a 4xx other
+    than 401, 403, 408, 429) is raised at once, unchanged. Nothing falls back to other
+    input, so the notebook and the Check see the same failure.
+    """
+    last: Exception | None = None
+    for attempt in range(REMOTE_ATTEMPTS):
+        try:
+            return fn(*args, **kwargs)
+        except Exception as exc:  # noqa: BLE001 - outages are retried, then raised
+            if not is_remote_failure(exc):
+                raise
+            last = exc
+            if attempt < REMOTE_ATTEMPTS - 1:
+                wait = REMOTE_BACKOFF_S[min(attempt, len(REMOTE_BACKOFF_S) - 1)]
+                print(f"[ara_attrib] {label} call failed ({type(exc).__name__}); "
+                      f"retry {attempt + 1} of {REMOTE_ATTEMPTS - 1} in {wait:.0f} s",
+                      file=sys.stderr, flush=True)
+                time.sleep(wait)
+    raise RemoteCallFailed(
+        f"{label} endpoint unreachable after {REMOTE_ATTEMPTS} attempts "
+        f"({type(last).__name__}: {str(last)[:160]}). Wait a moment and run it again."
+    ) from last
 
 
 # ── Pure-Python helpers ───────────────────────────────────────────────────────
@@ -101,8 +135,9 @@ def support(claim: str, passage: str, completion_id: str) -> str:
       "Does the following passage support, contradict, or have no bearing on
        this claim? Answer with one word: supports, contradicts, or neutral."
 
-    On any error (network, parsing): returns ``"neutral"`` and prints a warning.
-    Never raises.
+    A failed call is retried twice, then ``RemoteCallFailed`` is raised. It never
+    returns a verdict it did not get: "neutral" for a failed call would read as
+    "no passage supports this" (grading standard 09 principle 8).
 
     Args:
         claim:         A single factual claim string.
@@ -120,24 +155,21 @@ def support(claim: str, passage: str, completion_id: str) -> str:
         f"Claim: {claim}\n\n"
         f"Passage: {passage}"
     )
-    try:
-        es = es_client()
-        resp = es.inference.inference(
-            inference_id=completion_id,
-            body={
-                "input": prompt,
-                "task_settings": {"temperature": 0},
-            },
-        )
-        raw: str = resp["completion"][0]["result"].strip().lower()
-        if "support" in raw:
-            return "supports"
-        elif "contradict" in raw:
-            return "contradicts"
-        else:
-            return "neutral"
-    except Exception as exc:
-        print(f"[ara_attrib.support] warning: inference call failed, returning neutral. {exc}")
+    es = es_client()
+    resp = remote_call(
+        "completion", es.inference.inference,
+        inference_id=completion_id,
+        body={
+            "input": prompt,
+            "task_settings": {"temperature": 0},
+        },
+    )
+    raw: str = (resp["completion"][0]["result"] or "").strip().lower()
+    if "support" in raw:
+        return "supports"
+    elif "contradict" in raw:
+        return "contradicts"
+    else:
         return "neutral"
 
 
