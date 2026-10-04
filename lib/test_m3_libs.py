@@ -496,6 +496,17 @@ def test_import_ara_metrics():
 
 # ── Runner ────────────────────────────────────────────────────────────────────
 
+def test_capstone_figures_in_percent():
+    """A percentage followed by a space or a full stop is a figure (3.C unanswerable rule)."""
+    import ara_capstone as C
+    assert C.figures_in("about 5% of the volume") == ["5%"]
+    assert C.figures_in("The rate is 6.5%.") == ["6.5%"]
+    assert C.figures_in("18%") == ["18%"]
+    assert C.figures_in("12 percent and 7 per cent") == ["12 percent", "7 per cent"]
+    assert C.figures_in("a 12 percentage point move") == []
+    assert C.figure_numbers("Fees rose 18% under policy-004-s3.") == ["18"]
+
+
 if __name__ == "__main__":
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     passed = failed = 0

@@ -684,7 +684,9 @@ def attribute_by_overlap(claims: list[str], passages: list[dict],
 # ── Guardrail primitives ──────────────────────────────────────────────────────
 
 _DOLLAR_RE = re.compile(r"\$\s?\d[\d,]*(?:\.\d+)?")
-_PERCENT_RE = re.compile(r"\b\d+(?:\.\d+)?\s?(?:%|per\s?cent|percent)\b", re.IGNORECASE)
+# "%" is not a word character, so a \b after it would need a letter or digit next:
+# "5% of" and "5%." would never match. Only the spelled-out forms take the boundary.
+_PERCENT_RE = re.compile(r"\b\d+(?:\.\d+)?\s?(?:%|(?:per\s?cent|percent)\b)", re.IGNORECASE)
 _DAYS_RE = re.compile(r"\b\d+(?:\.\d+)?[-\s]+(?:calendar\s+|business\s+)?(?:day|days)\b",
                       re.IGNORECASE)
 
