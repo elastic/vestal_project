@@ -18,11 +18,33 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 # ── ara_metrics new additions ─────────────────────────────────────────────────
 
-def test_token_count_basic():
+def _block_tiktoken(monkeypatch):
+    """Make `import tiktoken` raise ImportError, so token_count takes its fallback."""
+    import builtins
+    real_import = builtins.__import__
+
+    def fake_import(name, *args, **kwargs):
+        if name == "tiktoken":
+            raise ImportError("tiktoken blocked for this test")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", fake_import)
+
+
+def test_token_count_basic(monkeypatch):
+    """The fallback is words x 1.3, rounded down. With tiktoken installed (as in the
+    sandboxes) token_count uses cl100k_base instead, so the fallback is forced here."""
     from ara_metrics import token_count
+    _block_tiktoken(monkeypatch)
     result = token_count("hello world foo bar")
     # 4 words * 1.3 = 5.2 → 5
     assert result == 5, f"Expected 5, got {result}"
+
+
+def test_token_count_tokenizer_positive():
+    """Whichever tokenizer is installed, a non-empty text has a positive count."""
+    from ara_metrics import token_count
+    assert token_count("hello world foo bar") > 0
 
 
 def test_token_count_empty():
@@ -38,10 +60,10 @@ def test_count_tokens_approx_alias():
 
 
 def test_context_fit_within():
-    from ara_metrics import context_fit
-    # 5 words * 1.3 = 6 (rounded down to 6)
+    """context_fit compares against token_count, whichever tokenizer it uses."""
+    from ara_metrics import context_fit, token_count
     text = "one two three four five"
-    tc = int(len(text.split()) * 1.3)  # 6
+    tc = token_count(text)
     assert context_fit(text, tc) is True
     assert context_fit(text, tc - 1) is False
 
