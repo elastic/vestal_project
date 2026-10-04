@@ -240,7 +240,20 @@ def load_all(results: dict, env: dict, seed: int) -> list[dict]:
     raw = json.loads(QUESTIONS_FILE.read_text())
     if isinstance(raw, list):
         return load_questions_old(raw, results)
+    if any(q.get("seed_variant") for q in raw.get("questions", [])):
+        require_variant()
     return load_questions_new(raw, results, env, seed)
+
+
+def require_variant() -> None:
+    """A seeded question must use the variant the Defend setup recorded, the one the check
+    grades against. Never reseed: a recomputed seed can show another variant's question."""
+    try:
+        int(json.loads(VARIANT_FILE.read_text())["seed_mod"])
+    except Exception:
+        print("This track's setup did not record your variant, so the questions can't be shown. "
+              "Stop the track and start it again.")
+        sys.exit(1)
 
 
 # ── Interactive prompt ─────────────────────────────────────────────────────────
