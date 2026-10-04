@@ -35,10 +35,12 @@ def whole_in_index(es, index, q):
         return False
     return any(all(r in norm(h["_source"].get("body_text", "")) for r in req) for h in hits)
 
-def summarize(results):
+def summarize(results, budget=BUDGET):
+    """Per-class pass counts, and how many questions sent Tina more than budget tokens.
+    Checks pass budget from thresholds.json, so the graded number has one source."""
     out = {}
     for cls in sorted({r["class"] for r in results}):
         rs = [r for r in results if r["class"] == cls]
         out[cls] = {"n": sum(r["ok"] for r in rs), "of": len(rs)}
-    out["over_budget"] = sum(r["tokens"] > BUDGET for r in results)
+    out["over_budget"] = sum(r["tokens"] > budget for r in results)
     return out
