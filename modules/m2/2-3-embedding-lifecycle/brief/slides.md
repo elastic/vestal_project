@@ -16,7 +16,7 @@ minutes: 8 -->
 <!-- problem -->
 
 <div class="col-left">
-  <div class="terminal-block" style="white-space:pre-wrap;">
+  <div class="terminal-block">
 Q: money moved around to hide
    where it came from
 
@@ -37,10 +37,13 @@ Loan Layering [sar-109] ..."
 <div class="col-right">
   <h2 class="slide-heading">The problem</h2>
   <p class="slide-body">The cause: the analyst's words are not the case's words.</p>
-  <div class="terminal-block" style="white-space:pre-wrap;">
-sar-103   shell company layering
-          and ownership obfuscation
-query     <span class="wrong">none of those words</span>
+  <div class="terminal-block">
+sar-103  shell company
+         layering and
+         ownership
+         obfuscation
+query    <span class="wrong">none of those
+         words</span>
   </div>
   <p class="slide-body">Tina answers confidently from four other cases. A new embedding model might close the gap, or a rewrite of the query might. Build 1 and Build 3 measure each.</p>
 </div>
@@ -50,7 +53,7 @@ query     <span class="wrong">none of those words</span>
 <!-- layout: concept -->
 
 <div class="col-diagram">
-  <div class="terminal-block" style="white-space:pre-wrap;">
+  <div class="terminal-block">
 cortex-corpus             current model
 cortex-corpus-candidate   candidate model
                           same documents
@@ -73,7 +76,7 @@ gain        candidate nDCG@5 - current
 <!-- layout: concept -->
 
 <div class="col-diagram">
-  <div class="terminal-block" style="white-space:pre-wrap;">
+  <div class="terminal-block">
 POST _aliases
 { "actions": [
   { "remove": {
@@ -87,7 +90,7 @@ POST _aliases
 </div>
 <div class="col-text">
   <h2 class="slide-heading">One request, no gap</h2>
-  <p class="slide-body">Tina queries <code style="white-space:normal;">cortex-corpus-live</code>, never an index name. Remove and add in one <code>_aliases</code> request, and no search sees the alias pointing nowhere.</p>
+  <p class="slide-body">Tina queries <code>cortex-corpus-live</code>, never an index name. Remove and add in one <code>_aliases</code> request, and no search sees the alias pointing nowhere.</p>
   <p class="slide-body">A probe searches the alias throughout and records every failure. Keep the old index: it is your rollback.</p>
 </div>
 
@@ -96,7 +99,7 @@ POST _aliases
 <!-- layout: concept -->
 
 <div class="col-diagram">
-  <div class="terminal-block" style="white-space:pre-wrap;">
+  <div class="terminal-block">
 # cortex-generation
 es.inference.inference(
     inference_id="cortex-generation",
@@ -125,7 +128,7 @@ llm_client().chat.completions.create(
 <!-- layout: concept -->
 
 <div class="col-diagram">
-  <div class="terminal-block" style="white-space:pre-wrap;">
+  <div class="terminal-block">
 Build 1   benchmark the candidate
           nDCG@5 and p95, both indices
 
@@ -164,21 +167,21 @@ Defend    keep or roll back,
 <!-- layout: done -->
 
 <h2 class="slide-heading" style="color:var(--white);">What done looks like</h2>
-<div class="done-row" style="flex-wrap:wrap;row-gap:var(--s-5);">
+<div class="done-row">
   <div class="done-item">
-    <span class="big-number" style="white-space:nowrap;">12</span>
+    <span class="big-number">12</span>
     <span class="big-number-label">labelled benchmark queries<br>policy, sar and wire-fraud</span>
   </div>
   <div class="done-item">
-    <span class="big-number" style="white-space:nowrap;">0</span>
+    <span class="big-number">0</span>
     <span class="big-number-label">failed or empty searches<br>in at least 20 probe samples</span>
   </div>
   <div class="done-item">
-    <span class="big-number" style="white-space:nowrap;">8 of 13</span>
+    <span class="big-number">8 of 13</span>
     <span class="big-number-label">held-out keyword misses<br>in the first 5 after rewrite()</span>
   </div>
   <div class="done-item">
-    <span class="big-number" style="white-space:nowrap;">35 s</span>
+    <span class="big-number">35 s</span>
     <span class="big-number-label">for all 13 rewrite() calls<br>index left unchanged</span>
   </div>
 </div>

@@ -27,9 +27,10 @@ generation call 2205 ms
   What is the retention period for
   CIP records at Cortex Bank?
 
-"Based on the provided documents, the retention
-period for CIP (Customer Identification Program)
-records at Cortex Bank and Trust varies ..."
+"Based on the provided documents, the
+retention period for CIP (Customer
+Identification Program) records at
+Cortex Bank and Trust varies ..."
   </div>
 </div>
 <div class="col-right">
@@ -51,7 +52,8 @@ near-miss   same domain, different question
             must miss and generate
 
 single-hop  one fact, one clause: fast tier
-multi-part  several sub-questions: strong tier
+multi-part  several sub-questions:
+            strong tier
   </div>
 </div>
 <div class="col-text">
@@ -92,7 +94,8 @@ Build 1   ES|QL over the transaction log
           filter, aggregation, weekly bucket
 
 Build 2   semantic cache
-          cache_lookup, cache_store, THRESHOLD
+          cache_lookup, cache_store,
+          THRESHOLD
 
 Build 3   route by complexity
           pick_tier(query): fast or strong

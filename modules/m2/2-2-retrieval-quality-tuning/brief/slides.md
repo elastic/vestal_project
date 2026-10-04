@@ -17,7 +17,8 @@ minutes: 8 -->
 
 <div class="col-left">
   <div class="terminal-block">
-Q: WF-2026-0803A   (the case number of wire-fraud-202)
+Q: WF-2026-0803A
+   (the case number of wire-fraud-202)
 
 by meaning (Tina today)   168 ms
  1  <span class="wrong">wire-fraud-204</span>
@@ -46,14 +47,18 @@ lexical leg  <span class="wrong">none</span>
 
 <div class="col-diagram">
   <div class="terminal-block">
-template        searches                    pays
+template      searches       pays
 
-bm25            body_text, exact tokens     one query
-dense           body, by meaning            one query
-                                            + an embedding
-hybrid          both, fused with RRF        both queries
-hybrid_rerank   hybrid, then a reranker     both queries
-                re-scores the top results   + a model call
+bm25          body_text,     one query
+              exact tokens
+dense         body, by       one query
+              meaning        + an embedding
+hybrid        both, fused    both queries
+              with RRF
+hybrid_rerank hybrid, then   both queries
+              a reranker     + a model call
+              re-scores the
+              top results
   </div>
 </div>
 <div class="col-text">

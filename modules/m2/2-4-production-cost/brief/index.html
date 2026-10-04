@@ -264,11 +264,11 @@ body { background: var(--developer-blue); display: flex; flex-direction: column;
   padding: var(--s-5);
   border-radius: var(--r-md);
   border: 1.5px solid rgba(72, 239, 207, 0.3);
-  white-space: pre;
+  white-space: pre-wrap;  /* lines that fit are unchanged; a narrow pane wraps instead of scrolling */
   overflow: auto;
   flex: 1;
   min-width: 0;
-  word-break: break-all;
+  overflow-wrap: anywhere;  /* break at spaces first, inside a word only when it can't fit */
 }
 .terminal-block .wrong { color: var(--light-poppy); }
 .terminal-block .label { color: var(--dark-grey); font-size: 11px; }
@@ -318,11 +318,25 @@ body { background: var(--developer-blue); display: flex; flex-direction: column;
 /* ── Acceptance numbers row ── */
 .done-row {
   display: flex;
-  gap: var(--s-8);
+  flex-wrap: wrap;
+  row-gap: var(--s-5);
+  gap: var(--s-5) var(--s-8);
   align-items: flex-end;
   justify-content: center;
 }
 .done-item { display: flex; flex-direction: column; align-items: center; gap: var(--s-2); }
+.done-item .big-number { white-space: nowrap; }
+
+/* ── Narrow panes (Instruqt with instructions open, or a phone): same content, tighter type ── */
+@media (max-width: 600px) {
+  .slide-body code, .col-text code, .col-right code { white-space: normal; overflow-wrap: anywhere; }
+  .slide-body { font-size: 14px; }
+  .terminal-block { font-size: 11px; line-height: 1.5; padding: var(--s-4); }
+  .rule-table { font-size: 14px; }
+  .rule-table th, .rule-table td { padding: var(--s-2) var(--s-3); }
+  .slide[data-layout="problem"] { gap: var(--s-5); }
+  .slide[data-layout="concept"] { gap: var(--s-4); }
+}
 
 /* ── Status indicator ── */
 .status-indicator {
@@ -453,9 +467,10 @@ generation call 2205 ms
   What is the retention period for
   CIP records at Cortex Bank?
 
-"Based on the provided documents, the retention
-period for CIP (Customer Identification Program)
-records at Cortex Bank and Trust varies ..."
+"Based on the provided documents, the
+retention period for CIP (Customer
+Identification Program) records at
+Cortex Bank and Trust varies ..."
   </div>
 </div>
 <div class="col-right">
@@ -473,7 +488,8 @@ near-miss   same domain, different question
             must miss and generate
 
 single-hop  one fact, one clause: fast tier
-multi-part  several sub-questions: strong tier
+multi-part  several sub-questions:
+            strong tier
   </div>
 </div>
 <div class="col-text">
@@ -506,7 +522,8 @@ Build 1   ES|QL over the transaction log
           filter, aggregation, weekly bucket
 
 Build 2   semantic cache
-          cache_lookup, cache_store, THRESHOLD
+          cache_lookup, cache_store,
+          THRESHOLD
 
 Build 3   route by complexity
           pick_tier(query): fast or strong

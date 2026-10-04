@@ -17,20 +17,21 @@ minutes: 7 -->
 
 <div class="col-left">
   <div class="terminal-block">
-Q: Under Cortex's risk-scoring reference, what
-   transaction limit, review level and escalation
-   SLA apply to Tier 5 accounts?
+Q: Under Cortex's risk-scoring reference,
+   what transaction limit, review level
+   and escalation SLA apply to Tier 5
+   accounts?
 
 Tina, through fixed 512-token chunks:
-"I apologize, but I cannot provide a complete
-answer to your question. [...]
-- Daily Velocity Limit: <span class="wrong">The threshold text is cut
-  off and does not provide the complete
-  transaction limit</span>
-- Review Level: <span class="wrong">Not specified in the provided
-  excerpt</span>
-- Escalation SLA: <span class="wrong">Not specified in the provided
-  excerpt</span>"
+"I apologize, but I cannot provide a
+complete answer to your question. [...]
+- Daily Velocity Limit: <span class="wrong">The threshold
+  text is cut off and does not provide
+  the complete transaction limit</span>
+- Review Level: <span class="wrong">Not specified in the
+  provided excerpt</span>
+- Escalation SLA: <span class="wrong">Not specified in
+  the provided excerpt</span>"
   </div>
 </div>
 <div class="col-right">
@@ -38,7 +39,8 @@ answer to your question. [...]
   <p class="slide-body">The chunk Tina retrieved ends in the middle of the Tier 5 row:</p>
   <div class="terminal-block">
 | Tier 5: Medium-High Risk
-| $2,500,001.00 to $10,000,000.00
+| $2,500,001.00 to
+| $10,000,000.00
 | <span class="wrong">Maximum of</span>   &lt;- chunk ends
   </div>
   <p class="slide-body">The rest of the row (100 transactions a day, a Level 3 Senior Analyst review, an 8-hour SLA) sits in the next chunk, which ranked outside her top 5. The document holds the answer. The chunking cut it in half.</p>
@@ -50,14 +52,18 @@ answer to your question. [...]
 
 <div class="col-diagram">
   <div class="terminal-block">
-strategy          keeps whole            breaks
+strategy          keeps whole  breaks
 
-fixed windows     nothing by design      tables, numbered
-                                         steps, timelines
-split at headings section text           a unit longer
-                                         than its section
-preserve units    any unit you define    needs explicit
-                                         boundaries
+fixed windows     nothing by   tables,
+                  design       numbered
+                               steps,
+                               timelines
+split at headings section text a unit
+                               longer than
+                               its section
+preserve units    any unit you needs
+                  define       explicit
+                               boundaries
   </div>
 </div>
 <div class="col-text">
