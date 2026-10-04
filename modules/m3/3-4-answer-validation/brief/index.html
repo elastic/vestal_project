@@ -264,11 +264,11 @@ body { background: var(--developer-blue); display: flex; flex-direction: column;
   padding: var(--s-5);
   border-radius: var(--r-md);
   border: 1.5px solid rgba(72, 239, 207, 0.3);
-  white-space: pre;
+  white-space: pre-wrap;  /* lines that fit are unchanged; a narrow pane wraps instead of scrolling */
   overflow: auto;
   flex: 1;
   min-width: 0;
-  word-break: break-all;
+  overflow-wrap: anywhere;  /* break at spaces first, inside a word only when it can't fit */
 }
 .terminal-block .wrong { color: var(--light-poppy); }
 .terminal-block .label { color: var(--dark-grey); font-size: 11px; }
@@ -318,11 +318,45 @@ body { background: var(--developer-blue); display: flex; flex-direction: column;
 /* ── Acceptance numbers row ── */
 .done-row {
   display: flex;
-  gap: var(--s-8);
+  flex-wrap: wrap;
+  row-gap: var(--s-5);
+  gap: var(--s-5) var(--s-8);
   align-items: flex-end;
   justify-content: center;
 }
 .done-item { display: flex; flex-direction: column; align-items: center; gap: var(--s-2); }
+.done-item .big-number { white-space: nowrap; }
+
+/* ── Short panes (Instruqt's slide panel on a small laptop): same content, tighter spacing ── */
+@media (max-height: 640px) {
+  .slide[data-layout="rule"] { gap: var(--s-3); }
+  .slide[data-layout="rule"] .slide-heading { margin-bottom: 0; }
+  .rule-table { font-size: 15px; line-height: 1.35; }
+  .rule-table th, .rule-table td { padding: var(--s-2) var(--s-4); }
+  .rule-caption { margin-top: 0; }
+  .terminal-block { line-height: 1.45; padding: var(--s-4); }
+  .slide-body { line-height: 1.4; }
+}
+@media (max-height: 540px) {
+  .rule-table { font-size: 14px; line-height: 1.25; }
+  .rule-table th, .rule-table td { padding: var(--s-1) var(--s-3); }
+  .slide-body { font-size: 14px; }
+  .terminal-block { font-size: 11px; }
+}
+
+/* ── Narrow panes (Instruqt with instructions open, or a phone): same content, tighter type ── */
+@media (max-width: 600px) {
+  .slide-body code, .col-text code, .col-right code { white-space: normal; overflow-wrap: anywhere; }
+  .slide-body { font-size: 14px; }
+  .terminal-block { font-size: 11px; line-height: 1.5; padding: var(--s-4); }
+  .rule-table { font-size: 14px; }
+  .rule-table th, .rule-table td { padding: var(--s-2) var(--s-3); }
+  .slide[data-layout="problem"] { gap: var(--s-5); }
+  .slide[data-layout="concept"] { gap: var(--s-4); }
+  .slide[data-layout="done"] { gap: var(--s-4); }
+  .done-row { gap: var(--s-3) var(--s-5); }
+  .done-item .big-number { font-size: 34px; }
+}
 
 /* ── Status indicator ── */
 .status-indicator {
@@ -445,23 +479,24 @@ body { background: var(--developer-blue); display: flex; flex-direction: column;
   <div class="terminal-block">
 start state: all three hooks empty
 
-Q: What aggregate cash volume did Halloway
-   Freight Services Inc. deposit during its
-   review period?
+Q: What aggregate cash volume did
+   Halloway Freight Services Inc.
+   deposit during its review period?
 retrieved  case-structuring-011  0.792
            case-structuring-017  0.791
            policy-001-s2         0.468
-A: I cannot answer this question based on
-   the material provided. The case material
-   includes information about <span class="wrong">Westmarch
-   Freight Inc. (account 37-20209-1)</span> and
-   <span class="wrong">Oakhurst Logistics LLC (account ending
-   73428)</span>, but contains no information
-   about Halloway Freight Services Inc. or
-   its account activity.
+A: I cannot answer this question based
+   on the material provided. The case
+   material includes information about
+   <span class="wrong">Westmarch Freight Inc. (account
+   37-20209-1)</span> and <span class="wrong">Oakhurst Logistics
+   LLC (account ending 73428)</span>, but
+   contains no information about Halloway
+   Freight Services Inc. or its account
+   activity.
 
-  no file on Halloway: both memos are about
-  other customers, at 0.79
+  no file on Halloway: both memos are
+  about other customers, at 0.79
   retrieval, rerank, generation ran
   <span class="wrong">no hook fired</span>
   </div>
@@ -478,20 +513,22 @@ one answer, four claims, three passages
 
 answer
  |
- +- claim 0  aggregate volume was $1,546,407.46 ---+
- |                                                 |
- +- claim 1  the trigger is $12,500 in 7 days --+  |
- |                                              |  |
- +- claim 2  filing is due in 30 days ------+   |  |
- |                                          |   |  |
- +- claim 3  the branch paid a $45,300 fine |   |  |
-             <span class="wrong">|</span>                             |   |  |
-             <span class="wrong">v</span>                             v   v  v
-       <span class="wrong">UNSUPPORTED</span>                 policy   pol  case
-                                    -011     -001  memo
+ +- claim 0  aggregate volume was
+ |           $1,546,407.46 -------------+
+ +- claim 1  the trigger is $12,500     |
+ |           in 7 days ------------+    |
+ +- claim 2  filing is due in      |    |
+ |           30 days --------+     |    |
+ +- claim 3  the branch paid |     |    |
+             a $45,300 fine  |     |    |
+             <span class="wrong">|</span>               |     |    |
+             <span class="wrong">v</span>               v     v    v
+       <span class="wrong">UNSUPPORTED</span>        policy  pol  case
+                           -011   -001 memo
 
   grounding is a property of each claim
-  three right and one invented is one wrong answer
+  three right and one invented is one
+  wrong answer
   </div>
 </div>
 <div class="col-text">
@@ -502,7 +539,8 @@ answer
 <img class="elastic-logo" alt="Elastic" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgwIiBoZWlnaHQ9IjI4MCIgdmlld0JveD0iMCAwIDI4MCAyODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0yMjAgMTQzLjQ5NEMyMjAuMDE0IDEzNy4wMDIgMjE4LjAyIDEzMC42NjQgMjE0LjI5MSAxMjUuMzQ4QzIxMC41NjMgMTIwLjAzMyAyMDUuMjgyIDExNiAxOTkuMTczIDExMy44MDJDMTk5LjczMSAxMTAuOTcgMjAwLjAxMiAxMDguMDkgMjAwLjAxNCAxMDUuMjA0QzIwMC4wMTYgOTUuNjQ2NiAxOTYuOTg5IDg2LjMzNDUgMTkxLjM2NyA3OC42MDZDMTg1Ljc0NCA3MC44Nzc0IDE3Ny44MTYgNjUuMTMwNCAxNjguNzIzIDYyLjE5MDhDMTU5LjYyOSA1OS4yNTExIDE0OS44MzcgNTkuMjcwMyAxNDAuNzU0IDYyLjI0NTZDMTMxLjY3MiA2NS4yMjA4IDEyMy43NjcgNzAuOTk4OSAxMTguMTc1IDc4Ljc0OTVDMTE0LjA1MSA3NS41NTUzIDEwOC45OTkgNzMuNzkxOSAxMDMuNzgzIDczLjcyNjRDOTguNTY2OSA3My42NjA5IDkzLjQ3MTkgNzUuMjk2OCA4OS4yNjkxIDc4LjM4NjRDODUuMDY2NCA4MS40NzYxIDgxLjk4NSA4NS44NTExIDgwLjQ5MTUgOTAuODQ5Qzc4Ljk5OCA5NS44NDY4IDc5LjE3MzggMTAxLjE5NSA4MC45OTI0IDEwNi4wODRDNzQuODY2NyAxMDguMzEzIDY5LjU3MSAxMTIuMzY1IDY1LjgxNzkgMTE3LjY5NUM2Mi4wNjQ3IDEyMy4wMjUgNjAuMDM0NCAxMjkuMzc2IDYwLjAwMDIgMTM1Ljg5NEM1OS45Nzk2IDE0Mi40MTMgNjEuOTgwNSAxNDguNzc4IDY1LjcyNzMgMTU0LjExM0M2OS40NzQxIDE1OS40NDcgNzQuNzgyNSAxNjMuNDg5IDgwLjkyMTYgMTY1LjY4MUM4MC4zODk2IDE2OC41MTQgODAuMTI2NCAxNzEuMzkgODAuMTM1NyAxNzQuMjcxQzgwLjExODYgMTgzLjgyNiA4My4xMzg5IDE5My4xMzkgODguNzYwMyAyMDAuODY2Qzk0LjM4MTggMjA4LjU5MiAxMDIuMzEzIDIxNC4zMzEgMTExLjQxIDIxNy4yNTVDMTIwLjUwNiAyMjAuMTc5IDEzMC4yOTcgMjIwLjEzNyAxMzkuMzY3IDIxNy4xMzNDMTQ4LjQzOCAyMTQuMTI5IDE1Ni4zMTkgMjA4LjMyIDE2MS44NzMgMjAwLjU0NUMxNjUuOTg0IDIwMy43NTMgMTcxLjAzIDIwNS41MzMgMTc2LjI0NSAyMDUuNjEzQzE4MS40NiAyMDUuNjkzIDE4Ni41NTggMjA0LjA3IDE5MC43NjcgMjAwLjk4OUMxOTQuOTc1IDE5Ny45MDkgMTk4LjA2NCAxOTMuNTQgMTk5LjU2NCAxODguNTQ1QzIwMS4wNjQgMTgzLjU1IDIwMC44OTQgMTc4LjIwMiAxOTkuMDc4IDE3My4zMTNDMjA1LjE5MiAxNzEuMDcyIDIxMC40NzQgMTY3LjAxMyAyMTQuMjEzIDE2MS42ODNDMjE3Ljk1MyAxNTYuMzUzIDIxOS45NzMgMTUwLjAwNiAyMjAgMTQzLjQ5NFpNMTIxLjk0NyA4My41NzUxQzEyNy4wOTkgNzYuMDgxNSAxMzQuNjc5IDcwLjU5NTEgMTQzLjQwNyA2OC4wNDJDMTUyLjEzNSA2NS40ODg5IDE2MS40NzcgNjYuMDI1NCAxNjkuODU1IDY5LjU2MTFDMTc4LjIzMyA3My4wOTY4IDE4NS4xMzUgNzkuNDE1IDE4OS4zOTUgODcuNDQ5MkMxOTMuNjU2IDk1LjQ4MzQgMTk1LjAxMyAxMDQuNzQxIDE5My4yMzkgMTEzLjY2MUwxNTcuOTE5IDE0NC41OTVMMTIyLjkwNiAxMjguNjRMMTE2LjA2OCAxMTQuMDQ2TDEyMS45NDcgODMuNTc1MVpNMTA0LjI0IDc5LjY0NTRDMTA4LjM5MiA3OS42NDQ2IDExMi40MyA4MS4wMDg4IDExNS43MzEgODMuNTI3OUwxMTAuNDMzIDExMC43OTJMODYuNDQ2NyAxMDUuMTI1Qzg1LjQwNjUgMTAyLjI2MSA4NS4wNzA3IDk5LjE4ODMgODUuNDY3NyA5Ni4xNjY4Qzg1Ljg2NDcgOTMuMTQ1MyA4Ni45ODI3IDkwLjI2MzcgODguNzI3NSA4Ny43NjUyQzkwLjQ3MjMgODUuMjY2NyA5Mi43OTI2IDgzLjIyNDcgOTUuNDkyNSA4MS44MTE0Qzk4LjE5MjUgODAuMzk4MiAxMDEuMTkzIDc5LjY1NTMgMTA0LjI0IDc5LjY0NTRaTTY2LjE4NTQgMTM1Ljk2NUM2Ni4yMjA3IDEzMC40MDMgNjcuOTkxMiAxMjQuOTkgNzEuMjQ5OSAxMjAuNDgxQzc0LjUwODYgMTE1Ljk3MyA3OS4wOTMxIDExMi41OTQgODQuMzY0IDExMC44MTVMMTEwLjY5MyAxMTcuMDMyTDExNi44NyAxMzAuMjQ0TDgzLjIwODcgMTYwLjY5MUM3OC4yMDAyIDE1OC43NzkgNzMuODkwNCAxNTUuMzkyIDcwLjg1MDQgMTUwLjk3NkM2Ny44MTA0IDE0Ni41NjEgNjYuMTgzNiAxNDEuMzI2IDY2LjE4NTQgMTM1Ljk2NVpNMTU4LjIxIDE5NS44NDVDMTUzLjQ1NCAyMDIuODQ4IDE0Ni41NzcgMjA4LjE0IDEzOC41OTEgMjEwLjk0NkMxMzAuNjA0IDIxMy43NTEgMTIxLjkyOCAyMTMuOTIxIDExMy44MzggMjExLjQzMkMxMDUuNzQ3IDIwOC45NDIgOTguNjY4MSAyMDMuOTI0IDkzLjY0MDQgMTk3LjExNEM4OC42MTI3IDE5MC4zMDMgODUuOTAxMyAxODIuMDYxIDg1LjkwNDQgMTczLjU5NkM4NS45MDgxIDE3MC45NTYgODYuMTcxNCAxNjguMzI0IDg2LjY5MDQgMTY1LjczNkwxMjEuMTE0IDEzNC41ODJMMTU2LjI2MSAxNTAuNTk5TDE2NC4wNDIgMTY1LjQ2OUwxNTguMjEgMTk1Ljg0NVpNMTc1Ljc5OSAxOTkuNzc1QzE3MS42NTkgMTk5Ljc2MSAxNjcuNjM5IDE5OC4zNzkgMTY0LjM2NCAxOTUuODQ1TDE2OS41ODIgMTY4LjY2OEwxOTMuNTUzIDE3NC4yNzFDMTk0LjU5NiAxNzcuMTMzIDE5NC45MzUgMTgwLjIwNCAxOTQuNTQxIDE4My4yMjRDMTk0LjE0OCAxODYuMjQ0IDE5My4wMzQgMTg5LjEyNSAxOTEuMjkzIDE5MS42MjRDMTg5LjU1MiAxOTQuMTI0IDE4Ny4yMzYgMTk2LjE2NyAxODQuNTM5IDE5Ny41ODNDMTgxLjg0MyAxOTguOTk5IDE3OC44NDUgMTk5Ljc0NSAxNzUuNzk5IDE5OS43NTlWMTk5Ljc3NVpNMTk1LjYzNiAxNjguNTY2TDE2OS4yNDUgMTYyLjM5NkwxNjIuMjM0IDE0OS4wMzVMMTk2Ljc1MiAxMTguNzkzQzIwMS43NjUgMTIwLjY4OCAyMDYuMDgyIDEyNC4wNjQgMjA5LjEzIDEyOC40NzJDMjEyLjE3OCAxMzIuODggMjEzLjgxMiAxMzguMTEyIDIxMy44MTUgMTQzLjQ3MUMyMTMuNzY1IDE0OS4wMjEgMjExLjk4NyAxNTQuNDE5IDIwOC43MyAxNTguOTEzQzIwNS40NzIgMTYzLjQwNyAyMDAuODk2IDE2Ni43NzYgMTk1LjYzNiAxNjguNTVWMTY4LjU2NloiIGZpbGw9IndoaXRlIj48L3BhdGg+Cjwvc3ZnPg=="/></section>
 <section class="slide" data-layout="concept" data-index="3"><div class="col-diagram">
   <div class="terminal-block">
-for one claim, three outcomes and nothing else
+for one claim, three outcomes
+and nothing else
 
   claim: "the aggregate was $1,546,407.46"
     passage 1  case memo     <span style="color:var(--light-teal);">supports</span>
@@ -516,8 +554,9 @@ for one claim, three outcomes and nothing else
     passage 3  neutral
   -> <span style="color:var(--light-teal);">UNSUPPORTED</span>
 
-  an attributor that never says UNSUPPORTED
-  is reporting citations it cannot stand behind
+  an attributor that never says
+  UNSUPPORTED is reporting citations it
+  cannot stand behind
   </div>
 </div>
 <div class="col-text">
@@ -567,9 +606,9 @@ claim
     -> <span style="color:var(--light-teal);">supports</span>
 
   policy-006-s5      <span style="color:var(--yellow);">source_type: policy</span>
-    "the Tier Two team has a strict mandate to
-     resolve escalated alerts within four hours
-     for intraday domestic payments"
+    "the Tier Two team has a strict mandate
+     to resolve escalated alerts within four
+     hours for intraday domestic payments"
     -> <span style="color:var(--light-teal);">supports</span>
 
   cite <span style="color:var(--light-teal);">policy-006-s5</span>
@@ -585,7 +624,8 @@ claim
   <div class="terminal-block">
 <span style="color:var(--yellow);">1  ungrounded figure</span>
    retrieved 0.93 0.90 0.72
-   A: "the transfer was flagged at $48,250.00"
+   A: "the transfer was flagged at
+       $48,250.00"
    the passages carry the transfer, not that
    amount
 
@@ -643,18 +683,21 @@ delivered
   <div class="terminal-block">
 right diagnosis, wrong control
 
-  failure   the answer named a figure no passage
-            carries
+  failure   the answer named a figure no
+            passage carries
   chosen    <span class="wrong">confidence fallback</span>
-  result    the result set scored 0.93, well above
-            any sensible threshold. The hook never
-            fires. The figure ships again.
+  result    the result set scored 0.93, well
+            above any sensible threshold. The
+            hook never fires. The figure
+            ships again.
 
-  failure   the query was about exchange rates
+  failure   the query was about exchange
+            rates
   chosen    <span class="wrong">output validation</span>
-  result    retrieval ran, generation ran, and the
-            answer cited nothing, so the hook
-            refuses after paying for both
+  result    retrieval ran, generation ran,
+            and the answer cited nothing, so
+            the hook refuses after paying for
+            both
 
   the diagnosis is only useful if it
   names the control that would have fired

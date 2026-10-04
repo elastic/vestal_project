@@ -17,18 +17,20 @@ minutes: 8 -->
 
 <div class="col-left">
   <div class="terminal-block">
-Q: In the investigation of Emberline Marine
-   Services Holdings Ltd., what was the total sum
-   established as attributable to the undisclosed
-   party?
+Q: In the investigation of Emberline
+   Marine Services Holdings Ltd., what
+   was the total sum established as
+   attributable to the undisclosed party?
 
 WHOLE NARRATIVES, top 3
-  1. sar-033   37,109 tokens  <span style="color:var(--yellow);">&lt;== holds the answer</span>
+  1. sar-033   37,109 tokens  <span style="color:var(--yellow);">&lt;== holds
+                              the answer</span>
   2. sar-040   37,115 tokens
   3. sar-039   37,106 tokens
   sent 111,330 tokens
 
-the answer: section 'Key Finding', 187 tokens
+the answer: section 'Key Finding',
+            187 tokens
 signal in context:  187 / 111,330  =  <span class="wrong">0.2%</span>
   </div>
 </div>
@@ -49,13 +51,15 @@ naive
   decisions: none
 
 advanced
-  query -> read intent -> filter + search -> rerank
-        -> top 5 passages -> answer
+  query -> read intent -> filter + search
+        -> rerank -> top 5 passages
+        -> answer
   decisions: <span style="color:var(--yellow);">+ which metadata clause</span>
 
 agentic
-  query -> think -> search -> think -> search -> answer
-                      |_______ loop, up to 3 calls
+  query -> think -> search -> think -> search
+        -> answer
+                    |___ loop, up to 3 calls
   decisions: <span style="color:var(--yellow);">+ was one search enough</span>
   </div>
 </div>
@@ -73,14 +77,17 @@ agentic
   <div class="terminal-block">
 a bucket breaks on either gate
 
-  precision   did the gold narrative reach the top 3?
-              below 0.75            ->  <span class="wrong">broken</span>
+  precision   did the gold narrative reach
+              the top 3?
+              below 0.75        ->  <span class="wrong">broken</span>
 
-  tokens      what the top 3 cost, per question
-              over your budget      ->  <span class="wrong">broken</span>
+  tokens      what the top 3 cost, per
+              question
+              over your budget  ->  <span class="wrong">broken</span>
 
-  break bucket   the first bucket, shortest first,
-                 that fails either gate
+  break bucket   the first bucket,
+                 shortest first, that fails
+                 either gate
                  none, if no bucket fails
   </div>
 </div>
@@ -99,7 +106,8 @@ a bucket breaks on either gate
 a question about a 1k narrative
 
   top 3 whole narratives
-    = the 3 most similar narratives in the corpus
+    = the 3 most similar narratives
+      in the corpus
     = of any length
 
   one of them can be a 40k narrative
@@ -119,16 +127,25 @@ a question about a 1k narrative
   <div class="terminal-block">
 same question, same corpus, same retriever
 
-WHOLE NARRATIVES, top 3   PASSAGES, top 5
-------------------------  ------------------------------
-sar-033   37,109          sar-033 Key Finding        187 <span style="color:var(--yellow);">&lt;==</span>
-sar-040   37,115          sar-033 Due Diligence    1,217
-sar-039   37,106          sar-033 Related Parties  1,418
-                          sar-033 Escalation       1,232
-                          sar-033 Activity         1,073
-------------------------  ------------------------------
-111,330 tokens sent       5,127 tokens sent
-answer in narrative 1     answer is passage 1
+WHOLE NARRATIVES, top 3
+------------------------
+sar-033   37,109
+sar-040   37,115
+sar-039   37,106
+------------------------
+111,330 tokens sent
+answer in narrative 1
+
+PASSAGES, top 5
+------------------------------
+sar-033 Key Finding        187 <span style="color:var(--yellow);">&lt;==</span>
+sar-033 Due Diligence    1,217
+sar-033 Related Parties  1,418
+sar-033 Escalation       1,232
+sar-033 Activity         1,073
+------------------------------
+5,127 tokens sent
+answer is passage 1
   </div>
 </div>
 <div class="col-text">
@@ -143,19 +160,20 @@ answer in narrative 1     answer is passage 1
 
 <div class="col-diagram">
   <div class="terminal-block">
-RAW REPORT                PRE-COMPUTED FACT RECORD
-inv-2024-0083             inv-2024-0083
------------------------   -------------------------
-9 sections of prose       { "summary":          ...
-4,860 tokens                "key_entities":     [..]
-every question re-reads     "amounts":          [..]
-all of it                   "dates":            [..]
-                            "answers_questions":[..]
-                            "topics":           [..] }
------------------------   -------------------------
-8 questions, top 3        8 questions, top 3
-tokens sent               a fraction      <span style="color:var(--yellow);">cheaper</span>
-precision                 measure it      <span style="color:var(--yellow);">?</span>
+RAW REPORT     PRE-COMPUTED FACT RECORD
+inv-2024-0083  inv-2024-0083
+-------------  ---------------------------
+9 sections of  { "summary":          ...
+prose            "key_entities":     [..]
+4,860 tokens     "amounts":          [..]
+every question   "dates":            [..]
+re-reads all     "answers_questions":[..]
+of it            "topics":           [..] }
+-------------  ---------------------------
+8 questions,   8 questions, top 3
+top 3
+tokens sent    a fraction      <span style="color:var(--yellow);">cheaper</span>
+precision      measure it      <span style="color:var(--yellow);">?</span>
   </div>
 </div>
 <div class="col-text">
@@ -177,10 +195,14 @@ strategy_router(query, features)
   returns  naive | advanced | agentic
 
 features on every query:
-  has_filter_intent  "tier 3 sanctions cases"
-  asks_for_figure    "what amount was wired"
-  multi_hop          "which two reports share.."
-  has_case_id        "case FIU-WIRE-2401"
+  has_filter_intent
+    "tier 3 sanctions cases"
+  asks_for_figure
+    "what amount was wired"
+  multi_hop
+    "which two reports share.."
+  has_case_id
+    "case FIU-WIRE-2401"
 
 one query can carry several.
 your order decides which wins.
@@ -198,15 +220,18 @@ your order decides which wins.
 
 <div class="col-diagram">
   <div class="terminal-block">
-Q  "tier 3 sanctions cases filed this quarter"
-   routed   naive        should be   advanced
-   got      5 structuring memos mentioning sanctions
-   answer   <span class="wrong">WRONG</span>
+Q "tier 3 sanctions cases filed this quarter"
+  routed   naive        should be   advanced
+  got      5 structuring memos mentioning
+           sanctions
+  answer   <span class="wrong">WRONG</span>
 
-Q  "which two reports share the beneficiary?"
-   routed   advanced     should be   agentic
-   got      one search, 5 passages, one report
-   answer   <span class="wrong">INCOMPLETE</span>   second report never retrieved
+Q "which two reports share the beneficiary?"
+  routed   advanced     should be   agentic
+  got      one search, 5 passages, one
+           report
+  answer   <span class="wrong">INCOMPLETE</span>   second report
+                        never retrieved
   </div>
 </div>
 <div class="col-text">

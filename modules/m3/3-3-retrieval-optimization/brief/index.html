@@ -264,11 +264,11 @@ body { background: var(--developer-blue); display: flex; flex-direction: column;
   padding: var(--s-5);
   border-radius: var(--r-md);
   border: 1.5px solid rgba(72, 239, 207, 0.3);
-  white-space: pre;
+  white-space: pre-wrap;  /* lines that fit are unchanged; a narrow pane wraps instead of scrolling */
   overflow: auto;
   flex: 1;
   min-width: 0;
-  word-break: break-all;
+  overflow-wrap: anywhere;  /* break at spaces first, inside a word only when it can't fit */
 }
 .terminal-block .wrong { color: var(--light-poppy); }
 .terminal-block .label { color: var(--dark-grey); font-size: 11px; }
@@ -318,11 +318,45 @@ body { background: var(--developer-blue); display: flex; flex-direction: column;
 /* ── Acceptance numbers row ── */
 .done-row {
   display: flex;
-  gap: var(--s-8);
+  flex-wrap: wrap;
+  row-gap: var(--s-5);
+  gap: var(--s-5) var(--s-8);
   align-items: flex-end;
   justify-content: center;
 }
 .done-item { display: flex; flex-direction: column; align-items: center; gap: var(--s-2); }
+.done-item .big-number { white-space: nowrap; }
+
+/* ── Short panes (Instruqt's slide panel on a small laptop): same content, tighter spacing ── */
+@media (max-height: 640px) {
+  .slide[data-layout="rule"] { gap: var(--s-3); }
+  .slide[data-layout="rule"] .slide-heading { margin-bottom: 0; }
+  .rule-table { font-size: 15px; line-height: 1.35; }
+  .rule-table th, .rule-table td { padding: var(--s-2) var(--s-4); }
+  .rule-caption { margin-top: 0; }
+  .terminal-block { line-height: 1.45; padding: var(--s-4); }
+  .slide-body { line-height: 1.4; }
+}
+@media (max-height: 540px) {
+  .rule-table { font-size: 14px; line-height: 1.25; }
+  .rule-table th, .rule-table td { padding: var(--s-1) var(--s-3); }
+  .slide-body { font-size: 14px; }
+  .terminal-block { font-size: 11px; }
+}
+
+/* ── Narrow panes (Instruqt with instructions open, or a phone): same content, tighter type ── */
+@media (max-width: 600px) {
+  .slide-body code, .col-text code, .col-right code { white-space: normal; overflow-wrap: anywhere; }
+  .slide-body { font-size: 14px; }
+  .terminal-block { font-size: 11px; line-height: 1.5; padding: var(--s-4); }
+  .rule-table { font-size: 14px; }
+  .rule-table th, .rule-table td { padding: var(--s-2) var(--s-3); }
+  .slide[data-layout="problem"] { gap: var(--s-5); }
+  .slide[data-layout="concept"] { gap: var(--s-4); }
+  .slide[data-layout="done"] { gap: var(--s-4); }
+  .done-row { gap: var(--s-3) var(--s-5); }
+  .done-item .big-number { font-size: 34px; }
+}
 
 /* ── Status indicator ── */
 .status-indicator {
@@ -443,18 +477,23 @@ body { background: var(--developer-blue); display: flex; flex-direction: column;
 
 <div class="col-left">
   <div class="terminal-block">
-Q: Among the investigations into large outbound
-   transfers that were unexpectedly diverted, what
-   was the specific amount involved in the
-   Lanternhill Machinery Enterprises LLC incident?
-intent: {"case_type": "wire_fraud", "risk_tier": null,
-         "date_from": null, "date_to": null}
- 1  case-wire-fraud-008    wire_fraud   in gold
- 2  <span class="wrong">case-sanctions-024     sanctions    WRONG</span>
- 3  case-wire-fraud-020    wire_fraud   in gold
- 4  <span class="wrong">case-sanctions-001     sanctions    WRONG</span>
- 5  <span class="wrong">case-sanctions-007     sanctions    WRONG</span>
-unfiltered precision@10 for this query: <span class="wrong">0.20</span>
+Q: Among the investigations into large
+   outbound transfers that were
+   unexpectedly diverted, what was the
+   specific amount involved in the
+   Lanternhill Machinery Enterprises LLC
+   incident?
+intent: {"case_type": "wire_fraud",
+         "risk_tier": null,
+         "date_from": null,
+         "date_to": null}
+ 1 case-wire-fraud-008 wire_fraud in gold
+ 2 <span class="wrong">case-sanctions-024  sanctions  WRONG</span>
+ 3 case-wire-fraud-020 wire_fraud in gold
+ 4 <span class="wrong">case-sanctions-001  sanctions  WRONG</span>
+ 5 <span class="wrong">case-sanctions-007  sanctions  WRONG</span>
+unfiltered precision@10 for this query:
+  <span class="wrong">0.20</span>
   </div>
 </div>
 <div class="col-right">
@@ -474,20 +513,22 @@ filter  <span class="wrong">none</span>
 one value, three ways to index it
 
 "wire_fraud"
-   as <span style="color:var(--yellow);">text</span>            analyzed into [wire, fraud]
-                      match  yes    filter  no
-                      count  no     sort    no
+  as <span style="color:var(--yellow);">text</span>           analyzed into
+                    [wire, fraud]
+                    match  yes    filter  no
+                    count  no     sort    no
 
-   as <span style="color:var(--yellow);">keyword</span>         stored whole
-                      match  yes    filter  <span style="color:var(--teal);">yes</span>
-                      count  <span style="color:var(--teal);">yes</span>    sort    <span style="color:var(--teal);">yes</span>
+  as <span style="color:var(--yellow);">keyword</span>        stored whole
+                    match  yes    filter  <span style="color:var(--teal);">yes</span>
+                    count  <span style="color:var(--teal);">yes</span>    sort    <span style="color:var(--teal);">yes</span>
 
-   as <span style="color:var(--yellow);">semantic_text</span>   embedded as a vector
-                      meaning  yes  filter  no
+  as <span style="color:var(--yellow);">semantic_text</span>  embedded as a vector
+                    meaning  yes  filter  no
 
 "2024-03-07"
-   as text            "2024" and "03" and "07"
-   as <span style="color:var(--yellow);">date</span>            a point on a line, ranges work
+  as text           "2024" and "03" and "07"
+  as <span style="color:var(--yellow);">date</span>           a point on a line,
+                    ranges work
   </div>
 </div>
 <div class="col-text">
@@ -501,19 +542,21 @@ one value, three ways to index it
 the same body, indexed twice
 
   memo body
-      |
-      +---> <span style="color:var(--yellow);">body_text</span>   (text)
-      |         inverted index, BM25
-      |         finds "CTR avoidance" exactly
-      |
-      +---> <span style="color:var(--yellow);">body</span>        (semantic_text)
-                vectors, nearest neighbour
-                finds "kept deposits under the limit"
+    |
+    +---> <span style="color:var(--yellow);">body_text</span>   (text)
+    |       inverted index, BM25
+    |       finds "CTR avoidance" exactly
+    |
+    +---> <span style="color:var(--yellow);">body</span>        (semantic_text)
+            vectors, nearest neighbour
+            finds
+            "kept deposits under the limit"
 
   hybrid retrieval fuses the two ranked lists
 
   one filter clause has to narrow <span class="wrong">both</span> halves
-  or the unfiltered half leaks contamination back in
+  or the unfiltered half leaks contamination
+  back in
   </div>
 </div>
 <div class="col-text">
@@ -526,16 +569,19 @@ the same body, indexed twice
   <div class="terminal-block">
 is it a facet?
 
-  case_type      keyword, 5 values        <span style="color:var(--teal);">facet</span>
-  risk_tier      keyword, 3 values        <span style="color:var(--teal);">facet</span>
-  filing_date    date                     <span style="color:var(--teal);">facet (range)</span>
-  title          text, free               <span class="wrong">not a facet</span>
-  body           semantic_text            <span class="wrong">not a facet</span>
+  case_type    keyword, 5 values  <span style="color:var(--teal);">facet</span>
+  risk_tier    keyword, 3 values  <span style="color:var(--teal);">facet</span>
+  filing_date  date               <span style="color:var(--teal);">facet
+                                  (range)</span>
+  title        text, free         <span class="wrong">not a facet</span>
+  body         semantic_text      <span class="wrong">not a facet</span>
 
 the test, in order:
   1  can a term clause select it exactly
-  2  does an aggregation return one bucket per value
-  3  is the value stable when the sentence is reworded
+  2  does an aggregation return one bucket
+     per value
+  3  is the value stable when the sentence
+     is reworded
 
   a field of prose fails all three, however
   informative it reads
@@ -551,11 +597,14 @@ the test, in order:
   <div class="terminal-block">
 120 memos, built to overlap
 
-  structuring          24     each memo also carries one
-  wire_fraud           24     other case type's vocabulary
-  sanctions            24
-  kyc_gap              24     x 3 risk tiers
-  elder_exploitation   24     x filing dates over 3 years
+  structuring          24  each memo also
+  wire_fraud           24  carries one other
+  sanctions            24  case type's
+  kyc_gap              24  vocabulary
+  elder_exploitation   24
+                           x 3 risk tiers
+                           x filing dates
+                             over 3 years
 
 precision@10, held-out queries
 (case type, risk tier, date window, combined)
@@ -573,7 +622,8 @@ precision@10, held-out queries
 <img class="elastic-logo" alt="Elastic" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgwIiBoZWlnaHQ9IjI4MCIgdmlld0JveD0iMCAwIDI4MCAyODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0yMjAgMTQzLjQ5NEMyMjAuMDE0IDEzNy4wMDIgMjE4LjAyIDEzMC42NjQgMjE0LjI5MSAxMjUuMzQ4QzIxMC41NjMgMTIwLjAzMyAyMDUuMjgyIDExNiAxOTkuMTczIDExMy44MDJDMTk5LjczMSAxMTAuOTcgMjAwLjAxMiAxMDguMDkgMjAwLjAxNCAxMDUuMjA0QzIwMC4wMTYgOTUuNjQ2NiAxOTYuOTg5IDg2LjMzNDUgMTkxLjM2NyA3OC42MDZDMTg1Ljc0NCA3MC44Nzc0IDE3Ny44MTYgNjUuMTMwNCAxNjguNzIzIDYyLjE5MDhDMTU5LjYyOSA1OS4yNTExIDE0OS44MzcgNTkuMjcwMyAxNDAuNzU0IDYyLjI0NTZDMTMxLjY3MiA2NS4yMjA4IDEyMy43NjcgNzAuOTk4OSAxMTguMTc1IDc4Ljc0OTVDMTE0LjA1MSA3NS41NTUzIDEwOC45OTkgNzMuNzkxOSAxMDMuNzgzIDczLjcyNjRDOTguNTY2OSA3My42NjA5IDkzLjQ3MTkgNzUuMjk2OCA4OS4yNjkxIDc4LjM4NjRDODUuMDY2NCA4MS40NzYxIDgxLjk4NSA4NS44NTExIDgwLjQ5MTUgOTAuODQ5Qzc4Ljk5OCA5NS44NDY4IDc5LjE3MzggMTAxLjE5NSA4MC45OTI0IDEwNi4wODRDNzQuODY2NyAxMDguMzEzIDY5LjU3MSAxMTIuMzY1IDY1LjgxNzkgMTE3LjY5NUM2Mi4wNjQ3IDEyMy4wMjUgNjAuMDM0NCAxMjkuMzc2IDYwLjAwMDIgMTM1Ljg5NEM1OS45Nzk2IDE0Mi40MTMgNjEuOTgwNSAxNDguNzc4IDY1LjcyNzMgMTU0LjExM0M2OS40NzQxIDE1OS40NDcgNzQuNzgyNSAxNjMuNDg5IDgwLjkyMTYgMTY1LjY4MUM4MC4zODk2IDE2OC41MTQgODAuMTI2NCAxNzEuMzkgODAuMTM1NyAxNzQuMjcxQzgwLjExODYgMTgzLjgyNiA4My4xMzg5IDE5My4xMzkgODguNzYwMyAyMDAuODY2Qzk0LjM4MTggMjA4LjU5MiAxMDIuMzEzIDIxNC4zMzEgMTExLjQxIDIxNy4yNTVDMTIwLjUwNiAyMjAuMTc5IDEzMC4yOTcgMjIwLjEzNyAxMzkuMzY3IDIxNy4xMzNDMTQ4LjQzOCAyMTQuMTI5IDE1Ni4zMTkgMjA4LjMyIDE2MS44NzMgMjAwLjU0NUMxNjUuOTg0IDIwMy43NTMgMTcxLjAzIDIwNS41MzMgMTc2LjI0NSAyMDUuNjEzQzE4MS40NiAyMDUuNjkzIDE4Ni41NTggMjA0LjA3IDE5MC43NjcgMjAwLjk4OUMxOTQuOTc1IDE5Ny45MDkgMTk4LjA2NCAxOTMuNTQgMTk5LjU2NCAxODguNTQ1QzIwMS4wNjQgMTgzLjU1IDIwMC44OTQgMTc4LjIwMiAxOTkuMDc4IDE3My4zMTNDMjA1LjE5MiAxNzEuMDcyIDIxMC40NzQgMTY3LjAxMyAyMTQuMjEzIDE2MS42ODNDMjE3Ljk1MyAxNTYuMzUzIDIxOS45NzMgMTUwLjAwNiAyMjAgMTQzLjQ5NFpNMTIxLjk0NyA4My41NzUxQzEyNy4wOTkgNzYuMDgxNSAxMzQuNjc5IDcwLjU5NTEgMTQzLjQwNyA2OC4wNDJDMTUyLjEzNSA2NS40ODg5IDE2MS40NzcgNjYuMDI1NCAxNjkuODU1IDY5LjU2MTFDMTc4LjIzMyA3My4wOTY4IDE4NS4xMzUgNzkuNDE1IDE4OS4zOTUgODcuNDQ5MkMxOTMuNjU2IDk1LjQ4MzQgMTk1LjAxMyAxMDQuNzQxIDE5My4yMzkgMTEzLjY2MUwxNTcuOTE5IDE0NC41OTVMMTIyLjkwNiAxMjguNjRMMTE2LjA2OCAxMTQuMDQ2TDEyMS45NDcgODMuNTc1MVpNMTA0LjI0IDc5LjY0NTRDMTA4LjM5MiA3OS42NDQ2IDExMi40MyA4MS4wMDg4IDExNS43MzEgODMuNTI3OUwxMTAuNDMzIDExMC43OTJMODYuNDQ2NyAxMDUuMTI1Qzg1LjQwNjUgMTAyLjI2MSA4NS4wNzA3IDk5LjE4ODMgODUuNDY3NyA5Ni4xNjY4Qzg1Ljg2NDcgOTMuMTQ1MyA4Ni45ODI3IDkwLjI2MzcgODguNzI3NSA4Ny43NjUyQzkwLjQ3MjMgODUuMjY2NyA5Mi43OTI2IDgzLjIyNDcgOTUuNDkyNSA4MS44MTE0Qzk4LjE5MjUgODAuMzk4MiAxMDEuMTkzIDc5LjY1NTMgMTA0LjI0IDc5LjY0NTRaTTY2LjE4NTQgMTM1Ljk2NUM2Ni4yMjA3IDEzMC40MDMgNjcuOTkxMiAxMjQuOTkgNzEuMjQ5OSAxMjAuNDgxQzc0LjUwODYgMTE1Ljk3MyA3OS4wOTMxIDExMi41OTQgODQuMzY0IDExMC44MTVMMTEwLjY5MyAxMTcuMDMyTDExNi44NyAxMzAuMjQ0TDgzLjIwODcgMTYwLjY5MUM3OC4yMDAyIDE1OC43NzkgNzMuODkwNCAxNTUuMzkyIDcwLjg1MDQgMTUwLjk3NkM2Ny44MTA0IDE0Ni41NjEgNjYuMTgzNiAxNDEuMzI2IDY2LjE4NTQgMTM1Ljk2NVpNMTU4LjIxIDE5NS44NDVDMTUzLjQ1NCAyMDIuODQ4IDE0Ni41NzcgMjA4LjE0IDEzOC41OTEgMjEwLjk0NkMxMzAuNjA0IDIxMy43NTEgMTIxLjkyOCAyMTMuOTIxIDExMy44MzggMjExLjQzMkMxMDUuNzQ3IDIwOC45NDIgOTguNjY4MSAyMDMuOTI0IDkzLjY0MDQgMTk3LjExNEM4OC42MTI3IDE5MC4zMDMgODUuOTAxMyAxODIuMDYxIDg1LjkwNDQgMTczLjU5NkM4NS45MDgxIDE3MC45NTYgODYuMTcxNCAxNjguMzI0IDg2LjY5MDQgMTY1LjczNkwxMjEuMTE0IDEzNC41ODJMMTU2LjI2MSAxNTAuNTk5TDE2NC4wNDIgMTY1LjQ2OUwxNTguMjEgMTk1Ljg0NVpNMTc1Ljc5OSAxOTkuNzc1QzE3MS42NTkgMTk5Ljc2MSAxNjcuNjM5IDE5OC4zNzkgMTY0LjM2NCAxOTUuODQ1TDE2OS41ODIgMTY4LjY2OEwxOTMuNTUzIDE3NC4yNzFDMTk0LjU5NiAxNzcuMTMzIDE5NC45MzUgMTgwLjIwNCAxOTQuNTQxIDE4My4yMjRDMTk0LjE0OCAxODYuMjQ0IDE5My4wMzQgMTg5LjEyNSAxOTEuMjkzIDE5MS42MjRDMTg5LjU1MiAxOTQuMTI0IDE4Ny4yMzYgMTk2LjE2NyAxODQuNTM5IDE5Ny41ODNDMTgxLjg0MyAxOTguOTk5IDE3OC44NDUgMTk5Ljc0NSAxNzUuNzk5IDE5OS43NTlWMTk5Ljc3NVpNMTk1LjYzNiAxNjguNTY2TDE2OS4yNDUgMTYyLjM5NkwxNjIuMjM0IDE0OS4wMzVMMTk2Ljc1MiAxMTguNzkzQzIwMS43NjUgMTIwLjY4OCAyMDYuMDgyIDEyNC4wNjQgMjA5LjEzIDEyOC40NzJDMjEyLjE3OCAxMzIuODggMjEzLjgxMiAxMzguMTEyIDIxMy44MTUgMTQzLjQ3MUMyMTMuNzY1IDE0OS4wMjEgMjExLjk4NyAxNTQuNDE5IDIwOC43MyAxNTguOTEzQzIwNS40NzIgMTYzLjQwNyAyMDAuODk2IDE2Ni43NzYgMTk1LjYzNiAxNjguNTVWMTY4LjU2NloiIGZpbGw9IndoaXRlIj48L3BhdGg+Cjwvc3ZnPg=="/></section>
 <section class="slide" data-layout="concept" data-index="6"><div class="col-diagram">
   <div class="terminal-block">
-the harness reads the intent, you build the clauses
+the harness reads the intent,
+you build the clauses
 
 intent
   {"case_type":  "sanctions",
@@ -583,11 +633,14 @@ intent
 
 your clauses
   [{"term":  {"case_type": "sanctions"}},
-   {"terms": {"risk_tier": ["medium","high"]}},
-   {"range": {"filing_date": {"gte": "2024-01-01"}}}]
+   {"terms": {"risk_tier":
+               ["medium","high"]}},
+   {"range": {"filing_date":
+               {"gte": "2024-01-01"}}}]
 
   a key set to null gets <span class="wrong">no clause</span>
-  one value and a list of values are different clauses
+  one value and a list of values are
+    different clauses
   a window with one end set is still a range
   </div>
 </div>
@@ -606,7 +659,8 @@ precision@10 = relevant in the top 10 / 10
 
 what a miss looks like after filtering
 
-  intent    {"risk_tier": ["high"], "case_type": null}
+  intent    {"risk_tier": ["high"],
+             "case_type": null}
   clauses   [{"term": {"case_type": null}}]
   result    <span class="wrong">0 documents</span>, precision 0.00
 
@@ -622,22 +676,26 @@ what a miss looks like after filtering
 <img class="elastic-logo" alt="Elastic" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgwIiBoZWlnaHQ9IjI4MCIgdmlld0JveD0iMCAwIDI4MCAyODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0yMjAgMTQzLjQ5NEMyMjAuMDE0IDEzNy4wMDIgMjE4LjAyIDEzMC42NjQgMjE0LjI5MSAxMjUuMzQ4QzIxMC41NjMgMTIwLjAzMyAyMDUuMjgyIDExNiAxOTkuMTczIDExMy44MDJDMTk5LjczMSAxMTAuOTcgMjAwLjAxMiAxMDguMDkgMjAwLjAxNCAxMDUuMjA0QzIwMC4wMTYgOTUuNjQ2NiAxOTYuOTg5IDg2LjMzNDUgMTkxLjM2NyA3OC42MDZDMTg1Ljc0NCA3MC44Nzc0IDE3Ny44MTYgNjUuMTMwNCAxNjguNzIzIDYyLjE5MDhDMTU5LjYyOSA1OS4yNTExIDE0OS44MzcgNTkuMjcwMyAxNDAuNzU0IDYyLjI0NTZDMTMxLjY3MiA2NS4yMjA4IDEyMy43NjcgNzAuOTk4OSAxMTguMTc1IDc4Ljc0OTVDMTE0LjA1MSA3NS41NTUzIDEwOC45OTkgNzMuNzkxOSAxMDMuNzgzIDczLjcyNjRDOTguNTY2OSA3My42NjA5IDkzLjQ3MTkgNzUuMjk2OCA4OS4yNjkxIDc4LjM4NjRDODUuMDY2NCA4MS40NzYxIDgxLjk4NSA4NS44NTExIDgwLjQ5MTUgOTAuODQ5Qzc4Ljk5OCA5NS44NDY4IDc5LjE3MzggMTAxLjE5NSA4MC45OTI0IDEwNi4wODRDNzQuODY2NyAxMDguMzEzIDY5LjU3MSAxMTIuMzY1IDY1LjgxNzkgMTE3LjY5NUM2Mi4wNjQ3IDEyMy4wMjUgNjAuMDM0NCAxMjkuMzc2IDYwLjAwMDIgMTM1Ljg5NEM1OS45Nzk2IDE0Mi40MTMgNjEuOTgwNSAxNDguNzc4IDY1LjcyNzMgMTU0LjExM0M2OS40NzQxIDE1OS40NDcgNzQuNzgyNSAxNjMuNDg5IDgwLjkyMTYgMTY1LjY4MUM4MC4zODk2IDE2OC41MTQgODAuMTI2NCAxNzEuMzkgODAuMTM1NyAxNzQuMjcxQzgwLjExODYgMTgzLjgyNiA4My4xMzg5IDE5My4xMzkgODguNzYwMyAyMDAuODY2Qzk0LjM4MTggMjA4LjU5MiAxMDIuMzEzIDIxNC4zMzEgMTExLjQxIDIxNy4yNTVDMTIwLjUwNiAyMjAuMTc5IDEzMC4yOTcgMjIwLjEzNyAxMzkuMzY3IDIxNy4xMzNDMTQ4LjQzOCAyMTQuMTI5IDE1Ni4zMTkgMjA4LjMyIDE2MS44NzMgMjAwLjU0NUMxNjUuOTg0IDIwMy43NTMgMTcxLjAzIDIwNS41MzMgMTc2LjI0NSAyMDUuNjEzQzE4MS40NiAyMDUuNjkzIDE4Ni41NTggMjA0LjA3IDE5MC43NjcgMjAwLjk4OUMxOTQuOTc1IDE5Ny45MDkgMTk4LjA2NCAxOTMuNTQgMTk5LjU2NCAxODguNTQ1QzIwMS4wNjQgMTgzLjU1IDIwMC44OTQgMTc4LjIwMiAxOTkuMDc4IDE3My4zMTNDMjA1LjE5MiAxNzEuMDcyIDIxMC40NzQgMTY3LjAxMyAyMTQuMjEzIDE2MS42ODNDMjE3Ljk1MyAxNTYuMzUzIDIxOS45NzMgMTUwLjAwNiAyMjAgMTQzLjQ5NFpNMTIxLjk0NyA4My41NzUxQzEyNy4wOTkgNzYuMDgxNSAxMzQuNjc5IDcwLjU5NTEgMTQzLjQwNyA2OC4wNDJDMTUyLjEzNSA2NS40ODg5IDE2MS40NzcgNjYuMDI1NCAxNjkuODU1IDY5LjU2MTFDMTc4LjIzMyA3My4wOTY4IDE4NS4xMzUgNzkuNDE1IDE4OS4zOTUgODcuNDQ5MkMxOTMuNjU2IDk1LjQ4MzQgMTk1LjAxMyAxMDQuNzQxIDE5My4yMzkgMTEzLjY2MUwxNTcuOTE5IDE0NC41OTVMMTIyLjkwNiAxMjguNjRMMTE2LjA2OCAxMTQuMDQ2TDEyMS45NDcgODMuNTc1MVpNMTA0LjI0IDc5LjY0NTRDMTA4LjM5MiA3OS42NDQ2IDExMi40MyA4MS4wMDg4IDExNS43MzEgODMuNTI3OUwxMTAuNDMzIDExMC43OTJMODYuNDQ2NyAxMDUuMTI1Qzg1LjQwNjUgMTAyLjI2MSA4NS4wNzA3IDk5LjE4ODMgODUuNDY3NyA5Ni4xNjY4Qzg1Ljg2NDcgOTMuMTQ1MyA4Ni45ODI3IDkwLjI2MzcgODguNzI3NSA4Ny43NjUyQzkwLjQ3MjMgODUuMjY2NyA5Mi43OTI2IDgzLjIyNDcgOTUuNDkyNSA4MS44MTE0Qzk4LjE5MjUgODAuMzk4MiAxMDEuMTkzIDc5LjY1NTMgMTA0LjI0IDc5LjY0NTRaTTY2LjE4NTQgMTM1Ljk2NUM2Ni4yMjA3IDEzMC40MDMgNjcuOTkxMiAxMjQuOTkgNzEuMjQ5OSAxMjAuNDgxQzc0LjUwODYgMTE1Ljk3MyA3OS4wOTMxIDExMi41OTQgODQuMzY0IDExMC44MTVMMTEwLjY5MyAxMTcuMDMyTDExNi44NyAxMzAuMjQ0TDgzLjIwODcgMTYwLjY5MUM3OC4yMDAyIDE1OC43NzkgNzMuODkwNCAxNTUuMzkyIDcwLjg1MDQgMTUwLjk3NkM2Ny44MTA0IDE0Ni41NjEgNjYuMTgzNiAxNDEuMzI2IDY2LjE4NTQgMTM1Ljk2NVpNMTU4LjIxIDE5NS44NDVDMTUzLjQ1NCAyMDIuODQ4IDE0Ni41NzcgMjA4LjE0IDEzOC41OTEgMjEwLjk0NkMxMzAuNjA0IDIxMy43NTEgMTIxLjkyOCAyMTMuOTIxIDExMy44MzggMjExLjQzMkMxMDUuNzQ3IDIwOC45NDIgOTguNjY4MSAyMDMuOTI0IDkzLjY0MDQgMTk3LjExNEM4OC42MTI3IDE5MC4zMDMgODUuOTAxMyAxODIuMDYxIDg1LjkwNDQgMTczLjU5NkM4NS45MDgxIDE3MC45NTYgODYuMTcxNCAxNjguMzI0IDg2LjY5MDQgMTY1LjczNkwxMjEuMTE0IDEzNC41ODJMMTU2LjI2MSAxNTAuNTk5TDE2NC4wNDIgMTY1LjQ2OUwxNTguMjEgMTk1Ljg0NVpNMTc1Ljc5OSAxOTkuNzc1QzE3MS42NTkgMTk5Ljc2MSAxNjcuNjM5IDE5OC4zNzkgMTY0LjM2NCAxOTUuODQ1TDE2OS41ODIgMTY4LjY2OEwxOTMuNTUzIDE3NC4yNzFDMTk0LjU5NiAxNzcuMTMzIDE5NC45MzUgMTgwLjIwNCAxOTQuNTQxIDE4My4yMjRDMTk0LjE0OCAxODYuMjQ0IDE5My4wMzQgMTg5LjEyNSAxOTEuMjkzIDE5MS42MjRDMTg5LjU1MiAxOTQuMTI0IDE4Ny4yMzYgMTk2LjE2NyAxODQuNTM5IDE5Ny41ODNDMTgxLjg0MyAxOTguOTk5IDE3OC44NDUgMTk5Ljc0NSAxNzUuNzk5IDE5OS43NTlWMTk5Ljc3NVpNMTk1LjYzNiAxNjguNTY2TDE2OS4yNDUgMTYyLjM5NkwxNjIuMjM0IDE0OS4wMzVMMTk2Ljc1MiAxMTguNzkzQzIwMS43NjUgMTIwLjY4OCAyMDYuMDgyIDEyNC4wNjQgMjA5LjEzIDEyOC40NzJDMjEyLjE3OCAxMzIuODggMjEzLjgxMiAxMzguMTEyIDIxMy44MTUgMTQzLjQ3MUMyMTMuNzY1IDE0OS4wMjEgMjExLjk4NyAxNTQuNDE5IDIwOC43MyAxNTguOTEzQzIwNS40NzIgMTYzLjQwNyAyMDAuODk2IDE2Ni43NzYgMTk1LjYzNiAxNjguNTVWMTY4LjU2NloiIGZpbGw9IndoaXRlIj48L3BhdGg+Cjwvc3ZnPg=="/></section>
 <section class="slide" data-layout="concept" data-index="8"><div class="col-diagram">
   <div class="terminal-block">
-a budget is a hard ceiling on the packed context
+a budget is a hard ceiling
+on the packed context
 
-  budget            4,000 tokens (the smaller one)
-  set B retrieved   5 passages
-                    3,850 + 1,151 + 1,067 + 1,354 + 1,126
-                    =  8,548 tokens
+  budget          4,000 tokens
+                  (the smaller one)
+  set B retrieved 5 passages
+                  3,850 + 1,151 + 1,067
+                  + 1,354 + 1,126
+                  =  8,548 tokens
 
   pack everything
-    sent            <span class="wrong">8,548 tokens, 4,548 over</span>
-    what arrives    the text up to the cut, mid-passage
-    the check       fails the overrun
+    sent          <span class="wrong">8,548 tokens, 4,548 over</span>
+    what arrives  the text up to the cut,
+                  mid-passage
+    the check     fails the overrun
 
   pack to fit, in rank order
     measure each passage before adding it
     skip one that does not fit
-    sent            at most 4,000 tokens
+    sent          at most 4,000 tokens
   </div>
 </div>
 <div class="col-text">
@@ -648,18 +706,23 @@ a budget is a hard ceiling on the packed context
 <img class="elastic-logo" alt="Elastic" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgwIiBoZWlnaHQ9IjI4MCIgdmlld0JveD0iMCAwIDI4MCAyODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0yMjAgMTQzLjQ5NEMyMjAuMDE0IDEzNy4wMDIgMjE4LjAyIDEzMC42NjQgMjE0LjI5MSAxMjUuMzQ4QzIxMC41NjMgMTIwLjAzMyAyMDUuMjgyIDExNiAxOTkuMTczIDExMy44MDJDMTk5LjczMSAxMTAuOTcgMjAwLjAxMiAxMDguMDkgMjAwLjAxNCAxMDUuMjA0QzIwMC4wMTYgOTUuNjQ2NiAxOTYuOTg5IDg2LjMzNDUgMTkxLjM2NyA3OC42MDZDMTg1Ljc0NCA3MC44Nzc0IDE3Ny44MTYgNjUuMTMwNCAxNjguNzIzIDYyLjE5MDhDMTU5LjYyOSA1OS4yNTExIDE0OS44MzcgNTkuMjcwMyAxNDAuNzU0IDYyLjI0NTZDMTMxLjY3MiA2NS4yMjA4IDEyMy43NjcgNzAuOTk4OSAxMTguMTc1IDc4Ljc0OTVDMTE0LjA1MSA3NS41NTUzIDEwOC45OTkgNzMuNzkxOSAxMDMuNzgzIDczLjcyNjRDOTguNTY2OSA3My42NjA5IDkzLjQ3MTkgNzUuMjk2OCA4OS4yNjkxIDc4LjM4NjRDODUuMDY2NCA4MS40NzYxIDgxLjk4NSA4NS44NTExIDgwLjQ5MTUgOTAuODQ5Qzc4Ljk5OCA5NS44NDY4IDc5LjE3MzggMTAxLjE5NSA4MC45OTI0IDEwNi4wODRDNzQuODY2NyAxMDguMzEzIDY5LjU3MSAxMTIuMzY1IDY1LjgxNzkgMTE3LjY5NUM2Mi4wNjQ3IDEyMy4wMjUgNjAuMDM0NCAxMjkuMzc2IDYwLjAwMDIgMTM1Ljg5NEM1OS45Nzk2IDE0Mi40MTMgNjEuOTgwNSAxNDguNzc4IDY1LjcyNzMgMTU0LjExM0M2OS40NzQxIDE1OS40NDcgNzQuNzgyNSAxNjMuNDg5IDgwLjkyMTYgMTY1LjY4MUM4MC4zODk2IDE2OC41MTQgODAuMTI2NCAxNzEuMzkgODAuMTM1NyAxNzQuMjcxQzgwLjExODYgMTgzLjgyNiA4My4xMzg5IDE5My4xMzkgODguNzYwMyAyMDAuODY2Qzk0LjM4MTggMjA4LjU5MiAxMDIuMzEzIDIxNC4zMzEgMTExLjQxIDIxNy4yNTVDMTIwLjUwNiAyMjAuMTc5IDEzMC4yOTcgMjIwLjEzNyAxMzkuMzY3IDIxNy4xMzNDMTQ4LjQzOCAyMTQuMTI5IDE1Ni4zMTkgMjA4LjMyIDE2MS44NzMgMjAwLjU0NUMxNjUuOTg0IDIwMy43NTMgMTcxLjAzIDIwNS41MzMgMTc2LjI0NSAyMDUuNjEzQzE4MS40NiAyMDUuNjkzIDE4Ni41NTggMjA0LjA3IDE5MC43NjcgMjAwLjk4OUMxOTQuOTc1IDE5Ny45MDkgMTk4LjA2NCAxOTMuNTQgMTk5LjU2NCAxODguNTQ1QzIwMS4wNjQgMTgzLjU1IDIwMC44OTQgMTc4LjIwMiAxOTkuMDc4IDE3My4zMTNDMjA1LjE5MiAxNzEuMDcyIDIxMC40NzQgMTY3LjAxMyAyMTQuMjEzIDE2MS42ODNDMjE3Ljk1MyAxNTYuMzUzIDIxOS45NzMgMTUwLjAwNiAyMjAgMTQzLjQ5NFpNMTIxLjk0NyA4My41NzUxQzEyNy4wOTkgNzYuMDgxNSAxMzQuNjc5IDcwLjU5NTEgMTQzLjQwNyA2OC4wNDJDMTUyLjEzNSA2NS40ODg5IDE2MS40NzcgNjYuMDI1NCAxNjkuODU1IDY5LjU2MTFDMTc4LjIzMyA3My4wOTY4IDE4NS4xMzUgNzkuNDE1IDE4OS4zOTUgODcuNDQ5MkMxOTMuNjU2IDk1LjQ4MzQgMTk1LjAxMyAxMDQuNzQxIDE5My4yMzkgMTEzLjY2MUwxNTcuOTE5IDE0NC41OTVMMTIyLjkwNiAxMjguNjRMMTE2LjA2OCAxMTQuMDQ2TDEyMS45NDcgODMuNTc1MVpNMTA0LjI0IDc5LjY0NTRDMTA4LjM5MiA3OS42NDQ2IDExMi40MyA4MS4wMDg4IDExNS43MzEgODMuNTI3OUwxMTAuNDMzIDExMC43OTJMODYuNDQ2NyAxMDUuMTI1Qzg1LjQwNjUgMTAyLjI2MSA4NS4wNzA3IDk5LjE4ODMgODUuNDY3NyA5Ni4xNjY4Qzg1Ljg2NDcgOTMuMTQ1MyA4Ni45ODI3IDkwLjI2MzcgODguNzI3NSA4Ny43NjUyQzkwLjQ3MjMgODUuMjY2NyA5Mi43OTI2IDgzLjIyNDcgOTUuNDkyNSA4MS44MTE0Qzk4LjE5MjUgODAuMzk4MiAxMDEuMTkzIDc5LjY1NTMgMTA0LjI0IDc5LjY0NTRaTTY2LjE4NTQgMTM1Ljk2NUM2Ni4yMjA3IDEzMC40MDMgNjcuOTkxMiAxMjQuOTkgNzEuMjQ5OSAxMjAuNDgxQzc0LjUwODYgMTE1Ljk3MyA3OS4wOTMxIDExMi41OTQgODQuMzY0IDExMC44MTVMMTEwLjY5MyAxMTcuMDMyTDExNi44NyAxMzAuMjQ0TDgzLjIwODcgMTYwLjY5MUM3OC4yMDAyIDE1OC43NzkgNzMuODkwNCAxNTUuMzkyIDcwLjg1MDQgMTUwLjk3NkM2Ny44MTA0IDE0Ni41NjEgNjYuMTgzNiAxNDEuMzI2IDY2LjE4NTQgMTM1Ljk2NVpNMTU4LjIxIDE5NS44NDVDMTUzLjQ1NCAyMDIuODQ4IDE0Ni41NzcgMjA4LjE0IDEzOC41OTEgMjEwLjk0NkMxMzAuNjA0IDIxMy43NTEgMTIxLjkyOCAyMTMuOTIxIDExMy44MzggMjExLjQzMkMxMDUuNzQ3IDIwOC45NDIgOTguNjY4MSAyMDMuOTI0IDkzLjY0MDQgMTk3LjExNEM4OC42MTI3IDE5MC4zMDMgODUuOTAxMyAxODIuMDYxIDg1LjkwNDQgMTczLjU5NkM4NS45MDgxIDE3MC45NTYgODYuMTcxNCAxNjguMzI0IDg2LjY5MDQgMTY1LjczNkwxMjEuMTE0IDEzNC41ODJMMTU2LjI2MSAxNTAuNTk5TDE2NC4wNDIgMTY1LjQ2OUwxNTguMjEgMTk1Ljg0NVpNMTc1Ljc5OSAxOTkuNzc1QzE3MS42NTkgMTk5Ljc2MSAxNjcuNjM5IDE5OC4zNzkgMTY0LjM2NCAxOTUuODQ1TDE2OS41ODIgMTY4LjY2OEwxOTMuNTUzIDE3NC4yNzFDMTk0LjU5NiAxNzcuMTMzIDE5NC45MzUgMTgwLjIwNCAxOTQuNTQxIDE4My4yMjRDMTk0LjE0OCAxODYuMjQ0IDE5My4wMzQgMTg5LjEyNSAxOTEuMjkzIDE5MS42MjRDMTg5LjU1MiAxOTQuMTI0IDE4Ny4yMzYgMTk2LjE2NyAxODQuNTM5IDE5Ny41ODNDMTgxLjg0MyAxOTguOTk5IDE3OC44NDUgMTk5Ljc0NSAxNzUuNzk5IDE5OS43NTlWMTk5Ljc3NVpNMTk1LjYzNiAxNjguNTY2TDE2OS4yNDUgMTYyLjM5NkwxNjIuMjM0IDE0OS4wMzVMMTk2Ljc1MiAxMTguNzkzQzIwMS43NjUgMTIwLjY4OCAyMDYuMDgyIDEyNC4wNjQgMjA5LjEzIDEyOC40NzJDMjEyLjE3OCAxMzIuODggMjEzLjgxMiAxMzguMTEyIDIxMy44MTUgMTQzLjQ3MUMyMTMuNzY1IDE0OS4wMjEgMjExLjk4NyAxNTQuNDE5IDIwOC43MyAxNTguOTEzQzIwNS40NzIgMTYzLjQwNyAyMDAuODk2IDE2Ni43NzYgMTk1LjYzNiAxNjguNTVWMTY4LjU2NloiIGZpbGw9IndoaXRlIj48L3BhdGg+Cjwvc3ZnPg=="/></section>
 <section class="slide" data-layout="concept" data-index="9"><div class="col-diagram">
   <div class="terminal-block">
-<span style="color:var(--yellow);">SET A  short memos</span>            <span style="color:var(--yellow);">SET B  long passages</span>
-3 memos, about 400 tokens     5 passages, 1,067 to 3,850
-1,182 tokens in all           8,548 tokens in all
-fits either budget whole      overruns 4,000
+<span style="color:var(--yellow);">SET A  short memos</span>     <span style="color:var(--yellow);">SET B  long passages</span>
+3 memos, about 400     5 passages, 1,067 to
+tokens                 3,850
+1,182 tokens in all    8,548 tokens in all
+fits either budget     overruns 4,000
+whole
 
-rerank_top_n                  rerank_top_n
-  score, take whole             score, take whole
-  until the budget is full      until the budget is full
+rerank_top_n           rerank_top_n
+  score, take whole      score, take whole
+  until the budget       until the budget
+  is full                is full
 
-summarize_first               summarize_first
-  compress each, then pack      compress each, then pack
-  all fit                       all fit, detail can drop
+summarize_first        summarize_first
+  compress each,         compress each,
+  then pack              then pack
+  all fit                all fit, detail
+                         can drop
   </div>
 </div>
 <div class="col-text">

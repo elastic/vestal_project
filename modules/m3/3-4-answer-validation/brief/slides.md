@@ -19,23 +19,24 @@ minutes: 7 -->
   <div class="terminal-block">
 start state: all three hooks empty
 
-Q: What aggregate cash volume did Halloway
-   Freight Services Inc. deposit during its
-   review period?
+Q: What aggregate cash volume did
+   Halloway Freight Services Inc.
+   deposit during its review period?
 retrieved  case-structuring-011  0.792
            case-structuring-017  0.791
            policy-001-s2         0.468
-A: I cannot answer this question based on
-   the material provided. The case material
-   includes information about <span class="wrong">Westmarch
-   Freight Inc. (account 37-20209-1)</span> and
-   <span class="wrong">Oakhurst Logistics LLC (account ending
-   73428)</span>, but contains no information
-   about Halloway Freight Services Inc. or
-   its account activity.
+A: I cannot answer this question based
+   on the material provided. The case
+   material includes information about
+   <span class="wrong">Westmarch Freight Inc. (account
+   37-20209-1)</span> and <span class="wrong">Oakhurst Logistics
+   LLC (account ending 73428)</span>, but
+   contains no information about Halloway
+   Freight Services Inc. or its account
+   activity.
 
-  no file on Halloway: both memos are about
-  other customers, at 0.79
+  no file on Halloway: both memos are
+  about other customers, at 0.79
   retrieval, rerank, generation ran
   <span class="wrong">no hook fired</span>
   </div>
@@ -55,20 +56,22 @@ one answer, four claims, three passages
 
 answer
  |
- +- claim 0  aggregate volume was $1,546,407.46 ---+
- |                                                 |
- +- claim 1  the trigger is $12,500 in 7 days --+  |
- |                                              |  |
- +- claim 2  filing is due in 30 days ------+   |  |
- |                                          |   |  |
- +- claim 3  the branch paid a $45,300 fine |   |  |
-             <span class="wrong">|</span>                             |   |  |
-             <span class="wrong">v</span>                             v   v  v
-       <span class="wrong">UNSUPPORTED</span>                 policy   pol  case
-                                    -011     -001  memo
+ +- claim 0  aggregate volume was
+ |           $1,546,407.46 -------------+
+ +- claim 1  the trigger is $12,500     |
+ |           in 7 days ------------+    |
+ +- claim 2  filing is due in      |    |
+ |           30 days --------+     |    |
+ +- claim 3  the branch paid |     |    |
+             a $45,300 fine  |     |    |
+             <span class="wrong">|</span>               |     |    |
+             <span class="wrong">v</span>               v     v    v
+       <span class="wrong">UNSUPPORTED</span>        policy  pol  case
+                           -011   -001 memo
 
   grounding is a property of each claim
-  three right and one invented is one wrong answer
+  three right and one invented is one
+  wrong answer
   </div>
 </div>
 <div class="col-text">
@@ -83,7 +86,8 @@ answer
 
 <div class="col-diagram">
   <div class="terminal-block">
-for one claim, three outcomes and nothing else
+for one claim, three outcomes
+and nothing else
 
   claim: "the aggregate was $1,546,407.46"
     passage 1  case memo     <span style="color:var(--light-teal);">supports</span>
@@ -97,8 +101,9 @@ for one claim, three outcomes and nothing else
     passage 3  neutral
   -> <span style="color:var(--light-teal);">UNSUPPORTED</span>
 
-  an attributor that never says UNSUPPORTED
-  is reporting citations it cannot stand behind
+  an attributor that never says
+  UNSUPPORTED is reporting citations it
+  cannot stand behind
   </div>
 </div>
 <div class="col-text">
@@ -156,9 +161,9 @@ claim
     -> <span style="color:var(--light-teal);">supports</span>
 
   policy-006-s5      <span style="color:var(--yellow);">source_type: policy</span>
-    "the Tier Two team has a strict mandate to
-     resolve escalated alerts within four hours
-     for intraday domestic payments"
+    "the Tier Two team has a strict mandate
+     to resolve escalated alerts within four
+     hours for intraday domestic payments"
     -> <span style="color:var(--light-teal);">supports</span>
 
   cite <span style="color:var(--light-teal);">policy-006-s5</span>
@@ -178,7 +183,8 @@ claim
   <div class="terminal-block">
 <span style="color:var(--yellow);">1  ungrounded figure</span>
    retrieved 0.93 0.90 0.72
-   A: "the transfer was flagged at $48,250.00"
+   A: "the transfer was flagged at
+       $48,250.00"
    the passages carry the transfer, not that
    amount
 
@@ -244,18 +250,21 @@ delivered
   <div class="terminal-block">
 right diagnosis, wrong control
 
-  failure   the answer named a figure no passage
-            carries
+  failure   the answer named a figure no
+            passage carries
   chosen    <span class="wrong">confidence fallback</span>
-  result    the result set scored 0.93, well above
-            any sensible threshold. The hook never
-            fires. The figure ships again.
+  result    the result set scored 0.93, well
+            above any sensible threshold. The
+            hook never fires. The figure
+            ships again.
 
-  failure   the query was about exchange rates
+  failure   the query was about exchange
+            rates
   chosen    <span class="wrong">output validation</span>
-  result    retrieval ran, generation ran, and the
-            answer cited nothing, so the hook
-            refuses after paying for both
+  result    retrieval ran, generation ran,
+            and the answer cited nothing, so
+            the hook refuses after paying for
+            both
 
   the diagnosis is only useful if it
   names the control that would have fired

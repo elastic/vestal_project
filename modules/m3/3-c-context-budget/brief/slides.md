@@ -17,27 +17,36 @@ minutes: 5 -->
 
 <div class="col-left">
   <div class="terminal-block">
-$ submit.py --limit 2     # the start state, unchanged
+# the start state, unchanged
+$ submit.py --limit 2
 
-  precision@10            <span class="wrong">0.400</span>   (target 0.80 on the held-out set)
+  precision@10            <span class="wrong">0.400</span>
+    (target 0.80 on the held-out set)
     policy              0.400
     case                <span class="wrong">0.150</span>
     sar                 0.650
-  peak context            <span class="wrong">9909 tokens</span>   (budget 6000, ceiling per question)
-  over budget             <span class="wrong">5 question(s)</span>   (target zero)
-  unsupported claims      <span class="wrong">9</span>   (target at most 1)
-  unanswerable held back  <span class="wrong">0/2</span>   (target all of them)
-  fabricated figures      <span class="wrong">1</span>   (target zero, no tolerance)
+  peak context            <span class="wrong">9909 tokens</span>
+    (budget 6000, ceiling per question)
+  over budget             <span class="wrong">5 question(s)</span>
+    (target zero)
+  unsupported claims      <span class="wrong">9</span>
+    (target at most 1)
+  unanswerable held back  <span class="wrong">0/2</span>
+    (target all of them)
+  fabricated figures      <span class="wrong">1</span>
+    (target zero, no tolerance)
   </div>
 </div>
 <div class="col-right">
   <h2 class="slide-heading">The problem</h2>
   <div class="terminal-block">
 # pipeline.py, as it ships
-route:  H.ALL_INDEXES, semantic, size 10
+route:  H.ALL_INDEXES,
+        semantic, size 10
 filter: none
 PACK_STRATEGY = "naive"
-attribute, guard: return nothing
+attribute, guard:
+  return nothing
   </div>
   <p class="slide-body">Tina's own dev run, before any change. One search across all three indices, every result packed whole, no claim tied to a passage, and nothing held back: on a question about a customer the corpus does not hold, a dollar figure from another file reached the desk.</p>
 </div>
@@ -52,7 +61,8 @@ where the questions come from
 
   policy library     requirements, thresholds
   case files         facts from one case
-  SAR narratives     findings buried in long reports
+  SAR narratives     findings buried in
+                     long reports
 
   some ask for something on file
   some ask for something that is not
@@ -69,8 +79,10 @@ where the questions come from
 
 <div class="col-diagram">
   <div class="terminal-block">
-an invented figure     analyst acts on it      <span class="wrong">costly</span>
-a declined answer      analyst looks it up     cheap
+an invented figure
+    analyst acts on it      <span class="wrong">costly</span>
+a declined answer
+    analyst looks it up     cheap
   </div>
 </div>
 <div class="col-text">

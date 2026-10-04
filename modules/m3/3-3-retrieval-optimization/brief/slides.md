@@ -17,18 +17,23 @@ minutes: 8 -->
 
 <div class="col-left">
   <div class="terminal-block">
-Q: Among the investigations into large outbound
-   transfers that were unexpectedly diverted, what
-   was the specific amount involved in the
-   Lanternhill Machinery Enterprises LLC incident?
-intent: {"case_type": "wire_fraud", "risk_tier": null,
-         "date_from": null, "date_to": null}
- 1  case-wire-fraud-008    wire_fraud   in gold
- 2  <span class="wrong">case-sanctions-024     sanctions    WRONG</span>
- 3  case-wire-fraud-020    wire_fraud   in gold
- 4  <span class="wrong">case-sanctions-001     sanctions    WRONG</span>
- 5  <span class="wrong">case-sanctions-007     sanctions    WRONG</span>
-unfiltered precision@10 for this query: <span class="wrong">0.20</span>
+Q: Among the investigations into large
+   outbound transfers that were
+   unexpectedly diverted, what was the
+   specific amount involved in the
+   Lanternhill Machinery Enterprises LLC
+   incident?
+intent: {"case_type": "wire_fraud",
+         "risk_tier": null,
+         "date_from": null,
+         "date_to": null}
+ 1 case-wire-fraud-008 wire_fraud in gold
+ 2 <span class="wrong">case-sanctions-024  sanctions  WRONG</span>
+ 3 case-wire-fraud-020 wire_fraud in gold
+ 4 <span class="wrong">case-sanctions-001  sanctions  WRONG</span>
+ 5 <span class="wrong">case-sanctions-007  sanctions  WRONG</span>
+unfiltered precision@10 for this query:
+  <span class="wrong">0.20</span>
   </div>
 </div>
 <div class="col-right">
@@ -52,20 +57,22 @@ filter  <span class="wrong">none</span>
 one value, three ways to index it
 
 "wire_fraud"
-   as <span style="color:var(--yellow);">text</span>            analyzed into [wire, fraud]
-                      match  yes    filter  no
-                      count  no     sort    no
+  as <span style="color:var(--yellow);">text</span>           analyzed into
+                    [wire, fraud]
+                    match  yes    filter  no
+                    count  no     sort    no
 
-   as <span style="color:var(--yellow);">keyword</span>         stored whole
-                      match  yes    filter  <span style="color:var(--teal);">yes</span>
-                      count  <span style="color:var(--teal);">yes</span>    sort    <span style="color:var(--teal);">yes</span>
+  as <span style="color:var(--yellow);">keyword</span>        stored whole
+                    match  yes    filter  <span style="color:var(--teal);">yes</span>
+                    count  <span style="color:var(--teal);">yes</span>    sort    <span style="color:var(--teal);">yes</span>
 
-   as <span style="color:var(--yellow);">semantic_text</span>   embedded as a vector
-                      meaning  yes  filter  no
+  as <span style="color:var(--yellow);">semantic_text</span>  embedded as a vector
+                    meaning  yes  filter  no
 
 "2024-03-07"
-   as text            "2024" and "03" and "07"
-   as <span style="color:var(--yellow);">date</span>            a point on a line, ranges work
+  as text           "2024" and "03" and "07"
+  as <span style="color:var(--yellow);">date</span>           a point on a line,
+                    ranges work
   </div>
 </div>
 <div class="col-text">
@@ -83,19 +90,21 @@ one value, three ways to index it
 the same body, indexed twice
 
   memo body
-      |
-      +---> <span style="color:var(--yellow);">body_text</span>   (text)
-      |         inverted index, BM25
-      |         finds "CTR avoidance" exactly
-      |
-      +---> <span style="color:var(--yellow);">body</span>        (semantic_text)
-                vectors, nearest neighbour
-                finds "kept deposits under the limit"
+    |
+    +---> <span style="color:var(--yellow);">body_text</span>   (text)
+    |       inverted index, BM25
+    |       finds "CTR avoidance" exactly
+    |
+    +---> <span style="color:var(--yellow);">body</span>        (semantic_text)
+            vectors, nearest neighbour
+            finds
+            "kept deposits under the limit"
 
   hybrid retrieval fuses the two ranked lists
 
   one filter clause has to narrow <span class="wrong">both</span> halves
-  or the unfiltered half leaks contamination back in
+  or the unfiltered half leaks contamination
+  back in
   </div>
 </div>
 <div class="col-text">
@@ -112,16 +121,19 @@ the same body, indexed twice
   <div class="terminal-block">
 is it a facet?
 
-  case_type      keyword, 5 values        <span style="color:var(--teal);">facet</span>
-  risk_tier      keyword, 3 values        <span style="color:var(--teal);">facet</span>
-  filing_date    date                     <span style="color:var(--teal);">facet (range)</span>
-  title          text, free               <span class="wrong">not a facet</span>
-  body           semantic_text            <span class="wrong">not a facet</span>
+  case_type    keyword, 5 values  <span style="color:var(--teal);">facet</span>
+  risk_tier    keyword, 3 values  <span style="color:var(--teal);">facet</span>
+  filing_date  date               <span style="color:var(--teal);">facet
+                                  (range)</span>
+  title        text, free         <span class="wrong">not a facet</span>
+  body         semantic_text      <span class="wrong">not a facet</span>
 
 the test, in order:
   1  can a term clause select it exactly
-  2  does an aggregation return one bucket per value
-  3  is the value stable when the sentence is reworded
+  2  does an aggregation return one bucket
+     per value
+  3  is the value stable when the sentence
+     is reworded
 
   a field of prose fails all three, however
   informative it reads
@@ -141,11 +153,14 @@ the test, in order:
   <div class="terminal-block">
 120 memos, built to overlap
 
-  structuring          24     each memo also carries one
-  wire_fraud           24     other case type's vocabulary
-  sanctions            24
-  kyc_gap              24     x 3 risk tiers
-  elder_exploitation   24     x filing dates over 3 years
+  structuring          24  each memo also
+  wire_fraud           24  carries one other
+  sanctions            24  case type's
+  kyc_gap              24  vocabulary
+  elder_exploitation   24
+                           x 3 risk tiers
+                           x filing dates
+                             over 3 years
 
 precision@10, held-out queries
 (case type, risk tier, date window, combined)
@@ -167,7 +182,8 @@ precision@10, held-out queries
 
 <div class="col-diagram">
   <div class="terminal-block">
-the harness reads the intent, you build the clauses
+the harness reads the intent,
+you build the clauses
 
 intent
   {"case_type":  "sanctions",
@@ -177,11 +193,14 @@ intent
 
 your clauses
   [{"term":  {"case_type": "sanctions"}},
-   {"terms": {"risk_tier": ["medium","high"]}},
-   {"range": {"filing_date": {"gte": "2024-01-01"}}}]
+   {"terms": {"risk_tier":
+               ["medium","high"]}},
+   {"range": {"filing_date":
+               {"gte": "2024-01-01"}}}]
 
   a key set to null gets <span class="wrong">no clause</span>
-  one value and a list of values are different clauses
+  one value and a list of values are
+    different clauses
   a window with one end set is still a range
   </div>
 </div>
@@ -204,7 +223,8 @@ precision@10 = relevant in the top 10 / 10
 
 what a miss looks like after filtering
 
-  intent    {"risk_tier": ["high"], "case_type": null}
+  intent    {"risk_tier": ["high"],
+             "case_type": null}
   clauses   [{"term": {"case_type": null}}]
   result    <span class="wrong">0 documents</span>, precision 0.00
 
@@ -224,22 +244,26 @@ what a miss looks like after filtering
 
 <div class="col-diagram">
   <div class="terminal-block">
-a budget is a hard ceiling on the packed context
+a budget is a hard ceiling
+on the packed context
 
-  budget            4,000 tokens (the smaller one)
-  set B retrieved   5 passages
-                    3,850 + 1,151 + 1,067 + 1,354 + 1,126
-                    =  8,548 tokens
+  budget          4,000 tokens
+                  (the smaller one)
+  set B retrieved 5 passages
+                  3,850 + 1,151 + 1,067
+                  + 1,354 + 1,126
+                  =  8,548 tokens
 
   pack everything
-    sent            <span class="wrong">8,548 tokens, 4,548 over</span>
-    what arrives    the text up to the cut, mid-passage
-    the check       fails the overrun
+    sent          <span class="wrong">8,548 tokens, 4,548 over</span>
+    what arrives  the text up to the cut,
+                  mid-passage
+    the check     fails the overrun
 
   pack to fit, in rank order
     measure each passage before adding it
     skip one that does not fit
-    sent            at most 4,000 tokens
+    sent          at most 4,000 tokens
   </div>
 </div>
 <div class="col-text">
@@ -254,18 +278,23 @@ a budget is a hard ceiling on the packed context
 
 <div class="col-diagram">
   <div class="terminal-block">
-<span style="color:var(--yellow);">SET A  short memos</span>            <span style="color:var(--yellow);">SET B  long passages</span>
-3 memos, about 400 tokens     5 passages, 1,067 to 3,850
-1,182 tokens in all           8,548 tokens in all
-fits either budget whole      overruns 4,000
+<span style="color:var(--yellow);">SET A  short memos</span>     <span style="color:var(--yellow);">SET B  long passages</span>
+3 memos, about 400     5 passages, 1,067 to
+tokens                 3,850
+1,182 tokens in all    8,548 tokens in all
+fits either budget     overruns 4,000
+whole
 
-rerank_top_n                  rerank_top_n
-  score, take whole             score, take whole
-  until the budget is full      until the budget is full
+rerank_top_n           rerank_top_n
+  score, take whole      score, take whole
+  until the budget       until the budget
+  is full                is full
 
-summarize_first               summarize_first
-  compress each, then pack      compress each, then pack
-  all fit                       all fit, detail can drop
+summarize_first        summarize_first
+  compress each,         compress each,
+  then pack              then pack
+  all fit                all fit, detail
+                         can drop
   </div>
 </div>
 <div class="col-text">
