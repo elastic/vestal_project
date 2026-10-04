@@ -37,8 +37,10 @@ REMOTE_BACKOFF_S = (1.5, 3.0)
 
 # At most this many inference calls in flight from one process. The Check runs the
 # learner's packer for several questions at once, and summarize_first makes one
-# completion call per candidate, so an unbounded burst can draw 429s.
-MAX_CONCURRENT_INFERENCE = 8
+# completion call per candidate, so an unbounded burst can draw 429s. 16 matches the
+# 3.3 check's child pool (at most 16 threads): its 15 packing calls put at most 15
+# inference calls in flight (10 reranks and 5 sequential summarize chains), so none waits.
+MAX_CONCURRENT_INFERENCE = 16
 _INFERENCE_SLOTS = threading.BoundedSemaphore(MAX_CONCURRENT_INFERENCE)
 
 
