@@ -58,7 +58,7 @@ hybrid_rerank   hybrid, then a reranker     both queries
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Four strategies</h2>
-  <p class="slide-body">Exact words win on identifiers. Meaning wins on questions in the analyst's own words. Hybrid serves both, and reranking is often the strongest ranking of all.</p>
+  <p class="slide-body">Exact words win on identifiers. Meaning wins on questions in the analyst's own words. Hybrid serves both. A reranker reads the question and each passage together, so it can separate two rules that differ by one detail.</p>
   <p class="slide-body">Every stage adds latency. Measure each one on your corpus before you assume it is worth the cost.</p>
 </div>
 
@@ -83,7 +83,7 @@ p50      median latency over three passes
 <div class="col-text">
   <h2 class="slide-heading">Three numbers</h2>
   <p class="slide-body">nDCG@5 rewards a good ranking overall. MRR asks one thing: is the case the analyst named at the top?</p>
-  <p class="slide-body">An identifier lookup that lands second scores half. The check measures all three on held-out questions you never see.</p>
+  <p class="slide-body">An identifier lookup that lands second scores half. The check measures all three on held-out questions you never see: identifiers, conceptual questions and fine distinctions between near-identical rules.</p>
 </div>
 
 ---

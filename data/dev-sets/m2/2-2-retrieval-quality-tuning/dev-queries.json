@@ -5,5 +5,8 @@
   {"query_id": "dev-con-01", "query_text": "How does Cortex Bank decide that a customer is a politically exposed person, and what extra review follows?", "query_class": "conceptual", "relevant_ids": ["policy-014"]},
   {"query_id": "dev-con-02", "query_text": "How do informal value transfer networks move money for customers outside the banking system?", "query_class": "conceptual", "relevant_ids": ["sar-116"]},
   {"query_id": "dev-con-03", "query_text": "What happens when a payment party matches a name on a screening list?", "query_class": "conceptual", "relevant_ids": ["policy-006"]},
-  {"query_id": "dev-con-04", "query_text": "How did an online relationship lead a customer to send advance-fee wires abroad?", "query_class": "conceptual", "relevant_ids": ["sar-114"]}
+  {"query_id": "dev-con-04", "query_text": "How did an online relationship lead a customer to send advance-fee wires abroad?", "query_class": "conceptual", "relevant_ids": ["sar-114"]},
+  {"query_id": "dev-fd-09", "query_text": "What's the minimum dollar amount for filing a SAR when we can't figure out who the perpetrator is?", "query_class": "fine_distinction", "relevant_ids": ["policy-003"]},
+  {"query_id": "dev-fd-30", "query_text": "In the refinance closing-cost diversion, how much of the stolen wire was frozen at the mule bank and returned?", "query_class": "fine_distinction", "relevant_ids": ["wire-fraud-205"]},
+  {"query_id": "dev-fd-35", "query_text": "Besides the CTR limit, which lower recordkeeping threshold were the sub-threshold prepaid loads meant to avoid?", "query_class": "fine_distinction", "relevant_ids": ["sar-110"]}
 ]

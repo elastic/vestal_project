@@ -123,7 +123,7 @@ def run_queries_with_template(
 
 def retriever_bm25(field: str = "body_text") -> dict:
     """BM25 (lexical) retriever template. {query_text} is substituted at run time."""
-    return {"query": {"match": {field: "{query_text}"}}}
+    return {"retriever": {"standard": {"query": {"match": {field: "{query_text}"}}}}}
 
 
 def retriever_dense(field: str = "body") -> dict:
@@ -156,10 +156,14 @@ def retriever_hybrid_rerank(
     rerank_id: str,
     text_field: str = "body_text",
     semantic_field: str = "body",
-    rank_window_size: int = 50,
+    rank_window_size: int = 20,
     rank_constant: int = 60,
 ) -> dict:
-    """Hybrid with reranking on top of RRF."""
+    """Hybrid with reranking on top of RRF.
+
+    rank_window_size is both the RRF candidate count and the reranker's window, so the
+    reranker re-scores every fused candidate (its own default is 10).
+    """
     return {
         "retriever": {
             "text_similarity_reranker": {
@@ -176,6 +180,7 @@ def retriever_hybrid_rerank(
                 "field": semantic_field,
                 "inference_id": rerank_id,
                 "inference_text": "{query_text}",
+                "rank_window_size": rank_window_size,
             }
         }
     }
