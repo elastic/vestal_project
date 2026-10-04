@@ -703,6 +703,74 @@ def figures_in(text: str) -> list[str]:
     return found
 
 
+# ── Is a delivered claim backed? (the rule the Check counts unsupported claims by) ──
+
+_FIGURE_NUMBER_RE = re.compile(r"\d[\d,]*(?:\.\d+)?")
+
+
+def figure_numbers(claim: str) -> list[str]:
+    """The numbers in the dollar figures, day counts and percentages a claim states,
+    without thousands separators: "$1,640,021.35" gives "1640021.35". A cited passage
+    id ("policy-011-s52") is a reference, not a figure."""
+    body = _PASSAGE_REF_RE.sub(" ", claim or "")
+    out: list[str] = []
+    for figure in figures_in(body):
+        match = _FIGURE_NUMBER_RE.search(figure)
+        if match:
+            out.append(match.group(0).replace(",", ""))
+    return out
+
+
+def states_numbers(text: str, numbers: list[str]) -> bool:
+    """True when `text` states every one of `numbers` as a number of its own: "30" is
+    in "30 days" and "$1,030", not in "300" or "30.5"."""
+    flat = (text or "").replace(",", "")
+    return all(re.search(rf"(?<![\d.]){re.escape(n)}(?!\.?\d)", flat) for n in numbers)
+
+
+def unbacked_reason(claim: str, passage_id: str | None, retrieved_ids, texts: dict) -> str:
+    """Why a delivered claim has no passage behind it, or "" when it has one.
+
+      "unattributed"     no attribution record names a passage for it (or it says
+                         UNSUPPORTED)
+      "not_retrieved"    it cites a passage this question did not retrieve
+      "figure_missing"   the cited passage does not state a dollar figure, day count
+                         or percentage the claim states
+
+    `texts` maps passage ids to their stored text (passage_texts()).
+    """
+    pid = str(passage_id or "").strip().strip("[]").strip()
+    if not pid or pid == "UNSUPPORTED":
+        return "unattributed"
+    if pid not in {str(i) for i in (retrieved_ids or [])}:
+        return "not_retrieved"
+    numbers = figure_numbers(claim)
+    if numbers and not states_numbers(texts.get(pid, ""), numbers):
+        return "figure_missing"
+    return ""
+
+
+def passage_texts(passage_ids) -> dict[str, str]:
+    """The stored text of each passage id, from one search across the indices.
+
+    A search outage is retried twice and then raises RemoteUnavailable.
+    """
+    ids = sorted({str(i) for i in (passage_ids or []) if i})
+    if not ids:
+        return {}
+    body = {"query": {"ids": {"values": ids}}, "size": min(10000, 4 * len(ids)),
+            "_source": ["body_text", "body"]}
+    resp = unwrap(remote_call("search", es_client().search, index="*", body=body))
+    texts: dict[str, list[str]] = {}
+    for hit in resp.get("hits", {}).get("hits", []):
+        source = hit.get("_source", {})
+        text = source.get("body_text") or source.get("body") or ""
+        if isinstance(text, dict):
+            text = text.get("text", "")
+        texts.setdefault(str(hit.get("_id", "")), []).append(str(text))
+    return {pid: "\n".join(parts) for pid, parts in texts.items()}
+
+
 REFUSAL_MARKERS = (
     "cannot find", "could not find", "can not find", "not find this information",
     "cannot answer", "unable to", "do not have", "does not contain", "no passage",

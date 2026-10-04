@@ -69,6 +69,27 @@ def test_elasticsearch_errors():
     assert not H.is_remote_error(es.BadRequestError("bad body", meta=meta(400), body={}))
 
 
+def test_figure_numbers_and_states_numbers():
+    claim = "Under policy-011-s52: file within 30 days once the total passes $10,000."
+    assert H.figure_numbers(claim) == ["10000", "30"]
+    assert H.states_numbers("A total of $10000 needs a filing in 30 calendar days.", ["10000", "30"])
+    assert not H.states_numbers("due in 300 days", ["30"])
+    assert not H.states_numbers("ratio 2030.5", ["30"])
+
+
+def test_unbacked_reason():
+    texts = {"case-0007": "The aggregate was $1,640,021.35 over 14 days."}
+    retrieved = ["case-0007", "policy-002-s3"]
+    assert H.unbacked_reason("The aggregate was $1,640,021.35.", "case-0007", retrieved, texts) == ""
+    assert H.unbacked_reason("The aggregate was $1,640,021.36.", "case-0007", retrieved,
+                             texts) == "figure_missing"
+    assert H.unbacked_reason("The memo was filed.", "case-0099", retrieved, texts) == "not_retrieved"
+    assert H.unbacked_reason("The memo was filed.", "UNSUPPORTED", retrieved, texts) == "unattributed"
+    assert H.unbacked_reason("The memo was filed.", None, retrieved, texts) == "unattributed"
+    # A claim with no figure is backed by any retrieved passage it cites.
+    assert H.unbacked_reason("The memo was filed.", "policy-002-s3", retrieved, texts) == ""
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_") and callable(fn):
