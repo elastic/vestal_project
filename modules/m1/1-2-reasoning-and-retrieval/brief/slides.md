@@ -172,7 +172,7 @@ Policy-003:  threshold=10000, direction="at or above"
 <h2 class="slide-heading">Decision rule</h2>
 <table class="rule-table">
   <tr><th>Requirement</th><th>Approach</th></tr>
-  <tr class="correct"><td>Weekly policy changes</td><td>Retrieval</td></tr>
+  <tr><td>Weekly policy changes</td><td>Retrieval</td></tr>
   <tr><td>Yearly policy changes and a fixed decision format</td><td>Fine-tuning + retrieval</td></tr>
 </table>
 <p class="rule-caption">Your Defend answers follow the requirement seeded for your sandbox; your measured propagation latency is the evidence.</p>
@@ -193,7 +193,7 @@ Policy-003:  threshold=10000, direction="at or above"
   </div>
   <div class="done-item">
     <span class="big-number">✓</span>
-    <span class="big-number-label">updated threshold<br>visible after PUT</span>
+    <span class="big-number-label">updated threshold<br>found in policy-003</span>
   </div>
 </div>
 
@@ -201,7 +201,7 @@ Policy-003:  threshold=10000, direction="at or above"
 
 <!-- layout: next -->
 
-<h2 class="slide-heading">Select Next, then open Build 1</h2>
+<h2 class="slide-heading">Select Check, then open Build 1</h2>
 <p style="opacity:0.8;font-size:18px;">Environment status:</p>
 <div class="status-indicator">
   <div class="status-dot"></div>

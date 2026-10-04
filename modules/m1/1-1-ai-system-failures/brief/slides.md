@@ -175,7 +175,7 @@ grounding          | ? / 6   ← your results will differ
 
 <!-- layout: next -->
 
-<h2 class="slide-heading">Select Next, then open Build 1</h2>
+<h2 class="slide-heading">Select Check, then open Build 1</h2>
 <p style="opacity:0.8;font-size:18px;">Environment status:</p>
 <div class="status-indicator">
   <div class="status-dot"></div>

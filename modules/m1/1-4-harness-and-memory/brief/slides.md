@@ -115,7 +115,7 @@ Turn 3, Analyst: Is <span class="wrong">that</span> reportable?
 <h2 class="slide-heading">Decision rule</h2>
 <table class="rule-table">
   <tr><th>Constraint</th><th>Correct posture</th><th>Why</th></tr>
-  <tr class="correct">
+  <tr>
     <td>Strict step order with audit trail</td>
     <td>Sequential</td>
     <td>Fixed sequence, each step logged</td>
@@ -157,7 +157,7 @@ Turn 3, Analyst: Is <span class="wrong">that</span> reportable?
 
 <!-- layout: next -->
 
-<h2 class="slide-heading">Select Next, then open Build 1</h2>
+<h2 class="slide-heading">Select Check, then open Build 1</h2>
 <p style="opacity:0.8;font-size:18px;">Environment status:</p>
 <div class="status-indicator">
   <div class="status-dot"></div>
