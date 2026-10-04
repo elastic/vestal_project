@@ -25,6 +25,7 @@ import random
 import math
 import os
 import pathlib
+import re
 import sys
 
 QUESTIONS_FILE = pathlib.Path("/home/elastic/defend/questions.json")
@@ -102,6 +103,20 @@ def _lookup(results: dict, key: str):
 
 def _metric_label(key: str) -> str:
     return key.replace(".", " ").replace("_", " ")
+
+
+def _formula_keys(choices: list[dict]) -> list[str]:
+    """Result keys the computed choices read, to name what a skipped challenge left missing."""
+    keys: list[str] = []
+    for c in choices:
+        comp = c.get("computed") or {}
+        for f in (comp.get("formula"), comp.get("fallback_formula")):
+            if not f or f.strip().startswith("env:"):
+                continue
+            for name in re.findall(r"[A-Za-z_][A-Za-z0-9_.]*", f):
+                if name not in ("floor", "max") and not name.startswith("env_") and name not in keys:
+                    keys.append(name)
+    return keys
 
 
 # ── Formula evaluation ────────────────────────────────────────────────────────
@@ -183,6 +198,9 @@ def load_questions_new(raw: dict, results: dict, env: dict, seed: int) -> list[d
                 context_lines.append(f"  Your {_metric_label(k)}: {val}")
 
         choices = render_choices(q.get("choices", []), results, env, seed)
+        # every choice is computed from results a skipped challenge never wrote
+        missing = [] if choices else [k for k in _formula_keys(q.get("choices", []))
+                                      if _lookup(results, k) is None]
         # 18 S5: choices shuffle by the sandbox seed so the right one has no fixed position;
         # reasons are never shuffled.
         if q.get("shuffle") == "seed":
@@ -196,6 +214,7 @@ def load_questions_new(raw: dict, results: dict, env: dict, seed: int) -> list[d
             "context_lines": context_lines,
             "choices": choices,
             "reasons": reasons,
+            "missing": missing,
         })
     return qs
 
@@ -296,8 +315,24 @@ def main() -> None:
         print("Your numbers are shown next to each question.")
     print("Another learner's answer may be wrong for you.")
 
+    # A skipped Build leaves no results, so a question built from them has no choices.
+    # Say so first, record the rest, and let Check name the challenge (C5-4).
+    skipped = [i for i, q in enumerate(questions, 1) if not q["choices"]]
+    if skipped:
+        print()
+        print("A challenge was skipped, so some of your results are missing.")
+        for i in skipped:
+            q = questions[i - 1]
+            names = ", ".join(_metric_label(k) for k in q.get("missing") or []) or "results from an earlier challenge"
+            print(f"  Question {i} can't be shown: it needs your {names}.")
+        if len(skipped) < len(questions):
+            print("Answer the other questions. Check then names the challenge to complete.")
+
     decision: dict = {}
     for i, q in enumerate(questions, 1):
+        if not q["choices"]:
+            decision[q["id"]] = {"skipped": True}
+            continue
         choice_key, choice_value, reason_key = ask_question(q, i, len(questions))
         entry: dict = {"choice": choice_key, "choice_value": choice_value}
         if reason_key:
