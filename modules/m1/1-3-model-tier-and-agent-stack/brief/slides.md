@@ -14,17 +14,19 @@
 
 <div class="col-left">
   <div class="terminal-block">
-User: What is Cortex Bank's internal threshold
-      for filing a Suspicious Activity Report
-      when the suspect is known, and is a
-      $4,000 suspicious transfer by a known
-      customer reportable?
+User: What is Cortex Bank's internal
+      threshold for filing a Suspicious
+      Activity Report when the suspect is
+      known, and is a $4,000 suspicious
+      transfer by a known customer
+      reportable?
 
-Tina: Cortex Bank's internal threshold for
-      filing a Suspicious Activity Report (SAR)
-      when the suspect is known is <span class="wrong">$5,000</span>.
-      A single $4,000 suspicious transfer by a
-      known customer would generally <span class="wrong">not</span> meet
+Tina: Cortex Bank's internal threshold
+      for filing a Suspicious Activity
+      Report (SAR) when the suspect is
+      known is <span class="wrong">$5,000</span>. A single $4,000
+      suspicious transfer by a known
+      customer would generally <span class="wrong">not</span> meet
       the monetary ...
   </div>
 </div>
@@ -111,16 +113,19 @@ Tina: Cortex Bank's internal threshold for
 <!-- layout: concept -->
 
 <div class="col-diagram">
-  <div class="terminal-block" style="font-size:13px;line-height:1.6;">
+  <div class="terminal-block" style="padding:var(--s-4);">
 <span class="label"># assistant message</span>
 {"role": "assistant",
  "tool_calls": [{"id": "call_abc",
    "function": {"name": "search_policies",
-     "arguments": "{\"query\": \"SAR threshold known suspect\"}"}}]}
+     "arguments":
+"{\"query\": \"SAR threshold known suspect\"}"
+   }}]}
 
 <span class="label"># your dispatch returns:</span>
 {"role": "tool", "tool_call_id": "call_abc",
- "content": "[{\"policy_id\": \"policy-003\", ...}]"}
+ "content":
+   "[{\"policy_id\": \"policy-003\", ...}]"}
   </div>
 </div>
 <div class="col-text">
@@ -133,17 +138,19 @@ Tina: Cortex Bank's internal threshold for
 <!-- layout: concept -->
 
 <div class="col-diagram">
-  <div class="terminal-block" style="font-size:13px;line-height:1.6;">
+  <div class="terminal-block">
 <span class="label"># tool schema</span>
 {"name": "search_policies",
  "description": "Search Cortex AML policies",
  "parameters": {"type": "object",
-   "properties": {"query": {"type": "string"}},
+   "properties": {
+     "query": {"type": "string"}},
    "required": ["query"]}}
 
 <span class="label"># Elasticsearch query it runs</span>
 {"query": {"match": {
-  "body_semantic": "SAR threshold known suspect"}}}
+  "body_semantic":
+    "SAR threshold known suspect"}}}
   </div>
 </div>
 <div class="col-text">

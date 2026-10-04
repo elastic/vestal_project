@@ -18,7 +18,8 @@ Decision: {
 }
 
 JSON Schema: <span style="color:var(--light-teal);">VALID</span>
-Policy-003:  threshold=10000, direction="at or above"
+Policy-003:  threshold=10000,
+             direction="at or above"
   </div>
 </div>
 <div class="col-right">
@@ -68,7 +69,7 @@ Policy-003:  threshold=10000, direction="at or above"
 <!-- layout: concept -->
 
 <div class="col-diagram">
-  <img src="../../../../brief/img/library/index.svg" alt="cortex-policies Elasticsearch index" style="max-height:180px;max-width:180px;">
+  <img src="../../../../brief/img/library/index.svg" alt="cortex-policies Elasticsearch index" style="max-height:180px;max-width:180px;min-width:0;">
   <div style="text-align:center;font-family:var(--font-code);font-size:13px;margin-top:8px;color:var(--dark-grey);">cortex-policies</div>
   <div style="text-align:center;font-size:13px;margin-top:4px;color:var(--ink);">19 policy documents<br>+ risk-scoring reference</div>
 </div>

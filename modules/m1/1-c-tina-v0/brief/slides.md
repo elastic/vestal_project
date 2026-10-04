@@ -15,17 +15,18 @@
 
 <div class="col-left">
   <div class="terminal-block">
-User: What aggregated cash amount within a
-      seven-day window triggers a structuring
-      alert at Cortex Bank, and what fuzzy-match
-      threshold does sanctions screening use for
+User: What aggregated cash amount within
+      a seven-day window triggers a
+      structuring alert at Cortex Bank,
+      and what fuzzy-match threshold does
+      sanctions screening use for
       cross-border SWIFT messages?
 
-Tina: ...triggers a structuring alert when
-      aggregated cash transactions within a
-      seven-day window reach **$7,500 USD**...
-      we utilize a fuzzy-match threshold of
-      **85%**.
+Tina: ...triggers a structuring alert
+      when aggregated cash transactions
+      within a seven-day window reach
+      **$7,500 USD**... we utilize a
+      fuzzy-match threshold of **85%**.
 
 <span class="label"># tools registered: 0   tool calls: 0</span>
 <span class="label"># policy-001: $12,500   policy-006: 72 percent</span>

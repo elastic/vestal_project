@@ -14,15 +14,16 @@
 
 <div class="col-left">
   <div class="terminal-block">
-Turn 1, Analyst: I'm reviewing Elias Vance,
-  account 4492. He made 10 daily withdrawals
-  of $9,500 each over two weeks.
+Turn 1, Analyst: I'm reviewing Elias
+  Vance, account 4492. He made 10 daily
+  withdrawals of $9,500 each over two
+  weeks.
 
 Turn 2, Analyst: Are his wire transfers
   consistent with that pattern?
 
-  Tina: I see several wire transfers in the
-  account. They appear routine.
+  Tina: I see several wire transfers in
+  the account. They appear routine.
 
 Turn 3, Analyst: Is <span class="wrong">that</span> reportable?
 
@@ -52,7 +53,7 @@ Turn 3, Analyst: Is <span class="wrong">that</span> reportable?
 <!-- layout: concept -->
 
 <div class="col-diagram">
-  <table class="rule-table" style="font-size:15px;">
+  <table class="rule-table" style="font-size:clamp(11px, 2.6vw, 15px);">
     <tr><th>Memory type</th><th>Lives where</th><th>Survives</th></tr>
     <tr><td>Context window</td><td>This API call</td><td>One call</td></tr>
     <tr><td>Working memory</td><td>This conversation</td><td>This session</td></tr>
@@ -95,7 +96,7 @@ Turn 3, Analyst: Is <span class="wrong">that</span> reportable?
 <!-- layout: concept -->
 
 <div class="col-diagram">
-  <table class="rule-table" style="font-size:14px;">
+  <table class="rule-table" style="font-size:clamp(12px, 2.6vw, 14px);">
     <tr><th>Posture</th><th>Control flow</th><th>Cortex use</th></tr>
     <tr><td>Sequential</td><td>Ordered steps</td><td>Compliance audit trail</td></tr>
     <tr><td>Graph</td><td>Branch on results</td><td>Risk-tiered escalation</td></tr>

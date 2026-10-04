@@ -32,9 +32,9 @@ Tina: The CTR threshold is <span class="wrong">$5,000</span> for cash
 <!-- layout: concept -->
 
 <div class="col-diagram">
-  <img src="../../../../brief/img/library/llm.svg" alt="LLM: generates text" style="max-width:100px;"> &nbsp;&nbsp;
-  <img src="../../../../brief/img/library/embedding-model.svg" alt="Embedding model: positions text in a vector space" style="max-width:100px;"> &nbsp;&nbsp;
-  <img src="../../../../brief/img/library/reranker.svg" alt="Reranker: orders candidate documents" style="max-width:100px;">
+  <img src="../../../../brief/img/library/llm.svg" alt="LLM: generates text" style="max-width:100px;min-width:0;"> &nbsp;&nbsp;
+  <img src="../../../../brief/img/library/embedding-model.svg" alt="Embedding model: positions text in a vector space" style="max-width:100px;min-width:0;"> &nbsp;&nbsp;
+  <img src="../../../../brief/img/library/reranker.svg" alt="Reranker: orders candidate documents" style="max-width:100px;min-width:0;">
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Three model types, three jobs</h2>
@@ -87,7 +87,8 @@ policy-003 (actual text):
 <div class="col-diagram">
   <div class="terminal-block" style="font-size:13px;">
 {
-  "answer": "SAR filing deadline: <span class="wrong">45 days</span>",
+  "answer":
+    "SAR filing deadline: <span class="wrong">45 days</span>",
   "policy_id": "policy-011",
   "confidence": "high"
 }
@@ -120,14 +121,16 @@ policy-011 (actual):
 
 <div class="col-diagram">
   <div class="terminal-block" style="font-size:13px;">
-# Ablation: remove each element, re-run 6 questions
+# Ablation: remove each element,
+# re-run 6 questions
 # Record how many stay grounded.
 
-Element removed    | Grounded
-role               | ? / 6
-schema             | ? / 6
-constraints        | ? / 6
-grounding          | ? / 6   ← your results will differ
+Element removed | Grounded
+role            | ? / 6
+schema          | ? / 6
+constraints     | ? / 6
+grounding       | ? / 6  ← your results
+                           will differ
   </div>
 </div>
 <div class="col-text">
