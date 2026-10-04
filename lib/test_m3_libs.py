@@ -289,6 +289,174 @@ def test_summarize_first_raises_rejected_request_at_once():
     assert fake.calls == 1, fake.calls
 
 
+# ── summarize_first in parallel: same list as the sequential version ──────────
+
+def _summarize_sequential(results, query, completion_id, per_doc_budget):
+    """The pre-parallel summarize_first (vestal m3-assets acf31c7), kept as the oracle."""
+    import ara_pack
+    if not results:
+        return []
+    es = ara_pack.es_client()
+    out = []
+    for r in results:
+        source_text = r.get("text") or r.get("body", "")
+        prompt = (
+            f"Summarize the following passage in at most {per_doc_budget} tokens, "
+            f"focusing only on information relevant to this question: {query}\n\n"
+            f"Passage:\n{source_text}\n\nSummary:"
+        )
+        resp = ara_pack._inference(
+            es, "completion",
+            inference_id=completion_id,
+            body={"input": prompt, "task_settings": {"temperature": 0}},
+        )
+        new_r = dict(r)
+        new_r["body"] = resp["completion"][0]["result"]
+        out.append(new_r)
+    return out
+
+
+class _MockInference:
+    """Stands in for ara_pack._inference: answers from the prompt after a delay that
+    shrinks with position, so later passages finish first; raises for chosen passages."""
+
+    def __init__(self, fail_on=(), exc=None):
+        import threading
+        self.fail_on, self.exc = set(fail_on), exc
+        self.lock = threading.Lock()
+        self.calls, self.in_flight, self.peak = [], 0, 0
+
+    def __call__(self, es, label, **kwargs):
+        import time
+        body = kwargs["body"]
+        assert label == "completion" and body["task_settings"] == {"temperature": 0}
+        passage = body["input"].split("Passage:\n", 1)[1].split("\n\nSummary:", 1)[0]
+        n = int(passage.rsplit(" ", 1)[1])
+        with self.lock:
+            self.calls.append(n)
+            self.in_flight += 1
+            self.peak = max(self.peak, self.in_flight)
+        try:
+            time.sleep(0.01 * (8 - n % 8))
+            if n in self.fail_on:
+                raise self.exc
+            return {"completion": [{"result": f"summary of {passage} | {kwargs['inference_id']} "
+                                              f"| {body['input'][:60]}"}]}
+        finally:
+            with self.lock:
+                self.in_flight -= 1
+
+
+def _with_mock(mock, fn, *args):
+    import ara_pack
+    saved = (ara_pack._inference, ara_pack.es_client)
+    ara_pack._inference, ara_pack.es_client = mock, (lambda: object())
+    try:
+        return fn(*args)
+    finally:
+        ara_pack._inference, ara_pack.es_client = saved
+
+
+def _passages(n):
+    # Mixed fields as the callers pass them: text, body only, and extra keys kept.
+    out = []
+    for i in range(n):
+        if i % 3 == 0:
+            out.append({"doc_id": f"d{i}", "text": f"passage {i}", "body": f"passage {i}"})
+        elif i % 3 == 1:
+            out.append({"doc_id": f"d{i}", "body": f"passage {i}", "rerank_score": i / 10})
+        else:
+            out.append({"doc_id": f"d{i}", "text": f"passage {i}"})
+    return out
+
+
+def test_summarize_first_parallel_matches_sequential():
+    """Same order, same fields, same summaries as the sequential loop; inputs untouched."""
+    import ara_pack
+    for n in (1, 2, 5, 20):
+        results = _passages(n)
+        before = [dict(r) for r in results]
+        seq = _with_mock(_MockInference(), _summarize_sequential, results, "q?", "cid", 80)
+        mock = _MockInference()
+        par = _with_mock(mock, ara_pack.summarize_first, results, "q?", "cid", 80)
+        assert par == seq, n
+        assert [r["doc_id"] for r in par] == [f"d{i}" for i in range(n)]
+        assert results == before  # the caller's dicts are not modified
+        assert sorted(mock.calls) == list(range(n))  # one call per passage
+        if n > 1:
+            assert mock.peak > 1, "calls did not overlap"
+        assert mock.peak <= ara_pack.MAX_CONCURRENT_INFERENCE
+    assert _with_mock(_MockInference(), ara_pack.summarize_first, [], "q", "cid", 80) == []
+
+
+def test_summarize_first_parallel_failure_raises_no_partial_list():
+    """Any one failed call raises RemoteCallFailed; nothing is returned."""
+    import ara_pack
+    for fail_on in ({0}, {4}, {2, 3}):
+        mock = _MockInference(fail_on, ara_pack.RemoteCallFailed(f"fail {sorted(fail_on)}"))
+        out = None
+        try:
+            out = _with_mock(mock, ara_pack.summarize_first, _passages(5), "q", "cid", 80)
+        except ara_pack.RemoteCallFailed as exc:
+            # The first failed passage in input order, as the sequential loop raised.
+            assert str(exc) == f"fail {sorted(fail_on)}"
+        else:
+            raise AssertionError(f"returned {out!r} with calls {sorted(fail_on)} failed")
+        assert out is None
+
+
+def test_summarize_first_parallel_rejected_request_raised_unchanged():
+    class Rejected(Exception):
+        status_code = 400
+
+    import ara_pack
+    mock = _MockInference({1}, Rejected("bad request"))
+    try:
+        _with_mock(mock, ara_pack.summarize_first, _passages(3), "q", "cid", 80)
+    except Rejected:
+        pass
+    else:
+        raise AssertionError("a 400 was not raised")
+
+
+def test_summarize_first_parallel_retry_through_real_inference():
+    """Through the real _inference: a passage whose call fails twice then answers is
+    retried and kept in place; one that fails three times raises RemoteCallFailed."""
+    import ara_pack
+    import threading
+
+    class Flaky:
+        def __init__(self, bad, failures):
+            self.bad, self.failures, self.seen, self.lock = bad, failures, {}, threading.Lock()
+
+        def inference(self, **kwargs):
+            n = int(kwargs["body"]["input"].split("Passage:\n", 1)[1].split("\n", 1)[0].rsplit(" ", 1)[1])
+            with self.lock:
+                self.seen[n] = self.seen.get(n, 0) + 1
+                count = self.seen[n]
+            if n == self.bad and count <= self.failures:
+                raise ConnectionError("Connection reset")
+            return {"completion": [{"result": f"s{n}"}]}
+
+    saved = (ara_pack.es_client, ara_pack.REMOTE_BACKOFF_S)
+    try:
+        ara_pack.REMOTE_BACKOFF_S = (0, 0)
+        flaky = Flaky(2, 2)
+        ara_pack.es_client = lambda: _FakeES(flaky)
+        out = ara_pack.summarize_first(_passages(4), "q", "cid", 50)
+        assert [r["body"] for r in out] == ["s0", "s1", "s2", "s3"] and flaky.seen[2] == 3
+        flaky = Flaky(1, 3)
+        ara_pack.es_client = lambda: _FakeES(flaky)
+        try:
+            ara_pack.summarize_first(_passages(4), "q", "cid", 50)
+        except ara_pack.RemoteCallFailed:
+            assert flaky.seen[1] == 3
+        else:
+            raise AssertionError("summarize_first returned after a call failed three times")
+    finally:
+        ara_pack.es_client, ara_pack.REMOTE_BACKOFF_S = saved
+
+
 def test_import_ara_attrib():
     import ara_attrib  # noqa: F401
 

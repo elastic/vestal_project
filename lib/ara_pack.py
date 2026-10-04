@@ -23,6 +23,7 @@ import os
 import sys
 import threading
 import time
+from concurrent.futures import ThreadPoolExecutor, wait
 from typing import Any
 
 from ara_metrics import token_count
@@ -37,9 +38,9 @@ REMOTE_BACKOFF_S = (1.5, 3.0)
 
 # At most this many inference calls in flight from one process. The Check runs the
 # learner's packer for several questions at once, and summarize_first makes one
-# completion call per candidate, so an unbounded burst can draw 429s. 16 matches the
-# 3.3 check's child pool (at most 16 threads): its 15 packing calls put at most 15
-# inference calls in flight (10 reranks and 5 sequential summarize chains), so none waits.
+# completion call per candidate (run in parallel), so an unbounded burst can draw 429s.
+# The 3.3 check's 15 packing calls make 10 reranks and 25 completions (5 questions x 5
+# candidates); at most 16 are in flight and the rest wait for a slot.
 MAX_CONCURRENT_INFERENCE = 16
 _INFERENCE_SLOTS = threading.BoundedSemaphore(MAX_CONCURRENT_INFERENCE)
 
@@ -169,8 +170,11 @@ def summarize_first(
     a summary focused on the query, in at most ``per_doc_budget`` tokens.
     Returns the results list with each result's ``body`` replaced by the summary.
     Temperature 0 (deterministic output for reproducibility in graded labs).
+    The per-passage calls are independent and run in parallel (at most
+    ``MAX_CONCURRENT_INFERENCE`` in flight); the list comes back in input order.
 
-    A completion that fails is retried twice, then ``RemoteCallFailed`` is raised.
+    A completion that fails is retried twice, then ``RemoteCallFailed`` is raised
+    (for the first failed passage in input order) and no partial list is returned.
     The original passage is never used in place of a summary: that would hand the
     packer a 4,000-token passage it has to skip or cut, and lose the figure in it.
 
@@ -187,9 +191,8 @@ def summarize_first(
         return []
 
     es = es_client()
-    out = []
 
-    for r in results:
+    def summarize_one(r: dict) -> dict:
         source_text = r.get("text") or r.get("body", "")
         prompt = (
             f"Summarize the following passage in at most {per_doc_budget} tokens, "
@@ -208,9 +211,17 @@ def summarize_first(
 
         new_r = dict(r)
         new_r["body"] = summary
-        out.append(new_r)
+        return new_r
 
-    return out
+    # The calls are independent, so they run at once; the shared semaphore in
+    # _inference still bounds how many are in flight. Results come back in input
+    # order. If any call fails, the error of the first failed result (in input order)
+    # is raised once the others have finished, and no partial list is returned.
+    workers = min(len(results), MAX_CONCURRENT_INFERENCE)
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = [pool.submit(summarize_one, r) for r in results]
+        wait(futures)
+    return [f.result() for f in futures]
 
 
 # ── Strategy 3: pack_context (pluggable) ──────────────────────────────────────
