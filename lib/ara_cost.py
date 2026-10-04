@@ -23,6 +23,13 @@ Fast-tier answer accuracy (Build 3, read by the Defend): answer_all() answers ea
 the way Tina does (tina_answer: top 5 from cortex-corpus-live, rag_answer's prompt,
 temperature 0) with one model, in a bounded thread pool, and grade_answer() checks each
 answer against gold facts. The check and the notebook's Dispatch cell both call them.
+
+Remote failures (spec 09 principle 8): an Elasticsearch call this module makes for the
+comparison is retried twice with a short backoff on an outage (no response, 401/403/408/429,
+5xx), then raises RemoteCallFailed, never a learner-facing "your query did not run". A query
+Elasticsearch rejected (any other 4xx) stays the learner's. answer_all retries a failed call
+with a short backoff inside its budget and records what still failed; it never answers with
+anything else.
 """
 from __future__ import annotations
 
@@ -35,6 +42,7 @@ import shutil
 import signal
 import subprocess
 import sys
+import time
 
 def _thresholds():
     try:
@@ -48,6 +56,49 @@ LEARNER_PY = "/home/elastic/.venv/bin/python"
 # Under the checks' 50 s deadline (ara_grade.deadline), so a slow learner module gets this
 # message and is killed with its process group instead of outliving the check.
 CHILD_TIMEOUT_S = 40
+
+
+# ── Remote calls ──────────────────────────────────────────────────────────────
+
+REMOTE_ATTEMPTS = 3
+
+
+class RemoteCallFailed(RuntimeError):
+    """A remote call still failed after its retries. Raised, never swallowed."""
+
+
+def is_outage(exc):
+    """True when a call got no usable answer: no response, a rate limit, auth, or a 5xx."""
+    status = getattr(exc, "status_code", None)
+    if status is None:
+        status = getattr(getattr(exc, "meta", None), "status", None)
+    if isinstance(status, int):
+        return status in (401, 403, 408, 429) or status >= 500
+    if type(exc).__name__ in ("APIConnectionError", "APITimeoutError", "ConnectionError",
+                              "ConnectionTimeout", "TransportError", "TlsError"):
+        return True
+    try:
+        from elastic_transport import TransportError
+        if isinstance(exc, TransportError):
+            return True
+    except Exception:
+        pass
+    return isinstance(exc, OSError)
+
+
+def _remote(fn, *args, **kwargs):
+    """fn(*args, **kwargs), retried twice with a short backoff on an outage; then
+    RemoteCallFailed. Anything that is not an outage is raised unchanged at once."""
+    for attempt in range(REMOTE_ATTEMPTS):
+        try:
+            return fn(*args, **kwargs)
+        except Exception as e:
+            if not is_outage(e):
+                raise
+            if attempt == REMOTE_ATTEMPTS - 1:
+                raise RemoteCallFailed(f"Elasticsearch did not respond after {REMOTE_ATTEMPTS} attempts "
+                                       f"({type(e).__name__}). Wait a moment and run it again.") from e
+            time.sleep(1.5 * (attempt + 1))
 
 
 # ── ES|QL comparison ──────────────────────────────────────────────────────────
@@ -69,7 +120,7 @@ def _rows(es, query, params=None):
     kw = {"query": query}
     if params:
         kw["params"] = [{k: v} for k, v in params.items()]
-    r = es.esql.query(**kw)
+    r = _remote(es.esql.query, **kw)
     cols = [c["name"] for c in r.get("columns", [])]
     return [dict(zip(cols, v)) for v in r.get("values", [])], cols
 
@@ -82,9 +133,11 @@ def compare(es, kind, learner_query, params=None):
     """Return (ok, message). The message states counts and the kind of mismatch only."""
     try:
         got, cols = _rows(es, learner_query, params)
+    except RemoteCallFailed:
+        raise  # an outage is not the learner's query
     except Exception as e:
         return False, f"the query did not run: {str(e)[:160]}"
-    ref, _ = _rows(es, REFERENCE[kind], params)
+    ref, _ = _rows(es, REFERENCE[kind], params)  # an outage raises RemoteCallFailed
     if not ref:  # an empty reference would let an empty answer pass
         return False, ("the reference query returned no rows on these parameters, so there is nothing to compare. "
                        "This is a provisioning problem, not your query: stop the track and start it again")
@@ -282,14 +335,15 @@ def grade_answer(answer, gold):
     return hits == len(gold), hits
 
 
-def answer_all(es, proxy, model, questions, pool=12, budget_s=30.0, retries=0):
+def answer_all(es, proxy, model, questions, pool=12, budget_s=30.0, retries=2, backoff_s=1.0):
     """Answer and grade every question in a bounded pool. A question with no "gold" is answered
     but not graded. Returns one record per question, in input order:
       {id, text, answer, retrieved, latency_s, correct (None if ungraded or failed), facts, error}
     Every search and generation call times out at budget_s from the start, so the pool's
     threads end by then too (they would otherwise hold the process open at exit); a question
     not answered by then is recorded with error "timeout". A failed call is tried again up
-    to `retries` times while the budget lasts; "attempts" records how many calls it took."""
+    to `retries` times while the budget lasts, after backoff_s x the attempt number (cut to
+    what is left of the budget); "attempts" records how many calls it took."""
     import concurrent.futures as cf
     import time as _t
     end = _t.monotonic() + budget_s
@@ -303,6 +357,8 @@ def answer_all(es, proxy, model, questions, pool=12, budget_s=30.0, retries=0):
                 ans, ids = tina_answer(es, proxy, model, q["text"], deadline=end)
             except Exception as e:
                 err = f"{type(e).__name__}: {str(e)[:150]}"
+                if n <= retries:
+                    _t.sleep(max(0.0, min(backoff_s * n, end - _t.monotonic() - 1.0)))
                 continue
             ok, hits = grade_answer(ans, q["gold"]) if q.get("gold") else (None, 0)
             return {"id": q["id"], "text": q["text"], "answer": ans, "retrieved": ids, "latency_s": round(_t.monotonic() - t, 1),

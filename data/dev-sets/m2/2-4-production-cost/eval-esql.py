@@ -16,7 +16,7 @@ for line in env.read_text().splitlines() if env.exists() else []:
         k, v = line.split("=", 1)
         os.environ.setdefault(k.strip(), v.strip())
 from elasticsearch import Elasticsearch
-from ara_cost import compare
+from ara_cost import compare, RemoteCallFailed
 
 saved = pathlib.Path("/home/elastic/esql-queries.json")
 if not saved.exists():
@@ -29,7 +29,10 @@ for d in dev:
     kind = d["type"]
     if not queries.get(kind):
         print(f"FAIL  {kind:13s} no query saved under '{kind}'"); continue
-    ok, msg = compare(es, kind, queries[kind], d.get("dev_parameters"))
+    try:
+        ok, msg = compare(es, kind, queries[kind], d.get("dev_parameters"))
+    except RemoteCallFailed as e:  # an outage, not your query
+        sys.exit(str(e))
     passed += ok
     print(f"{'PASS' if ok else 'FAIL'}  {kind:13s} {msg}")
 print(f"\n{passed} of {len(dev)} queries match the reference on the dev parameters.")
