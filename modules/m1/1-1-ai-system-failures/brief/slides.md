@@ -142,18 +142,18 @@ grounding          | ? / 6   ← your results will differ
 
 <h2 class="slide-heading">Decision rule</h2>
 <table class="rule-table">
-  <tr><th>Prompt element removed</th><th>Grounded pass rate drops most</th><th>Therefore</th></tr>
+  <tr><th>Your ablation</th><th>Therefore</th></tr>
   <tr>
-    <td>Element A</td><td>&#x2193; biggest drop</td><td>Element A was decisive</td>
+    <td>One element's removal drops grounded answers most</td><td>That element was decisive</td>
   </tr>
   <tr>
-    <td>Element B</td><td>&#x2193; smaller drop</td><td>Element B was not decisive</td>
+    <td>Two or more tie for the largest drop</td><td>Any one of them was decisive</td>
   </tr>
   <tr>
-    <td>Element C or D</td><td>&#x2193; smallest drop</td><td>Those were not decisive</td>
+    <td>No removal lowered the grounded count</td><td>No single element was decisive</td>
   </tr>
 </table>
-<p class="rule-caption">Which element is "A" depends on which one your prompt was missing. Your ablation results answer it, not general knowledge.</p>
+<p class="rule-caption">Take the first row that applies. Your ablation results answer it, not general knowledge.</p>
 
 ---
 
