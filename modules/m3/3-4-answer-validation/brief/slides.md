@@ -182,7 +182,7 @@ claim
 <div class="col-diagram">
   <div class="terminal-block">
 <span style="color:var(--yellow);">1  ungrounded figure</span>
-   retrieved 0.93 0.90 0.72
+   retrieved 0.99 0.97 0.72
    A: "the transfer was flagged at
        $48,250.00"
    the passages carry the transfer, not that
@@ -253,9 +253,9 @@ right diagnosis, wrong control
   failure   the answer named a figure no
             passage carries
   chosen    <span class="wrong">confidence fallback</span>
-  result    the result set scored 0.93, well
-            above any sensible threshold. The
-            hook never fires. The figure
+  result    the result set scored 0.99,
+            above the confidence threshold.
+            The hook never fires. The figure
             ships again.
 
   failure   the query was about exchange
