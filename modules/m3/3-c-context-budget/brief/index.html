@@ -480,16 +480,16 @@ body { background: var(--developer-blue); display: flex; flex-direction: column;
 # the start state, unchanged
 $ submit.py --limit 2
 
-  precision@10            <span class="wrong">0.400</span>
+  precision@10            <span class="wrong">0.383</span>
     (target 0.80 on the held-out set)
-    policy              0.400
+    policy              0.350
     case                <span class="wrong">0.150</span>
     sar                 0.650
-  peak context            <span class="wrong">9909 tokens</span>
+  peak context            <span class="wrong">9916 tokens</span>
     (budget 6000, ceiling per question)
   over budget             <span class="wrong">5 question(s)</span>
     (target zero)
-  unsupported claims      <span class="wrong">9</span>
+  unsupported claims      <span class="wrong">10</span>
     (target at most 1)
   unanswerable held back  <span class="wrong">0/2</span>
     (target all of them)
