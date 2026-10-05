@@ -62,7 +62,7 @@ Turn 3, Analyst: Is <span class="wrong">that</span> reportable?
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Three memory scopes</h2>
-  <p class="slide-body">"That account" in turn three needs <strong>working memory</strong>: it must survive across the conversation but not necessarily across sessions. The right scope avoids over-storing (full persistent) and under-storing (context-only).</p>
+  <p class="slide-body">"That account" in turn three needs <strong>working memory</strong>: it must survive the conversation, not necessarily across sessions. Scope is set by when the store is cleared, not where it lives. The right scope avoids over-storing (full persistent) and under-storing (context-only).</p>
 </div>
 
 ---

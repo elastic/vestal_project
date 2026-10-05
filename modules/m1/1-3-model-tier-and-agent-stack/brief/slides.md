@@ -155,7 +155,7 @@ Tina: Cortex Bank's internal threshold
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Your tool is a search</h2>
-  <p class="slide-body"><code>search_policies(query)</code> runs semantic search over <code>cortex-policies</code>. You write the schema and the dispatch. The harness in <code>/opt/ara/lib/tina/</code> handles the LLM loop.</p>
+  <p class="slide-body"><code>search_policies(query)</code> runs semantic search over <code>cortex-policies</code>. You write the schema, the dispatch and the loop that sends each result back to the model; the harness in <code>/opt/ara/lib/tina/</code> supplies the client and <code>ToolRegistry</code>.</p>
 </div>
 
 ---
