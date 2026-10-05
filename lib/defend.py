@@ -7,10 +7,15 @@ The learner runs: python3 /opt/ara/lib/defend.py
 Reads questions.json from /home/elastic/defend/questions.json, shows each
 question with computed options and the learner's measured numbers from
 /opt/ara/results/, validates the selection, writes decision.json to
-/home/elastic/defend/decision.json, and prints "Decision recorded. Select Check."
+/home/elastic/defend/decision.json, and prints "Decision recorded."
 
-It never says whether the answer is right. The truth table lives only in the
-private check script.
+It then runs the Defend check's own grading in feedback mode (spec 18 section
+1.8) through `sudo -n /opt/ara/checks/defend-feedback`, a root wrapper that
+takes no arguments and writes no grade. On a pass it prints the check's pass
+lines; on a fail, the check's fail message and how to change the answers;
+with no output (wrapper missing, outage, nothing to grade yet) it says
+"Select Check in the sidebar to continue." The truth table lives only in the
+private check script, which elastic cannot read.
 
 Supports two questions.json shapes for backward compatibility:
   New: {"questions": [...], "display_rules": {...}, ...}
