@@ -369,7 +369,7 @@
   },
   {
     "question_id": "q-case-009",
-    "text": "Looking across accounts with missing onboarding information, what was the unverified initial funding amount deposited by Zephyrine Underhill?",
+    "text": "Looking across accounts with missing onboarding information, what aggregate activity was conducted on the deficient file for Zephyrine Underhill?",
     "intent_label": "kyc_gap",
     "retrieval_pattern": "advanced",
     "intent": {
@@ -666,7 +666,7 @@
   },
   {
     "question_id": "q-case-016",
-    "text": "When examining accounts with sustained high-volume cash deposits kept under reporting limits, what was the total amount subsequently transferred by Wheatfield Commodities Enterprises LLC?",
+    "text": "When examining accounts with sustained high-volume cash deposits kept under reporting limits, what aggregate cash volume did Wheatfield Commodities Enterprises LLC deposit during the review period?",
     "intent_label": "structuring",
     "retrieval_pattern": "advanced",
     "intent": {

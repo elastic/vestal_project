@@ -165,7 +165,7 @@ the test, in order:
 precision@10, held-out queries
 (case type, risk tier, date window, combined)
 
-  unfiltered hybrid     <span class="wrong">0.505</span>
+  unfiltered hybrid     <span class="wrong">0.510</span>
   reference filters     <span style="color:var(--teal);">1.000</span>
   one clause per constraint
   </div>
@@ -248,7 +248,8 @@ a budget is a hard ceiling
 on the packed context
 
   budget          4,000 tokens
-                  (the smaller one)
+                  (the smaller one on
+                  some seeds)
   set B retrieved 5 passages
                   3,850 + 1,151 + 1,067
                   + 1,354 + 1,126
@@ -269,7 +270,7 @@ on the packed context
 <div class="col-text">
   <h2 class="slide-heading">Context budgets</h2>
   <p class="slide-body">Overrunning a budget is not a slightly larger bill. It is a truncated prompt, and the truncation lands wherever the text happened to end.</p>
-  <p class="slide-body">Two budgets are seeded for your sandbox: 4,000 and 12,000 tokens. The smaller one is a real constraint.</p>
+  <p class="slide-body">Two budgets are seeded for your sandbox: either 3,000 and 8,000 tokens, or 4,000 and 12,000. constraint.json has yours. The smaller one is a real constraint; the diagram uses 4,000.</p>
 </div>
 
 ---
@@ -282,7 +283,7 @@ on the packed context
 3 memos, about 400     5 passages, 1,067 to
 tokens                 3,850
 1,182 tokens in all    8,548 tokens in all
-fits either budget     overruns 4,000
+fits either budget     overruns 3,000/4,000
 whole
 
 rerank_top_n           rerank_top_n
@@ -336,7 +337,7 @@ summarize_first        summarize_first
     <span class="big-number-label">gold retention on held-out questions<br>no budget overrun</span>
   </div>
 </div>
-<p class="rule-caption" style="color:var(--dark-grey);">The mapping fingerprint from Build 1 has to still match when Build 2 is graded.</p>
+<p class="rule-caption" style="color:var(--dark-grey);">Tina also has to quote the gold figure from your packed context in 3 of the 4 sampled answers. The mapping fingerprint from Build 1 has to still match when Build 2 is graded.</p>
 
 ---
 
