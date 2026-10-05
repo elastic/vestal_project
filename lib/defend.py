@@ -305,6 +305,29 @@ def ask_question(q: dict, idx: int, total: int) -> tuple[str, str | int | float,
     return chosen_choice["key"], chosen_choice["value"], chosen_reason["key"]
 
 
+FEEDBACK_CMD = ["sudo", "-n", "/opt/ara/checks/defend-feedback"]
+
+
+def feedback() -> bool | None:
+    """Spec 18 section 1.8: grade the recorded decision with the Defend check's own code (run as
+    root through one sudoers entry) and print what Check would show. True on a pass (the rule
+    behind each answer, next to your numbers), False on a fail (the check's message for the first
+    inconsistent question, never why). None when the step is unavailable: Check still grades."""
+    import subprocess
+    try:
+        p = subprocess.run(FEEDBACK_CMD, capture_output=True, text=True, timeout=60,
+                           stdin=subprocess.DEVNULL)
+    except Exception:
+        return None
+    if p.returncode not in (0, 10) or not p.stdout.strip():
+        return None
+    print()
+    if p.returncode == 0:
+        print("Your answers are consistent with your measurements:")
+    print(p.stdout.rstrip())
+    return p.returncode == 0
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -350,7 +373,12 @@ def main() -> None:
 
     print()
     print("Decision recorded.")
-    print("Select Check in the sidebar to continue.")
+    passed = feedback()
+    print()
+    if passed is False:
+        print("Run python3 /opt/ara/lib/defend.py again to change your answers, then select Check.")
+    else:
+        print("Select Check in the sidebar to continue.")
 
 
 if __name__ == "__main__":
