@@ -543,7 +543,7 @@
   },
   {
     "question_id": "q-case-013",
-    "text": "In medium and high risk cases involving transfers to potentially restricted entities, what was the total value of the wires originated by Westmarch Exports Inc.?",
+    "text": "In medium and high risk cases involving transfers to potentially restricted entities, what aggregate value of screened transactions was under review for Westmarch Exports Inc.?",
     "intent_label": "sanctions",
     "retrieval_pattern": "advanced",
     "intent": {

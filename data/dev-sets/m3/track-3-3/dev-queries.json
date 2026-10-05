@@ -1354,7 +1354,7 @@
   },
   {
     "query_id": "dev-3-3-13",
-    "query_text": "In medium and high risk cases involving transfers to potentially restricted entities, what was the total value of the wires originated by Westmarch Exports Inc.?",
+    "query_text": "In medium and high risk cases involving transfers to potentially restricted entities, what aggregate value of screened transactions was under review for Westmarch Exports Inc.?",
     "relevant_ids": [
       "case-sanctions-009",
       "case-sanctions-010",

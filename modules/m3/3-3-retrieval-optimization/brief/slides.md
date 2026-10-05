@@ -270,7 +270,7 @@ on the packed context
 <div class="col-text">
   <h2 class="slide-heading">Context budgets</h2>
   <p class="slide-body">Overrunning a budget is not a slightly larger bill. It is a truncated prompt, and the truncation lands wherever the text happened to end.</p>
-  <p class="slide-body">Two budgets are seeded for your sandbox: either 3,000 and 8,000 tokens, or 4,000 and 12,000. constraint.json has yours. The smaller one is a real constraint; the diagram uses 4,000.</p>
+  <p class="slide-body">Your sandbox has two seeded budgets: either 3,000 and 8,000 tokens, or 4,000 and 12,000. constraint.json has yours. The smaller one always binds; on some seeds, so does the larger. The diagram uses 4,000.</p>
 </div>
 
 ---
@@ -283,8 +283,8 @@ on the packed context
 3 memos, about 400     5 passages, 1,067 to
 tokens                 3,850
 1,182 tokens in all    8,548 tokens in all
-fits either budget     overruns 3,000/4,000
-whole
+fits either budget     overruns 3,000, 4,000
+whole                  and 8,000
 
 rerank_top_n           rerank_top_n
   score, take whole      score, take whole
