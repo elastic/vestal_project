@@ -4,3 +4,4 @@
 {"decision_id":"dev-04","subject":"Dan Wilson","account":"#7788","decision":{"threshold":10000,"direction":"at or above","reportable":true},"has_error":false,"policy_ref":"policy-003"}
 {"decision_id":"dev-05","subject":"Erin Brooks","account":"#2468","decision":{"sar_deadline_days":30,"filing_required":true},"has_error":false,"policy_ref":"policy-011"}
 {"decision_id":"dev-06","subject":"Frank Osei","account":"#1357","decision":{"sar_deadline_days":60,"filing_required":true},"has_error":true,"error_type":"stale_value","policy_ref":"policy-011"}
+{"decision_id":"dev-07","subject":"Grace Okafor","account":"#9753","decision":{"threshold":10000,"direction":"above","reportable":true},"has_error":true,"error_type":"wrong_direction","policy_ref":"policy-003"}
