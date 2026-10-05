@@ -124,8 +124,8 @@ a declined answer
 <h2 class="slide-heading">Decision rule</h2>
 <table class="rule-table">
   <tr><th>Question</th><th>Read</th><th>The answer</th></tr>
-  <tr><td>Q1: guardrail that held back the most</td><td><code>held back by</code></td><td>Largest count; a tie accepts either. Nothing held back: no guardrail</td></tr>
-  <tr><td>Q2: class with the most context</td><td>averages under <code>peak context</code></td><td>Largest of the three. All three within 5%: no class</td></tr>
+  <tr><td>Q1: guardrail that held back the most</td><td><code>dev run held back by guardrail</code></td><td>Largest count; a tie accepts either. Nothing held back: no guardrail</td></tr>
+  <tr><td>Q2: class with the most context</td><td><code>dev run mean context tokens</code></td><td>Largest of the three. All three within 5%: no class</td></tr>
 </table>
 <p class="rule-caption">Your own measurements decide each row.</p>
 
