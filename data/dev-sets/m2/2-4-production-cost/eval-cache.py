@@ -38,5 +38,6 @@ s = score_sequence(recs, seq)
 print(f"\nThreshold {thr}. {s['correct']} of {s['of']} outcomes right; near-misses that missed: "
       f"{s['near_miss_ok']} of {s['near_miss_of']}; cache documents {docs} for {s['misses']} misses.")
 print(f"Hit rate on this sequence: {s['hit_rate']} (the Defend uses your held-out hit rate).")
-print(f"The check allows at most {T['max_wrong_outcomes']} wrong outcomes on its held-out sequence, "
+n = T["max_wrong_outcomes"]
+print(f"The check allows at most {n} wrong outcome{'' if n == 1 else 's'} on its held-out sequence, "
       "and needs every near-miss to miss and one document per miss.")
