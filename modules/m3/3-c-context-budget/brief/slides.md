@@ -125,9 +125,9 @@ a declined answer
 <table class="rule-table">
   <tr><th>Question</th><th>Read</th><th>The answer</th></tr>
   <tr><td>Q1: guardrail that held back the most</td><td><code>held back by</code></td><td>Largest count; a tie accepts either. Nothing held back: no guardrail</td></tr>
-  <tr><td>Q2: class with the most context</td><td>averages under <code>peak context</code></td><td>Largest average. All three within 5%: no class</td></tr>
+  <tr><td>Q2: class with the most context</td><td>averages under <code>peak context</code></td><td>Largest of the three. All three within 5%: no class</td></tr>
 </table>
-<p class="rule-caption">Your own measurements decide each row, from a full <code>submit.py</code> run of all 40 dev questions.</p>
+<p class="rule-caption">Your own measurements decide each row.</p>
 
 ---
 
