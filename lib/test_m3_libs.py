@@ -490,6 +490,33 @@ def test_support_recovers_on_retry():
     assert _support_with(fake) == "neutral" and fake.calls == 3
 
 
+class _FakeReply:
+    """es.inference stand-in that answers with a fixed completion text."""
+
+    def __init__(self, text):
+        self.text = text
+
+    def inference(self, **kwargs):
+        return {"completion": [{"result": self.text}]}
+
+
+def test_support_reads_the_leading_label():
+    """The verdict is the reply's leading word, matched exactly; an explanation that
+    uses the word "support" is not a supports verdict."""
+    cases = {
+        "supports": "supports", "Supports.": "supports", "  SUPPORTS\n": "supports",
+        '"supports"': "supports", "**Supports**": "supports", "`supports`": "supports",
+        "contradicts": "contradicts", "Contradicts.": "contradicts",
+        "contradicts; a shorter window would support it": "contradicts",
+        "neutral": "neutral",
+        "neutral\n\nThe passage does not support the claim.": "neutral",
+        "does not support": "neutral", "partially supports": "neutral",
+        "unsupported": "neutral", "support": "neutral", "": "neutral", "...": "neutral",
+    }
+    for reply, verdict in cases.items():
+        assert _support_with(_FakeReply(reply)) == verdict, (reply, verdict)
+
+
 def test_import_ara_metrics():
     import ara_metrics  # noqa: F401
 

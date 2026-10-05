@@ -123,6 +123,20 @@ def split_claims(answer: str) -> list[str]:
 
 # ── EIS-backed grounding check ────────────────────────────────────────────────
 
+SUPPORT_LABELS = ("supports", "contradicts", "neutral")
+
+
+def support_verdict(raw: str) -> str:
+    """The verdict in a support() reply: its leading word, after any whitespace,
+    punctuation, quotes or markdown, matched exactly against the three labels the
+    prompt asks for. A reply that leads with anything else ("neutral" explained with
+    the word support, "does not support", "partially supports") is neutral, never
+    supports. Kept identical in _ara34.py and vestal lib/ara_attrib.py."""
+    match = re.match(r"[^a-z]*([a-z]+)", (raw or "").lower())
+    word = match.group(1) if match else ""
+    return word if word in SUPPORT_LABELS else "neutral"
+
+
 def support(claim: str, passage: str, completion_id: str) -> str:
     """Check whether a passage supports, contradicts, or is neutral to a claim.
 
@@ -165,13 +179,7 @@ def support(claim: str, passage: str, completion_id: str) -> str:
             "task_settings": {"temperature": 0},
         },
     )
-    raw: str = (resp["completion"][0]["result"] or "").strip().lower()
-    if "support" in raw:
-        return "supports"
-    elif "contradict" in raw:
-        return "contradicts"
-    else:
-        return "neutral"
+    return support_verdict(resp["completion"][0]["result"] or "")
 
 
 # ── Attribution record ────────────────────────────────────────────────────────
