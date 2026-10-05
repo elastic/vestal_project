@@ -165,7 +165,7 @@ the test, in order:
 precision@10, held-out queries
 (case type, risk tier, date window, combined)
 
-  unfiltered hybrid     <span class="wrong">0.510</span>
+  unfiltered hybrid     <span class="wrong">0.515</span>
   reference filters     <span style="color:var(--teal);">1.000</span>
   one clause per constraint
   </div>
@@ -251,12 +251,12 @@ on the packed context
                   (the smaller one on
                   some seeds)
   set B retrieved 5 passages
-                  3,850 + 1,151 + 1,067
-                  + 1,354 + 1,126
-                  =  8,548 tokens
+                  3,860 + 1,151 + 1,374
+                  + 1,144 + 1,067
+                  =  8,596 tokens
 
   pack everything
-    sent          <span class="wrong">8,548 tokens, 4,548 over</span>
+    sent          <span class="wrong">8,596 tokens, 4,596 over</span>
     what arrives  the text up to the cut,
                   mid-passage
     the check     fails the overrun
@@ -270,7 +270,7 @@ on the packed context
 <div class="col-text">
   <h2 class="slide-heading">Context budgets</h2>
   <p class="slide-body">Overrunning a budget is not a slightly larger bill. It is a truncated prompt, and the truncation lands wherever the text happened to end.</p>
-  <p class="slide-body">Your sandbox has two seeded budgets: either 3,000 and 8,000 tokens, or 4,000 and 12,000. constraint.json has yours. The smaller one always binds; on some seeds, so does the larger. The diagram uses 4,000.</p>
+  <p class="slide-body">Your sandbox has two seeded budgets: either 3,000 and 8,000 tokens, or 4,000 and 12,000. constraint.json has yours. On set B the smaller budget always binds; the larger sometimes does. The diagram uses 4,000.</p>
 </div>
 
 ---
@@ -281,8 +281,8 @@ on the packed context
   <div class="terminal-block">
 <span style="color:var(--yellow);">SET A  short memos</span>     <span style="color:var(--yellow);">SET B  long passages</span>
 3 memos, about 400     5 passages, 1,067 to
-tokens                 3,850
-1,182 tokens in all    8,548 tokens in all
+tokens                 3,860
+1,182 tokens in all    8,596 tokens in all
 fits either budget     overruns 3,000, 4,000
 whole                  and 8,000
 
