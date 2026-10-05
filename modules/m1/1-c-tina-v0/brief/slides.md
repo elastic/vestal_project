@@ -51,7 +51,7 @@ Tina: ...triggers a structuring alert
 
 <div class="col-text">
   <h2 class="slide-heading">Three runs per question</h2>
-  <p class="slide-body">The same agent can answer a question correctly once and miss it the next time. <code>submit.py</code> runs each question <strong>3 times</strong> on the tier <code>choose_model</code> gives it. The check grades each question on a majority, <strong>2 of 3 runs</strong>, and reports how many runs were correct.</p>
+  <p class="slide-body">The same agent can answer a question correctly once and miss it the next time. The check runs your agent itself, each question <strong>3 times</strong> on the tier <code>choose_model</code> gives it. It grades each question on a majority, <strong>2 of 3 runs</strong>, and reports how many runs were correct.</p>
 </div>
 
 ---
