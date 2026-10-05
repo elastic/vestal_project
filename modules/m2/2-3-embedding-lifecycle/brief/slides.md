@@ -21,7 +21,7 @@ Q: money moved around to hide
    where it came from
 
 Tina today (cortex-corpus)
- 1  <span class="wrong">sar-109</span>
+ 1  sar-109
  2  <span class="wrong">sar-105</span>
  3  <span class="wrong">sar-116</span>
  4  <span class="wrong">sar-110</span>
@@ -45,7 +45,7 @@ sar-103  shell company
 query    <span class="wrong">none of those
          words</span>
   </div>
-  <p class="slide-body">Tina answers confidently from four other cases. A new embedding model might close the gap, or a rewrite of the query might. Build 1 and Build 3 measure each.</p>
+  <p class="slide-body">Tina answers from other cases and misses sar-103. A new embedding model might close the gap, or a rewrite of the query might. Build 1 and Build 3 measure each.</p>
 </div>
 
 ---
