@@ -318,6 +318,7 @@ right diagnosis, wrong control
 <!-- rule -->
 
 <h2 class="slide-heading">Decision rules</h2>
+<p class="rule-caption">Take the first row that applies.</p>
 <table class="rule-table">
   <tr><th>Failure mode</th><th>Guardrail</th><th>Where it runs</th></tr>
   <tr><td>Query outside the corpus</td><td>Scope restriction</td><td>Before retrieval</td></tr>
