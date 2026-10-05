@@ -19,7 +19,7 @@ def strategy_router(query: str, features: dict) -> str:
     features keys (booleans):
         has_filter_intent  names a case type, risk tier or date range
         asks_for_figure    asks for an amount, count or deadline
-        multi_hop          needs facts from more than one document
+        multi_hop          needs facts from separate documents, each needing its own search
         has_case_id        names a case reference
 
     Args:
