@@ -4,7 +4,7 @@ Usage:
   /home/elastic/.venv/bin/python /home/elastic/dev-sets/eval-rewrite.py
 
 It runs rewrite() from /home/elastic/rewrite.py on the dev queries, the same way the check
-does: in a separate process, one query at a time. It then runs Tina's keyword search on
+does: in a separate process, up to 8 queries at a time. It then runs Tina's keyword search on
 cortex-corpus-live with what rewrite() returned and reports whether the target document is among the first k
 distinct documents (k and the searched field come from thresholds.json, as in the check). It runs rewrite()
 three times (ARA_EVAL_ROUNDS to change) and shows the range, because a rewrite that calls a model varies run
