@@ -2442,7 +2442,8 @@ _KF_IMPLICIT_OWN_RE = re.compile(
 _KF_OTHER_ACCOUNT_RE = re.compile(
     r"external|another (?:domestic |foreign )?(?:financial )?institution|"
     r"separate (?:financial )?institution|foreign financial institution|"
-    r"receiving institution|correspondent|third[- ]party", re.IGNORECASE)
+    r"outside (?:financial )?institution|receiving institution|correspondent|"
+    r"third[- ]party", re.IGNORECASE)
 
 
 def _money(text: str) -> float:
