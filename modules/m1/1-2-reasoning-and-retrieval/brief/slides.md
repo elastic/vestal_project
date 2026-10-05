@@ -11,8 +11,8 @@
 <div class="col-left">
   <div class="terminal-block">
 Decision: {
-  "subject": "Sandra Park",
-  "threshold": <span class="wrong">5000</span>,
+  "subject": "Jordan Ellis",
+  "threshold": <span class="wrong">2500</span>,
   "direction": "<span class="wrong">above</span>",
   "reportable": false
 }
@@ -24,7 +24,7 @@ Policy-003:  threshold=10000,
 </div>
 <div class="col-right">
   <h2 class="slide-heading">The problem</h2>
-  <p class="slide-body">The decision is schema-valid. Both values are wrong. The CTR threshold is <strong>$10,000</strong>, not $5,000. The direction is <strong>"at or above"</strong>, not "above". Cortex files the wrong reports.</p>
+  <p class="slide-body">The decision is schema-valid. Both values are wrong. The CTR threshold is <strong>$10,000</strong>, not $2,500. The direction is <strong>"at or above"</strong>, not "above". Cortex files the wrong reports.</p>
 </div>
 
 ---
@@ -36,14 +36,14 @@ Policy-003:  threshold=10000,
     <tr><th>A reasoning trace</th></tr>
     <tr><td>1. Retrieve policy-003 from index</td></tr>
     <tr><td>2. Parse threshold: $10,000</td></tr>
-    <tr class="correct"><td>3. Compare: $9,500 <span class="wrong">above</span> $10,000 → false ✗</td></tr>
+    <tr class="correct"><td>3. Compare: $10,000 <span class="wrong">above</span> $10,000 → false ✗</td></tr>
     <tr><td>4. Set reportable: false</td></tr>
     <tr><td>5. Return decision JSON</td></tr>
   </table>
 </div>
 <div class="col-text">
   <h2 class="slide-heading">A reasoning trace, step by step</h2>
-  <p class="slide-body">Step 3 uses the wrong comparison operator. "Above" excludes the boundary. "At or above" includes it. The schema says nothing about which operator is correct.</p>
+  <p class="slide-body">Step 3 uses the wrong operator. At exactly $10,000, "above" gives false; "at or above" gives true. The schema says nothing about which operator is correct.</p>
 </div>
 
 ---
@@ -71,7 +71,7 @@ Policy-003:  threshold=10000,
 <div class="col-diagram">
   <img src="../../../../brief/img/library/index.svg" alt="cortex-policies Elasticsearch index" style="max-height:180px;max-width:180px;min-width:0;">
   <div style="text-align:center;font-family:var(--font-code);font-size:13px;margin-top:8px;color:var(--dark-grey);">cortex-policies</div>
-  <div style="text-align:center;font-size:13px;margin-top:4px;color:var(--ink);">19 policy documents<br>+ risk-scoring reference</div>
+  <div style="text-align:center;font-size:13px;margin-top:4px;color:var(--ink);">18 policy documents<br>+ risk-scoring reference</div>
 </div>
 <div class="col-text">
   <h2 class="slide-heading">The source is in Elasticsearch</h2>
@@ -86,7 +86,7 @@ Policy-003:  threshold=10000,
   <div style="display:flex;flex-direction:column;gap:12px;padding:16px;">
     <div style="background:var(--light-teal);border-radius:8px;padding:12px;text-align:center;">
       <div style="font-family:var(--font-code);font-size:12px;color:var(--developer-blue);">Index update</div>
-      <div style="font-family:var(--font-code);font-size:22px;font-weight:700;color:var(--developer-blue);">~1–3 s</div>
+      <div style="font-family:var(--font-code);font-size:22px;font-weight:700;color:var(--developer-blue);">~3–5 s</div>
       <div style="font-size:12px;color:var(--developer-blue);">Next query sees new value</div>
     </div>
     <div style="font-size:13px;text-align:center;color:var(--dark-grey);">POST /cortex-policies/_update/policy-003-1 → refresh → search</div>
