@@ -151,7 +151,7 @@ answer is passage 1
 <div class="col-text">
   <h2 class="slide-heading">Passages, not documents</h2>
   <p class="slide-body">Only the unit of retrieval changed. Retrieving a document bets that the whole document is relevant. Retrieving a section makes that bet one section at a time.</p>
-  <p class="slide-body">The same answer, for 6 percent of the tokens.</p>
+  <p class="slide-body">Passages cost about 6 percent of the tokens but sometimes miss the right section. Whole narratives find it but overrun your budget in most buckets. A fact index gets both.</p>
 </div>
 
 ---
