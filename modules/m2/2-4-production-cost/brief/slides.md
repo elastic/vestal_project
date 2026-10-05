@@ -123,7 +123,7 @@ Defend    savings and routing,
   <tr><td>Below 0.8, or nothing sent fast</td><td>Route nothing to the fast tier</td></tr>
   <tr><td>Always</td><td>Multi-part analysis goes to the strong tier</td></tr>
 </table>
-<p class="rule-caption">First match wins. Savings = <code>floor(daily volume × hit rate × cost per call in cents / 100)</code></p>
+<p class="rule-caption">Rows are independent. Savings = <code>floor(daily volume × hit rate × cost per call in cents / 100)</code></p>
 
 ---
 

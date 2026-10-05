@@ -64,8 +64,8 @@ hybrid_rerank hybrid, then   both queries
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Four strategies</h2>
-  <p class="slide-body">Exact words win on identifiers. Meaning wins on questions in the analyst's own words. Hybrid serves both. A reranker reads the question and each passage together, so it can separate two rules that differ by one detail.</p>
-  <p class="slide-body">Every stage adds latency. Measure each one on your corpus before you assume it is worth the cost.</p>
+  <p class="slide-body">Exact words win on identifiers. Meaning wins on questions in the analyst's words. Hybrid hedges between the two; it can trail the stronger leg on your corpus. A reranker reads question and passage together, so it separates two rules that differ by one detail.</p>
+  <p class="slide-body">Every stage adds latency. Measure each on your corpus before you pay for it.</p>
 </div>
 
 ---

@@ -36,7 +36,7 @@ Loan Layering [sar-109] ..."
 </div>
 <div class="col-right">
   <h2 class="slide-heading">The problem</h2>
-  <p class="slide-body">The cause: the analyst's words are not the case's words.</p>
+  <p class="slide-body">The cause: the analyst's words are not the case's words. Keyword search needs them, and the current model's semantic match ranks other cases first.</p>
   <div class="terminal-block">
 sar-103  shell company
          layering and
@@ -45,7 +45,7 @@ sar-103  shell company
 query    <span class="wrong">none of those
          words</span>
   </div>
-  <p class="slide-body">Tina answers from other cases and misses sar-103. A new embedding model might close the gap, or a rewrite of the query might. Build 1 and Build 3 measure each.</p>
+  <p class="slide-body">Tina answers from other cases and misses sar-103. A new embedding model might close the semantic gap (Build 1). A query rewrite can give keyword search the case's words (Build 3).</p>
 </div>
 
 ---
