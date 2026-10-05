@@ -746,9 +746,9 @@ right diagnosis, wrong control
 <h2 class="slide-heading">Decision rules</h2>
 <table class="rule-table">
   <tr><th>Failure mode</th><th>Guardrail</th><th>Where it runs</th></tr>
-  <tr><td>Ungrounded figure</td><td>Output validation</td><td>After generation</td></tr>
-  <tr><td>Low retrieval confidence</td><td>Confidence fallback</td><td>After retrieval</td></tr>
   <tr><td>Query outside the corpus</td><td>Scope restriction</td><td>Before retrieval</td></tr>
+  <tr><td>Low retrieval confidence</td><td>Confidence fallback</td><td>After retrieval</td></tr>
+  <tr><td>Ungrounded figure</td><td>Output validation</td><td>After generation</td></tr>
   <tr><td>Two passages support a claim</td><td>Cite the policy passage</td><td>In attribution</td></tr>
 </table>
 <p class="rule-caption">One mode, one guardrail. A right diagnosis with the wrong guardrail is wrong.</p>
