@@ -29,12 +29,11 @@ Tina: ...triggers a structuring alert
       fuzzy-match threshold of **85%**.
 
 <span class="label"># tools registered: 0   tool calls: 0</span>
-<span class="label"># policy-001: $12,500   policy-006: 72 percent</span>
   </div>
 </div>
 <div class="col-right">
   <h2 class="slide-heading">The problem</h2>
-  <p class="slide-body">Today Tina has no tools. Asked a held-out question on the fast tier, she answered with confidence and got both figures wrong. Neither came from a Cortex policy.</p>
+  <p class="slide-body">Today Tina has no tools. Asked a held-out question on the fast tier, she answered with confidence and got both figures wrong. She called no tool; both figures belong to other Cortex rules, not the ones asked.</p>
 </div>
 
 ---
