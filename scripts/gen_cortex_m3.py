@@ -2411,6 +2411,192 @@ def _parse_prose_date(text: str):
     return (int(m.group(3)), _MONTHS.index(m.group(1)) + 1, int(m.group(2)))
 
 
+# ── Within-document coherence checks (corpus repair, 2026-10-05) ─────────────
+#
+# The T9 checks above prove each gold literal is unique and present in its own
+# Key Finding.  They say nothing about whether the rest of the narrative agrees
+# with that Key Finding.  These checks cover the contradictions a reader (or an
+# agent answering from retrieved passages) can hit: a Key Finding figure larger
+# than the activity the header says was reviewed, a gold date outside the review
+# period, an onward transfer larger than the unrecovered remainder it came from,
+# and a Key Finding account described as the subject's own although the header
+# does not list it.
+
+_SAR_AMOUNT_RE = re.compile(r"\$\d[\d,]*\.\d{2}\b")
+_SAR_DATE_RE = re.compile(r"(?:%s) \d{1,2}, \d{4}" % "|".join(
+    ["January", "February", "March", "April", "May", "June", "July", "August",
+     "September", "October", "November", "December"]))
+# Explicit phrases that make a Key Finding account the subject's or the filing
+# bank's own deposit account.  "subject's primary operating account" is the
+# same claim as "subject's account", so up to two words may sit between.
+_KF_OWN_ACCOUNT_RE = re.compile(
+    r"Cortex Bank and Trust account|subject's (?:\w+ ){0,2}account", re.IGNORECASE)
+# Implicit ownership: the account is called an operating or holding account, or
+# a subject is named in the same sentence.  Warn-level, because a bank's own
+# holding account credited "for further credit to" a subject is a valid role.
+_KF_IMPLICIT_OWN_RE = re.compile(
+    r"Cortex Bank and Trust (?:holding |suspense )?account|operating account|"
+    r"which received the|holding account for|the subject account", re.IGNORECASE)
+# Descriptors that place a Key Finding account outside the subjects' own
+# accounts at the filing bank.
+_KF_OTHER_ACCOUNT_RE = re.compile(
+    r"external|another (?:domestic |foreign )?(?:financial )?institution|"
+    r"separate (?:financial )?institution|foreign financial institution|"
+    r"outside (?:financial )?institution|receiving institution|correspondent|"
+    r"third[- ]party", re.IGNORECASE)
+
+
+def _money(text: str) -> float:
+    return float(text.replace("$", "").replace(",", ""))
+
+
+def _sar_sentences(text: str) -> list:
+    return [x for x in re.split(r"(?<=[.!?])\s+|\n+", text) if x.strip()]
+
+
+def _sar_prose_sections(sar: dict) -> list:
+    """(title, body) for every section except the header, the Key Finding and
+    the exhibits, read back from the assembled body."""
+    out = []
+    for chunk in sar["body"].split("\n## ")[1:]:
+        title, _, body = chunk.partition("\n\n")
+        if title == "Key Finding" or title.startswith("Exhibit"):
+            continue
+        out.append((title, body))
+    return out
+
+
+def sar_coherence_checks(sars: list, check, warn, name_res=None) -> None:
+    print("\n=== Key Finding agrees with the rest of the narrative ===")
+    over_agg, out_of_period, over_residual, own_acct, own_acct_soft = [], [], [], [], []
+    for s in sars:
+        header = s["body"].split("\n## ")[0]
+        gold = _money(s["gold_amount"])
+        m = re.search(r"Aggregate amount of activity reviewed: (\$[\d,]+\.\d{2})", header)
+        if m and gold > _money(m.group(1)):
+            over_agg.append("%s %s > %s" % (s["doc_id"], s["gold_amount"], m.group(1)))
+        m = re.search(r"Review period: (.+?) through (.+)", header)
+        if m:
+            lo, hi = _parse_prose_date(m.group(1)), _parse_prose_date(m.group(2))
+            g = tuple(int(x) for x in s["gold_date_iso"].split("-"))
+            if not lo <= g <= hi:
+                out_of_period.append("%s %s outside %s - %s"
+                                     % (s["doc_id"], s["gold_date"], m.group(1), m.group(2)))
+        # Wire fraud: the unrecovered remainder bounds any onward movement of the
+        # diverted funds.  The residual is the figure named in "residual" /
+        # "unrecoverable" sentences, the frozen sum the figure in "frozen" /
+        # "freeze" sentences.  The bound applies only where the Key Finding
+        # amount could be a portion of that wire (gold < frozen + residual); a
+        # Key Finding about a separate, larger transfer is bounded by the
+        # aggregate check instead.
+        if s["case_type"] == "wire_fraud":
+            res, frz = {}, {}
+            for _, body in _sar_prose_sections(s):
+                for sent in _sar_sentences(body):
+                    amts = _SAR_AMOUNT_RE.findall(sent)
+                    if len(amts) != 1:
+                        continue
+                    if re.search(r"residual|unrecover", sent, re.IGNORECASE):
+                        res[amts[0]] = res.get(amts[0], 0) + 1
+                    elif re.search(r"frozen|freez", sent, re.IGNORECASE):
+                        frz[amts[0]] = frz.get(amts[0], 0) + 1
+            if res and frz:
+                r_amt = max(res, key=res.get)
+                f_amt = max((a for a in frz if a != r_amt), key=frz.get, default=None)
+                if f_amt and gold < _money(r_amt) + _money(f_amt) and gold > _money(r_amt):
+                    over_residual.append("%s %s > residual %s" % (s["doc_id"], s["gold_amount"], r_amt))
+        acct = s.get("gold_account")
+        if acct and acct not in header:
+            subjects = re.findall(r"^  (.+?) \((?:individual|business)\), account", header, re.M)
+            sents = " ".join(x for x in _sar_sentences(s["key_finding"]) if acct in x)
+            other = _KF_OTHER_ACCOUNT_RE.search(sents)
+            if _KF_OWN_ACCOUNT_RE.search(sents) and not other:
+                own_acct.append("%s %s" % (s["doc_id"], acct))
+            elif not other and (_KF_IMPLICIT_OWN_RE.search(sents)
+                                or any(n in sents for n in subjects)):
+                own_acct_soft.append("%s %s" % (s["doc_id"], acct))
+    check("gold_amount_not_above_header_aggregate", not over_agg, "; ".join(over_agg))
+    check("gold_date_inside_review_period", not out_of_period, "; ".join(out_of_period))
+    check("onward_transfer_not_above_residual_loss", not over_residual, "; ".join(over_residual))
+    check("kf_account_not_called_the_subjects_or_banks_own", not own_acct,
+          "; ".join(own_acct))
+    warn("kf_account_role_stated", not own_acct_soft,
+         "%d not in the header, implied to be a subject's, not described as held elsewhere: %s"
+         % (len(own_acct_soft), "; ".join(own_acct_soft)))
+
+    # Same figure narrated with different dates or counterparties: one event
+    # told several ways.  Warn only; the gold amount itself never appears
+    # outside the Key Finding (T9).
+    co_re = name_res[0] if name_res else None
+    multi = []
+    for s in sars:
+        info = {}
+        for _, body in _sar_prose_sections(s):
+            for sent in _sar_sentences(body):
+                amts = _SAR_AMOUNT_RE.findall(sent)
+                if len(amts) != 1:
+                    continue
+                i = info.setdefault(amts[0], {"n": 0, "dates": set(), "ents": set()})
+                i["n"] += 1
+                i["dates"].update(_SAR_DATE_RE.findall(sent))
+                if co_re:
+                    i["ents"].update(x for x in co_re.findall(sent) if x != s["subject_name"])
+        bad = [a for a, i in info.items()
+               if i["n"] >= 2 and (len(i["dates"]) > 1 or len(i["ents"]) > 1)]
+        if bad:
+            multi.append("%s (%d figures)" % (s["doc_id"], len(bad)))
+    warn("same_figure_one_date_and_counterparty", not multi,
+         "%d narratives: %s" % (len(multi), ", ".join(multi)))
+
+    # Competing literal: a non-Key-Finding sentence that carries another literal
+    # of the asked kind and shares as many distinctive question words as the
+    # Key Finding sentence holding the gold.  Lexical and warn-only; the release
+    # gate for this is the LLM content screen.
+    stop = set("what which when where while that this those these with from into "
+               "over under about after before during their there have been were "
+               "does across among amount figure value total files file desk record "
+               "recorded report filing matter review period account accounts sum "
+               "show list pull specific date name entity investigation subject".split())
+
+    def stem(w):
+        for suf in ("ations", "ation", "ings", "ing", "ed", "es", "s"):
+            if w.endswith(suf) and len(w) - len(suf) >= 4:
+                return w[:-len(suf)]
+        return w
+
+    def words(t):
+        return {stem(w) for w in re.findall(r"[a-z]+", t.lower()) if len(w) >= 4 and w not in stop}
+
+    import math
+    competing = []
+    for s in sars:
+        prose = [x for _, b in _sar_prose_sections(s) for x in _sar_sentences(b)]
+        kfs = _sar_sentences(s["key_finding"])
+        df = {}
+        for x in prose + kfs:
+            for w in words(x):
+                df[w] = df.get(w, 0) + 1
+        n = len(prose) + len(kfs)
+        for q in s["questions"]:
+            qw = words(q["text"].replace(s["subject_name"], "")) - words(s["subject_name"])
+            score = lambda x: sum(math.log((n + 1) / (1 + df.get(w, 0))) for w in qw & words(x))
+            g = max([score(x) for x in kfs if q["gold_literal"] in x] or [0])
+            for x in prose:
+                if q["literal_kind"] == "amount":
+                    lits = _SAR_AMOUNT_RE.findall(x)
+                elif q["literal_kind"] == "date":
+                    lits = _SAR_DATE_RE.findall(x)
+                else:
+                    lits = [e for e in (co_re.findall(x) if co_re else [])
+                            if e != s["subject_name"]]
+                if any(l != q["gold_literal"] for l in lits) and g > 0 and score(x) >= g:
+                    competing.append(q["question_id"])
+                    break
+    warn("no_competing_literal_scores_with_the_gold_sentence", not competing,
+         "%d of %d questions (lexical screen; see the LLM screen): %s"
+         % (len(competing), sum(len(s["questions"]) for s in sars), ", ".join(competing)))
+
+
 def validate(sars: list, passages: list, investigations: list, facts: list,
              cases: list, case_questions: list, dev_sets: dict = None,
              verbose: bool = True) -> dict:
@@ -2608,7 +2794,9 @@ def validate(sars: list, passages: list, investigations: list, facts: list,
         known_docs = {d["doc_id"] for _, d in all_docs}
         expected = {"track-3-1/dev-queries-sar": 40,
                     "track-3-1/dev-queries-investigations": 8,
-                    "track-3-3/dev-queries": 20,
+                    # 20 drawn from the case-question bank plus 6 authored for
+                    # the measured filter-query shapes (vestal eda0012).
+                    "track-3-3/dev-queries": 26,
                     "track-3-4/dev-claim-questions": 10}
         for name, rows in sorted(dev_sets.items()):
             if name in expected:
@@ -2648,11 +2836,27 @@ def validate(sars: list, passages: list, investigations: list, facts: list,
                         if q["question_id"] not in inv_used)
         check("at_least_10_heldout_investigation_questions_remain", inv_spare >= 10,
               "spare=%d" % inv_spare)
-        dev_33_ids = {q["question_id"]
-                      for q in (dev_sets.get("track-3-3/dev-queries") or [])}
-        check("at_least_20_heldout_case_questions_remain",
-              len(case_questions) - len(dev_33_ids) >= 20,
-              "spare=%d" % (len(case_questions) - len(dev_33_ids)))
+        # Track 3.3's held-out filter and packing queries are authored in the
+        # track (private/heldout/03-filter-queries.json, q-hld-3-3-*), not
+        # drawn from this bank, so the old "20 bank questions left for the
+        # held-out set" count no longer measures anything.  What still matters
+        # is that every dev query taken from the bank still matches it.
+        bank_by_id = {q["question_id"]: q for q in case_questions}
+        drift = []
+        for q in (dev_sets.get("track-3-3/dev-queries") or []):
+            qid = q.get("question_id") or ""
+            if not qid.startswith("q-case-"):
+                continue
+            b = bank_by_id.get(qid)
+            if b is None or b.get("gold_literal") != q.get("gold_literal"):
+                drift.append(qid)
+        check("devset_3_3_bank_questions_resolve_to_the_case_question_bank", not drift,
+              ",".join(drift[:5]))
+
+    co_re = re.compile(r"(?:%s) (?:%s) (?:%s)" % (
+        "|".join(map(re.escape, COMPANY_FIRST)), "|".join(map(re.escape, COMPANY_CORE)),
+        "|".join(map(re.escape, sorted(COMPANY_SUFFIX, key=len, reverse=True)))))
+    sar_coherence_checks(sars, check, warn, (co_re,))
 
     print("\n=== retired names and vendor tokens ===")
     hits = []
