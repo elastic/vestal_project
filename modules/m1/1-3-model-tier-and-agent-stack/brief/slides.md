@@ -173,7 +173,7 @@ Tina: Cortex Bank's internal threshold
 </div>
 <div class="col-text">
   <h2 class="slide-heading">What each stage cannot do</h2>
-  <p class="slide-body">The Defend asks which gap applied at each stage. Your recorded trace confirms it.</p>
+  <p class="slide-body">The Defend asks which gap applied at each stage. Your Build 2 results confirm it.</p>
 </div>
 
 ---
@@ -187,7 +187,7 @@ Tina: Cortex Bank's internal threshold
   <tr><td>Data residency</td><td>Strong tier: fast has no EU region</td></tr>
   <tr><td>Cost ceiling $0.40 per 1,000</td><td>Under the ceiling; if both or neither, cheaper</td></tr>
   <tr><td>Completion-token ceiling 200 per reply</td><td>Under the ceiling; if both, cheaper; if neither, fewer tokens</td></tr>
-  <tr><td>Stage gaps</td><td>What the stage before could not do, per your traces</td></tr>
+  <tr><td>Stage gaps</td><td>What the stage before could not do, per your Build 2 results</td></tr>
 </table>
 <p class="rule-caption">Your own measurements decide each row.</p>
 
@@ -207,7 +207,7 @@ Tina: Cortex Bank's internal threshold
   </div>
   <div class="done-item">
     <span class="big-number">4</span>
-    <span class="big-number-label">stage traces<br>grounded from stage 2</span>
+    <span class="big-number-label">stages built<br>grounded from stage 2</span>
   </div>
 </div>
 
