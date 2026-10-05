@@ -87,7 +87,7 @@ for q in QS:
     print(f"  {ok(r['ok'])}  {q['query_id']:7s} {q['class']:9s} {why}")
     print(f"        {q['query_text']}")
 
-s = summarize(results)
+s = summarize(results, budget=T["budget_tokens"])
 print()
 # Units and each class pass on the dev set at the same rate the check requires on the held-out set.
 U = T["units"]

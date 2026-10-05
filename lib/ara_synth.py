@@ -39,8 +39,8 @@ def generate_transactions(seed: str, count: int = 2000, anchor: datetime | None 
       flagged: bool  (True for risk_tier in {high, critical})
       timestamp: ISO-8601 UTC, spread over the 90 days ending at `anchor`
 
-    18 §2.1 (2.4-3): `anchor` defaults to now (provisioning time), so the dev and
-    held-out windows (30 and 14 days back from NOW()) always contain rows. The seed
+    18 §2.1 (2.4-3): `anchor` defaults to now (provisioning time), so the query windows
+    (dev: 30 days back from NOW(); held-out: set in heldout/) always contain rows. The seed
     still decides every other field.
     """
     rng = random.Random(hashlib.md5(seed.encode()).hexdigest())

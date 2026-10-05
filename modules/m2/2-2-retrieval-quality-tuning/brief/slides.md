@@ -18,7 +18,8 @@ minutes: 8 -->
 <div class="col-left">
   <div class="terminal-block">
 Q: WF-2026-0803A
-   (the case number of wire-fraud-202)
+   (from wire-fraud-202's case
+    number, MTB-WF-2026-0803A)
 
 by meaning (Tina today)   168 ms
  1  <span class="wrong">wire-fraud-204</span>

@@ -40,7 +40,7 @@ complete answer to your question. [...]
   <div class="terminal-block">
 | Tier 5: Medium-High Risk
 | $2,500,001.00 to
-| $10,000,000.00
+  $10,000,000.00
 | <span class="wrong">Maximum of</span>   &lt;- chunk ends
   </div>
   <p class="slide-body">The rest of the row (100 transactions a day, a Level 3 Senior Analyst review, an 8-hour SLA) sits in the next chunk, which ranked outside her top 5. The document holds the answer. The chunking cut it in half.</p>
