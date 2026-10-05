@@ -100,7 +100,7 @@
   },
   {
     "query_id": "dev-3-1-router-10",
-    "query_text": "Compare the outcomes of the two structuring investigations that were referred to FinCEN.",
+    "query_text": "Compare the beneficiaries in the two high-risk investigations that were referred to FinCEN.",
     "features": {
       "has_filter_intent": true,
       "asks_for_figure": false,
@@ -111,7 +111,7 @@
   },
   {
     "query_id": "dev-3-1-router-11",
-    "query_text": "Which of the two wire fraud investigations opened in November involved the larger amount, and by how much?",
+    "query_text": "Which of the two medium-risk wire fraud investigations opened in November involved the larger amount, and by how much?",
     "features": {
       "has_filter_intent": true,
       "asks_for_figure": true,
@@ -133,7 +133,7 @@
   },
   {
     "query_id": "dev-3-1-router-13",
-    "query_text": "Case reference sar-031: what did the follow-up investigation conclude?",
+    "query_text": "Case reference FIU-WIRE-2415: what did the investigation conclude?",
     "features": {
       "has_filter_intent": false,
       "asks_for_figure": false,
@@ -144,7 +144,7 @@
   },
   {
     "query_id": "dev-3-1-router-14",
-    "query_text": "Pull the report for investigation inv-2024-0117 and list the accounts it froze.",
+    "query_text": "Pull the report for investigation FIU-WIRE-2416 and list the accounts where funds were frozen.",
     "features": {
       "has_filter_intent": false,
       "asks_for_figure": false,

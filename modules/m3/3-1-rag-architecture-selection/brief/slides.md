@@ -161,11 +161,11 @@ answer is passage 1
 <div class="col-diagram">
   <div class="terminal-block">
 RAW REPORT     PRE-COMPUTED FACT RECORD
-inv-2024-0083  inv-2024-0083
+FIU-WIRE-2413  FIU-WIRE-2413
 -------------  ---------------------------
 9 sections of  { "summary":          ...
 prose            "key_entities":     [..]
-4,860 tokens     "amounts":          [..]
+4,902 tokens     "amounts":          [..]
 every question   "dates":            [..]
 re-reads all     "answers_questions":[..]
 of it            "topics":           [..] }
@@ -196,7 +196,7 @@ strategy_router(query, features)
 
 features on every query:
   has_filter_intent
-    "tier 3 sanctions cases"
+    "high-risk sanctions cases"
   asks_for_figure
     "what amount was wired"
   multi_hop
@@ -220,7 +220,7 @@ your order decides which wins.
 
 <div class="col-diagram">
   <div class="terminal-block">
-Q "tier 3 sanctions cases filed this quarter"
+Q "high-risk sanctions cases this quarter"
   routed   naive        should be   advanced
   got      5 structuring memos mentioning
            sanctions
