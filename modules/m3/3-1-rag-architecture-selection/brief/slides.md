@@ -251,7 +251,7 @@ Q "how much was wired in the investigation
 <p class="rule-caption">Take the first row that applies.</p>
 <table class="rule-table">
   <tr><th>Characteristic</th><th>Pattern</th><th>Reason</th></tr>
-  <tr><td>Facts from two or more documents</td><td>agentic</td><td>Hop two depends on hop one</td></tr>
+  <tr><td>Facts from separate documents, each needing its own search</td><td>agentic</td><td>Hop two depends on hop one</td></tr>
   <tr><td>Query names a case reference, case type, risk tier, or date</td><td>advanced</td><td>Metadata clause cuts contamination</td></tr>
   <tr><td>Query asks for a figure</td><td>advanced</td><td>Rerank puts the passage with the figure first</td></tr>
   <tr><td>Single-hop lookup, one document</td><td>naive</td><td>No filter, no second hop</td></tr>
