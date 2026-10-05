@@ -111,7 +111,7 @@
   },
   {
     "query_id": "dev-3-1-router-11",
-    "query_text": "Which of the two medium-risk wire fraud investigations opened in November involved the larger amount, and by how much?",
+    "query_text": "Which of the two medium-risk wire fraud investigations that are still ongoing involved the larger amount, and by how much?",
     "features": {
       "has_filter_intent": true,
       "asks_for_figure": true,
