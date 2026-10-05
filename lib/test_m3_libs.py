@@ -503,15 +503,18 @@ class _FakeReply:
 
 
 def test_support_reads_the_leading_label():
-    """The verdict is the reply's leading word (after an optional "Verdict:" label),
-    stem-matched: support* is supports, contradict* is contradicts. An explanation
-    that uses the word "support" later on is not a supports verdict."""
+    """The verdict is the reply's leading word (after an optional "Verdict:" or
+    "Answer:" label), stem-matched: support* is supports, contradict* is contradicts.
+    An explanation that uses the word "support" later on is not a supports verdict."""
     cases = {
         "supports": "supports", "Supports.": "supports", "  SUPPORTS\n": "supports",
         '"supports"': "supports", "**Supports**": "supports", "`supports`": "supports",
         "Supported": "supports", "Support": "supports", "support": "supports",
         "Verdict: supports": "supports", "**Verdict:** supports": "supports",
         "verdict - Supported.": "supports",
+        "Answer: supports": "supports", "**Answer:** Supported": "supports",
+        "Answer: Contradicted": "contradicts", "Answer: neutral": "neutral",
+        "Final verdict: supports": "neutral",
         "contradicts": "contradicts", "Contradicts.": "contradicts",
         "Contradicted": "contradicts", "Contradict": "contradicts",
         "Verdict: contradicts": "contradicts",

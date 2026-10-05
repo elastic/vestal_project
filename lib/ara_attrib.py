@@ -128,13 +128,13 @@ SUPPORT_LABELS = ("supports", "contradicts", "neutral")
 
 def support_verdict(raw: str) -> str:
     """The verdict in a support() reply: its leading word, after any whitespace,
-    punctuation, quotes or markdown and an optional "Verdict:" label. A leading word
-    that starts with "support" ("supports", "Supported", "Support") is supports; one
-    that starts with "contradict" is contradicts. Anything else ("neutral", or
-    "neutral" explained with the word support, "does not support", "partially
-    supports", "unsupported") is neutral, never supports. Kept identical in
-    _ara34.py and vestal lib/ara_attrib.py."""
-    match = re.match(r"[^a-z]*(?:verdict[^a-z]+)?([a-z]+)", (raw or "").lower())
+    punctuation, quotes or markdown and an optional "Verdict:" or "Answer:" label.
+    A leading word that starts with "support" ("supports", "Supported", "Support")
+    is supports; one that starts with "contradict" is contradicts. Anything else
+    ("neutral", or "neutral" explained with the word support, "does not support",
+    "partially supports", "unsupported", "Final verdict: supports") is neutral,
+    never supports. Kept identical in _ara34.py and vestal lib/ara_attrib.py."""
+    match = re.match(r"[^a-z]*(?:(?:verdict|answer)[^a-z]+)?([a-z]+)", (raw or "").lower())
     word = match.group(1) if match else ""
     if word.startswith("support"):
         return "supports"
