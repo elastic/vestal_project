@@ -220,11 +220,11 @@ your order decides which wins.
 
 <div class="col-diagram">
   <div class="terminal-block">
-Q "high-risk sanctions cases this quarter"
-  routed   naive        should be   advanced
-  got      5 structuring memos mentioning
-           sanctions
-  answer   <span class="wrong">WRONG</span>
+Q "Case reference FIU-WIRE-2415: what did
+   the investigation conclude?"
+  routed   agentic      should be   advanced
+  cost     the search loop, <span class="wrong">up to 3 calls</span>,
+           for one filtered lookup
 
 Q "how much was wired in the investigation
    opened the same day as FIU-WIRE-2421?"
@@ -238,7 +238,8 @@ Q "how much was wired in the investigation
 <div class="col-text">
   <h2 class="slide-heading">Where Tina picks wrong</h2>
   <p class="slide-body">Under-routing costs accuracy: the filter or the second hop never happens, and the answer is wrong or incomplete.</p>
-  <p class="slide-body">Over-routing costs tokens and latency: a single-hop policy lookup sent through the agentic loop pays for searches it does not need.</p>
+  <p class="slide-body">Over-routing costs tokens and latency: Tina loops on a lone case reference when one filtered lookup finds the report.</p>
+  <p class="slide-body">agentic is never right for a single-hop lookup. naive is never right where a filter is named.</p>
 </div>
 
 ---

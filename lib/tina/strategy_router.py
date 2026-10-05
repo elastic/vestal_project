@@ -1,10 +1,11 @@
 """
 tina/strategy_router.py — Tina's current strategy router (ARA M3, lab 3.1 Build 2).
 
-This is the router Tina ships with at the start of lab 3.1. It routes single-feature
-queries correctly but checks its features in the wrong order, so some queries that carry
-more than one feature go to the wrong strategy. The learner writes the replacement in the
-lab 3.1 strategy-router notebook; the check grades that notebook cell, not this module.
+This is the router Tina ships with at the start of lab 3.1. It sends some queries to the
+wrong strategy: some that carry more than one feature, because of the order it checks
+them in, and a query whose only feature is a case reference. The dev set shows which.
+The learner writes the replacement in the lab 3.1 strategy-router notebook; the check
+grades that notebook cell, not this module.
 
 No LLM calls; pure Python over the precomputed features dict.
 """
