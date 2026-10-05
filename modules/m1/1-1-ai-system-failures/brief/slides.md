@@ -70,14 +70,15 @@ Tina: The threshold is <span class="wrong">$5,000</span>.
       A $9,500 deposit is reportable.
 
 policy-003 (actual text):
-"Currency Transaction Reports are
- required for cash transactions
- exceeding $10,000..."
+"...any single transaction
+ involving physical currency
+ that equals or exceeds ten
+ thousand dollars."
   </div>
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Hallucination is confident</h2>
-  <p class="slide-body">The $5,000 answer has no signal that it is wrong. Same format, same confidence, wrong value. The only way to catch it is to compare against the authoritative source.</p>
+  <p class="slide-body">The $5,000 answer cites no source and has no signal that it is wrong. Same format, same confidence, wrong value: a <strong>hallucination</strong>. The only way to catch it is to compare against the authoritative source.</p>
 </div>
 
 ---
@@ -93,14 +94,14 @@ policy-003 (actual text):
   "confidence": "high"
 }
 
-policy-011 (actual):
-"SARs must be filed within
- 30 calendar days..."
+policy-011 (actual text):
+"...electronically transmitted
+ within thirty calendar days."
   </div>
 </div>
 <div class="col-text">
   <h2 class="slide-heading">Schema-valid is not correct</h2>
-  <p class="slide-body">The output has the right shape — JSON with all required fields. But the value is wrong: 45 days, not 30. Schema validation passes. Semantic validation catches it. This sets up track 1.2.</p>
+  <p class="slide-body">The output has the right shape and even cites policy-011. But policy-011 says 30 days, not 45. An answer whose cited source does not state its value is <strong>ungrounded</strong>. Schema validation passes. Semantic validation catches it. This sets up track 1.2.</p>
 </div>
 
 ---
@@ -165,8 +166,8 @@ grounding       | ? / 6  ← your results
 <h2 class="slide-heading" style="color:var(--white);">What done looks like</h2>
 <div class="done-row">
   <div class="done-item">
-    <span class="big-number">3</span>
-    <span class="big-number-label">diagnoses recorded<br>all endpoints invoked (Build 1)</span>
+    <span class="big-number">3<span style="font-size:0.5em;">/3</span></span>
+    <span class="big-number-label">diagnoses correct<br>all endpoints invoked (Build 1)</span>
   </div>
   <div class="done-item">
     <span class="big-number">5<span style="font-size:0.5em;">/6</span></span>

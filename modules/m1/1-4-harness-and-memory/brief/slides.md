@@ -15,9 +15,9 @@
 <div class="col-left">
   <div class="terminal-block">
 Turn 1, Analyst: I'm reviewing Elias
-  Vance, account 4492. He made 10 daily
-  withdrawals of $9,500 each over two
-  weeks.
+  Vance, account 4492. He withdrew
+  $9,000 to $9,500 at ATMs daily for
+  ten days.
 
 Turn 2, Analyst: Are his wire transfers
   consistent with that pattern?
@@ -33,7 +33,7 @@ Turn 3, Analyst: Is <span class="wrong">that</span> reportable?
 </div>
 <div class="col-right">
   <h2 class="slide-heading">The problem</h2>
-  <p class="slide-body">Tina forgot the customer by turn three. Every LLM call starts fresh. The context window held the conversation, but the model processed each turn independently. Cortex analysts cannot re-introduce context every turn.</p>
+  <p class="slide-body">Tina forgot the customer by turn three. Every LLM call starts fresh: the model sees only what the harness sends with that call, and nothing carried turn one forward. Cortex analysts cannot re-introduce context every turn.</p>
 </div>
 
 ---
@@ -142,7 +142,7 @@ Turn 3, Analyst: Is <span class="wrong">that</span> reportable?
 <div class="done-row">
   <div class="done-item">
     <span class="big-number">1</span>
-    <span class="big-number-label">turn 3 answer naming<br>the customer and $10,000</span>
+    <span class="big-number-label">turn 3 answer: customer,<br>SAR and policy threshold</span>
   </div>
   <div class="done-item">
     <span class="big-number">3</span>
@@ -158,7 +158,7 @@ Turn 3, Analyst: Is <span class="wrong">that</span> reportable?
 
 <!-- layout: next -->
 
-<h2 class="slide-heading">Select Check, then open Build 1</h2>
+<h2 class="slide-heading">Select Check, then open the Build</h2>
 <p style="opacity:0.8;font-size:18px;">Environment status:</p>
 <div class="status-indicator">
   <div class="status-dot"></div>
