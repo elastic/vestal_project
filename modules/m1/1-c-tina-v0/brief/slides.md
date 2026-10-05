@@ -80,7 +80,7 @@ Tina: ...triggers a structuring alert
 <!-- rule -->
 
 <h2 class="slide-heading">Decision rule</h2>
-<p class="slide-body">Trust a question to the fast tier only if it was correct in every run there. Passing on 2 of 3 meets the grade, not the bar for trust, and tokens are a cost, not evidence. Keep those correct every time; move any that missed to the strong tier.</p>
+<p class="slide-body">Trust a question to the fast tier only if correct in every run. 2 of 3 meets the grade, not the bar; tokens are cost, not evidence. Move any that missed to the strong tier. The one-fast-question minimum is the exercise; this rule sets production routing, even if none stays fast.</p>
 <p class="rule-caption">Your own runs decide the answer.</p>
 
 ---
