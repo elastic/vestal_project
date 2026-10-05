@@ -211,7 +211,7 @@ your order decides which wins.
 <div class="col-text">
   <h2 class="slide-heading">The strategy router</h2>
   <p class="slide-body">The harness extracts the features. You write the function that maps them to a strategy.</p>
-  <p class="slide-body">Order matters when a query carries more than one feature. Tina's current router gets some of those wrong. Build 2's See it yourself cell shows which, and what each costs.</p>
+  <p class="slide-body">Order matters when a query carries more than one feature. Tina's current router gets some of those wrong. Build 2's notebook opens with a See it yourself cell that shows which, and what each costs.</p>
 </div>
 
 ---
