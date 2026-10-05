@@ -1093,7 +1093,7 @@
   },
   {
     "query_id": "dev-3-c-una-05",
-    "query_text": "How many days does Cortex Bank and Trust allow for filing a currency transaction report on a cash-equivalent instrument purchase?",
+    "query_text": "How many days does Cortex Bank and Trust allow for filing a corrected currency transaction report after an error is found in one already filed?",
     "query_class": "unanswerable",
     "gold_literal": null,
     "relevant_ids": [],
