@@ -96,7 +96,7 @@
       "multi_hop": false,
       "has_case_id": true
     },
-    "expected_strategy": "agentic"
+    "expected_strategy": "advanced"
   },
   {
     "query_id": "dev-3-1-router-10",
@@ -122,7 +122,7 @@
   },
   {
     "query_id": "dev-3-1-router-12",
-    "query_text": "Investigation FIU-WIRE-2401 and the Bluewater Equipment investigation: what outcome did each reach?",
+    "query_text": "Investigation FIU-WIRE-2404 was opened on the same day as one other investigation. Which one, and what disposition did it reach?",
     "features": {
       "has_filter_intent": false,
       "asks_for_figure": false,
@@ -133,24 +133,24 @@
   },
   {
     "query_id": "dev-3-1-router-13",
-    "query_text": "Case reference sar-031: what did the follow-up investigation conclude?",
+    "query_text": "Case reference FIU-WIRE-2415: what did the investigation conclude?",
     "features": {
       "has_filter_intent": false,
       "asks_for_figure": false,
       "multi_hop": false,
       "has_case_id": true
     },
-    "expected_strategy": "agentic"
+    "expected_strategy": "advanced"
   },
   {
     "query_id": "dev-3-1-router-14",
-    "query_text": "Pull the report for investigation inv-2024-0117 and list the accounts it froze.",
+    "query_text": "Pull the report for investigation FIU-WIRE-2416: who is its subject?",
     "features": {
       "has_filter_intent": false,
       "asks_for_figure": false,
       "multi_hop": false,
       "has_case_id": true
     },
-    "expected_strategy": "agentic"
+    "expected_strategy": "advanced"
   }
 ]

@@ -133,6 +133,8 @@ def test_strategy_router_agentic_multi_hop():
 
 
 def test_strategy_router_agentic_case_id():
+    # Tests Tina's shipped router (lib/tina/strategy_router.py), which sends has_case_id to
+    # agentic. The 3.1 reference router and Decision rule send it to advanced.
     from tina.strategy_router import strategy_router
     result = strategy_router("case 12345", {"multi_hop": False, "has_filter_intent": False,
                                              "asks_for_figure": False, "has_case_id": True})

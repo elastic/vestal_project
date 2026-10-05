@@ -19,7 +19,7 @@ def strategy_router(query: str, features: dict) -> str:
         has_filter_intent  names a case type, risk tier or date range
         asks_for_figure    asks for an amount, count or deadline
         multi_hop          needs facts from more than one document
-        has_case_id        gives a case reference to follow
+        has_case_id        names a case reference
 
     Args:
         query:    The raw user query string.

@@ -200,7 +200,7 @@ features on every query:
   asks_for_figure
     "what amount was wired"
   multi_hop
-    "which two reports share.."
+    "opened the same day as FIU-WIRE-2421"
   has_case_id
     "case FIU-WIRE-2401"
 
@@ -226,12 +226,13 @@ Q "high-risk sanctions cases this quarter"
            sanctions
   answer   <span class="wrong">WRONG</span>
 
-Q "which two reports share the beneficiary?"
+Q "how much was wired in the investigation
+   opened the same day as FIU-WIRE-2421?"
   routed   advanced     should be   agentic
-  got      one search, 5 passages, one
-           report
-  answer   <span class="wrong">INCOMPLETE</span>   second report
-                        never retrieved
+  got      one search, FIU-WIRE-2421 only
+  answer   <span class="wrong">INCOMPLETE</span>   the date was in
+                        the first report; no
+                        second search
   </div>
 </div>
 <div class="col-text">
@@ -248,10 +249,11 @@ Q "which two reports share the beneficiary?"
 <h2 class="slide-heading">Decision rule</h2>
 <p class="rule-caption">Take the first row that applies.</p>
 <table class="rule-table">
-  <tr><th>The request</th><th>Pattern</th></tr>
-  <tr><td>Needs facts from two or more documents, or a case reference to follow</td><td>agentic</td></tr>
-  <tr><td>Names a case type, risk tier or date, or asks for a figure</td><td>advanced</td></tr>
-  <tr><td>A single-hop lookup in one document</td><td>naive</td></tr>
+  <tr><th>Characteristic</th><th>Pattern</th><th>Reason</th></tr>
+  <tr><td>Facts from two or more documents</td><td>agentic</td><td>Hop two depends on hop one</td></tr>
+  <tr><td>Query names a case reference, case type, risk tier, or date</td><td>advanced</td><td>Metadata clause cuts contamination</td></tr>
+  <tr><td>Query asks for a figure</td><td>advanced</td><td>Rerank puts the passage with the figure first</td></tr>
+  <tr><td>Single-hop lookup, one document</td><td>naive</td><td>No filter, no second hop</td></tr>
 </table>
 
 ---
