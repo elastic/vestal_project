@@ -273,7 +273,7 @@ Q "which two reports share the beneficiary?"
     <span class="big-number-label">fewer tokens from the fact index,<br>precision within one query</span>
   </div>
 </div>
-<p class="rule-caption" style="color:var(--dark-grey);">Your per-bucket numbers must land within 0.30 precision and 50 percent tokens of the check's, which measures on held-out questions.</p>
+<p class="rule-caption" style="color:var(--dark-grey);">Your per-bucket numbers must land within 0.20 precision and 50 percent tokens of the check's, which measures on held-out questions.</p>
 
 ---
 
