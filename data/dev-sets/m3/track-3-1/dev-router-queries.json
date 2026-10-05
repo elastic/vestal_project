@@ -89,10 +89,10 @@
   },
   {
     "query_id": "dev-3-1-router-09",
-    "query_text": "What amount was transferred in investigation FIU-WIRE-2401, and who received it?",
+    "query_text": "In case FIU-WIRE-2401, how did the altered payment instructions reach the customer?",
     "features": {
       "has_filter_intent": false,
-      "asks_for_figure": true,
+      "asks_for_figure": false,
       "multi_hop": false,
       "has_case_id": true
     },
