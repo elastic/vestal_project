@@ -1,10 +1,10 @@
 Q: In the investigation of Emberline Marine Services Holdings Ltd., what was the total sum established as attributable to the undisclosed party?
 
 WHOLE NARRATIVES, top 3
-  1. sar-033   37,109 tokens   <== holds the answer
+  1. sar-033   37,112 tokens   <== holds the answer
   2. sar-040   37,115 tokens
-  3. sar-039   37,106 tokens
-  sent 111,330 tokens; the answer is section 'Key Finding', 187 tokens = 0.2%
+  3. sar-032   18,666 tokens
+  sent 92,893 tokens; the answer is section 'Key Finding', 187 tokens = 0.2%
 
 PASSAGES, top 5
   1. sar-033 Key Finding                          187   <== the answer
@@ -14,4 +14,4 @@ PASSAGES, top 5
   5. sar-033 Activity Overview                  1,073
   sent 5,127 tokens
 
-Captured 2026-10-01 from a live 3.1 sandbox (participant tyyv77ygycv9, assets m3-assets) by capture_problem.py, dev question dev-3-1-33. Start state: match on the semantic_text field body, top 3 whole narratives and top 5 passages.
+Captured 2026-10-05 from live 3.1 sandboxes (participants gtkdculqwhmu at m3-assets af487ba, and 7mmeq4px3kkj at 758ceaf; identical output) by capture_problem.py, dev question dev-3-1-33. Start state: match on the semantic_text field body, top 3 whole narratives and top 5 passages. The corpus repair (af487ba) moved sar-039 out of the top 3; sar-032 (bucket_20k) is now third.

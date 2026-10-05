@@ -4,7 +4,7 @@ minutes: 8 -->
 
 <p class="track-code">Lab 3.1</p>
 <h1 class="slide-title">Select and justify<br>a RAG architecture</h1>
-<p class="slide-subtitle"><strong>Tina</strong> is Cortex Bank and Trust's compliance assistant. One question about a 37,000-token narrative sends her 111,330 tokens; 187 hold the answer. You measure where that breaks, then make her choose a strategy per query.</p>
+<p class="slide-subtitle"><strong>Tina</strong> is Cortex Bank and Trust's compliance assistant. One question about a 37,000-token narrative sends her 92,893 tokens; 187 hold the answer. You measure where that breaks, then make her choose a strategy per query.</p>
 <div style="margin-top:auto;padding:10px 16px;background:rgba(255,255,255,0.12);border-radius:8px;border:1px solid rgba(255,255,255,0.25);font-size:13px;display:flex;align-items:center;gap:10px;max-width:420px;">
   <span style="font-size:18px;">&#8592;</span>
   <span><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</span>
@@ -23,20 +23,20 @@ Q: In the investigation of Emberline
    attributable to the undisclosed party?
 
 WHOLE NARRATIVES, top 3
-  1. sar-033   37,109 tokens  <span style="color:var(--yellow);">&lt;== holds
+  1. sar-033   37,112 tokens  <span style="color:var(--yellow);">&lt;== holds
                               the answer</span>
   2. sar-040   37,115 tokens
-  3. sar-039   37,106 tokens
-  sent 111,330 tokens
+  3. sar-032   18,666 tokens
+  sent 92,893 tokens
 
 the answer: section 'Key Finding',
             187 tokens
-signal in context:  187 / 111,330  =  <span class="wrong">0.2%</span>
+signal in context:  187 / 92,893  =  <span class="wrong">0.2%</span>
   </div>
 </div>
 <div class="col-right">
   <h2 class="slide-heading">The problem</h2>
-  <p class="slide-body">Tina found the right narrative, first of three. She was sent <strong>111,330 tokens</strong> to answer a question that <strong>187</strong> of them answer.</p>
+  <p class="slide-body">Tina found the right narrative, first of three. She was sent <strong>92,893 tokens</strong> to answer a question that <strong>187</strong> of them answer.</p>
   <p class="slide-body">A live run against this lab's start state. You measure the same thing in Build 1, at five narrative lengths.</p>
 </div>
 
@@ -129,11 +129,11 @@ same question, same corpus, same retriever
 
 WHOLE NARRATIVES, top 3
 ------------------------
-sar-033   37,109
+sar-033   37,112
 sar-040   37,115
-sar-039   37,106
+sar-032   18,666
 ------------------------
-111,330 tokens sent
+92,893 tokens sent
 answer in narrative 1
 
 PASSAGES, top 5
@@ -151,7 +151,7 @@ answer is passage 1
 <div class="col-text">
   <h2 class="slide-heading">Passages, not documents</h2>
   <p class="slide-body">Only the unit of retrieval changed. Retrieving a document bets that the whole document is relevant. Retrieving a section makes that bet one section at a time.</p>
-  <p class="slide-body">The same answer, for 5 percent of the tokens.</p>
+  <p class="slide-body">The same answer, for 6 percent of the tokens.</p>
 </div>
 
 ---
