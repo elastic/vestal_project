@@ -1,5 +1,5 @@
 {"decision_id":"dev-01","subject":"Alice Johnson","account":"#1122","decision":{"threshold":10000,"direction":"at or above","reportable":true},"has_error":false,"policy_ref":"policy-003"}
-{"decision_id":"dev-02","subject":"Bob Martinez","account":"#3344","decision":{"threshold":7500,"direction":"at or above","reportable":true},"has_error":true,"error_type":"wrong_threshold","policy_ref":"policy-003"}
+{"decision_id":"dev-02","subject":"Bob Martinez","account":"#3344","decision":{"threshold":6200,"direction":"at or above","reportable":true},"has_error":true,"error_type":"wrong_threshold","policy_ref":"policy-003"}
 {"decision_id":"dev-03","subject":"Carol Smith","account":"#5566","decision":{"threshold":10000,"direction":"at or above","reportable":false},"has_error":false,"policy_ref":"policy-003"}
 {"decision_id":"dev-04","subject":"Dan Wilson","account":"#7788","decision":{"threshold":10000,"direction":"at or above","reportable":true},"has_error":false,"policy_ref":"policy-003"}
 {"decision_id":"dev-05","subject":"Erin Brooks","account":"#2468","decision":{"sar_deadline_days":30,"filing_required":true},"has_error":false,"policy_ref":"policy-011"}
