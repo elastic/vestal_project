@@ -146,15 +146,15 @@ grounding       | ? / 6  ← your results
 
 <h2 class="slide-heading">Decision rule</h2>
 <table class="rule-table">
-  <tr><th>Your ablation</th><th>Therefore</th></tr>
+  <tr><th>Your ablation</th><th>Q1 answer</th></tr>
   <tr>
-    <td>One element's removal drops grounded answers most</td><td>That element was decisive</td>
+    <td>No removal lowered the grounded count</td><td>No single element</td>
   </tr>
   <tr>
-    <td>Two or more tie for the largest drop</td><td>Any one of them was decisive</td>
+    <td>One section's removal caused the largest drop in grounded answers</td><td>That section</td>
   </tr>
   <tr>
-    <td>No removal lowered the grounded count</td><td>No single element was decisive</td>
+    <td>Two or more sections tie for the largest drop</td><td>Any one of them</td>
   </tr>
 </table>
 <p class="rule-caption">Take the first row that applies. Your ablation results answer it, not general knowledge.</p>
