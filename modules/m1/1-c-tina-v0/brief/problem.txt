@@ -1,7 +1,7 @@
 Captured 2026-10-02, sandbox hql8ys38c5g3 (test copy ara-p2-1-c-tina-v0), start state:
 Tina's harness with no tools registered, react_loop on ARA_MODEL_FAST, temperature 0,
 system prompt "You are Tina, Cortex Bank's compliance assistant." Held-out question q1.
-Tool calls: 0. Gold: $12,500 (policy-001) and 72 percent (policy-006).
+Tool calls: 0.
 
 User: What aggregated cash amount within a seven-day window triggers a structuring alert at
 Cortex Bank, and what fuzzy-match threshold does sanctions screening use for cross-border
