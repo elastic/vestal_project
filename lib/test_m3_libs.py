@@ -503,17 +503,25 @@ class _FakeReply:
 
 
 def test_support_reads_the_leading_label():
-    """The verdict is the reply's leading word, matched exactly; an explanation that
-    uses the word "support" is not a supports verdict."""
+    """The verdict is the reply's leading word (after an optional "Verdict:" label),
+    stem-matched: support* is supports, contradict* is contradicts. An explanation
+    that uses the word "support" later on is not a supports verdict."""
     cases = {
         "supports": "supports", "Supports.": "supports", "  SUPPORTS\n": "supports",
         '"supports"': "supports", "**Supports**": "supports", "`supports`": "supports",
+        "Supported": "supports", "Support": "supports", "support": "supports",
+        "Verdict: supports": "supports", "**Verdict:** supports": "supports",
+        "verdict - Supported.": "supports",
         "contradicts": "contradicts", "Contradicts.": "contradicts",
+        "Contradicted": "contradicts", "Contradict": "contradicts",
+        "Verdict: contradicts": "contradicts",
         "contradicts; a shorter window would support it": "contradicts",
-        "neutral": "neutral",
+        "neutral": "neutral", "Verdict: neutral": "neutral", "Verdict": "neutral",
         "neutral\n\nThe passage does not support the claim.": "neutral",
         "does not support": "neutral", "partially supports": "neutral",
-        "unsupported": "neutral", "support": "neutral", "": "neutral", "...": "neutral",
+        "unsupported": "neutral", "Unsupported.": "neutral",
+        "The passage supports the claim.": "neutral",
+        "": "neutral", "...": "neutral",
     }
     for reply, verdict in cases.items():
         assert _support_with(_FakeReply(reply)) == verdict, (reply, verdict)
