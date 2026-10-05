@@ -1,5 +1,5 @@
 {"query_id":"dev-q-01","query_text":"What is Cortex Bank's CTR threshold for cash transactions?","relevant_ids":["policy-003-0","policy-003-1","policy-003-2","policy-003-3","policy-003-4"]}
 {"query_id":"dev-q-02","query_text":"What are the structuring red flags in Cortex's AML policy?","relevant_ids":["policy-001-0","policy-001-1","policy-001-2","policy-001-3","policy-001-4"]}
-{"query_id":"dev-q-03","query_text":"What is the SAR filing deadline?","relevant_ids":["policy-011-0","policy-011-1","policy-011-2","policy-011-3","policy-011-4","policy-011-5","policy-003-2","policy-009-4","policy-015-5","policy-017-4"]}
+{"query_id":"dev-q-03","query_text":"What is the SAR filing deadline?","relevant_ids":["policy-011-0","policy-011-1","policy-011-2","policy-011-3","policy-011-4","policy-011-5"]}
 {"query_id":"dev-q-04","query_text":"How does Cortex Bank verify beneficial ownership?","relevant_ids":["policy-004-0","policy-004-1","policy-004-2","policy-004-3","policy-004-4","policy-004-5"]}
 {"query_id":"dev-q-05","query_text":"What triggers enhanced transaction monitoring at Cortex?","relevant_ids":["policy-005-0","policy-005-1","policy-005-2","policy-005-3","policy-005-4","policy-009-0","policy-009-1","policy-009-2","policy-009-3","policy-009-4","policy-009-5"]}
