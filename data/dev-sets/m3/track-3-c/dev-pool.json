@@ -884,7 +884,7 @@
   },
   {
     "query_id": "dev-3-c-sar-06",
-    "query_text": "To which entity was the significant transfer from Glenhaven Marine Services LLC directed?",
+    "query_text": "To which entity was the October 16, 2024 transfer from Glenhaven Marine Services LLC directed?",
     "query_class": "sar",
     "gold_literal": "Kestrel Textiles LLC",
     "relevant_ids": [
@@ -913,7 +913,7 @@
   },
   {
     "query_id": "dev-3-c-sar-07",
-    "query_text": "To which entity were the funds from the Hearthstone Marine Services Inc. account transferred?",
+    "query_text": "To which entity were the funds from the Hearthstone Marine Services Inc. account remitted on June 21, 2024?",
     "query_class": "sar",
     "gold_literal": "Falcon Crest Marine Services Trading Co.",
     "relevant_ids": [
@@ -942,7 +942,7 @@
   },
   {
     "query_id": "dev-3-c-sar-08",
-    "query_text": "Which entity originated the large, undocumented wire transfer to Summit Gate Fabrication Inc.?",
+    "query_text": "Which entity originated the undocumented wire transfer credited to Summit Gate Fabrication Inc. on July 9, 2024?",
     "query_class": "sar",
     "gold_literal": "Clearspan Management Group LLC",
     "relevant_ids": [
