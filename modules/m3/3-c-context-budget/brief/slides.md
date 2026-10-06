@@ -48,7 +48,7 @@ PACK_STRATEGY = "naive"
 attribute, guard:
   return nothing
   </div>
-  <p class="slide-body">Tina's own dev run, before any change. One search across all three indices, every result packed whole, no claim tied to a passage, and nothing held back: on a question about a customer the corpus does not hold, a dollar figure from another file reached the desk.</p>
+  <p class="slide-body">Tina's own dev run, before any change, in a sandbox with a 6,000-token budget; <code>submit.py</code> prints yours. One search across all three indices, every result packed whole, no claim tied to a passage, and nothing held back: on a question about a customer the corpus does not hold, a dollar figure from another file reached the desk.</p>
 </div>
 
 ---
