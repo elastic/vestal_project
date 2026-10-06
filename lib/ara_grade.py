@@ -53,8 +53,8 @@ def outage_message(service: str) -> str:
 
 ES_UNREACHABLE = outage_message("Elasticsearch")
 RERANKER_UNREACHABLE = outage_message("The reranker")
-# R-P8 (Joe 2026-10-03) named this wording for the LLM proxy; kept as ruled.
-LLM_UNREACHABLE = "LLM proxy unreachable. Wait a moment and select Check again."
+# The outage form for the LLM proxy (Joe 2026-10-06, "Align it"; R-P8 behaviour unchanged).
+LLM_UNREACHABLE = outage_message("The LLM proxy")
 
 CHECK_DEADLINE_S = 50
 # The default deadline message: the check may be running learner code, so it blames neither.
