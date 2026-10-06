@@ -110,6 +110,21 @@ def _metric_label(key: str) -> str:
     return key.replace(".", " ").replace("_", " ")
 
 
+def fmt_num(value) -> str:
+    """A number as the learner reads it (A16): thousands separators from 1,000 up, as every
+    assignment writes them. Whole floats lose ".0" only from 1,000 up. Anything else is str().
+    Display only: a choice's value stays raw for grading."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return str(value)
+    if isinstance(value, float):
+        if value != value or value in (float("inf"), float("-inf")):
+            return str(value)
+        if abs(value) >= 1000:
+            return f"{int(value):,}" if value.is_integer() else f"{value:,}"
+        return str(value)
+    return f"{value:,}" if abs(value) >= 1000 else str(value)
+
+
 def _formula_keys(choices: list[dict]) -> list[str]:
     """Result keys the computed choices read, to name what a skipped challenge left missing."""
     keys: list[str] = []
@@ -197,7 +212,7 @@ def render_choices(choices: list[dict], results: dict, env: dict, seed: int,
                     and _reads_absent_result(comp, results)):
                 dropped.append(c["key"])
             continue
-        label = c["label"].replace("{result}", str(val))
+        label = c["label"].replace("{result}", fmt_num(val))
         if label in seen_labels:
             continue
         seen_labels.add(label)
@@ -226,7 +241,7 @@ def load_questions_new(raw: dict, results: dict, env: dict, seed: int) -> list[d
         for k in context_keys:
             val = _lookup(results, k)
             if val is not None:
-                context_lines.append(f"  Your {_metric_label(k)}: {val}")
+                context_lines.append(f"  Your {_metric_label(k)}: {fmt_num(val)}")
 
         dropped: list = []
         choices = render_choices(q.get("choices", []), results, env, seed, dropped)
@@ -261,7 +276,7 @@ def load_questions_old(raw: list, results: dict) -> list[dict]:
         for metric in q.get("show_metrics", []):
             val = _lookup(results, metric)
             if val is not None:
-                context_lines.append(f"  Your {_metric_label(metric)}: {val}")
+                context_lines.append(f"  Your {_metric_label(metric)}: {fmt_num(val)}")
         choices = [{"key": c["key"], "label": c["label"], "value": c["label"]}
                    for c in q.get("choices", [])]
         qs.append({

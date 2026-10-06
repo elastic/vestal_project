@@ -1,0 +1,38 @@
+# ara-qa-record.yml - one schema for every ARA track (alignment N5, 2026-10-06).
+# Validate: python3 lib/kit/qa_record.py check <track dir>
+# Migrate an old record: python3 lib/kit/qa_record.py migrate <track dir> (keeps the old text,
+# byte for byte, under history.pre_alignment_2026_10_06; nothing is deleted).
+schema: ara-qa-record/1
+track: <slug>                                   # the track dir name
+module: <M1|M2|M3>
+title: "<track.yml title>"
+assets:
+  repo: elastic/vestal_project
+  prefix: agentic-retrieval-architect/<m1|m2|m3>
+  tag: "<ARA_ASSETS_TAG in the ch01 setup>"
+  tag_status: "<cut | pending: what is left>"
+  branch: <m1-assets|m2-v13|m3-assets>
+  head: "<vestal sha the tag is cut from, or the tested head>"
+traqs_head: "<traqs sha this record describes>"
+calibration: private/calibration.md
+validate_heldout:
+  command: "python3 lib/kit/validate_heldout.py --track <dir> --assets <vestal>"
+  result: "<n FAIL, n WARN>"
+  date: "<YYYY-MM-DD>"
+lint:
+  ara_lint: "<pass | what failed>"
+  align_lint: "<pass | what failed>"
+  instruqt_validate: "<pass | what failed>"
+  date: "<YYYY-MM-DD>"
+track_test:
+  result: "<green | red: why>"
+  participant_id: "<id>"
+  slug: "<ara-p2-... test slug>"
+  assets_ref: "<tag or sha the test fetched>"
+  date: "<YYYY-MM-DD>"
+integrity_review: "<latest review and its open items, or none>"
+departures: []                                  # departures-v3 row ids this track carries
+divergences_kept: []                            # "<item>: <written justification>"
+status: "<one line>"
+last_updated: "<YYYY-MM-DD>"
+history: {}                                     # dated entries, oldest first; never rewritten
