@@ -1,26 +1,7 @@
-Q: Under Cortex's risk-scoring reference, what transaction limit, review level and escalation SLA apply to Tier 5 accounts?
+Q: What does the risk-scoring deadline schedule say about Tier 5 accounts?
 
-TINA, through a fixed-512 index (512-token windows, 50-token overlap)
-  top 5: risk-scoring-reference chunk 3, policy-008, risk-scoring-reference chunk 0,
-         risk-scoring-reference chunk 1, risk-scoring-reference chunk 4
-  chunk 2, the only chunk holding the whole Tier 5 row, is not in the top 5
+rag_answer(es, question, "cortex-corpus-live", completion_id="cortex-generation")
 
-ANSWER:
-I apologize, but I cannot provide a complete answer to your question. While the documents reference Tier 5: Medium-High Risk accounts in the risk-scoring matrix, the specific details for Tier 5 are incomplete in the provided documentation.
+NotFoundError(404, 'index_not_found_exception', 'no such index [cortex-corpus-live]')
 
-According to [risk-scoring-reference], Tier 5 is defined as:
-
-- **Monthly Volume Threshold:** $2,500,001.00 to $10,000,000.00 (Large corporate entity with cross-border flow)
-- **Daily Velocity Limit:** The threshold text is cut off and does not provide the complete transaction limit
-- **Review Level:** Not specified in the provided excerpt
-- **Escalation SLA:** Not specified in the provided excerpt
-
-The document appears to be truncated at this point, so the complete Tier 5 parameters are not available in the materials provided to me. I would need the full risk-scoring matrix to give you the accurate review level and escalation SLA for Tier 5 accounts.
-
-THE SPLIT CHUNK: risk-scoring-reference chunk 1 ends mid-row
-  ... | Tier 5: Medium-High Risk | $2,500,001.00 to $10,000,000.00 (Large corporate entity with cross-border flow) | Maximum of
-
-THE ROW IN THE DOCUMENT
-  | Tier 5: Medium-High Risk | $2,500,001.00 to $10,000,000.00 (...) | Maximum of 100 inbound/outbound transactions per 24-hour cycle | Comprehensive Level 3 Senior Analyst investigation and peer-group analysis | 8 hours strictly enforced Service Level Agreement for full disposition | ...
-
-Captured 2026-10-03 from a live 2.1 sandbox (participant pfarb9udtwmt, test copy ara-p2-2-1-v0, assets vestal_project m2-v13 6f53ff7) by a probe in the test copy's Build 1 solve. Index: chunk_fixed(max_tokens=512, overlap_tokens=50) over the whole corpus, the track's naive baseline, behind cortex-corpus-live. Retrieval: Tina's default retriever (match on body). Generation: the platform completion endpoint (.anthropic-claude-4.5-haiku-completion), since cortex-generation does not exist before Build 2. The question is not in any held-out or dev set.
+Captured 2026-10-02 from a live 2.1 sandbox (participant z6l13auy90bz, test copy ara-p2-2-1-v0, assets vestal_project m2-v13) by a probe in the test copy's Build 1 solve, before any index exists. Start state: no cortex-* index or alias; Tina's default retriever, match on body.
