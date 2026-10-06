@@ -292,8 +292,8 @@ def require_variant() -> None:
 
 # ── Interactive prompt ─────────────────────────────────────────────────────────
 
-PARTIAL_NOTICE = ("Some choices come from a Build you have not finished; "
-                  "finish it, then run defend.py again.")
+PARTIAL_NOTICE = ("Some choices come from a Build you skipped, so they can't be shown. "
+                  "Check names that Build.")
 CLOSING_NOT_PASSED = ("Fix what this names, then select Check. "
                       "To change an answer, run python3 /opt/ara/lib/defend.py again.")
 
