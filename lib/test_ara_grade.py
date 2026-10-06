@@ -452,6 +452,26 @@ def test_grade_write_is_atomic_and_root_only():
         assert sorted(x.name for x in pathlib.Path(tmp).iterdir()) == ["ch.json", "victim"]
 
 
+def test_guidance_counter_leaves_a_shared_parent_alone():
+    # Pilot item (a): the tries file's directory may be shared (/opt/ara/results holds what
+    # defend.py reads), so an existing one keeps its mode; a missing one is created root-only.
+    with tempfile.TemporaryDirectory() as tmp:
+        shared = pathlib.Path(tmp) / "results"
+        shared.mkdir()
+        os.chmod(shared, 0o755)
+        g = G.Grade("ch", tries=shared / "tries.json")
+        g.criterion("a", False, "m")
+        g.apply_guidance()
+        assert (shared.stat().st_mode & 0o777) == 0o755
+        assert json.loads((shared / "tries.json").read_text()) == {"a": 1}
+        assert ((shared / "tries.json").stat().st_mode & 0o777) == 0o600
+        fresh = pathlib.Path(tmp) / "private" / "tries.json"
+        g = G.Grade("ch", tries=fresh)
+        g.criterion("a", False, "m")
+        g.apply_guidance()
+        assert (fresh.parent.stat().st_mode & 0o777) == 0o700 and json.loads(fresh.read_text()) == {"a": 1}
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0
