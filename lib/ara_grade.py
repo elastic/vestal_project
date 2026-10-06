@@ -67,8 +67,10 @@ DEADLINE_SERVICE_MESSAGE = ("The check ran out of time after {seconds} seconds a
                             "Elasticsearch or a model endpoint was slow to respond. Wait a moment "
                             "and select Check again.")
 
-MISSING_THRESHOLDS = ("This sandbox is missing its grading thresholds file, so the check cannot "
-                      "score your work. Stop the track and start it again.")
+# Every missing or unreadable grader, config or held-out file (coordinator rule, 2026-10-06).
+GRADER_FILE_MISSING = ("A grader file is missing or unreadable. This is a provisioning error, not "
+                       "your work: stop the track and start it again.")
+MISSING_THRESHOLDS = GRADER_FILE_MISSING
 DEFEND_REMEDY = ("Run python3 /opt/ara/lib/defend.py again to record your answers, then select "
                  "Check again.")
 
