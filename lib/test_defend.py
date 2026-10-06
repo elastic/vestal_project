@@ -68,6 +68,13 @@ def test_notice_silent_with_results():
     assert q["partial"] is False and len(q["choices"]) == 4
 
 
+def test_notice_silent_on_withheld_tie_gap():
+    # 3.3 Build 3 records the gap as None inside the tie band: the Build is finished.
+    q = _load(Q33, {"setB_small_retention_gap": None})
+    assert q["partial"] is False
+    assert sorted(c["key"] for c in q["choices"]) == ["neither", "tie"]
+
+
 def test_notice_silent_on_dedupe():
     # floor(4000 / 8000) = 0: a, c and d all read "0 chunks"; two are dropped as collisions.
     q = _load(Q21, {"p95_tokens": 8000})
