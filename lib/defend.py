@@ -155,11 +155,31 @@ def _eval_formula(formula: str, results: dict, env: dict) -> int | float | str |
         return None
 
 
+def _reads_absent_result(comp: dict, results: dict) -> bool:
+    """True when a formula of this computed choice reads a result key no Build has written."""
+    for f in (comp.get("formula"), comp.get("fallback_formula")):
+        if not f or f.strip().startswith("env:"):
+            continue
+        for name in re.findall(r"[A-Za-z_][A-Za-z0-9_.]*", re.sub(r"'[^']*'|\"[^\"]*\"", "", f)):
+            if name in ("floor", "max") or name.startswith("env_"):
+                continue
+            if name in results:
+                continue
+            cur = results
+            for part in name.split("."):
+                if not isinstance(cur, dict) or part not in cur:
+                    return True
+                cur = cur[part]
+    return False
+
+
 def render_choices(choices: list[dict], results: dict, env: dict, seed: int,
                    dropped: list | None = None) -> list[dict]:
     """Expand computed choices; drop collisions; optionally shuffle by seed.
     `dropped` collects the keys of computed choices left out because their results are
-    missing (formula and fallback both None; not env:, not a label collision)."""
+    missing: formula and fallback both None, not env:, not a label collision, and a result
+    key they read is absent (a key recorded as None, such as 3.3's tie gap, is withheld
+    on purpose by a finished Build)."""
     rendered = []
     seen_labels: set = set()
     for c in choices:
@@ -173,7 +193,8 @@ def render_choices(choices: list[dict], results: dict, env: dict, seed: int,
             if "fallback_formula" in comp:
                 val = _eval_formula(comp["fallback_formula"], results, env)
         if val is None:
-            if dropped is not None and not comp["formula"].strip().startswith("env:"):
+            if (dropped is not None and not comp["formula"].strip().startswith("env:")
+                    and _reads_absent_result(comp, results)):
                 dropped.append(c["key"])
             continue
         label = c["label"].replace("{result}", str(val))
