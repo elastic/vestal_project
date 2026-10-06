@@ -234,6 +234,26 @@ def test_validate_heldout_reads_ndjson_corpus():
         p.write_text('{"case_id": "c-1", "body": "one"}\n{"case_id": "c-2", "body": "two"}\n')
         assert [r["case_id"] for r in validate_heldout.load_items(p)] == ["c-1", "c-2"]
 
+def test_grader_rule_fails_when_both_forms_present():
+    # H6d: a track that installs the shared grader and still has its own copy fails, because
+    # ara-embed.py would embed the old copy after the install line and it would win.
+    install = "install -m 600 -o root -g root /opt/ara/src/lib/ara_grade.py /opt/ara/checks/ara_grade.py"
+    with tempfile.TemporaryDirectory() as tmp:
+        t = make_track(pathlib.Path(tmp))
+        setup = next(t.glob("01-*/setup-elastic-serverless"))
+        own = t / "private" / "checks" / "ara_grade.py"
+        own.parent.mkdir(parents=True, exist_ok=True)
+        own.write_text("# per-track copy\n")
+        rc, out = lint(t, "grader")
+        assert rc == 0 and "info grader: per-track copy" in out, out
+        setup.write_text(setup.read_text() + "\n" + install + "\n")
+        rc, out = lint(t, "grader")
+        assert rc == 1 and "FAIL grader" in out, out
+        own.unlink()
+        rc, out = lint(t, "grader")
+        assert rc == 0 and "info grader: shared install line" in out, out
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0
