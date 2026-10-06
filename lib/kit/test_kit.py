@@ -227,6 +227,13 @@ def test_validate_heldout_t9c_and_plugin():
         assert "FAIL track rule: 3" in out and ctx.fails == 2
 
 
+
+def test_validate_heldout_reads_ndjson_corpus():
+    with tempfile.TemporaryDirectory() as tmp:
+        p = pathlib.Path(tmp) / "cases.ndjson"
+        p.write_text('{"case_id": "c-1", "body": "one"}\n{"case_id": "c-2", "body": "two"}\n')
+        assert [r["case_id"] for r in validate_heldout.load_items(p)] == ["c-1", "c-2"]
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0
