@@ -1,0 +1,59 @@
+<!-- converted from slides.md by brief/page.py; edit by hand -->
+
+<header>
+
+<p class="track-code">Capstone 3.C</p>
+
+<h1>Capstone 3.C: Context budget</h1>
+
+<p>Cortex Bank and Trust's compliance desk puts about twenty questions an hour to <strong>Tina</strong>. Every answer is read by an analyst who acts on it.</p>
+
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+
+</header>
+
+<section id="scenario">
+<h2>The scenario</h2>
+<p>The desk's questions mix three sources: the policy library, the case files and the SAR narratives. Some ask for something the corpus does not hold, and the desk cannot tell which before it asks. A figure Tina invents costs more than an answer she declines to give: the analyst acts on the first and looks up the second.</p>
+<pre># the start state, unchanged
+$ submit.py --limit 2
+
+  precision@10            <span class="wrong">0.383</span>
+    (target 0.80 on the held-out set)
+    policy              0.350
+    case                <span class="wrong">0.150</span>
+    sar                 0.650
+  peak context            <span class="wrong">9916 tokens</span>
+    (budget 6000, ceiling per question)
+  over budget             <span class="wrong">5 question(s)</span>
+    (target zero)
+  unsupported claims      <span class="wrong">10</span>
+    (target at most 1)
+  unanswerable held back  <span class="wrong">0/2</span>
+    (target all of them)
+  fabricated figures      <span class="wrong">1</span>
+    (target zero, no tolerance)</pre>
+
+  <pre># pipeline.py, as it ships
+route:  H.ALL_INDEXES,
+        semantic, size 10
+filter: none
+PACK_STRATEGY = "naive"
+attribute, guard:
+  return nothing</pre>
+  <p>Tina's own dev run, before any change, in a sandbox with a 6,000-token budget; <code>submit.py</code> prints yours. One search across all three indices, every result packed whole, no claim tied to a passage, and nothing held back: on a question about a customer the corpus does not hold, a dollar figure from another file reached the desk.</p>
+</section>
+
+<section id="slo">
+<h2>The SLO</h2>
+<table>
+  <tr><th>Target</th><th>Value</th></tr>
+  <tr><td>Precision@10 on the 17 answerable questions</td><td><strong>&ge; 0.80</strong></td></tr>
+  <tr><td>Context sent to the model, every answerable question</td><td><strong>&le; your budget</strong>: 6,000 or 9,000 tokens, seeded per sandbox</td></tr>
+  <tr><td>Exact figure in the delivered answer</td><td><strong>&ge; 14 of 17</strong></td></tr>
+  <tr><td>Claims delivered with no passage behind them</td><td><strong>&le; 1</strong></td></tr>
+  <tr><td>The 3 unanswerable questions</td><td><strong>all held back</strong> by your guard, zero figures, no tolerance</td></tr>
+  <tr><td>The store</td><td><code>cortex-cases</code> mapping unchanged; no index over 1.5&times; the largest provisioned</td></tr>
+</table>
+<p>You have 40 dev questions to self-evaluate with <code>submit.py</code>. The check grades 20 held-out questions of the same kind, then you defend which levers you pulled, from your own measurements.</p>
+</section>
