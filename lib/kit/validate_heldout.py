@@ -85,7 +85,7 @@ class Ctx:
 
 
 def load_items(path: pathlib.Path) -> list[dict]:
-    if path.suffix == ".jsonl":
+    if path.suffix in (".jsonl", ".ndjson"):  # one JSON object per line
         return [json.loads(l) for l in path.read_text().splitlines() if l.strip()]
     data = json.loads(path.read_text())
     if isinstance(data, dict):
