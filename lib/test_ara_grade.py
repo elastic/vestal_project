@@ -380,9 +380,19 @@ def test_scrub_catches_truncated_copies():
     assert n == 40
     assert G.scrub(f"error: {SECRET[:n]}...", [SECRET]) == f"error: {P}..."
     assert G.scrub(f"error: {SECRET[:60]}", [SECRET]) == f"error: {P}"
-    assert G.scrub(f"({SECRET[:55].upper()}) then the check gave up", [SECRET]) == \
-        f"({P}) then the check gave up"
-    assert G.scrub(f"x {SECRET[:50]} y {SECRET[:45]}", [SECRET]) == f"x {P} y {P}"
+    # Cut at 45 characters at the end of the message, and the same followed by an ellipsis.
+    assert G.scrub(f"The runner stopped on {SECRET[:45]}", [SECRET]) == f"The runner stopped on {P}"
+    assert G.scrub(f"The runner stopped on {SECRET[:45]}... then gave up", [SECRET]) == \
+        f"The runner stopped on {P}... then gave up"
+    assert G.scrub(f"stopped: {SECRET[:45]}\u2026", [SECRET]) == f"stopped: {P}\u2026"
+    # Closing quotes and brackets after a cut copy at the end still count as the end.
+    assert G.scrub(f"KeyError('{SECRET[:55].upper()}')", [SECRET]) == f"KeyError('{P}')"
+    assert G.scrub(f"x {SECRET[:50]}... y {SECRET[:45]}", [SECRET]) == f"x {P}... y {P}"
+    # A dev string that shares the opening, mid-message, is not a cut copy and stays.
+    dev = SECRET[:45] + " flagged last week by the payments desk?"
+    assert dev[:n] == SECRET[:n] and dev != SECRET
+    assert G.scrub(f"Dev query '{dev}' returned 3 hits.", [SECRET]) == f"Dev query '{dev}' returned 3 hits."
+    assert G.scrub(f"{SECRET[:50]} then the check gave up", [SECRET]) == f"{SECRET[:50]} then the check gave up"
     # Below the threshold the start of a string is ordinary wording and stays.
     assert G.scrub(f"error: {SECRET[:n - 1]}", [SECRET]) == f"error: {SECRET[:n - 1]}"
     # A string shorter than the threshold is matched whole only.
