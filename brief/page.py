@@ -9,7 +9,8 @@ page-poller.js). Sections are <h2> headings, so assignments cite them by title.
 Usage:
   python3 brief/page.py build   <module-track-dir>                 # page.html -> brief/index.html
   python3 brief/page.py check   <module-track-dir> [--cite FILE...]  # contract + drift; exit 1 on failure
-  python3 brief/page.py convert <slides.md> [-o <track>/page.html]   # deck -> draft page source
+  python3 brief/page.py convert <slides.md|index.html> [-o <track>/page.html]
+                                        # deck, or an older hand-written page -> draft page source
 
 <module-track-dir> is modules/mN/<track>/ in this repo.
 
@@ -354,6 +355,32 @@ def convert(slides_path: pathlib.Path) -> str:
     return "\n\n".join(out) + "\n"
 
 
+def convert_page(index_path: pathlib.Path) -> str:
+    """A draft page source from an older hand-written page (M2's <div class="slide"> blocks).
+    The block with the <h1> becomes the header, the closing "Select Check" block is dropped
+    (the template supplies it), the rest become sections with the standard ids."""
+    text = index_path.read_text()
+    body = re.search(r"<body>(.*?)<div id=\"status\"", text, re.S)
+    blocks = re.split(r'<div class="slide">', body.group(1) if body else text)[1:]
+    out: list[str] = [f"<!-- converted from {index_path.name} by brief/page.py; edit by hand -->"]
+    for b in blocks:
+        b = re.sub(r"\s*</div>\s*$", "", b.strip())
+        b = re.sub(r"\s*</div>\s*</div>\s*$", "", b)
+        if "<h1" in b:
+            out.append(f"<header>\n{b.strip()}\n</header>")
+            continue
+        heading, rest = _heading_first(b)
+        if heading.startswith("Select Check"):
+            continue
+        sid = SECTION_IDS.get(heading)
+        open_tag = f'<section id="{sid}">' if sid else "<section>"
+        rest = re.sub(r'\s+style="[^"]*"', "", rest).strip()
+        if heading == "Decision rule" and rest.startswith("<p>"):
+            rest = '<p class="rule-line">' + rest[3:]
+        out.append(f"{open_tag}\n<h2>{heading}</h2>\n{rest}\n</section>")
+    return "\n\n".join(out) + "\n"
+
+
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
 def main(argv: list[str] | None = None) -> int:
@@ -363,7 +390,7 @@ def main(argv: list[str] | None = None) -> int:
     c = sub.add_parser("check"); c.add_argument("track_dir", type=pathlib.Path)
     c.add_argument("--cite", nargs="*", type=pathlib.Path, default=[])
     c.add_argument("--capstone", action="store_true", default=None)
-    v = sub.add_parser("convert"); v.add_argument("slides", type=pathlib.Path)
+    v = sub.add_parser("convert"); v.add_argument("slides", type=pathlib.Path, help="slides.md or an older index.html")
     v.add_argument("-o", "--out", type=pathlib.Path)
     a = ap.parse_args(argv)
     if a.cmd == "build":
@@ -373,7 +400,7 @@ def main(argv: list[str] | None = None) -> int:
     elif a.cmd == "check":
         fails = check(a.track_dir, a.cite, a.capstone)
     else:
-        text = convert(a.slides)
+        text = convert_page(a.slides) if a.slides.suffix == ".html" else convert(a.slides)
         if a.out:
             a.out.write_text(text)
             print(f"Draft written: {a.out}. Edit it, then: page.py build {a.out.parent}")
