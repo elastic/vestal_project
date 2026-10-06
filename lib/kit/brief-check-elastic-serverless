@@ -1,0 +1,31 @@
+#!/bin/bash
+# Brief environment gate (pattern spec 3.6). Passes only when challenge 01's background provisioning has finished.
+set -u
+STATUS=/opt/ara/brief/status.json
+[[ -f /opt/ara/.ready ]] && exit 0
+
+if [[ -f /opt/ara/.failed ]]; then
+  fail-message "$(python3 - "$STATUS" <<'PY'
+import json, sys
+try: s = json.load(open(sys.argv[1]))
+except Exception: s = {}
+print(f"Environment provisioning failed during: {s.get('error', 'an unknown step')}. "
+      "Stop this track and start it again. If it fails a second time, report that step name to your instructor.")
+PY
+)"
+  exit 1
+fi
+
+fail-message "$(python3 - "$STATUS" <<'PY'
+import json, sys, time
+try: s = json.load(open(sys.argv[1]))
+except Exception: s = {}
+step, n, total = s.get("step", "starting"), s.get("step_n", 0), s.get("step_total", 0)
+mins = int((time.time() - s.get("started", time.time())) // 60)
+where = f"step {n} of {total}, {step}" if total else step
+total = f", about {s['expected_min']} in total" if s.get("expected_min") else ""
+print(f"Your environment is still provisioning ({where}; {mins} min elapsed{total}). "
+      "Keep reading the Brief and select Check again in a minute.")
+PY
+)"
+exit 1

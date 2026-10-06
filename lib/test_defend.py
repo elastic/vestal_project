@@ -127,6 +127,45 @@ def test_strings():
         "To change an answer, run python3 /opt/ara/lib/defend.py again.")
 
 
+# A16: learner-visible numbers carry thousands separators; the graded value stays raw.
+QBUDGET = {"questions": [{"id": "q1", "text": "T", "context_from_results": ["token_budget", "recall"],
+                          "choices": [{"key": "fit", "label": "{result} tokens",
+                                       "computed": {"formula": "token_budget"}},
+                                      {"key": "half", "label": "{result} tokens",
+                                       "computed": {"formula": "floor(token_budget / 2)"}}],
+                          "reasons": []}]}
+
+
+def test_numbers_formatted_for_display_only():
+    q = _load(QBUDGET, {"token_budget": 60000, "recall": 0.83})
+    assert q["context_lines"] == ["  Your token budget: 60,000", "  Your recall: 0.83"]
+    by_key = {c["key"]: c for c in q["choices"]}
+    assert by_key["fit"]["label"] == "60,000 tokens" and by_key["fit"]["value"] == 60000
+    assert by_key["half"]["label"] == "30,000 tokens" and by_key["half"]["value"] == 30000
+
+
+def test_fmt_num():
+    assert [defend.fmt_num(v) for v in (999, 1000, 1234.5, 12000.0, 0.5, -2048, True, "60000", None)] == \
+        ["999", "1,000", "1,234.5", "12,000", "0.5", "-2,048", "True", "60000", "None"]
+
+
+def test_old_schema_context_formatted():
+    raw = [{"id": "q1", "question": "T", "show_metrics": ["total_tokens"],
+            "choices": [{"key": "a", "label": "A"}], "reasons": []}]
+    q = defend.load_questions_old(raw, {"total_tokens": 92893})[0]
+    assert q["context_lines"] == ["  Your total tokens: 92,893"] and q["text"] == "T"
+
+
+def test_shuffle_is_per_question_and_keeps_reasons():
+    raw = {"questions": [{"id": "q9", "text": "T", "shuffle": "seed",
+                          "choices": [{"key": k, "label": k} for k in "abcdef"],
+                          "reasons": [{"key": r, "label": r} for r in "xyz"]}]}
+    q = _load(raw, {})
+    assert sorted(c["key"] for c in q["choices"]) == list("abcdef")
+    assert [r["key"] for r in q["reasons"]] == list("xyz")
+    assert [c["key"] for c in _load(raw, {})["choices"]] == [c["key"] for c in q["choices"]]
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0

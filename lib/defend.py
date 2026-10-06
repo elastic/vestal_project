@@ -26,12 +26,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import random
 import math
 import os
 import pathlib
 import re
 import sys
-import random
 
 QUESTIONS_FILE = pathlib.Path("/home/elastic/defend/questions.json")
 VARIANT_FILE   = pathlib.Path("/home/elastic/defend/variant.json")
@@ -57,7 +57,8 @@ def load_results() -> dict:
 
 def load_env() -> dict:
     env = {}
-    env_path = pathlib.Path("/home/elastic/env")
+    # the learner runs this as elastic; solves import it as root, which reads only /opt/ara/env (T20)
+    env_path = pathlib.Path("/opt/ara/env" if os.geteuid() == 0 else "/home/elastic/env")
     if env_path.exists():
         for line in env_path.read_text().splitlines():
             line = line.strip()
@@ -65,6 +66,20 @@ def load_env() -> dict:
                 k, v = line.split("=", 1)
                 env[k.strip()] = v.strip()
     return env
+
+
+def shuffle_seed() -> int:
+    """Per-sandbox seed for choice order (G4). seed_mod has only 2-3 values, so it would give
+    every learner one of 2-3 orders. Grading is by value, so order never affects the grade."""
+    for src in ("/etc/machine-id",):
+        try:
+            mid = pathlib.Path(src).read_text().strip()
+        except Exception:
+            continue
+        if mid:  # an empty machine-id (common in images) would give every sandbox one order
+            return int(hashlib.md5(mid.encode()).hexdigest(), 16)
+    import socket
+    return int(hashlib.md5(socket.gethostname().encode()).hexdigest(), 16)
 
 
 def seed_from_variant() -> int:
@@ -93,6 +108,21 @@ def _lookup(results: dict, key: str):
 
 def _metric_label(key: str) -> str:
     return key.replace(".", " ").replace("_", " ")
+
+
+def fmt_num(value) -> str:
+    """A number as the learner reads it (A16): thousands separators from 1,000 up, as every
+    assignment writes them. Whole floats lose ".0" only from 1,000 up. Anything else is str().
+    Display only: a choice's value stays raw for grading."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return str(value)
+    if isinstance(value, float):
+        if value != value or value in (float("inf"), float("-inf")):
+            return str(value)
+        if abs(value) >= 1000:
+            return f"{int(value):,}" if value.is_integer() else f"{value:,}"
+        return str(value)
+    return f"{value:,}" if abs(value) >= 1000 else str(value)
 
 
 def _formula_keys(choices: list[dict]) -> list[str]:
@@ -182,7 +212,7 @@ def render_choices(choices: list[dict], results: dict, env: dict, seed: int,
                     and _reads_absent_result(comp, results)):
                 dropped.append(c["key"])
             continue
-        label = c["label"].replace("{result}", str(val))
+        label = c["label"].replace("{result}", fmt_num(val))
         if label in seen_labels:
             continue
         seen_labels.add(label)
@@ -211,27 +241,19 @@ def load_questions_new(raw: dict, results: dict, env: dict, seed: int) -> list[d
         for k in context_keys:
             val = _lookup(results, k)
             if val is not None:
-                context_lines.append(f"  Your {_metric_label(k)}: {val}")
+                context_lines.append(f"  Your {_metric_label(k)}: {fmt_num(val)}")
 
         dropped: list = []
         choices = render_choices(q.get("choices", []), results, env, seed, dropped)
         # every choice is computed from results a skipped challenge never wrote
         missing = [] if choices else [k for k in _formula_keys(q.get("choices", []))
                                       if _lookup(results, k) is None]
-        
-        # Apply seeded shuffle if requested
-        if q.get("shuffle") == "seed" and seed is not None:
-            shuffled_choices = list(choices)
-            random.Random(seed).shuffle(shuffled_choices)
-            choices = shuffled_choices
-        
+        # 18 S5: choices shuffle by the sandbox seed so the right one has no fixed position;
+        # reasons are never shuffled.
+        if q.get("shuffle") == "seed":
+            choices = list(choices)
+            random.Random(shuffle_seed() + int(hashlib.md5(q["id"].encode()).hexdigest(), 16) % 1000).shuffle(choices)
         reasons = q.get("reasons", [])
-        
-        # Apply seeded shuffle to reasons if requested
-        if q.get("shuffle") == "seed" and seed is not None and reasons:
-            shuffled_reasons = list(reasons)
-            random.Random(seed).shuffle(shuffled_reasons)
-            reasons = shuffled_reasons
 
         qs.append({
             "id": q["id"],
@@ -254,7 +276,7 @@ def load_questions_old(raw: list, results: dict) -> list[dict]:
         for metric in q.get("show_metrics", []):
             val = _lookup(results, metric)
             if val is not None:
-                context_lines.append(f"  Your {_metric_label(metric)}: {val}")
+                context_lines.append(f"  Your {_metric_label(metric)}: {fmt_num(val)}")
         choices = [{"key": c["key"], "label": c["label"], "value": c["label"]}
                    for c in q.get("choices", [])]
         qs.append({
@@ -379,10 +401,11 @@ def main() -> None:
     questions = load_all(results, env, seed)
 
     print()
-    print("Defend — your measurements, your call")
+    print("Defend: your measurements, your call")
     print("=" * 60)
     print("Answer based on what you measured in this track.")
-    print("Your numbers are shown next to each question.")
+    if any(q["context_lines"] for q in questions):
+        print("Your numbers are shown next to each question.")
     print("Another learner's answer may be wrong for you.")
 
     # A skipped Build leaves no results, so a question built from them has no choices.
