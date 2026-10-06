@@ -7,10 +7,15 @@ The learner runs: python3 /opt/ara/lib/defend.py
 Reads questions.json from /home/elastic/defend/questions.json, shows each
 question with computed options and the learner's measured numbers from
 /opt/ara/results/, validates the selection, writes decision.json to
-/home/elastic/defend/decision.json, and prints "Decision recorded. Select Check."
+/home/elastic/defend/decision.json, and prints "Decision recorded."
 
-It never says whether the answer is right. The truth table lives only in the
-private check script.
+It then runs the Defend check's own grading in feedback mode (spec 18 section
+1.8) through `sudo -n /opt/ara/checks/defend-feedback`, a root wrapper that
+takes no arguments and writes no grade. On a pass it prints the check's pass
+lines; on a fail, the check's fail message and how to change the answers;
+with no output (wrapper missing, outage, nothing to grade yet) it says
+"Select Check in the sidebar to continue." The truth table lives only in the
+private check script, which elastic cannot read.
 
 Supports two questions.json shapes for backward compatibility:
   New: {"questions": [...], "display_rules": {...}, ...}
@@ -150,8 +155,11 @@ def _eval_formula(formula: str, results: dict, env: dict) -> int | float | str |
         return None
 
 
-def render_choices(choices: list[dict], results: dict, env: dict, seed: int) -> list[dict]:
-    """Expand computed choices; drop collisions; optionally shuffle by seed."""
+def render_choices(choices: list[dict], results: dict, env: dict, seed: int,
+                   dropped: list | None = None) -> list[dict]:
+    """Expand computed choices; drop collisions; optionally shuffle by seed.
+    `dropped` collects the keys of computed choices left out because their results are
+    missing (formula and fallback both None; not env:, not a label collision)."""
     rendered = []
     seen_labels: set = set()
     for c in choices:
@@ -165,6 +173,8 @@ def render_choices(choices: list[dict], results: dict, env: dict, seed: int) -> 
             if "fallback_formula" in comp:
                 val = _eval_formula(comp["fallback_formula"], results, env)
         if val is None:
+            if dropped is not None and not comp["formula"].strip().startswith("env:"):
+                dropped.append(c["key"])
             continue
         label = c["label"].replace("{result}", str(val))
         if label in seen_labels:
@@ -197,7 +207,8 @@ def load_questions_new(raw: dict, results: dict, env: dict, seed: int) -> list[d
             if val is not None:
                 context_lines.append(f"  Your {_metric_label(k)}: {val}")
 
-        choices = render_choices(q.get("choices", []), results, env, seed)
+        dropped: list = []
+        choices = render_choices(q.get("choices", []), results, env, seed, dropped)
         # every choice is computed from results a skipped challenge never wrote
         missing = [] if choices else [k for k in _formula_keys(q.get("choices", []))
                                       if _lookup(results, k) is None]
@@ -215,6 +226,8 @@ def load_questions_new(raw: dict, results: dict, env: dict, seed: int) -> list[d
             "choices": choices,
             "reasons": reasons,
             "missing": missing,
+            # some choices shown, some left out for a Build's missing results
+            "partial": bool(choices) and bool(dropped),
         })
     return qs
 
@@ -265,9 +278,17 @@ def require_variant() -> None:
 
 # ── Interactive prompt ─────────────────────────────────────────────────────────
 
+PARTIAL_NOTICE = ("Some choices come from a Build you have not finished; "
+                  "finish it, then run defend.py again.")
+CLOSING_NOT_PASSED = ("Fix what this names, then select Check. "
+                      "To change an answer, run python3 /opt/ara/lib/defend.py again.")
+
+
 def ask_question(q: dict, idx: int, total: int) -> tuple[str, str | int | float, str]:
     """Return (choice_key, choice_value, reason_key)."""
     print()
+    if q.get("partial"):
+        print(PARTIAL_NOTICE)
     print(f"Question {idx} of {total}")
     print("=" * 60)
     print(q["text"])
@@ -384,7 +405,7 @@ def main() -> None:
     passed = feedback()
     print()
     if passed is False:
-        print("Run python3 /opt/ara/lib/defend.py again to change your answers, then select Check.")
+        print(CLOSING_NOT_PASSED)
     else:
         print("Select Check in the sidebar to continue.")
 
