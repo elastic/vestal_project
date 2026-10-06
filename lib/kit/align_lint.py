@@ -200,6 +200,9 @@ class Lint:
             (_challenges(self.track)[0] / "setup-elastic-serverless").read_text()
         print(f"  info grader: {'per-track copy' if own else ''}{' + ' if own and shared else ''}"
               f"{'shared install line' if shared else ''}{'none found' if not (own or shared) else ''}")
+        if own and shared:  # ara-embed would embed the old copy after the install, and it would win
+            self.res("grader", False, "the setup installs the shared grader but private/checks/ara_grade.py "
+                     "is still there; delete it so ara-embed.py stops embedding the old copy")
 
 
 RULES = {"gate": Lint.gate, "launcher": Lint.launcher, "provision": Lint.provision, "srclock": Lint.srclock,

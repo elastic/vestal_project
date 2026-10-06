@@ -77,22 +77,70 @@ HELDOUT_PLACEHOLDER = "<held-out item>"
 _SCRUB: list[tuple[str, str]] = []
 
 
+# A cut-off copy of a held-out string is scrubbed once this many of its leading characters
+# survive the cut. Error text is cut before a check echoes it (child runners keep 120-300
+# characters), so a held-out query that straddles the cut leaves only its start. 40 characters
+# is about seven words: long enough that ordinary wording does not match one by chance, short
+# enough to catch a query cut a little past its start.
+SCRUB_PREFIX_MIN = 40
+
+
 def _forms(secret: str) -> list[str]:
     """The ways a string can appear in exception text: as is, repr-escaped, JSON-escaped."""
     out = [secret, repr(secret)[1:-1], json.dumps(secret)[1:-1]]
     return [f for f in dict.fromkeys(out) if f]
 
 
+def _atoms(form: str) -> list[str]:
+    """form as regex pieces: each whitespace run matches any whitespace run, every other
+    character matches itself in either case."""
+    return [r"\s+" if piece.isspace() else re.escape(piece)
+            for piece in re.findall(r"\s+|\S", form.strip())]
+
+
+def _scrub_form(s: str, form: str, placeholder: str) -> str:
+    atoms = _atoms(form)
+    if not atoms:
+        return s
+    s = re.sub("".join(atoms), lambda m: placeholder, s, flags=re.I)
+    # A truncated copy: the first SCRUB_PREFIX_MIN characters, then as much more of the
+    # string as follows them.
+    head, size = [], 0
+    for a in atoms:
+        head.append(a)
+        size += 1
+        if size >= SCRUB_PREFIX_MIN:
+            break
+    if size < SCRUB_PREFIX_MIN or len(head) == len(atoms):
+        return s
+    rest = [re.compile(a, re.I) for a in atoms[len(head):]]
+    out, pos = [], 0
+    for m in re.finditer("".join(head), s, flags=re.I):
+        if m.start() < pos:
+            continue
+        end = m.end()
+        for r in rest:
+            n = r.match(s, end)
+            if not n:
+                break
+            end = n.end()
+        out.append(s[pos:m.start()] + placeholder)
+        pos = end
+    return "".join(out) + s[pos:]
+
+
 def scrub(text: Any, secrets: Iterable[str] | None = None,
           placeholder: str = HELDOUT_PLACEHOLDER) -> str:
     """text with every secret replaced by placeholder, longest first. With no secrets given,
-    uses the strings register_heldout() recorded (each with its own placeholder)."""
+    uses the strings register_heldout() recorded (each with its own placeholder). A match
+    ignores case and the width of whitespace runs, and a copy cut off after at least
+    SCRUB_PREFIX_MIN characters is replaced too."""
     s = "" if text is None else str(text)
     pairs = ([(x, placeholder) for x in secrets if isinstance(x, str) and x]
              if secrets is not None else list(_SCRUB))
     expanded = [(f, p) for x, p in pairs for f in _forms(x)]
     for form, p in sorted(expanded, key=lambda fp: len(fp[0]), reverse=True):
-        s = s.replace(form, p)
+        s = _scrub_form(s, form, p)
     return s
 
 
@@ -197,6 +245,17 @@ def deadline(seconds: int = CHECK_DEADLINE_S, message: str | None = None) -> Non
     signal.alarm(seconds)
 
 
+def cancel_deadline() -> None:
+    """Cancel the deadline() alarm. Grade.write calls it: once a grade is recorded, the check
+    is no longer at risk of Instruqt's limit, and "wrote no grade" would be false."""
+    global _DEADLINE_AT
+    if _DEADLINE_AT is None:
+        return
+    import signal
+    signal.alarm(0)
+    _DEADLINE_AT = None
+
+
 # ── Remote failures (spec 09 principle 8, R-P8) ───────────────────────────────
 
 REMOTE_RETRIES = 2
@@ -273,12 +332,45 @@ def remote_call(fn, *args, _message: str = ES_UNREACHABLE, **kwargs):
     return _call_with_retries(fn, args, kwargs, _message)
 
 
+# Exception types the model gateway's client raises (openai, and httpx beneath it). The
+# Elasticsearch client raises its own types from elasticsearch / elastic_transport.
+_LLM_MODULES = ("openai", "httpx", "httpcore", "anthropic")
+_LLM_NAMES = {"APIConnectionError", "APITimeoutError", "RateLimitError", "InternalServerError",
+              "AuthenticationError", "PermissionDeniedError"}
+_ES_MODULES = ("elasticsearch", "elastic_transport")
+# ara_pack / ara_attrib RemoteCallFailed starts with the call's label: "completion endpoint
+# unreachable after ..." is the model; "search", "rerank" and "embed" go through Elasticsearch.
+_LLM_LABEL = re.compile(r"\s*(?:chat_)?completion\b", re.I)
+
+
+def outage_service_message(exc: BaseException) -> str:
+    """The outage message that names the service an uncaught exception came from: the LLM
+    proxy for the model client's errors, Elasticsearch for the Elasticsearch client's. Reads
+    the exception, then its cause chain; anything it cannot place is Elasticsearch, the
+    service every check calls."""
+    seen: set[int] = set()
+    e: BaseException | None = exc
+    while e is not None and id(e) not in seen:
+        seen.add(id(e))
+        root = (type(e).__module__ or "").split(".")[0]
+        if root in _LLM_MODULES:
+            return LLM_UNREACHABLE
+        if root in _ES_MODULES:
+            return ES_UNREACHABLE
+        if type(e).__name__ == "RemoteCallFailed" and _LLM_LABEL.match(str(e)):
+            return LLM_UNREACHABLE
+        if type(e).__name__ in _LLM_NAMES:
+            return LLM_UNREACHABLE
+        e = e.__cause__ or e.__context__
+    return ES_UNREACHABLE
+
+
 def _excepthook(tp, exc, tb):
     # Safety net for a remote call made outside remote(): an outage still writes no grade and
-    # shows the wait message (silent in feedback), not only a traceback.
+    # shows the wait message naming that service (silent in feedback), not only a traceback.
     sys.__excepthook__(tp, exc, tb)
     if isinstance(exc, Exception) and is_outage(exc):
-        _outage(ES_UNREACHABLE)
+        _outage(outage_service_message(exc))
 
 
 sys.excepthook = _excepthook
@@ -325,6 +417,10 @@ class Grade:
         self.criteria.append({"name": name, "value": value, "is_metric": True})
 
     def write(self, path: str | None = None, passed: bool | None = None) -> None:
+        """Record the grade, root-only, by rename: a reader never sees a half-written file. The
+        deadline is cancelled first: grading is over, so it can no longer report "wrote no
+        grade" after this grade, or cut the write short."""
+        cancel_deadline()
         if FEEDBACK:
             return
         GRADES_DIR.mkdir(parents=True, exist_ok=True)
@@ -335,7 +431,7 @@ class Grade:
             "passed": (self._first_failure is None) if passed is None else passed,
             "criteria": self.criteria,
         }
-        pathlib.Path(out).write_text(json.dumps(to_jsonable(data), indent=2))
+        write_no_follow(out, json.dumps(to_jsonable(data), indent=2), mode=0o600)
 
     def results_for_defend(self, path: str, metrics: dict) -> None:
         """Results defend.py reads. Not written in feedback. Written by rename, never through a
@@ -450,9 +546,11 @@ def unreadable(path, remedy: str) -> None:
 
 
 def learner_json(path, remedy: str, shape=dict):
-    """Parse a learner-writable JSON file; anything else goes through unreadable()."""
+    """Parse a learner-writable JSON file; anything else goes through unreadable(). Read with
+    read_learner_text, so a symlink planted at the name (or its directory) is never followed."""
     try:
-        data = json.loads(pathlib.Path(path).read_text())
+        text = read_learner_text(path)
+        data = None if text is None else json.loads(text)
     except (OSError, UnicodeDecodeError, ValueError):
         data = None
     if not isinstance(data, shape):

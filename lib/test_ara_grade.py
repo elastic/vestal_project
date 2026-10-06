@@ -325,6 +325,133 @@ def test_to_jsonable_and_fmt_num():
         ["60,000", "999", "1,234.5", "12,000", "0.83", "-2,048", "True", "60000", "None"]
 
 
+# ── N3 review fixes (F1, F3, F4, F5) ──────────────────────────────────────────
+
+def _exc(name, module, base=Exception):
+    return type(name, (base,), {"__module__": module})
+
+
+def test_excepthook_names_the_service():
+    # F1: the uncaught-outage message names the service the exception came from.
+    llm = _exc("APIConnectionError", "openai._exceptions")("Connection error.")
+    assert G.outage_service_message(llm) == G.LLM_UNREACHABLE
+    assert G.outage_service_message(_exc("ConnectError", "httpx")("refused")) == G.LLM_UNREACHABLE
+    es = _exc("ConnectionError", "elastic_transport")("refused")
+    assert G.outage_service_message(es) == G.ES_UNREACHABLE
+    rcf = _exc("RemoteCallFailed", "ara_pack", RuntimeError)
+    wrapped = rcf("completion endpoint unreachable after 3 attempts (ApiError: 502)")
+    wrapped.__cause__ = es
+    assert G.outage_service_message(wrapped) == G.LLM_UNREACHABLE
+    assert G.outage_service_message(rcf("search endpoint unreachable after 3 attempts")) == G.ES_UNREACHABLE
+    cause = rcf("rerank endpoint unreachable")
+    cause.__cause__ = llm
+    assert G.outage_service_message(cause) == G.LLM_UNREACHABLE
+    assert G.outage_service_message(ConnectionError("no route")) == G.ES_UNREACHABLE
+    rc, out, shown, grades = run("""
+        E = type("APIConnectionError", (Exception,), {"__module__": "openai._exceptions"})
+        raise E("Connection error.")
+    """)
+    assert rc == 1 and shown == G.LLM_UNREACHABLE and grades == []
+    rc, out, shown, _ = run("""
+        E = type("APIConnectionError", (Exception,), {"__module__": "openai._exceptions"})
+        raise E("Connection error.")
+    """, feedback=True)
+    assert out == "" and shown == ""
+
+
+SECRET = "What is the refund window for wire transfers flagged by the sanctions team in Q3?"
+
+
+def test_scrub_ignores_case_and_whitespace():
+    # F3: case and whitespace changes are the same string.
+    P = G.HELDOUT_PLACEHOLDER
+    assert G.scrub(f"bad: {SECRET.upper()}", [SECRET]) == f"bad: {P}"
+    assert G.scrub(SECRET.replace(" ", "  "), [SECRET]) == P
+    assert G.scrub(SECRET.replace(" for ", "\n for\t"), [SECRET]) == P
+    assert G.scrub(f"KeyError({SECRET.lower()!r})", [SECRET]) == f"KeyError('{P}')"
+    assert G.scrub("dec-0042 EMBERLINE marine", ["dec-0042 Emberline Marine"], "<d>") == "<d>"
+
+
+def test_scrub_catches_truncated_copies():
+    # F3: a copy cut off after at least SCRUB_PREFIX_MIN characters is scrubbed, along with
+    # whatever more of the string follows; the text after the copy stays.
+    P = G.HELDOUT_PLACEHOLDER
+    n = G.SCRUB_PREFIX_MIN
+    assert n == 40
+    assert G.scrub(f"error: {SECRET[:n]}...", [SECRET]) == f"error: {P}..."
+    assert G.scrub(f"error: {SECRET[:60]}", [SECRET]) == f"error: {P}"
+    assert G.scrub(f"({SECRET[:55].upper()}) then the check gave up", [SECRET]) == \
+        f"({P}) then the check gave up"
+    assert G.scrub(f"x {SECRET[:50]} y {SECRET[:45]}", [SECRET]) == f"x {P} y {P}"
+    # Below the threshold the start of a string is ordinary wording and stays.
+    assert G.scrub(f"error: {SECRET[:n - 1]}", [SECRET]) == f"error: {SECRET[:n - 1]}"
+    # A string shorter than the threshold is matched whole only.
+    short = "Emberline Marine payout"
+    assert G.scrub("Emberline Marine pay", [short]) == "Emberline Marine pay"
+    rc, out, shown, _ = run(f"""
+        G.register_heldout([{SECRET!r}])
+        G.fail("The runner stopped: " + {SECRET!r}[:48] + "...")
+    """)
+    assert shown == f"The runner stopped: {P}..."
+
+
+def test_learner_json_refuses_symlink():
+    # F4: learner_json and decision_answers never read through a planted symlink.
+    with tempfile.TemporaryDirectory() as tmp:
+        root_only = pathlib.Path(tmp) / "root-only.json"
+        root_only.write_text(json.dumps({"answers": [{"question_id": "q1", "choice": "SECRET-CHOICE"}]}))
+        link = pathlib.Path(tmp) / "decision.json"
+        link.symlink_to(root_only)
+        rc, out, shown, grades = run(f"print(G.decision_answers({str(link)!r}))")
+        assert rc == 1 and "SECRET-CHOICE" not in out + shown and "symbolic link" in shown
+        rc, out, shown, _ = run(f"print(G.learner_json({str(link)!r}, 'Save it again.'))", feedback=True)
+        assert rc == 1 and out == "" and shown == ""
+        rc, out, shown, _ = run(f"G.learner_json({str(pathlib.Path(tmp) / 'none.json')!r}, 'Save it again.')")
+        assert rc == 1 and shown.startswith("none.json is not in the form this check reads")
+
+
+def test_deadline_cancelled_once_grade_written():
+    # F5: once the grade is written the deadline cannot fire, so a pass stays a pass and a
+    # failure shows only its own message.
+    rc, out, shown, grades = run("""
+        import time
+        G.deadline(1)
+        g = G.Grade("ch"); g.criterion("a", True, "ok"); g.verdict()
+        time.sleep(2)
+        print("finished")
+    """)
+    assert rc == 0 and shown == "" and grades == ["ch.json"] and out == "finished"
+    rc, out, shown, grades = run("""
+        import time
+        G.deadline(1)
+        g = G.Grade("ch"); g.criterion("a", False, "Raise the threshold.")
+        g.apply_guidance(); g.write()
+        time.sleep(2)
+        G._fail(g._first_failure); raise SystemExit(1)
+    """)
+    assert rc == 1 and shown == "Raise the threshold." and grades == ["ch.json"]
+
+
+def test_grade_write_is_atomic_and_root_only():
+    # F5: the grade is written by rename, mode 600, and a symlink at the name is replaced.
+    with tempfile.TemporaryDirectory() as tmp:
+        victim = pathlib.Path(tmp) / "victim"
+        victim.write_text("keep")
+        out = pathlib.Path(tmp) / "ch.json"
+        out.symlink_to(victim)
+        g = G.Grade("ch")
+        g.criterion("a", True, "ok")
+        saved, G.GRADES_DIR = G.GRADES_DIR, pathlib.Path(tmp)
+        try:
+            g.write(path=str(out))
+        finally:
+            G.GRADES_DIR = saved
+        assert victim.read_text() == "keep" and not out.is_symlink()
+        assert json.loads(out.read_text())["passed"] is True
+        assert (out.stat().st_mode & 0o777) == 0o600
+        assert sorted(x.name for x in pathlib.Path(tmp).iterdir()) == ["ch.json", "victim"]
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0
