@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 import defend  # noqa: E402
 
-NOTICE = "Some choices come from a Build you have not finished; finish it, then run defend.py again."
+NOTICE = "Some choices come from a Build you skipped, so they can't be shown. Check names that Build."
 
 
 def _q(qid, choices):
