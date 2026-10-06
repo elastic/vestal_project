@@ -1,0 +1,132 @@
+<!-- Lab 1.3 Brief page source (alignment A1, 2026-10-06): converted from the deck by brief/page.py, then
+     edited. problem.txt records the capture the problem section shows.
+     Build: python3 brief/page.py build modules/m1/1-3-model-tier-and-agent-stack -->
+
+<header>
+<p class="track-code">Lab 1.3</p>
+<h1>Lab 1.3: Build Tina, from completion to ReAct on Elasticsearch</h1>
+<p><strong>Tina</strong> is Cortex Bank's AI compliance assistant, the system you build across this module. You choose her model tier, then build her in four stages, each one fixing the gap of the stage before: a bare model call, context from Elasticsearch, a search tool and a ReAct loop.</p>
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<pre>Q: What is Cortex Bank's internal threshold for
+   filing a Suspicious Activity Report when the
+   suspect is known, and is a $4,000 suspicious
+   transfer by a known customer reportable?
+
+Stage 1 recorded. Tina says:
+... The internal threshold for filing a SAR when
+the suspect is a known customer ... is <span class="wrong">**$5,000 or
+more**</span> ...
+
+Therefore, a single **$4,000 suspicious transfer
+by a known customer** is generally <span class="wrong">**not
+reportable**</span> under the mandatory FinCEN SAR
+filing thresholds ...</pre>
+<p>Tina answered confidently from her training: $5,000 is the federal figure, and she consulted no source. Cortex's own threshold is <strong>$3,500</strong>, in policy-003, so this $4,000 transfer must be reported. Cortex would miss the filing. You see this yourself in Build 2, stage 1.</p>
+</section>
+
+<section>
+<h2>What a tier is</h2>
+<p><img src="img/tier-axes.svg" alt="Four tier axes: cost per 1,000 requests, latency p50, capability on task, deployment constraints"></p>
+<p>Four axes: <strong>cost</strong> per 1,000 requests, <strong>latency</strong> p50, <strong>capability</strong> on your task, and <strong>deployment constraints</strong> such as data residency or a limit on completion tokens per reply. A benchmark on the wrong axis picks the wrong tier.</p>
+</section>
+
+<section>
+<h2>Choose by constraint, not by benchmark</h2>
+<p><img src="img/tier-constraints.svg" alt="Three Cortex constraints: data residency, a cost ceiling and a completion-token ceiling. Each sandbox gets one."></p>
+<p>Cortex has three possible constraints: a <strong>data-residency</strong> rule, a <strong>cost ceiling</strong> per 1,000 requests, and a <strong>completion-token ceiling</strong> on completion tokens per reply. Your sandbox has one. Residency is a rule; the ceilings are decided by what you measure. Completion tokens include any reasoning a model does before it answers.</p>
+</section>
+
+<section>
+<h2>Stage 1: bare completion</h2>
+<p><img src="../../../../brief/img/library/stage-1.svg" alt="Stage 1: User sends a message; LLM generates an answer with no retrieval"></p>
+<p>User, then LLM, then answer. No source is consulted: the model generates from its training weights. Gap: <strong>no source</strong>.</p>
+</section>
+
+<section>
+<h2>Stage 2: context injection</h2>
+<p><img src="../../../../brief/img/library/stage-2.svg" alt="Stage 2: the cortex-policies index is retrieved before the LLM call and injected into the prompt"></p>
+<p>Retrieve the top 3 chunks from <code>cortex-policies</code> and put them in the prompt. The model can cite sources. Gap: it can only read what <strong>you pre-loaded</strong>. It cannot ask for different documents mid-answer.</p>
+</section>
+
+<section>
+<h2>Stage 3: tool calling</h2>
+<p><img src="../../../../brief/img/library/stage-3.svg" alt="Stage 3: the LLM calls a search_policies tool during the conversation on demand"></p>
+<p>Register <code>search_policies(query)</code> and the model calls it on demand. <code>finish_reason: tool_calls</code> triggers your dispatch, and the result returns as a <code>role: tool</code> message. Gap: <strong>one shot</strong>. A two-hop question needs two searches.</p>
+</section>
+
+<section>
+<h2>Stage 4: ReAct loop</h2>
+<p><img src="../../../../brief/img/library/stage-4.svg" alt="Stage 4: a loop arrow connects answer back to LLM, enabling multiple tool calls"></p>
+<p>Handle <code>tool_calls</code>, append each result, and continue until <code>finish_reason: stop</code>. The model reasons, searches again, and combines what several calls return. This is the target architecture.</p>
+</section>
+
+<section>
+<h2>The tool-call protocol</h2>
+<pre><span class="label"># assistant message</span>
+{"role": "assistant",
+ "tool_calls": [{"id": "call_abc",
+   "function": {"name": "search_policies",
+     "arguments":
+"{\"query\": \"SAR threshold known suspect\"}"
+   }}]}
+
+<span class="label"># your dispatch returns:</span>
+{"role": "tool", "tool_call_id": "call_abc",
+ "content":
+   "[{\"policy_id\": \"policy-003\", ...}]"}</pre>
+<p>Four messages: the <strong>assistant</strong> message with <code>tool_calls</code>, your code's dispatch, a <strong>tool</strong> message with the result, and the model's next turn. You implement the dispatch loop.</p>
+</section>
+
+<section>
+<h2>Your tool is a search</h2>
+<pre><span class="label"># tool schema</span>
+{"name": "search_policies",
+ "description": "Search Cortex AML policies",
+ "parameters": {"type": "object",
+   "properties": {
+     "query": {"type": "string"}},
+   "required": ["query"]}}
+
+<span class="label"># Elasticsearch query it runs</span>
+{"query": {"match": {
+  "body_semantic":
+    "SAR threshold known suspect"}}}</pre>
+<p><code>search_policies(query)</code> runs a semantic search over <code>cortex-policies</code>. You write the schema, the dispatch and the loop that sends each result back to the model; the harness in <code>/opt/ara/lib/tina/</code> supplies the client and <code>ToolRegistry</code>.</p>
+</section>
+
+<section>
+<h2>What each stage cannot do</h2>
+<table>
+  <tr><th>Stage</th><th>What it cannot do</th></tr>
+  <tr><td>1: bare completion</td><td>No source consulted</td></tr>
+  <tr><td>2: context injection</td><td>Cannot choose documents mid-answer</td></tr>
+  <tr><td>3: tool calling</td><td>Cannot loop; one shot only</td></tr>
+  <tr><td>4: ReAct loop</td><td>(target; no gap for this task)</td></tr>
+</table>
+<p>The Defend asks which gap applied at each stage. Your Build 2 results confirm it.</p>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Your own measurements decide each row.</p>
+<table>
+  <tr><th>Your constraint</th><th>Choose</th></tr>
+  <tr><td>Data residency</td><td>Strong tier: fast has no EU region</td></tr>
+  <tr><td>Cost ceiling $0.40 per 1,000</td><td>Under the ceiling; if both or neither, cheaper</td></tr>
+  <tr><td>Completion-token ceiling 200 per reply</td><td>Under the ceiling; if both, cheaper; if neither, fewer tokens</td></tr>
+  <tr><td>Stage gaps</td><td>What the stage before could not do, per your Build 2 results</td></tr>
+</table>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+<li><strong>Build 1:</strong> 5 recorded runs on each tier.</li>
+<li><strong>Build 2:</strong> four stages built, grounded from stage 2, and a stage 4 loop whose 2 or more tool calls return both gold values.</li>
+<li><strong>Defend:</strong> your tier and stage-gap answers follow your own measurements.</li>
+</ul>
+</section>

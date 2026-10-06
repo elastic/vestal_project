@@ -1,0 +1,90 @@
+<!-- Lab 1.4 Brief page source (alignment A1, 2026-10-06): converted from the deck by brief/page.py, then
+     edited. problem.txt records the capture the problem section shows.
+     Build: python3 brief/page.py build modules/m1/1-4-harness-and-memory -->
+
+<header>
+<p class="track-code">Lab 1.4</p>
+<h1>Lab 1.4: Harness and memory</h1>
+<p><strong>Tina</strong> is Cortex Bank's AI compliance assistant. On turn three an analyst asks "Is that reportable?", and Tina has no idea what "that" is. Model calls have no memory. You give her one: implement the MemoryStore, then defend the harness posture that fits Cortex's constraints.</p>
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<p>Turn one names the customer: Elias Vance, account 4492, $9,000 to $9,500 at ATMs daily for ten days. Here is what Tina says next, from the notebook's conversation cell with the memory store as it ships:</p>
+<pre>Turn 2 recalled 0 memories:
+Turn 2: I'm sorry, but I don't have any memory of a
+previous conversation about a customer's withdrawal
+pattern or wire transfers. Please provide more
+context.
+Turn 3 recalled 0 memories:
+Turn 3: I need more information to answer your
+question. <span class="wrong">What transaction are you referring
+to?</span></pre>
+<p>Tina forgot the customer by turn two. Every LLM call starts fresh: the model sees only what the harness sends with that call, and nothing carried turn one forward. Cortex analysts cannot re-introduce the context every turn.</p>
+</section>
+
+<section>
+<h2>What a harness adds</h2>
+<p><img src="../../../../brief/img/library/agent.svg" alt="A harness wraps the model: memory, tool dispatch, control flow, and tracing surround the LLM box"></p>
+<p>The model is one box. A harness wraps it with <strong>memory</strong> (state that persists), <strong>tool dispatch</strong> (calling Elasticsearch), <strong>control flow</strong> (loops, branches) and <strong>tracing</strong> (audit). None of this lives in the model call itself.</p>
+</section>
+
+<section>
+<h2>Three memory scopes</h2>
+<table>
+  <tr><th>Memory type</th><th>Lives where</th><th>Survives</th></tr>
+  <tr><td>Context window</td><td>This API call</td><td>One call</td></tr>
+  <tr><td>Working memory</td><td>This conversation</td><td>This session</td></tr>
+  <tr><td>Persistent memory</td><td>External store</td><td>Across sessions</td></tr>
+</table>
+<p>"That" in turn three needs <strong>working memory</strong>: it must survive the conversation, not necessarily across sessions. Scope is set by when the store is cleared, not where it lives. The right scope avoids storing too much (everything persistent) and too little (the context window only).</p>
+</section>
+
+<section>
+<h2>Your memory store is an index</h2>
+<pre><span class="label"># cortex-tina-memory mapping</span>
+{
+  "mappings": {
+    "properties": {
+      "turn":     {"type": "integer"},
+      "entities": {"type": "text"},
+      "summary":  {"type": "text"}
+    }
+  }
+}
+
+<span class="label"># remember: index one doc per turn</span>
+<span class="label"># recall:   search on entities + summary</span></pre>
+<p><code>cortex-tina-memory</code> is a small Elasticsearch index. <strong>Remember</strong> indexes a document per turn. <strong>Recall</strong> searches it by entity or topic. It stays on the same stack as <code>cortex-policies</code>.</p>
+</section>
+
+<section>
+<h2>Three harness postures</h2>
+<table>
+  <tr><th>Posture</th><th>Control flow</th><th>Cortex use</th></tr>
+  <tr><td>Sequential</td><td>Ordered steps</td><td>Compliance audit trail</td></tr>
+  <tr><td>Graph</td><td>Branch on results</td><td>Risk-tiered escalation</td></tr>
+  <tr><td>Event-driven</td><td>React to triggers</td><td>Wire alert on arrival</td></tr>
+</table>
+<p><strong>Sequential</strong> runs fixed steps in order: auditable and predictable. <strong>Graph</strong> branches on what each step returns: flexible, and harder to trace. <strong>Event-driven</strong> reacts to external signals: responsive, and it needs durable queues.</p>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Take the first row that applies. Your sandbox has one constraint, and the Defend grades your posture choice against it.</p>
+<table>
+  <tr><th>Constraint</th><th>Correct posture</th><th>Why</th></tr>
+  <tr><td>Strict step order with audit trail</td><td>Sequential</td><td>Fixed sequence, each step logged</td></tr>
+  <tr><td>Branch on tool results</td><td>Graph</td><td>Conditional paths require branch nodes</td></tr>
+  <tr><td>React to incoming events</td><td>Event-driven</td><td>External trigger drives execution</td></tr>
+</table>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+<li><strong>Build:</strong> Tina's turn 3 answer names the customer, the SAR and the policy threshold, and <code>cortex-tina-memory</code> holds at least 3 documents.</li>
+<li><strong>Defend:</strong> 3 answers with matching reasons, for the constraint your sandbox was given.</li>
+</ul>
+</section>

@@ -1,0 +1,47 @@
+<!-- Capstone 1.C Brief page source (alignment A1/A3, 2026-10-06): converted from the deck by brief/page.py,
+     then edited to the capstone shape (scenario with the start-state capture, SLO, Select Check). The
+     decision rule lives in the assignment. problem.txt records the capture. Temperature 0 (exam-pool B4):
+     lib/tina/loop.py react_loop defaults to temperature=0.0.
+     Build: python3 brief/page.py build modules/m1/1-c-tina-v0 -->
+
+<header>
+<p class="track-code">Capstone 1.C</p>
+<h1>Capstone 1.C: Build Tina v0</h1>
+<p><strong>Tina</strong> is Cortex Bank's AI compliance assistant. This capstone puts Labs 1.1 to 1.4 together: a search tool, a ReAct loop, citations, and a routing call between two model tiers. Then you show which question earned the fast tier.</p>
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+</header>
+
+<section id="scenario">
+<h2>The scenario</h2>
+<p>Analysts will ask Tina questions that each need two facts from <strong>two different policies</strong> in <code>cortex-policies</code>. Today she has no tools. Asked one of those questions on the fast tier, this is what she said:</p>
+<pre>User: What aggregated cash amount within
+      a seven-day window triggers a
+      structuring alert at Cortex Bank,
+      and what fuzzy-match threshold does
+      sanctions screening use for
+      cross-border SWIFT messages?
+
+Tina: ...triggers a structuring alert
+      when aggregated cash transactions
+      within a seven-day window reach
+      <span class="wrong">**$7,500 USD**</span>... we utilize a
+      fuzzy-match threshold of <span class="wrong">**85%**</span>.
+
+<span class="label"># tools registered: 0   tool calls: 0</span></pre>
+<p>She answered with confidence and got both figures wrong: she called no tool, and both figures belong to other Cortex rules, not the ones asked. The harness has a tool registry and a ReAct loop. The notebook's starter <code>search_policies</code> runs the search; you decide what it gives the model. Cortex pays for every token, and an analyst must see which policy each fact came from.</p>
+<p>Tina's harness already runs at <strong>temperature 0</strong>, and her answers still vary between runs: the same agent can answer a question correctly once and miss it the next time. So the check runs your agent itself, each question <strong>3 times</strong> on the tier <code>choose_model</code> gives it, grades each question on a majority, <strong>2 of 3 runs</strong>, and reports how many runs were correct.</p>
+</section>
+
+<section id="slo">
+<h2>The SLO</h2>
+<table>
+  <tr><th>Criterion</th><th>Target</th></tr>
+  <tr><td>Questions with both correct values</td><td>3 of 3</td></tr>
+  <tr><td>Questions citing each fact's policy, from retrieved chunks only</td><td>3 of 3</td></tr>
+  <tr><td>Tool calls per run</td><td>at most 4</td></tr>
+  <tr><td>Questions on the fast tier</td><td>at least 1</td></tr>
+  <tr><td>Tokens per pass</td><td>under 9,000</td></tr>
+  <tr><td>Tokens per pass (reported, not graded)</td><td>target 5,000</td></tr>
+</table>
+<p>Graded rows count on 2 of a question's 3 runs. The token target is reported only. The Defend then asks which questions your runs support on the fast tier; the assignment carries its decision rule.</p>
+</section>

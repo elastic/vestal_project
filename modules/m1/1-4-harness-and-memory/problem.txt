@@ -1,0 +1,10 @@
+# Lab 1.4 start state: the 3-turn conversation cell with a recall() that returns nothing (the
+# shipped MemoryStore stub), as the notebook prints it. Captured 2026-10-06 from a live 1.4 sandbox
+# (participant enekzg2dhsle, test copy ara-p2-1-4-harness-and-memory, assets vestal_project
+# m1-assets 581479e) by the Build solve's NAIVE run. Turn 1's answer is cut at 300 characters.
+Turn 1 recalled 0 memories:
+Turn 1: For Elias Vance, the daily ATM withdrawals of $9,000 to $9,500, while individually below the $10,000 Currency Transaction Report (CTR) threshold, constitute a suspicious pattern. This series of transactions, appearing to serve no legitimate purpose and potentially structured to avoid reporting, mandates the filing of a Suspi
+Turn 2 recalled 0 memories:
+Turn 2: I'm sorry, but I don't have any memory of a previous conversation about a customer's withdrawal pattern or wire transfers. Please provide more context.
+Turn 3 recalled 0 memories:
+Turn 3: I need more information to answer your question. What transaction are you referring to?

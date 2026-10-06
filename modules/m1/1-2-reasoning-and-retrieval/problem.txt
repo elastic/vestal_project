@@ -1,0 +1,15 @@
+# Lab 1.2 start state: the dev decisions Build 1 loads, as the notebook's load cell prints them.
+# Captured 2026-10-06 from a live 1.2 sandbox (participant rbxa5kolkhkm, test copy
+# ara-p2-1-2-reasoning-and-retrieval, assets vestal_project m1-assets 581479e) by the Build 1
+# solve, which runs the notebook's cells as elastic. Every decision is valid against its schema.
+# The planted errors (dev-sets/dev-decisions.jsonl has_error): dev-02 wrong_threshold,
+# dev-06 stale_value, dev-07 wrong_direction. policy-003: $10,000, "at or above"; policy-011: 30 days.
+Loaded 7 dev decisions.
+  dev-01: {'threshold': 10000, 'direction': 'at or above', 'reportable': True}
+  dev-02: {'threshold': 6200, 'direction': 'at or above', 'reportable': True}
+  dev-03: {'threshold': 10000, 'direction': 'at or above', 'reportable': False}
+  dev-04: {'threshold': 10000, 'direction': 'at or above', 'reportable': True}
+  dev-05: {'sar_deadline_days': 30, 'filing_required': True}
+  dev-06: {'sar_deadline_days': 60, 'filing_required': True}
+  dev-07: {'threshold': 10000, 'direction': 'above', 'reportable': True}
+NOTEBOOK-RUN stub: dev caught 0 of 3, dev false positives 0 of 4
