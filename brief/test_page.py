@@ -191,6 +191,54 @@ def test_convert_deck_to_valid_page():
         assert page.check(d) == []
 
 
+OLD_PAGE = """<!DOCTYPE html><html><head><title>Lab 9.3: Old page</title></head><body>
+<div class="deck">
+  <div class="slide">
+    <h1>Lab 9.3: Old page</h1>
+    <p>Scenario.</p>
+  </div>
+  <div class="slide">
+    <h2>The problem</h2>
+    <pre>capture</pre>
+  </div>
+  <div class="slide">
+    <h2>A concept</h2>
+    <p style="margin-top: 12px;">Text.</p>
+  </div>
+  <div class="slide">
+    <h2>Decision rule</h2>
+    <p>Take the first row that applies.</p>
+    <table><tr><th>A</th></tr></table>
+  </div>
+  <div class="slide">
+    <h2>What done looks like</h2>
+    <ul><li>x</li></ul>
+  </div>
+  <div class="slide">
+    <h2>Select Check to continue</h2>
+    <p>The indicator below turns green.</p>
+  </div>
+</div>
+<div id="status" class="status-waiting">Provisioning...</div>
+<script>poll()</script>
+</body></html>
+"""
+
+
+def test_convert_old_page_to_valid_page():
+    with tempfile.TemporaryDirectory() as tmp:
+        d = pathlib.Path(tmp) / "9-3-old"
+        (d / "brief").mkdir(parents=True)
+        old = d / "brief" / "index.html"
+        old.write_text(OLD_PAGE)
+        src = page.convert_page(old)
+        assert '<section id="rule">' in src and '<p class="rule-line">Take the first row' in src
+        assert "style=" not in src and "indicator below" not in src
+        (d / "page.html").write_text(src)
+        page.build(d)
+        assert page.check(d) == []
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0
