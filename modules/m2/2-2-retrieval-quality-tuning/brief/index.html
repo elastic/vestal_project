@@ -2,40 +2,55 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lab 2.2: Tune retrieval quality</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', system-ui, sans-serif; background: #101C3F; color: #fff; min-height: 100vh; }
-  .deck { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
-  .slide { background: #153385; border-radius: 8px; padding: 40px; margin-bottom: 32px; }
-  h1 { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 2rem; font-weight: 700; color: #48EFCF; margin-bottom: 16px; }
-  h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 12px; }
-  p, li { line-height: 1.55; margin-bottom: 8px; }
-  code, pre { font-family: 'Space Mono', monospace; background: #101C3F; padding: 2px 6px; border-radius: 3px; }
-  pre { padding: 16px; margin: 12px 0; overflow-x: auto; }
-  p code, li code, td code { overflow-wrap: anywhere; }
-  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
-  th, td { border: 1px solid #0B64DD; padding: 8px 12px; text-align: left; }
-  th { background: #0B64DD; }
-  th, td { overflow-wrap: anywhere; }
-  ul { padding-left: 20px; }
-  #status { position: fixed; bottom: 24px; right: 24px; padding: 10px 18px; border-radius: 6px; font-size: 0.875rem; font-family: 'Space Mono', monospace; }
-  .status-waiting { background: #FEC514; color: #000; }
-  .status-ready { background: #48EFCF; color: #000; }
-  .status-failed { background: #FF957D; color: #000; }
+/* ARA Brief page (alignment A1-A5): one scrolling page, sections citable by their h2 title.
+   Colours are brand tokens (brand/tokens.css). */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', system-ui, sans-serif; background: #101C3F; color: #FFFFFF; min-height: 100vh; }
+.page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+.page > header, .page > section { background: #153385; border-radius: 8px; padding: 32px 40px; margin-bottom: 28px; }
+.track-code { font-family: 'Space Mono', monospace; font-size: 0.875rem; color: #ABB4C4; margin-bottom: 8px; }
+h1 { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 2rem; font-weight: 700; color: #48EFCF; margin-bottom: 16px; }
+h2 { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 12px; }
+p, li { line-height: 1.55; margin-bottom: 8px; }
+ul, ol { padding-left: 1.4em; margin: 8px 0; }
+strong { color: #FFFFFF; }
+code, pre { font-family: 'Space Mono', ui-monospace, monospace; background: #101C3F; border-radius: 3px; }
+code { padding: 2px 6px; }
+pre { padding: 16px; margin: 12px 0; overflow-x: auto; font-size: 0.85rem; line-height: 1.45; white-space: pre; }
+p code, li code, td code { overflow-wrap: anywhere; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+th, td { border: 1px solid #0B64DD; padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+th { background: #0B64DD; }
+figure { margin: 12px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; background: #FFFFFF; border-radius: 6px; padding: 8px; }
+.hl { color: #FEC514; }
+.wrong { color: #FF957D; }
+.right { color: #48EFCF; }
+.tip, .note { padding: 10px 14px; border-left: 3px solid #FEC514; background: #101C3F; border-radius: 6px; margin: 12px 0; }
+.rule-line { font-weight: 600; }
+#status { position: fixed; bottom: 24px; right: 24px; padding: 10px 18px; border-radius: 6px; font-size: 0.875rem; font-family: 'Space Mono', monospace; max-width: calc(100% - 48px); }
+.status-waiting { background: #FEC514; color: #1C1E23; }
+.status-ready { background: #48EFCF; color: #1C1E23; }
+.status-failed { background: #FF957D; color: #1C1E23; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
-<div class="deck">
-  <div class="slide">
-    <h1>Lab 2.2: Tune retrieval quality</h1>
-    <p>The corpus is indexed. Now you choose how Tina searches it. Four retriever strategies, two quality metrics, one production decision.</p>
-  </div>
-  <div class="slide">
-    <!-- problem -->
-    <h2>The problem</h2>
-    <p>An analyst asks Tina for <code>WF-2026-0803A</code>, from wire-fraud-202's case number, MTB-WF-2026-0803A. Tina's only retriever searches by meaning:</p>
-    <pre>by meaning (Tina today)   168 ms
+<main class="page">
+<header>
+<p class="track-code">Lab 2.2</p>
+<h1>Lab 2.2: Tune retrieval quality</h1>
+<p>The corpus is indexed. Now you choose how Tina searches it. Four retriever strategies, two quality metrics, one production decision.</p>
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<p>An analyst asks Tina for <code>WF-2026-0803A</code>, from wire-fraud-202's case number, MTB-WF-2026-0803A. Tina's only retriever searches by meaning:</p>
+<pre>by meaning (Tina today)   168 ms
  1  wire-fraud-204
  2  wire-fraud-207
  3  wire-fraud-202   the case asked for
@@ -43,63 +58,106 @@
 
 by exact words             54 ms
  1  wire-fraud-202</pre>
-    <p>A case number has no meaning to embed, so two cases that read alike rank above the one asked for. Exact words find it first, in a third of the time. You run this search yourself at the start of Build 1.</p>
-  </div>
-  <div class="slide">
-    <h2>Four strategies</h2>
-    <table>
-      <tr><th>Strategy</th><th>Strength</th></tr>
-      <tr><td>BM25</td><td>Exact keyword match — wins on identifier queries</td></tr>
-      <tr><td>Dense semantic</td><td>Meaning over keywords</td></tr>
-      <tr><td>Hybrid (RRF)</td><td>Hedges between the two; it can trail the stronger leg on your corpus</td></tr>
-      <tr><td>Hybrid + rerank</td><td>Often the strongest ranking, but adds latency; measure it on your corpus</td></tr>
-    </table>
-  </div>
-  <div class="slide">
-    <h2>What you will do</h2>
-    <ul>
-      <li><strong>Build 1 — Retriever bench:</strong> Implement all 4 strategies. Measure nDCG@5 and BM25 identifier MRR.</li>
-      <li><strong>Build 2 — Tune the vector index:</strong> Calculate the largest <code>m</code> for BBQ quantization that fits your seeded RAM budget.</li>
-      <li><strong>Defend:</strong> Justify which retriever ships as Tina's default given your latency budget.</li>
-    </ul>
-  </div>
-  <div class="slide">
-    <!-- rule -->
-    <h2>Decision rule</h2>
-    <p>Your own measurements decide each row.</p>
-    <table>
-      <tr><th>Decision</th><th>Rule</th></tr>
-      <tr><td>Default retriever</td><td>The highest nDCG@5 among templates whose p50 fits the budget</td></tr>
-      <tr><td>Exact lookups</td><td>The template with the highest identifier MRR</td></tr>
-      <tr><td>Graph memory</td><td>4 &times; <code>m</code> bytes per vector, times the vector count</td></tr>
-    </table>
-  </div>
-  <div class="slide">
-    <h2>What done looks like</h2>
-    <ul>
-      <li>All four templates return documents for every question, each with nDCG@5 at least <strong>0.4</strong></li>
-      <li><code>bm25</code> identifier MRR at least <strong>0.90</strong></li>
-      <li><code>hybrid_rerank</code> nDCG@5 target <strong>0.75</strong>, reported, not graded</li>
-      <li><code>cortex-corpus-tuned</code>: <code>bbq_hnsw</code> at the largest <code>m</code> that fits your budget, <code>ef_construction</code> at least <strong>100</strong>, same document count as <code>cortex-corpus</code></li>
-      <li>Hybrid nDCG@5 moves by at most <strong>0.03</strong> after tuning</li>
-    </ul>
-  </div>
-  <div class="slide">
-    <h2>Select Check to continue</h2>
-    <p>The indicator below turns green when your environment is ready.</p>
-  </div>
-</div>
-<div id="status" class="status-waiting">Provisioning...</div>
+<p>A case number has no meaning to embed, so two cases that read alike rank above the one asked for. Exact words find it first, in a third of the time. You run this search yourself at the start of Build 1.</p>
+</section>
+
+<section>
+<h2>Four strategies</h2>
+<table>
+<tr><th>Strategy</th><th>Strength</th></tr>
+<tr><td>BM25</td><td>Exact keyword match: wins on identifier queries</td></tr>
+<tr><td>Dense semantic</td><td>Meaning over keywords</td></tr>
+<tr><td>Hybrid (RRF)</td><td>Hedges between the two; it can trail the stronger leg on your corpus</td></tr>
+<tr><td>Hybrid + rerank</td><td>Often the strongest ranking, but adds latency; measure it on your corpus</td></tr>
+</table>
+</section>
+
+<section>
+<h2>Measuring a ranking</h2>
+<p>Each metric scores the top <em>k</em> results of one question, then averages over the question set. Worked example: a question with 3 relevant documents, and a top 5 with relevant hits at ranks 1 and 3.</p>
+<table>
+<tr><th>Metric</th><th>What it measures</th><th>Example</th></tr>
+<tr><td>precision@k</td><td>Relevant results in the top <em>k</em>, divided by <em>k</em></td><td>2 / 5 = 0.40</td></tr>
+<tr><td>recall@k</td><td>Relevant results in the top <em>k</em>, divided by all relevant documents</td><td>2 / 3 = 0.67</td></tr>
+<tr><td>MRR</td><td>1 / the rank of the first relevant result</td><td>1 / 1 = 1.00</td></tr>
+<tr><td>nDCG@k</td><td>Relevant results weighted toward the top, scaled so the ideal order scores 1</td><td>Higher when the hit at rank 3 moves to rank 2</td></tr>
+</table>
+<p>This lab grades nDCG@5, and MRR on identifier questions, where one exact document is the answer.</p>
+</section>
+
+<section>
+<h2>Sizing the vector index</h2>
+<p>On Serverless, a new <code>semantic_text</code> index with dense embeddings is already quantized with Better Binary Quantization (<code>bbq_hnsw</code>), at the default <code>m</code> of 16. Tuning changes the graph, <code>m</code> and <code>ef_construction</code>, not the quantization.</p>
+<table>
+<tr><th>Per vector</th><th>Bytes</th><th>At 1,024 dimensions, <code>m</code> = 16</th></tr>
+<tr><td>BBQ vector</td><td>&lceil;dims / 64&rceil; &times; 8 + 14</td><td>142</td></tr>
+<tr><td>HNSW graph</td><td>4 &times; <code>m</code></td><td>64</td></tr>
+</table>
+<p>A larger <code>m</code> gives each vector more graph neighbors: better recall at production scale, and more memory.</p>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Your own measurements decide each row.</p>
+<table>
+<tr><th>Decision</th><th>Rule</th></tr>
+<tr><td>Default retriever</td><td>The highest nDCG@5 among templates whose p50 fits the budget</td></tr>
+<tr><td>Exact lookups</td><td>The template with the highest identifier MRR</td></tr>
+<tr><td>Graph memory</td><td>4 &times; <code>m</code> bytes per vector, times the vector count</td></tr>
+</table>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+<li>All four templates return documents for every question, each with nDCG@5 at least <strong>0.4</strong></li>
+<li><code>bm25</code> identifier MRR at least <strong>0.90</strong></li>
+<li><code>hybrid_rerank</code> nDCG@5 target <strong>0.75</strong>, reported, not graded</li>
+<li><code>cortex-corpus-tuned</code>: <code>bbq_hnsw</code> at the largest <code>m</code> that fits your budget, <code>ef_construction</code> at least <strong>100</strong>, same document count as <code>cortex-corpus</code></li>
+<li>Hybrid nDCG@5 moves by at most <strong>0.03</strong> after tuning</li>
+</ul>
+</section>
+<section id="next">
+<h2>Select Check to continue</h2>
+<p>The indicator in the bottom-right corner turns green when your environment is ready. Select <strong>Check</strong> at any time and it reports which provisioning step is still running.</p>
+</section>
+</main>
+<div id="status" class="status-waiting" role="status" aria-live="polite">Provisioning: starting</div>
 <script>
-  function poll() {
-    fetch('/status.json').then(r=>r.json()).then(s=>{
-      const el=document.getElementById('status');
-      if(s.ready){el.className='status-ready';el.textContent='Environment ready. Select Check.';}
-      else if(s.error){el.className='status-failed';el.textContent='Provisioning failed: '+s.error+'. Stop and restart.';}
-      else{const w=s.step_n?`step ${s.step_n}/${s.step_total}, ${s.step}`:'starting';const m=s.started?Math.floor((Date.now()/1000-s.started)/60):0;el.className='status-waiting';el.textContent=`Provisioning: ${w} (${m} min)`;}
-    }).catch(()=>{});
+/* ARA Brief page status indicator (alignment A4, spec 02 section 3.6). One copy for every
+   Brief page; page.py inlines it and its check diffs the inlined copy against this file.
+   Polls /status.json every 10 s until ready or failed. The indicator is a courtesy; the
+   Brief's check is the gate. */
+(function () {
+  var el = document.getElementById('status');
+  if (!el) { return; }
+  function show(state, text) {
+    el.className = 'status-' + state;
+    el.textContent = text;
   }
-  poll();setInterval(poll,10000);
+  function poll() {
+    fetch('/status.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (s) {
+        if (s && s.ready) {
+          show('ready', 'Environment ready. Select Check.');
+          return;
+        }
+        if (s && s.error) {
+          show('failed', 'Provisioning failed during ' + s.error + '. Stop this track and start it again.');
+          return;
+        }
+        if (s) {
+          var where = s.step_n ? 'step ' + s.step_n + ' of ' + s.step_total + ', ' + s.step : 'starting';
+          var mins = s.started ? Math.max(0, Math.floor((Date.now() / 1000 - s.started) / 60)) : 0;
+          show('waiting', 'Provisioning: ' + where + ' (' + mins + ' min)');
+        }
+        setTimeout(poll, 10000);
+      })
+      .catch(function () { setTimeout(poll, 10000); });
+  }
+  poll();
+}());
 </script>
 </body>
 </html>

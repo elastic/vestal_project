@@ -1,0 +1,70 @@
+<header>
+<p class="track-code">Lab 2.4</p>
+<h1>Lab 2.4: Production cost</h1>
+<p>Every LLM call costs money. You will measure that cost, reduce it with a semantic cache, and route cheaper queries to a fast model tier, without sacrificing answer quality.</p>
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<p>Before the cache, Tina pays for the same question twice. Two paraphrases from this lab's start state:</p>
+<pre>generation call 2477 ms | How long must Cortex Bank keep
+                          customer identification records?
+generation call 2205 ms | What is the retention period for
+                          CIP records at Cortex Bank?</pre>
+<p>Both ask about the same records, and each paid for its own generation call. Every call is billed, and most of Tina's questions are lookups a cheaper model could answer.</p>
+</section>
+
+<section>
+<h2>Answer from data, not a model</h2>
+<p>A question whose answer is a count or a sum over structured data never needs generation. An ES|QL query answers it for free, and exactly.</p>
+<table>
+<tr><th>Question</th><th>Answered by</th><th>Model calls</th></tr>
+<tr><td>How many transactions over a threshold came from one country last month?</td><td>An ES|QL query over <code>cortex-transactions</code></td><td>None</td></tr>
+<tr><td>What does the retention policy require for identification records?</td><td>Retrieval, then generation</td><td>One</td></tr>
+</table>
+</section>
+
+<section>
+<h2>The semantic cache</h2>
+<p>A semantic cache matches an incoming query to one already answered by embedding similarity. Above a similarity threshold it serves the cached answer and skips generation; below it, it generates and stores the new answer.</p>
+<table>
+<tr><th>Threshold</th><th>What goes wrong</th><th>Cost</th></tr>
+<tr><td>Too low</td><td>A near-miss (same domain, different question) hits</td><td>The analyst gets an answer to a different question</td></tr>
+<tr><td>Too high</td><td>A paraphrase misses</td><td>A generation call paid for again</td></tr>
+</table>
+</section>
+
+<section>
+<h2>Route by complexity</h2>
+<p>Most of Tina's questions are one-fact lookups that a cheaper model answers as well as a strong one. A router reads the question text and picks the tier with no model call: a model classifier would spend a call to save one.</p>
+<table>
+<tr><th>Query type</th><th>Example shape</th><th>Tier</th></tr>
+<tr><td>Single-hop</td><td>One fact from one document</td><td>Fast, if its answer accuracy holds</td></tr>
+<tr><td>Multi-part</td><td>Reasoning across documents</td><td>Strong</td></tr>
+</table>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Your own measurements decide each row.</p>
+<table>
+<tr><th>When</th><th>Then</th></tr>
+<tr><td>A query paraphrases one already answered</td><td>Serve the cached answer; no generation call</td></tr>
+<tr><td>Same domain, different question (a near-miss)</td><td>Miss and generate</td></tr>
+<tr><td>Fast-tier answer accuracy is 0.8 or higher</td><td>Route single-hop lookups to the fast tier</td></tr>
+<tr><td>Below 0.8, or nothing sent fast</td><td>Route nothing to the fast tier</td></tr>
+<tr><td>Always</td><td>Multi-part analysis goes to the strong tier</td></tr>
+</table>
+<p>Daily savings = <code>floor(daily volume &times; hit rate &times; cost per call in cents / 100)</code></p>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+<li>ES|QL: all <strong>3</strong> queries return the reference rows; sums within <strong>0.1%</strong></li>
+<li>Cache: at most <strong>1 of 12</strong> outcomes wrong, <strong>0</strong> near-misses served, one document per miss</li>
+<li>Router: at least <strong>10 of 12</strong> to the right tier, the env model per tier, one live fast-tier call</li>
+<li>Defend: Q1 within <strong>$1</strong>; Q2 and Q3 follow from your fast-tier answer accuracy and the <strong>0.8</strong> bar</li>
+</ul>
+</section>

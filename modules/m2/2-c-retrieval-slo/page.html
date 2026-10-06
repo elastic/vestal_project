@@ -1,0 +1,25 @@
+<header>
+<p class="track-code">Capstone 2.C</p>
+<h1>Capstone 2.C: Retrieval SLO</h1>
+<p>Cortex Bank's compliance assistant Tina has a retrieval service-level objective. Today's pipeline doesn't meet it. You diagnose why Tina misses, pull the levers that fix it within the SLO, and defend your choice.</p>
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+</header>
+
+<section id="scenario">
+<h2>The scenario</h2>
+<p>Cortex's regional deployment never got the fixes from labs 2.1 to 2.3. There Tina answers from a 200-token fixed-chunk index through a dense-only retriever.</p>
+<p>Her answers to compliance questions come back incomplete. Today, for <strong>0 of 4</strong> held-out policy questions and <strong>1 of 4</strong> case questions, one chunk in Tina's top 5 holds the whole answer. The SLO requires 3 of 4 in each. Finding out why is your first job.</p>
+</section>
+
+<section id="slo">
+<h2>The SLO</h2>
+<table>
+<tr><th>Metric</th><th>Current</th><th>Target</th></tr>
+<tr><td>Policy answers whole in one chunk of Tina's top 5</td><td>0 / 4</td><td><strong>&ge; 3 / 4</strong></td></tr>
+<tr><td>Case answers whole in one chunk of Tina's top 5</td><td>1 / 4</td><td><strong>&ge; 3 / 4</strong></td></tr>
+<tr><td>Tokens in any question's top 5</td><td></td><td><strong>&le; 4,000</strong></td></tr>
+<tr><td>p95 retrieval latency</td><td></td><td><strong>&le; 800 ms</strong></td></tr>
+<tr><td>Chunk count</td><td>baseline</td><td><strong>&le; 1.5&times; baseline</strong></td></tr>
+</table>
+<p>You have 8 dev questions, 4 per class, to self-evaluate with <code>submit.py</code>. The check grades 8 held-out questions of the same kind.</p>
+</section>

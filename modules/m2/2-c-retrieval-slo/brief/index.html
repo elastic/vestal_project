@@ -5,98 +5,107 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Capstone 2.C: Retrieval SLO</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', system-ui, sans-serif; background: #101C3F; color: #fff; min-height: 100vh; }
-  .deck { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
-  .slide { background: #153385; border-radius: 8px; padding: 40px; margin-bottom: 32px; }
-  h1 { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 2rem; font-weight: 700; color: #48EFCF; margin-bottom: 16px; }
-  h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 12px; color: #48EFCF; }
-  p, li { line-height: 1.55; margin-bottom: 8px; }
-  code, pre { font-family: 'Space Mono', monospace; background: #101C3F; padding: 2px 6px; border-radius: 3px; font-size: 0.875rem; }
-  pre { padding: 16px; margin: 12px 0; overflow-x: auto; }
-  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
-  th, td { border: 1px solid #0B64DD; padding: 8px 12px; text-align: left; }
-  th { background: #0B64DD; }
-  ul { padding-left: 20px; }
-  .label { display: inline-block; font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 3px; margin-right: 6px; font-family: 'Space Mono', monospace; }
-  .artifact  { background: #6B46C1; }
-  .measured  { background: #0B64DD; }
-  .behavior  { background: #059669; }
-  .defend    { background: #B45309; }
-  #status { position: fixed; bottom: 24px; right: 24px; padding: 10px 18px; border-radius: 6px; font-size: 0.875rem; font-family: 'Space Mono', monospace; }
-  .status-waiting { background: #FEC514; color: #000; }
-  .status-ready   { background: #48EFCF; color: #000; }
-  .status-failed  { background: #FF957D; color: #000; }
+/* ARA Brief page (alignment A1-A5): one scrolling page, sections citable by their h2 title.
+   Colours are brand tokens (brand/tokens.css). */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', system-ui, sans-serif; background: #101C3F; color: #FFFFFF; min-height: 100vh; }
+.page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+.page > header, .page > section { background: #153385; border-radius: 8px; padding: 32px 40px; margin-bottom: 28px; }
+.track-code { font-family: 'Space Mono', monospace; font-size: 0.875rem; color: #ABB4C4; margin-bottom: 8px; }
+h1 { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 2rem; font-weight: 700; color: #48EFCF; margin-bottom: 16px; }
+h2 { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 12px; }
+p, li { line-height: 1.55; margin-bottom: 8px; }
+ul, ol { padding-left: 1.4em; margin: 8px 0; }
+strong { color: #FFFFFF; }
+code, pre { font-family: 'Space Mono', ui-monospace, monospace; background: #101C3F; border-radius: 3px; }
+code { padding: 2px 6px; }
+pre { padding: 16px; margin: 12px 0; overflow-x: auto; font-size: 0.85rem; line-height: 1.45; white-space: pre; }
+p code, li code, td code { overflow-wrap: anywhere; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+th, td { border: 1px solid #0B64DD; padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+th { background: #0B64DD; }
+figure { margin: 12px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; background: #FFFFFF; border-radius: 6px; padding: 8px; }
+.hl { color: #FEC514; }
+.wrong { color: #FF957D; }
+.right { color: #48EFCF; }
+.tip, .note { padding: 10px 14px; border-left: 3px solid #FEC514; background: #101C3F; border-radius: 6px; margin: 12px 0; }
+.rule-line { font-weight: 600; }
+#status { position: fixed; bottom: 24px; right: 24px; padding: 10px 18px; border-radius: 6px; font-size: 0.875rem; font-family: 'Space Mono', monospace; max-width: calc(100% - 48px); }
+.status-waiting { background: #FEC514; color: #1C1E23; }
+.status-ready { background: #48EFCF; color: #1C1E23; }
+.status-failed { background: #FF957D; color: #1C1E23; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
-<div class="deck">
+<main class="page">
+<header>
+<p class="track-code">Capstone 2.C</p>
+<h1>Capstone 2.C: Retrieval SLO</h1>
+<p>Cortex Bank's compliance assistant Tina has a retrieval service-level objective. Today's pipeline doesn't meet it. You diagnose why Tina misses, pull the levers that fix it within the SLO, and defend your choice.</p>
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+</header>
 
-  <div class="slide">
-    <h1>Capstone 2.C: Retrieval SLO</h1>
-    <p>Cortex Bank's compliance assistant Tina has a retrieval service-level objective. Today's pipeline doesn't meet it. You diagnose why Tina misses, pull the levers that fix it within the SLO, and defend your choice.</p>
-  </div>
+<section id="scenario">
+<h2>The scenario</h2>
+<p>Cortex's regional deployment never got the fixes from labs 2.1 to 2.3. There Tina answers from a 200-token fixed-chunk index through a dense-only retriever.</p>
+<p>Her answers to compliance questions come back incomplete. Today, for <strong>0 of 4</strong> held-out policy questions and <strong>1 of 4</strong> case questions, one chunk in Tina's top 5 holds the whole answer. The SLO requires 3 of 4 in each. Finding out why is your first job.</p>
+</section>
 
-  <div class="slide">
-    <h2>The scenario</h2>
-    <p>Tina's answers to compliance questions come back incomplete. Today, for <strong>0 of 4</strong> held-out policy questions and <strong>1 of 4</strong> case questions, one chunk in Tina's top 5 holds the whole answer. The SLO requires 3 of 4 in each. Finding out why is your first job.</p>
-  </div>
-
-  <div class="slide">
-    <h2>The SLO</h2>
-    <table>
-      <tr><th>Metric</th><th>Current</th><th>Target</th></tr>
-      <tr><td>Policy answers whole in one chunk of Tina's top 5</td><td>0 / 4</td><td><strong>≥ 3 / 4</strong></td></tr>
-      <tr><td>Case answers whole in one chunk of Tina's top 5</td><td>1 / 4</td><td><strong>≥ 3 / 4</strong></td></tr>
-      <tr><td>Tokens in any question's top 5</td><td></td><td><strong>≤ 4,000</strong></td></tr>
-      <tr><td>p95 retrieval latency</td><td>—</td><td><strong>≤ 800 ms</strong></td></tr>
-      <tr><td>Chunk count</td><td>baseline</td><td><strong>≤ 1.5× baseline</strong></td></tr>
-    </table>
-    <p>You have 8 dev questions, 4 per class, to self-evaluate with <code>submit.py</code>. The check grades 8 held-out questions of the same kind.</p>
-  </div>
-
-  <div class="slide">
-    <h2>What you will do</h2>
-    <ul>
-      <li><strong>Diagnose:</strong> Run <code>/home/elastic/.venv/bin/python /home/elastic/submit.py</code> before you change anything. It prints the cause of each dev miss: split, or retrieval miss</li>
-      <li><strong>Improve:</strong> Edit <code>/home/elastic/retriever.json</code> and/or re-chunk into a new index and cut the alias over</li>
-      <li><strong>Evaluate:</strong> Re-run <code>submit.py</code> — iterate until at least 3 of 4 dev questions pass in each class</li>
-      <li><strong>Defend:</strong> Run <code>python3 /opt/ara/lib/defend.py</code> to record your answers, then select Check</li>
-    </ul>
-  </div>
-
-  <div class="slide">
-    <h2>Grading criteria</h2>
-    <p><span class="label artifact">ARTIFACT</span> <code>cortex-corpus-live</code> alias resolves; <code>retriever.json</code> is valid and runs against it; embedding model unchanged; <code>body_text</code> mapped as text</p>
-    <p><span class="label measured">MEASURED</span> p95 ≤ 800 ms; chunk count ≤ 1.5× baseline (nDCG@10 logged as a diagnostic)</p>
-    <p><span class="label behavior">BEHAVIOR</span> One chunk in Tina's top 5 holds the whole answer for ≥ 3 of 4 held-out policy questions and ≥ 3 of 4 case questions; no top 5 over 4,000 tokens</p>
-    <p><span class="label defend">DEFEND</span> Your answers match the diagnosis and your live configuration</p>
-    <p style="margin-top: 12px;"><strong>To pass</strong>: Check passes at tier 75 or higher (see the assignment's Grading tiers).</p>
-  </div>
-
-  <div class="slide">
-    <h2>Select Check to continue</h2>
-    <p>The indicator below turns green when your environment is ready. The starting corpus takes about 10 to 20 minutes to build, and can take up to 35. This challenge allows 60 minutes.</p>
-  </div>
-
-</div>
-<div id="status" class="status-waiting">Provisioning...</div>
+<section id="slo">
+<h2>The SLO</h2>
+<table>
+<tr><th>Metric</th><th>Current</th><th>Target</th></tr>
+<tr><td>Policy answers whole in one chunk of Tina's top 5</td><td>0 / 4</td><td><strong>&ge; 3 / 4</strong></td></tr>
+<tr><td>Case answers whole in one chunk of Tina's top 5</td><td>1 / 4</td><td><strong>&ge; 3 / 4</strong></td></tr>
+<tr><td>Tokens in any question's top 5</td><td></td><td><strong>&le; 4,000</strong></td></tr>
+<tr><td>p95 retrieval latency</td><td></td><td><strong>&le; 800 ms</strong></td></tr>
+<tr><td>Chunk count</td><td>baseline</td><td><strong>&le; 1.5&times; baseline</strong></td></tr>
+</table>
+<p>You have 8 dev questions, 4 per class, to self-evaluate with <code>submit.py</code>. The check grades 8 held-out questions of the same kind.</p>
+</section>
+<section id="next">
+<h2>Select Check to continue</h2>
+<p>The indicator in the bottom-right corner turns green when your environment is ready. Select <strong>Check</strong> at any time and it reports which provisioning step is still running.</p>
+</section>
+</main>
+<div id="status" class="status-waiting" role="status" aria-live="polite">Provisioning: starting</div>
 <script>
-  function poll() {
-    fetch('/status.json').then(r => r.json()).then(s => {
-      const el = document.getElementById('status');
-      if (s.ready) {
-        el.className = 'status-ready'; el.textContent = 'Environment ready. Select Check.';
-      } else if (s.error) {
-        el.className = 'status-failed'; el.textContent = 'Provisioning failed during: ' + s.error + '. Stop and restart.';
-      } else {
-        const where = s.step_n ? `step ${s.step_n} of ${s.step_total}, ${s.step}` : 'starting';
-        const mins = s.started ? Math.floor((Date.now()/1000 - s.started)/60) : 0;
-        el.className = 'status-waiting'; el.textContent = `Provisioning: ${where} (${mins} min)`;
-      }
-    }).catch(() => {});
+/* ARA Brief page status indicator (alignment A4, spec 02 section 3.6). One copy for every
+   Brief page; page.py inlines it and its check diffs the inlined copy against this file.
+   Polls /status.json every 10 s until ready or failed. The indicator is a courtesy; the
+   Brief's check is the gate. */
+(function () {
+  var el = document.getElementById('status');
+  if (!el) { return; }
+  function show(state, text) {
+    el.className = 'status-' + state;
+    el.textContent = text;
   }
-  poll(); setInterval(poll, 10000);
+  function poll() {
+    fetch('/status.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (s) {
+        if (s && s.ready) {
+          show('ready', 'Environment ready. Select Check.');
+          return;
+        }
+        if (s && s.error) {
+          show('failed', 'Provisioning failed during ' + s.error + '. Stop this track and start it again.');
+          return;
+        }
+        if (s) {
+          var where = s.step_n ? 'step ' + s.step_n + ' of ' + s.step_total + ', ' + s.step : 'starting';
+          var mins = s.started ? Math.max(0, Math.floor((Date.now() / 1000 - s.started) / 60)) : 0;
+          show('waiting', 'Provisioning: ' + where + ' (' + mins + ' min)');
+        }
+        setTimeout(poll, 10000);
+      })
+      .catch(function () { setTimeout(poll, 10000); });
+  }
+  poll();
+}());
 </script>
 </body>
 </html>

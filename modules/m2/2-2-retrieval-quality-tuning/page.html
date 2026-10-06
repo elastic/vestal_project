@@ -1,0 +1,77 @@
+<header>
+<p class="track-code">Lab 2.2</p>
+<h1>Lab 2.2: Tune retrieval quality</h1>
+<p>The corpus is indexed. Now you choose how Tina searches it. Four retriever strategies, two quality metrics, one production decision.</p>
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<p>An analyst asks Tina for <code>WF-2026-0803A</code>, from wire-fraud-202's case number, MTB-WF-2026-0803A. Tina's only retriever searches by meaning:</p>
+<pre>by meaning (Tina today)   168 ms
+ 1  wire-fraud-204
+ 2  wire-fraud-207
+ 3  wire-fraud-202   the case asked for
+ 4  sar-111
+
+by exact words             54 ms
+ 1  wire-fraud-202</pre>
+<p>A case number has no meaning to embed, so two cases that read alike rank above the one asked for. Exact words find it first, in a third of the time. You run this search yourself at the start of Build 1.</p>
+</section>
+
+<section>
+<h2>Four strategies</h2>
+<table>
+<tr><th>Strategy</th><th>Strength</th></tr>
+<tr><td>BM25</td><td>Exact keyword match: wins on identifier queries</td></tr>
+<tr><td>Dense semantic</td><td>Meaning over keywords</td></tr>
+<tr><td>Hybrid (RRF)</td><td>Hedges between the two; it can trail the stronger leg on your corpus</td></tr>
+<tr><td>Hybrid + rerank</td><td>Often the strongest ranking, but adds latency; measure it on your corpus</td></tr>
+</table>
+</section>
+
+<section>
+<h2>Measuring a ranking</h2>
+<p>Each metric scores the top <em>k</em> results of one question, then averages over the question set. Worked example: a question with 3 relevant documents, and a top 5 with relevant hits at ranks 1 and 3.</p>
+<table>
+<tr><th>Metric</th><th>What it measures</th><th>Example</th></tr>
+<tr><td>precision@k</td><td>Relevant results in the top <em>k</em>, divided by <em>k</em></td><td>2 / 5 = 0.40</td></tr>
+<tr><td>recall@k</td><td>Relevant results in the top <em>k</em>, divided by all relevant documents</td><td>2 / 3 = 0.67</td></tr>
+<tr><td>MRR</td><td>1 / the rank of the first relevant result</td><td>1 / 1 = 1.00</td></tr>
+<tr><td>nDCG@k</td><td>Relevant results weighted toward the top, scaled so the ideal order scores 1</td><td>Higher when the hit at rank 3 moves to rank 2</td></tr>
+</table>
+<p>This lab grades nDCG@5, and MRR on identifier questions, where one exact document is the answer.</p>
+</section>
+
+<section>
+<h2>Sizing the vector index</h2>
+<p>On Serverless, a new <code>semantic_text</code> index with dense embeddings is already quantized with Better Binary Quantization (<code>bbq_hnsw</code>), at the default <code>m</code> of 16. Tuning changes the graph, <code>m</code> and <code>ef_construction</code>, not the quantization.</p>
+<table>
+<tr><th>Per vector</th><th>Bytes</th><th>At 1,024 dimensions, <code>m</code> = 16</th></tr>
+<tr><td>BBQ vector</td><td>&lceil;dims / 64&rceil; &times; 8 + 14</td><td>142</td></tr>
+<tr><td>HNSW graph</td><td>4 &times; <code>m</code></td><td>64</td></tr>
+</table>
+<p>A larger <code>m</code> gives each vector more graph neighbors: better recall at production scale, and more memory.</p>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Your own measurements decide each row.</p>
+<table>
+<tr><th>Decision</th><th>Rule</th></tr>
+<tr><td>Default retriever</td><td>The highest nDCG@5 among templates whose p50 fits the budget</td></tr>
+<tr><td>Exact lookups</td><td>The template with the highest identifier MRR</td></tr>
+<tr><td>Graph memory</td><td>4 &times; <code>m</code> bytes per vector, times the vector count</td></tr>
+</table>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+<li>All four templates return documents for every question, each with nDCG@5 at least <strong>0.4</strong></li>
+<li><code>bm25</code> identifier MRR at least <strong>0.90</strong></li>
+<li><code>hybrid_rerank</code> nDCG@5 target <strong>0.75</strong>, reported, not graded</li>
+<li><code>cortex-corpus-tuned</code>: <code>bbq_hnsw</code> at the largest <code>m</code> that fits your budget, <code>ef_construction</code> at least <strong>100</strong>, same document count as <code>cortex-corpus</code></li>
+<li>Hybrid nDCG@5 moves by at most <strong>0.03</strong> after tuning</li>
+</ul>
+</section>

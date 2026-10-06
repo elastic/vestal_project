@@ -5,105 +5,152 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lab 2.4: Production cost</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', system-ui, sans-serif; background: #101C3F; color: #fff; min-height: 100vh; }
-  .deck { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
-  .slide { background: #153385; border-radius: 8px; padding: 40px; margin-bottom: 32px; }
-  h1 { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 2rem; font-weight: 700; color: #48EFCF; margin-bottom: 16px; }
-  h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 12px; }
-  p, li { line-height: 1.55; margin-bottom: 8px; }
-  code, pre { font-family: 'Space Mono', monospace; background: #101C3F; padding: 2px 6px; border-radius: 3px; }
-  pre { padding: 16px; margin: 12px 0; overflow-x: auto; }
-  p code, li code, td code { overflow-wrap: anywhere; }
-  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
-  th, td { border: 1px solid #0B64DD; padding: 8px 12px; text-align: left; }
-  th { background: #0B64DD; }
-  th, td { overflow-wrap: anywhere; }
-  ul { padding-left: 20px; }
-  #status { position: fixed; bottom: 24px; right: 24px; padding: 10px 18px; border-radius: 6px; font-size: 0.875rem; font-family: 'Space Mono', monospace; }
-  .status-waiting { background: #FEC514; color: #000; }
-  .status-ready { background: #48EFCF; color: #000; }
-  .status-failed { background: #FF957D; color: #000; }
+/* ARA Brief page (alignment A1-A5): one scrolling page, sections citable by their h2 title.
+   Colours are brand tokens (brand/tokens.css). */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', system-ui, sans-serif; background: #101C3F; color: #FFFFFF; min-height: 100vh; }
+.page { max-width: 960px; margin: 0 auto; padding: 40px 24px 96px; }
+.page > header, .page > section { background: #153385; border-radius: 8px; padding: 32px 40px; margin-bottom: 28px; }
+.track-code { font-family: 'Space Mono', monospace; font-size: 0.875rem; color: #ABB4C4; margin-bottom: 8px; }
+h1 { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 2rem; font-weight: 700; color: #48EFCF; margin-bottom: 16px; }
+h2 { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 12px; }
+p, li { line-height: 1.55; margin-bottom: 8px; }
+ul, ol { padding-left: 1.4em; margin: 8px 0; }
+strong { color: #FFFFFF; }
+code, pre { font-family: 'Space Mono', ui-monospace, monospace; background: #101C3F; border-radius: 3px; }
+code { padding: 2px 6px; }
+pre { padding: 16px; margin: 12px 0; overflow-x: auto; font-size: 0.85rem; line-height: 1.45; white-space: pre; }
+p code, li code, td code { overflow-wrap: anywhere; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+th, td { border: 1px solid #0B64DD; padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+th { background: #0B64DD; }
+figure { margin: 12px 0; text-align: center; }
+figure img { max-width: 100%; height: auto; background: #FFFFFF; border-radius: 6px; padding: 8px; }
+.hl { color: #FEC514; }
+.wrong { color: #FF957D; }
+.right { color: #48EFCF; }
+.tip, .note { padding: 10px 14px; border-left: 3px solid #FEC514; background: #101C3F; border-radius: 6px; margin: 12px 0; }
+.rule-line { font-weight: 600; }
+#status { position: fixed; bottom: 24px; right: 24px; padding: 10px 18px; border-radius: 6px; font-size: 0.875rem; font-family: 'Space Mono', monospace; max-width: calc(100% - 48px); }
+.status-waiting { background: #FEC514; color: #1C1E23; }
+.status-ready { background: #48EFCF; color: #1C1E23; }
+.status-failed { background: #FF957D; color: #1C1E23; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
-<div class="deck">
-  <div class="slide">
-    <h1>Lab 2.4: Production cost</h1>
-    <p>Every LLM call costs money. You will measure that cost, reduce it with a semantic cache, and route cheaper queries to a fast model tier — without sacrificing answer quality.</p>
-  </div>
-  <div class="slide">
-    <!-- problem -->
-    <h2>The problem</h2>
-    <p>Before the cache, Tina pays for the same question twice. Two paraphrases from this lab's start state:</p>
-    <pre>generation call 2477 ms | How long must Cortex Bank keep
+<main class="page">
+<header>
+<p class="track-code">Lab 2.4</p>
+<h1>Lab 2.4: Production cost</h1>
+<p>Every LLM call costs money. You will measure that cost, reduce it with a semantic cache, and route cheaper queries to a fast model tier, without sacrificing answer quality.</p>
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<p>Before the cache, Tina pays for the same question twice. Two paraphrases from this lab's start state:</p>
+<pre>generation call 2477 ms | How long must Cortex Bank keep
                           customer identification records?
 generation call 2205 ms | What is the retention period for
                           CIP records at Cortex Bank?</pre>
-    <p>Both ask about the same records, and each paid for its own generation call. Every call is billed, and most of Tina's questions are lookups a cheaper model could answer.</p>
-  </div>
-  <div class="slide">
-    <h2>What you will do</h2>
-    <ul>
-      <li><strong>Build 1 — Query transactions:</strong> Write ES|QL queries to analyse the synthetic transaction log.</li>
-      <li><strong>Build 2 — Semantic cache:</strong> Build a similarity-based cache. Tune the threshold to balance hit rate vs. correctness.</li>
-      <li><strong>Build 3 — Route by complexity:</strong> Classify queries as single-hop or multi-part. Route single-hop to a faster model.</li>
-      <li><strong>Defend:</strong> Calculate daily savings from the cache and justify the routing decision from your fast-tier answer accuracy.</li>
-    </ul>
-  </div>
-  <div class="slide">
-    <!-- rule -->
-    <h2>Decision rule</h2>
-    <p>Your own measurements decide each row.</p>
-    <table>
-      <tr><th>When</th><th>Then</th></tr>
-      <tr><td>A query paraphrases one already answered</td><td>Serve the cached answer; no generation call</td></tr>
-      <tr><td>Same domain, different question (a near-miss)</td><td>Miss and generate</td></tr>
-      <tr><td>Fast-tier answer accuracy is 0.8 or higher</td><td>Route single-hop lookups to the fast tier</td></tr>
-      <tr><td>Below 0.8, or nothing sent fast</td><td>Route nothing to the fast tier</td></tr>
-      <tr><td>Always</td><td>Multi-part analysis goes to the strong tier</td></tr>
-    </table>
-    <p style="margin-top:12px">Daily savings = <code>floor(daily volume × hit rate × cost per call in cents / 100)</code></p>
-  </div>
-  <div class="slide">
-    <h2>Key concepts</h2>
-    <ul>
-      <li><strong>Semantic cache</strong> — match incoming queries by embedding similarity; serve cached answers above threshold</li>
-      <li><strong>Similarity threshold</strong> — too low → near-misses hit (wrong answer); too high → paraphrases miss (wasted calls)</li>
-      <li><strong>Query classification</strong> — single-hop (one fact lookup) vs multi-part (reasoning across documents)</li>
-    </ul>
-  </div>
-  <div class="slide">
-    <h2>What done looks like</h2>
-    <ul>
-      <li>ES|QL: all <strong>3</strong> queries return the reference rows; sums within <strong>0.1%</strong></li>
-      <li>Cache: at most <strong>1 of 12</strong> outcomes wrong, <strong>0</strong> near-misses served, one document per miss</li>
-      <li>Router: at least <strong>10 of 12</strong> to the right tier, the env model per tier, one live fast-tier call</li>
-      <li>Defend: Q1 within <strong>$1</strong>; Q2 and Q3 follow from your fast-tier answer accuracy and the <strong>0.8</strong> bar</li>
-    </ul>
-  </div>
-  <div class="slide">
-    <h2>Select Check to continue</h2>
-    <p>The indicator below turns green when your environment is ready.</p>
-  </div>
-</div>
-<div id="status" class="status-waiting">Provisioning...</div>
+<p>Both ask about the same records, and each paid for its own generation call. Every call is billed, and most of Tina's questions are lookups a cheaper model could answer.</p>
+</section>
+
+<section>
+<h2>Answer from data, not a model</h2>
+<p>A question whose answer is a count or a sum over structured data never needs generation. An ES|QL query answers it for free, and exactly.</p>
+<table>
+<tr><th>Question</th><th>Answered by</th><th>Model calls</th></tr>
+<tr><td>How many transactions over a threshold came from one country last month?</td><td>An ES|QL query over <code>cortex-transactions</code></td><td>None</td></tr>
+<tr><td>What does the retention policy require for identification records?</td><td>Retrieval, then generation</td><td>One</td></tr>
+</table>
+</section>
+
+<section>
+<h2>The semantic cache</h2>
+<p>A semantic cache matches an incoming query to one already answered by embedding similarity. Above a similarity threshold it serves the cached answer and skips generation; below it, it generates and stores the new answer.</p>
+<table>
+<tr><th>Threshold</th><th>What goes wrong</th><th>Cost</th></tr>
+<tr><td>Too low</td><td>A near-miss (same domain, different question) hits</td><td>The analyst gets an answer to a different question</td></tr>
+<tr><td>Too high</td><td>A paraphrase misses</td><td>A generation call paid for again</td></tr>
+</table>
+</section>
+
+<section>
+<h2>Route by complexity</h2>
+<p>Most of Tina's questions are one-fact lookups that a cheaper model answers as well as a strong one. A router reads the question text and picks the tier with no model call: a model classifier would spend a call to save one.</p>
+<table>
+<tr><th>Query type</th><th>Example shape</th><th>Tier</th></tr>
+<tr><td>Single-hop</td><td>One fact from one document</td><td>Fast, if its answer accuracy holds</td></tr>
+<tr><td>Multi-part</td><td>Reasoning across documents</td><td>Strong</td></tr>
+</table>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Your own measurements decide each row.</p>
+<table>
+<tr><th>When</th><th>Then</th></tr>
+<tr><td>A query paraphrases one already answered</td><td>Serve the cached answer; no generation call</td></tr>
+<tr><td>Same domain, different question (a near-miss)</td><td>Miss and generate</td></tr>
+<tr><td>Fast-tier answer accuracy is 0.8 or higher</td><td>Route single-hop lookups to the fast tier</td></tr>
+<tr><td>Below 0.8, or nothing sent fast</td><td>Route nothing to the fast tier</td></tr>
+<tr><td>Always</td><td>Multi-part analysis goes to the strong tier</td></tr>
+</table>
+<p>Daily savings = <code>floor(daily volume &times; hit rate &times; cost per call in cents / 100)</code></p>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+<li>ES|QL: all <strong>3</strong> queries return the reference rows; sums within <strong>0.1%</strong></li>
+<li>Cache: at most <strong>1 of 12</strong> outcomes wrong, <strong>0</strong> near-misses served, one document per miss</li>
+<li>Router: at least <strong>10 of 12</strong> to the right tier, the env model per tier, one live fast-tier call</li>
+<li>Defend: Q1 within <strong>$1</strong>; Q2 and Q3 follow from your fast-tier answer accuracy and the <strong>0.8</strong> bar</li>
+</ul>
+</section>
+<section id="next">
+<h2>Select Check to continue</h2>
+<p>The indicator in the bottom-right corner turns green when your environment is ready. Select <strong>Check</strong> at any time and it reports which provisioning step is still running.</p>
+</section>
+</main>
+<div id="status" class="status-waiting" role="status" aria-live="polite">Provisioning: starting</div>
 <script>
-  function poll() {
-    fetch('/status.json').then(r => r.json()).then(s => {
-      const el = document.getElementById('status');
-      if (s.ready) {
-        el.className = 'status-ready'; el.textContent = 'Environment ready. Select Check.';
-      } else if (s.error) {
-        el.className = 'status-failed'; el.textContent = 'Provisioning failed during: ' + s.error + '. Stop and restart.';
-      } else {
-        const where = s.step_n ? `step ${s.step_n} of ${s.step_total}, ${s.step}` : 'starting';
-        const mins = s.started ? Math.floor((Date.now()/1000 - s.started)/60) : 0;
-        el.className = 'status-waiting'; el.textContent = `Provisioning: ${where} (${mins} min)`;
-      }
-    }).catch(() => {});
+/* ARA Brief page status indicator (alignment A4, spec 02 section 3.6). One copy for every
+   Brief page; page.py inlines it and its check diffs the inlined copy against this file.
+   Polls /status.json every 10 s until ready or failed. The indicator is a courtesy; the
+   Brief's check is the gate. */
+(function () {
+  var el = document.getElementById('status');
+  if (!el) { return; }
+  function show(state, text) {
+    el.className = 'status-' + state;
+    el.textContent = text;
   }
-  poll(); setInterval(poll, 10000);
+  function poll() {
+    fetch('/status.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (s) {
+        if (s && s.ready) {
+          show('ready', 'Environment ready. Select Check.');
+          return;
+        }
+        if (s && s.error) {
+          show('failed', 'Provisioning failed during ' + s.error + '. Stop this track and start it again.');
+          return;
+        }
+        if (s) {
+          var where = s.step_n ? 'step ' + s.step_n + ' of ' + s.step_total + ', ' + s.step : 'starting';
+          var mins = s.started ? Math.max(0, Math.floor((Date.now() / 1000 - s.started) / 60)) : 0;
+          show('waiting', 'Provisioning: ' + where + ' (' + mins + ' min)');
+        }
+        setTimeout(poll, 10000);
+      })
+      .catch(function () { setTimeout(poll, 10000); });
+  }
+  poll();
+}());
 </script>
 </body>
 </html>
