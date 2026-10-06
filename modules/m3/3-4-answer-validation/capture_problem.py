@@ -1,9 +1,9 @@
-"""Capture the Brief's problem slide for Lab 3.4 from a live run (spec 18 section 1.2).
+"""Capture the Brief's problem section for Lab 3.4 from a live run (spec 18 section 1.2).
 
 Runs in a provisioned 3.4 sandbox against the start state: the shipped guardrails notebook's
 harness cell, with all three hooks empty, over the fifteen dev queries. For each query it
 prints what retrieval returned, what Tina delivered, the figures in it, and the claims the
-reference attributor could not ground. The problem slide's failure is picked from this output.
+reference attributor could not ground. The problem section's failure is picked from this output.
 
 Run as elastic after provisioning, with the track env (the ch03 solve did this for the capture):
   /home/elastic/.venv/bin/python3 /opt/ara/src/modules/m3/3-4-answer-validation/capture_problem.py

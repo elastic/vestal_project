@@ -1,4 +1,4 @@
-"""Capture the Brief's problem slide for Lab 3.1 from a live run (spec 18 section 1.2).
+"""Capture the Brief's problem section for Lab 3.1 from a live run (spec 18 section 1.2).
 
 Runs in a provisioned 3.1 sandbox against the start state: one 40k-bucket dev question,
 retrieved whole (top 3 narratives) and as passages (top 5 sections), with the token cost of
