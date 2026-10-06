@@ -1,8 +1,10 @@
 """
 ara_grade.py - the shared private grader for ARA tracks (alignment round N3, 2026-10-06).
 
-One canonical module for every track. Installed root-only at /opt/ara/checks/ara_grade.py
-by challenge 01's provision.sh, straight from the assets bundle:
+One canonical module for every track. Installed root-only at /opt/ara/checks/ara_grade.py,
+straight from the assets bundle, by the "Installing graders" step of challenge 01's
+setup-elastic-serverless (in the provision.sh it writes and launches), after /opt/ara/checks
+exists:
 
     install -m 600 -o root -g root /opt/ara/src/lib/ara_grade.py /opt/ara/checks/ara_grade.py
 
@@ -447,7 +449,9 @@ class Grade:
         """Grading standard section 7a. A criterion's counter rises only when its message is the
         one shown (the first failure) and resets when it passes. From the second showing, the
         criterion's guide is appended. Check and Defend feedback share the counter (both run
-        verdict). The counter file is root-only: only the check reads it. No-op without tries."""
+        verdict). The counter file is root-only (600): only the check reads it. A missing directory
+        is created root-only; an existing one keeps its mode, because it may be shared with files
+        others read (/opt/ara/results holds what defend.py reads). No-op without tries."""
         if self.tries is None:
             return
         try:
@@ -464,10 +468,9 @@ class Grade:
             elif c is shown:
                 tries[c["name"]] = int(tries.get(c["name"], 0) or 0) + 1
         try:
-            self.tries.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
-            os.chmod(self.tries.parent, 0o700)
-            self.tries.write_text(json.dumps(tries))
-            os.chmod(self.tries, 0o600)
+            if not self.tries.parent.exists():
+                self.tries.parent.mkdir(mode=0o700, parents=True)
+            write_no_follow(self.tries, json.dumps(tries), mode=0o600)
         except OSError:
             pass
         if shown is not None and shown["name"] in self.guides and tries.get(shown["name"], 0) >= 2:
