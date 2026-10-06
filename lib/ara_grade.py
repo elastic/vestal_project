@@ -80,7 +80,9 @@ _SCRUB: list[tuple[str, str]] = []
 
 
 # A cut-off copy of a held-out string is scrubbed once this many of its leading characters
-# survive the cut. Error text is cut before a check echoes it (child runners keep 120-300
+# survive the cut, and only where a cut shows: the copy runs to the end of the text (closing
+# quotes, brackets and whitespace aside) or is followed directly by an ellipsis. Held-out and
+# dev queries share template openings, so the same opening mid-message is dev text and stays. Error text is cut before a check echoes it (child runners keep 120-300
 # characters), so a held-out query that straddles the cut leaves only its start. 40 characters
 # is about seven words: long enough that ordinary wording does not match one by chance, short
 # enough to catch a query cut a little past its start.
@@ -116,6 +118,7 @@ def _scrub_form(s: str, form: str, placeholder: str) -> str:
     if size < SCRUB_PREFIX_MIN or len(head) == len(atoms):
         return s
     rest = [re.compile(a, re.I) for a in atoms[len(head):]]
+    cut = re.compile(r"(?:\.\.\.|\u2026)|[\s\"')\]}]*\Z")
     out, pos = [], 0
     for m in re.finditer("".join(head), s, flags=re.I):
         if m.start() < pos:
@@ -126,6 +129,8 @@ def _scrub_form(s: str, form: str, placeholder: str) -> str:
             if not n:
                 break
             end = n.end()
+        if not cut.match(s, end):
+            continue
         out.append(s[pos:m.start()] + placeholder)
         pos = end
     return "".join(out) + s[pos:]
@@ -135,8 +140,8 @@ def scrub(text: Any, secrets: Iterable[str] | None = None,
           placeholder: str = HELDOUT_PLACEHOLDER) -> str:
     """text with every secret replaced by placeholder, longest first. With no secrets given,
     uses the strings register_heldout() recorded (each with its own placeholder). A match
-    ignores case and the width of whitespace runs, and a copy cut off after at least
-    SCRUB_PREFIX_MIN characters is replaced too."""
+    ignores case and the width of whitespace runs. A copy cut off after at least
+    SCRUB_PREFIX_MIN characters is replaced too, where it ends the text or meets an ellipsis."""
     s = "" if text is None else str(text)
     pairs = ([(x, placeholder) for x in secrets if isinstance(x, str) and x]
              if secrets is not None else list(_SCRUB))
