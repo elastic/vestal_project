@@ -487,6 +487,9 @@ def test_outage_wording_is_aligned():
     assert G.LLM_UNREACHABLE == "The LLM proxy did not respond. Wait a moment and select Check again."
     assert G.ES_UNREACHABLE == "Elasticsearch did not respond. Wait a moment and select Check again."
     assert "unreachable" not in G.LLM_UNREACHABLE.lower()
+    assert G.MISSING_THRESHOLDS == G.GRADER_FILE_MISSING == (
+        "A grader file is missing or unreadable. This is a provisioning error, not your work: "
+        "stop the track and start it again.")
 
 
 if __name__ == "__main__":
