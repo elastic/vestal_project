@@ -482,6 +482,13 @@ def test_guidance_counter_leaves_a_shared_parent_alone():
         assert (fresh.parent.stat().st_mode & 0o777) == 0o700 and json.loads(fresh.read_text()) == {"a": 1}
 
 
+def test_outage_wording_is_aligned():
+    # Joe 2026-10-06: every service outage, the LLM proxy included, uses the one form.
+    assert G.LLM_UNREACHABLE == "The LLM proxy did not respond. Wait a moment and select Check again."
+    assert G.ES_UNREACHABLE == "Elasticsearch did not respond. Wait a moment and select Check again."
+    assert "unreachable" not in G.LLM_UNREACHABLE.lower()
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0
