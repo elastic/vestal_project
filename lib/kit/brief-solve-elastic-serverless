@@ -1,0 +1,16 @@
+#!/bin/bash
+# Brief solve (pattern spec 3.6). Runs for track test and Skip; waits for provisioning so the check passes.
+# Ceiling 54 minutes (spec 02 section 3.6): Instruqt stops a solve at 55, so 54 lets this message print.
+for i in $(seq 1 648); do
+  if [[ -f /opt/ara/.ready ]]; then
+    # The assets copy is root-only once provisioning ends (final audit lane 2, MUST-FIX 1).
+    if runuser -u elastic -- ls /opt/ara/src > /dev/null 2>&1; then
+      echo "Solve: elastic can list /opt/ara/src; provisioning did not close it."; exit 1
+    fi
+    echo "CALIB src-lock: elastic ls /opt/ara/src -> $(cd / && runuser -u elastic -- ls /opt/ara/src 2>&1 | head -1)"
+    exit 0
+  fi
+  if [[ -f /opt/ara/.failed ]]; then echo "Provisioning failed:"; cat /opt/ara/.failed; exit 1; fi
+  sleep 5
+done
+echo "Provisioning did not finish in 54 minutes."; exit 1
