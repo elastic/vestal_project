@@ -492,6 +492,14 @@ def test_outage_wording_is_aligned():
         "stop the track and start it again.")
 
 
+
+def test_decision_messages_are_uniform():
+    # Coordinator 2026-10-06: one wording for every Defend.
+    assert G.NO_DECISION == ("No decision.json found. Run `python3 /opt/ara/lib/defend.py` in the "
+                             "Terminal, answer every question, then select Check.")
+    assert G.BAD_DECISION == ("decision.json can't be read. Run `python3 /opt/ara/lib/defend.py` "
+                              "again, then select Check.")
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0
