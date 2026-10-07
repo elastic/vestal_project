@@ -98,7 +98,7 @@ third parties ...</pre>
 
 <section id="rule">
 <h2>Decision rule</h2>
-<p class="rule-line">Gain is the candidate's nDCG@5 minus the current model's. A gain of 0.02 or less, including a negative one, is noise.</p>
+<p class="rule-line">Take the first row that applies. Gain is the candidate's nDCG@5 minus the current model's. A gain of 0.02 or less, including a negative one, is noise.</p>
 <table>
 <tr><th>Gain over current</th><th>Candidate p95</th><th>Call</th></tr>
 <tr><td>More than 0.02</td><td>Within budget</td><td>Keep the cutover</td></tr>
