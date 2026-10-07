@@ -576,12 +576,24 @@ def learner_json(path, remedy: str, shape=dict):
 
 def decision_answers(path="/home/elastic/defend/decision.json") -> dict:
     """decision.json as defend.py writes it, as {question_id: answer}. Every answer is an object
-    with a string question_id, and its choice and reason, when present, are strings."""
-    rows = learner_json(path, DEFEND_REMEDY).get("answers", [])
+    with a string question_id, and its choice and reason, when present, are strings. A missing
+    file stops with NO_DECISION; one that is not valid JSON or not that shape, with BAD_DECISION
+    (no grade either way)."""
+    try:
+        text = read_learner_text(path)
+    except (OSError, UnicodeDecodeError):
+        fail(BAD_DECISION)
+    if text is None:
+        fail(NO_DECISION)
+    try:
+        data = json.loads(text)
+    except ValueError:
+        fail(BAD_DECISION)
+    rows = data.get("answers", []) if isinstance(data, dict) else None
     if not (isinstance(rows, list) and all(
             isinstance(a, dict) and isinstance(a.get("question_id"), str)
             and all(isinstance(a.get(k, ""), str) for k in ("choice", "reason")) for a in rows)):
-        unreadable(path, DEFEND_REMEDY)
+        fail(BAD_DECISION)
     return {a["question_id"]: a for a in rows}
 
 

@@ -292,8 +292,18 @@ def test_learner_json_and_decision_answers():
         assert G.decision_answers(str(good)) == {"q1": {"question_id": "q1", "choice": "a", "reason": "r"}}
         bad = pathlib.Path(tmp) / "bad.json"
         bad.write_text(json.dumps({"answers": [{"question_id": 1}]}))
-        rc, out, shown, _ = run(f'G.decision_answers({str(bad)!r})')
-        assert rc == 1 and shown.startswith("bad.json is not in the form this check reads")
+        rc, out, shown, grades = run(f'G.decision_answers({str(bad)!r})')
+        assert rc == 1 and shown == G.BAD_DECISION and not grades
+        notjson = pathlib.Path(tmp) / "notjson.json"
+        notjson.write_text("{not json")
+        rc, out, shown, grades = run(f'G.decision_answers({str(notjson)!r})')
+        assert rc == 1 and shown == G.BAD_DECISION and not grades
+        listy = pathlib.Path(tmp) / "list.json"
+        listy.write_text("[]")
+        rc, out, shown, grades = run(f'G.decision_answers({str(listy)!r})')
+        assert rc == 1 and shown == G.BAD_DECISION and not grades
+        rc, out, shown, grades = run(f'G.decision_answers({str(pathlib.Path(tmp) / "none.json")!r})')
+        assert rc == 1 and shown == G.NO_DECISION and not grades
 
 
 def test_thresholds_missing():
