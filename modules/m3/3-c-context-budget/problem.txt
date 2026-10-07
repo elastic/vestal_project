@@ -1,27 +1,27 @@
-# Captured 2026-10-05 from a live run of the 3.C start state (participant vhcoebxrohzp, budget 6000,
-# vestal m3-assets after the corpus repair).
+# Captured 2026-10-06 from a live run of the 3.C start state (participant mfti0pifvgeu, budget 6000,
+# vestal m3-assets 3cf0365).
 # Tina's starting pipeline.py, unchanged: one semantic request across all three indices,
 # no filter, every result packed whole (PACK_STRATEGY = "naive"), no attribution, no guard.
-# Command: /home/elastic/.venv/bin/python /home/elastic/submit.py --limit 2 (8 dev questions).
+# Command: /home/elastic/.venv/bin/python /home/elastic/submit.py --limit 3 (12 dev questions).
 
-Dev pool results (14s, 8 questions)
+Dev pool results (21s, 12 questions)
 ==================================================================
-  precision@10            0.383   (target 0.80 on the held-out set)
-    policy              0.350
-    case                0.150
-    sar                 0.650
-  peak context            9916 tokens   (budget 6000, ceiling per question)
-    policy              3270 tokens on average
-    case                5719 tokens on average
-    sar                 6650 tokens on average
-  over budget             5 question(s)   (target zero)
-  gold figure delivered   6/6   (target 14 of 17 held out)
-  unsupported claims      10   (target at most 1)
+  precision@10            0.311   (target 0.80 on the held-out set)
+    policy              0.267
+    case                0.133
+    sar                 0.533
+  peak context            10725 tokens   (budget 6000, ceiling per question)
+    policy              2924 tokens on average
+    case                7388 tokens on average
+    sar                 7144 tokens on average
+  over budget             7 question(s)   (target zero)
+  gold figure delivered   9/9   (target 14 of 17 held out)
+  unsupported claims      17   (target at most 1)
   UNSUPPORTED returned    0   (attribute said UNSUPPORTED this often; the check needs at least 1 on the held-out set)
-  unanswerable held back  0/2   (target all of them)
-  fabricated figures      1   (target zero, no tolerance)
+  unanswerable held back  0/3   (target all of them)
+  fabricated figures      3   (target zero, no tolerance)
   held back by            scope_check 0, confidence_fallback 0, validate_output 0   (every question, answerable ones included)
 ==================================================================
   lever deltas (precision): router off, filter off, packing +0.000, attribution +0.000, guardrails +0.000
-  over budget: dev-3-c-case-02, dev-3-c-sar-01, dev-3-c-sar-02, dev-3-c-una-01, dev-3-c-una-02
-  figures reached the desk on: dev-3-c-una-01
+  over budget: dev-3-c-case-02, dev-3-c-case-03, dev-3-c-sar-01, dev-3-c-sar-02, dev-3-c-sar-03, dev-3-c-una-01
+  figures reached the desk on: dev-3-c-una-01, dev-3-c-una-02, dev-3-c-una-03

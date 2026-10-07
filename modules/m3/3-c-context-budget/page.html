@@ -16,22 +16,22 @@
 <h2>The scenario</h2>
 <p>The desk's questions mix three sources: the policy library, the case files and the SAR narratives. Some ask for something the corpus does not hold, and the desk cannot tell which before it asks. A figure Tina invents costs more than an answer she declines to give: the analyst acts on the first and looks up the second.</p>
 <pre># the start state, unchanged
-$ submit.py --limit 2
+$ submit.py --limit 3
 
-  precision@10            <span class="wrong">0.383</span>
+  precision@10            <span class="wrong">0.311</span>
     (target 0.80 on the held-out set)
-    policy              0.350
-    case                <span class="wrong">0.150</span>
-    sar                 0.650
-  peak context            <span class="wrong">9916 tokens</span>
+    policy              0.267
+    case                <span class="wrong">0.133</span>
+    sar                 0.533
+  peak context            <span class="wrong">10725 tokens</span>
     (budget 6000, ceiling per question)
-  over budget             <span class="wrong">5 question(s)</span>
+  over budget             <span class="wrong">7 question(s)</span>
     (target zero)
-  unsupported claims      <span class="wrong">10</span>
+  unsupported claims      <span class="wrong">17</span>
     (target at most 1)
-  unanswerable held back  <span class="wrong">0/2</span>
+  unanswerable held back  <span class="wrong">0/3</span>
     (target all of them)
-  fabricated figures      <span class="wrong">1</span>
+  fabricated figures      <span class="wrong">3</span>
     (target zero, no tolerance)</pre>
 
   <pre># pipeline.py, as it ships
@@ -41,7 +41,7 @@ filter: none
 PACK_STRATEGY = "naive"
 attribute, guard:
   return nothing</pre>
-  <p>Tina's own dev run, before any change, in a sandbox with a 6,000-token budget; <code>submit.py</code> prints yours. One search across all three indices, every result packed whole, no claim tied to a passage, and nothing held back: on a question about a customer the corpus does not hold, a dollar figure from another file reached the desk.</p>
+  <p>Tina's own dev run, before any change, in a sandbox with a 6,000-token budget; <code>submit.py</code> prints yours. One search across all three indices, every result packed whole, no claim tied to a passage, and nothing held back: on all three questions the corpus cannot answer, a dollar figure from another file reached the desk.</p>
 </section>
 
 <section id="slo">
