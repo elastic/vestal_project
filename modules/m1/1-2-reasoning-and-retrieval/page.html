@@ -79,7 +79,7 @@
   <tr><td>Policy values</td><td>Retrieval: seconds per update</td></tr>
   <tr><td>Behaviour: format, defined terms</td><td>Fine-tuning</td></tr>
 </table>
-<p>Values come from retrieval either way. Your sandbox has one Cortex requirement, in <code>/home/elastic/cadence-constraint.json</code>, and that requirement decides the approach. Build 2 measures how fast one policy update reaches an answer; the Defend shows that number as evidence of how fast retrieval delivers a change. It does not change which row applies.</p>
+<p>Cortex's values live in the corpus, in <code>cortex-policies</code>, so both rows keep retrieval for them. When the request itself carries every fact, there is nothing to retrieve, and fine-tuning alone can cover the behaviour. Your sandbox has one Cortex requirement, in <code>/home/elastic/cadence-constraint.json</code>, and that requirement decides the approach. Build 2 measures how fast one policy update reaches an answer; the Defend shows that number as evidence of how fast retrieval delivers a change. It does not change which row applies.</p>
 </section>
 
 <section>
