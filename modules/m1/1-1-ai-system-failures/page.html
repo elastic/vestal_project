@@ -28,7 +28,7 @@
   "policy_id": "policy-011",
   "confidence": "high"
 }</pre>
-<p>Tina gave both with confidence. Cortex Bank's CTR threshold is <strong>$10,000</strong> (policy-003), and policy-011 sets the SAR deadline at <strong>30 days</strong>. Cortex files the wrong reports if either ships. The second response is not an answer at all. Each one is wrong in a different way, and Build 1 asks you to name how.</p>
+<p>Tina gave both with confidence. Cortex Bank's CTR threshold is <strong>$10,000</strong> (policy-003), and policy-011 sets the SAR deadline at <strong>30 days</strong>. Cortex files the wrong reports if either ships. A third response, not shown here (response_2), is not an answer at all. Each one is wrong in a different way, and Build 1 asks you to name how.</p>
 </section>
 
 <section>
@@ -103,7 +103,7 @@ grounding       | ? / 6  &lt;- your results
 <h2>Decision rule</h2>
 <p class="rule-line">Take the first row that applies. Your ablation results answer it, not general knowledge.</p>
 <table>
-  <tr><th>Your ablation</th><th>Q1 answer</th></tr>
+  <tr><th>Your ablation</th><th>Question 1 answer</th></tr>
   <tr><td>No removal lowered the grounded count</td><td>No single element</td></tr>
   <tr><td>One section's removal caused the largest drop in grounded answers</td><td>That section</td></tr>
   <tr><td>Two or more sections tie for the largest drop</td><td>Any one of them</td></tr>
@@ -113,8 +113,9 @@ grounding       | ? / 6  &lt;- your results
 <section id="done">
 <h2>What done looks like</h2>
 <ul>
-<li><strong>Build 1:</strong> 3 of 3 diagnoses correct, with all three endpoint types run.</li>
-<li><strong>Build 2:</strong> at least 5 of 6 held-out responses grounded, and all 6 schema-valid.</li>
-<li><strong>Defend:</strong> your answer names the element your own ablation shows was decisive.</li>
+<li>Endpoint types run: all <strong>3</strong> (LLM, embedding model, reranker)</li>
+<li>Diagnoses correct: <strong>3 of 3</strong></li>
+<li>Held-out responses schema-valid: <strong>6 of 6</strong></li>
+<li>Held-out responses grounded: at least <strong>5 of 6</strong></li>
 </ul>
 </section>

@@ -125,8 +125,10 @@ filing thresholds ...</pre>
 <section id="done">
 <h2>What done looks like</h2>
 <ul>
-<li><strong>Build 1:</strong> 5 recorded runs on each tier.</li>
-<li><strong>Build 2:</strong> four stages built, grounded from stage 2, and a stage 4 loop whose 2 or more tool calls return both gold values.</li>
-<li><strong>Defend:</strong> your tier and stage-gap answers follow your own measurements.</li>
+<li>Recorded runs on each tier: <strong>5</strong></li>
+<li>Best tier's mean field accuracy: at least <strong>50%</strong></li>
+<li>Stages 1 to 4 run, with stage 2 grounded in the retrieved policy</li>
+<li>Stage 3 calls <code>search_policies</code> with a relevant query</li>
+<li>Stage 4 tool calls: at least <strong>2</strong>, with <strong>2</strong> distinct queries, and both gold values in the answer</li>
 </ul>
 </section>

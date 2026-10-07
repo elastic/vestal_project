@@ -53,7 +53,7 @@ figure img { max-width: 100%; height: auto; background: #FFFFFF; border-radius: 
 
 <section id="problem">
 <h2>The problem</h2>
-<p>Turn one names the customer: Elias Vance, account 4492, $9,000 to $9,500 at ATMs daily for ten days. Here is what Tina says next, from the notebook's conversation cell with the memory store as it ships:</p>
+<p>Turn one names the customer: Elias Vance, account 4492, $9,000 to $9,500 at ATMs daily for ten days. Here is what Tina says next, from the notebook's conversation cell with no memory store wired in:</p>
 <pre>Turn 2 recalled 0 memories:
 Turn 2: I'm sorry, but I don't have any memory of a
 previous conversation about a customer's withdrawal
@@ -126,8 +126,9 @@ to?</span></pre>
 <section id="done">
 <h2>What done looks like</h2>
 <ul>
-<li><strong>Build:</strong> Tina's turn 3 answer names the customer, the SAR and the policy threshold, and <code>cortex-tina-memory</code> holds at least 3 documents.</li>
-<li><strong>Defend:</strong> 3 answers with matching reasons, for the constraint your sandbox was given.</li>
+<li>Turn 3's recalled memories name the customer from turn one</li>
+<li>Tina's turn 3 answer names the customer, the SAR and the policy threshold</li>
+<li><code>cortex-tina-memory</code> documents: at least <strong>3</strong></li>
 </ul>
 </section>
 <section id="next">
