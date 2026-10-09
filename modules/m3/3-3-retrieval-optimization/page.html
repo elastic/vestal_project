@@ -22,11 +22,11 @@ intent: {"case_type": "wire_fraud",
          "risk_tier": null,
          "date_from": null,
          "date_to": null}
- 1 case-wire-fraud-008 wire_fraud in gold
- 2 <span class="wrong">case-sanctions-024  sanctions  WRONG</span>
- 3 case-wire-fraud-020 wire_fraud in gold
- 4 <span class="wrong">case-sanctions-001  sanctions  WRONG</span>
- 5 <span class="wrong">case-sanctions-007  sanctions  WRONG</span>
+ 1 case-wire-fraud-008  wire_fraud  in gold
+ 2 <span class="wrong">case-sanctions-024   sanctions   WRONG</span>
+ 3 case-wire-fraud-020  wire_fraud  in gold
+ 4 <span class="wrong">case-sanctions-001   sanctions   WRONG</span>
+ 5 <span class="wrong">case-sanctions-007   sanctions   WRONG</span>
 unfiltered precision@10 for this query:
   <span class="wrong">0.20</span></pre>
 <p>The cause: the query that produced this ranks on text alone.</p>
@@ -203,7 +203,7 @@ on the packed context
     skip one that does not fit
     sent          at most 4,000 tokens</pre>
 <p>Overrunning a budget is not a slightly larger bill. It is a truncated prompt, and the truncation lands wherever the text happened to end.</p>
-<p>Your sandbox has two seeded budgets: either 3,000 and 8,000 tokens, or 4,000 and 12,000. constraint.json has yours. On set B the smaller budget always binds; the larger sometimes does. The diagram uses 4,000.</p>
+<p>Your sandbox has two seeded budgets: either 3,000 and 8,000 tokens, or 4,000 and 12,000. <code>/home/elastic/constraint.json</code> has yours. On set B the smaller budget always binds; the larger sometimes does. The diagram uses 4,000.</p>
 </section>
 
 <section>

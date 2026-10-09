@@ -26,6 +26,11 @@ A capstone page (--capstone, or a track dir named N-c-*):
   <header>, <section id="scenario"><h2>The scenario</h2>, <section id="slo"><h2>The SLO</h2>
 Optional, either kind: <div id="next-note">...</div> moves into the closing section.
 The template adds the closing "Select Check to continue" section and the shared poller.
+
+Figures (Brief review, 2026-10-09). Every <img> sits in a <figure> and carries no width or height:
+the build sizes each SVG at SVG_SCALE CSS px per viewBox unit, so text in every figure renders at
+one size across pages, and figures shrink on narrow screens but never grow. The brand fonts are
+inlined as data URIs, so the page makes no network requests.
 """
 from __future__ import annotations
 
@@ -46,6 +51,17 @@ LAB_SECTIONS_TAIL = ["Decision rule", "What done looks like", "Select Check to c
 CAPSTONE_SECTIONS = ["The scenario", "The SLO", "Select Check to continue"]
 SECTION_IDS = {"The problem": "problem", "Decision rule": "rule", "What done looks like": "done",
                "The scenario": "scenario", "The SLO": "slo", "Select Check to continue": "next"}
+SVG_SCALE = 1.25            # CSS px per SVG viewBox unit, for every figure
+MIN_FIGURE_TEXT_PX = 12     # smallest text a figure may render, at the narrowest content width
+NARROW_CONTENT_PX = 536     # figure content width in a 600 px viewport (page.css narrow rules)
+FIGURE_PAD_PX = 12          # the white panel's padding (page.css figure img)
+FONTS = [  # (family, weight CSS, file under brand/fonts). Inter is one variable font.
+    ("Inter", "100 900", "Inter/weight-400.woff2"),
+    ("Space Grotesk", "700", "SpaceGrotesk/weight-700.woff2"),
+    ("Space Mono", "400", "SpaceMono/weight-400.woff2"),
+    ("Space Mono", "700", "SpaceMono/weight-700.woff2"),
+]
+FONT_DIR = REPO_ROOT / "brand" / "fonts"
 CITE_RE = re.compile(r"Brief[,:]?\s+[\"'‘“]([^\"'’”\n]{2,100})[\"'’”]")
 
 
@@ -65,8 +81,23 @@ def _include(src: str, base: pathlib.Path) -> str:
     return re.sub(r"<!--\s*include:\s*([^>]+?)\s*-->", rep, src)
 
 
+def svg_geometry(svg: str) -> tuple[float, float, float | None]:
+    """(viewBox width, viewBox height, smallest font-size in viewBox units or None)."""
+    m = re.search(r'viewBox="\s*[-\d.]+[\s,]+[-\d.]+[\s,]+([\d.]+)[\s,]+([\d.]+)\s*"', svg)
+    if not m:
+        raise ValueError("SVG has no viewBox")
+    sizes = [float(x) for x in re.findall(r'font-size(?:="|:\s*)([\d.]+)', svg)]
+    return float(m.group(1)), float(m.group(2)), (min(sizes) if sizes else None)
+
+
+def svg_size(svg: str) -> tuple[int, int]:
+    w, h, _ = svg_geometry(svg)
+    return round(w * SVG_SCALE), round(h * SVG_SCALE)
+
+
 def _inline_images(src: str, base: pathlib.Path) -> str:
-    """<img src="x.svg|png"> relative to the track dir or its brief/ becomes a data URI."""
+    """<img src="x.svg|png"> relative to the track dir or its brief/ becomes a data URI.
+    An SVG also gets width and height from its viewBox at SVG_SCALE."""
     def rep(m: re.Match) -> str:
         url = m.group(2)
         if url.startswith(("data:", "http:", "https:")):
@@ -74,11 +105,29 @@ def _inline_images(src: str, base: pathlib.Path) -> str:
         for root in (base, base / "brief"):
             p = (root / url).resolve()
             if p.exists():
+                ext = p.suffix.lower().lstrip(".")
                 mime = {"svg": "image/svg+xml", "png": "image/png", "jpg": "image/jpeg",
-                        "jpeg": "image/jpeg"}.get(p.suffix.lower().lstrip("."), "application/octet-stream")
-                return f'{m.group(1)}data:{mime};base64,{base64.b64encode(p.read_bytes()).decode()}{m.group(3)}'
+                        "jpeg": "image/jpeg"}.get(ext, "application/octet-stream")
+                size = ""
+                if ext == "svg":
+                    try:
+                        w, h = svg_size(p.read_text())
+                    except ValueError as exc:
+                        raise SystemExit(f"{url}: {exc}")
+                    size = f' width="{w}" height="{h}"'
+                data = base64.b64encode(p.read_bytes()).decode()
+                return f'{m.group(1)}data:{mime};base64,{data}"{size}{m.group(3)[1:]}'
         raise SystemExit(f"image not found: {url}")
     return re.sub(r'(<img\b[^>]*\bsrc=")([^"]+)("[^>]*>)', rep, src)
+
+
+def font_faces() -> str:
+    out = []
+    for family, weight, rel in FONTS:
+        data = base64.b64encode((FONT_DIR / rel).read_bytes()).decode()
+        out.append(f"@font-face {{ font-family: '{family}'; font-weight: {weight}; font-style: normal; "
+                   f"font-display: swap; src: url(data:font/woff2;base64,{data}) format('woff2'); }}")
+    return "\n".join(out)
 
 
 def render(track_dir: pathlib.Path) -> str:
@@ -93,7 +142,7 @@ def render(track_dir: pathlib.Path) -> str:
     title = _text(h1.group(1)) if h1 else "ARA Brief"
     page, css, poller = template_parts()
     out = page.replace("<!-- PAGE_TITLE -->", html.escape(title, quote=False))
-    out = out.replace("<!-- PAGE_CSS -->", css.rstrip("\n"))
+    out = out.replace("<!-- PAGE_CSS -->", font_faces() + "\n" + css.rstrip("\n"))
     out = out.replace("<!-- PAGE_BODY -->", src.strip("\n"))
     out = out.replace("<!-- PAGE_NEXT_NOTE -->\n", (note + "\n") if note else "")
     out = out.replace("<!-- PAGE_POLLER -->", poller.rstrip("\n"))
@@ -121,6 +170,9 @@ class _Outline(HTMLParser):
         self.scripts: list[str] = []
         self.ext: list[str] = []
         self.status = False
+        self.loose_imgs: list[str] = []    # <img> outside a <figure>
+        self.svgs: list[tuple[str, str]] = []  # (alt, data URI) of inlined SVGs
+        self.bare_spans = 0
         self.title = ""
         self._stack: list[str] = []
         self._cap: str | None = None
@@ -136,6 +188,13 @@ class _Outline(HTMLParser):
             self.ext.append(a["src"])
         if a.get("id") == "status":
             self.status = True
+        if tag == "img":
+            if "figure" not in self._stack:
+                self.loose_imgs.append(a.get("alt") or a.get("src", "")[:40])
+            if (a.get("src") or "").startswith("data:image/svg+xml;base64,"):
+                self.svgs.append((a.get("alt") or "", a["src"]))
+        if tag == "span" and not a.get("class"):
+            self.bare_spans += 1
         if tag == "section":
             self.sections.append({"id": a.get("id"), "h2": None, "children": []})
             self._depth_in_section = 0
@@ -212,12 +271,37 @@ def check_html(page: str, capstone: bool) -> list[str]:
         fails.append("the page must carry exactly one script, the shared poller, byte for byte")
     if o.ext:
         fails.append(f"external resources: {o.ext[:3]}")
+    if o.loose_imgs:
+        fails.append(f"<img> outside a <figure>: {o.loose_imgs[:3]}")
+    for alt, uri in o.svgs:
+        fails += [f"figure {alt[:40]!r}: {f}" for f in figure_text_fails(
+            base64.b64decode(uri.split(",", 1)[1]).decode())]
+    if o.bare_spans:
+        fails.append(f"{o.bare_spans} <span> without a class (highlight lost)")
+    for family, _, _ in FONTS:
+        if f"font-family: '{family}'" not in page:
+            fails.append(f"brand font {family} not inlined")
     body = re.sub(r"<(script|style)\b.*?</\1>", "", page, flags=re.S)
     if "—" in body:
         fails.append("em-dash in page text")
     if re.search(r"\bslides?\b", _text(body), re.I):
         fails.append('page text says "slide": it is a page now')
     return fails
+
+
+def figure_text_fails(svg: str) -> list[str]:
+    """The smallest text in an SVG at SVG_SCALE, shrunk to the narrow content width."""
+    try:
+        w, _, smallest = svg_geometry(svg)
+    except ValueError as exc:
+        return [str(exc)]
+    if smallest is None:
+        return []
+    shrink = min(1.0, (NARROW_CONTENT_PX - 2 * FIGURE_PAD_PX) / (w * SVG_SCALE))
+    px = smallest * SVG_SCALE * shrink
+    if px < MIN_FIGURE_TEXT_PX:
+        return [f"text renders at {px:.1f} px at narrow width (minimum {MIN_FIGURE_TEXT_PX})"]
+    return []
 
 
 def citations(paths: list[pathlib.Path]) -> list[str]:
@@ -235,6 +319,13 @@ def check(track_dir: pathlib.Path, cite: list[pathlib.Path] | None = None,
         return [f"{served} missing"]
     page = served.read_text()
     if (track_dir / SOURCE_NAME).exists():
+        src = (track_dir / SOURCE_NAME).read_text()
+        if re.search(r"<img\b[^>]*\b(width|height)=", src):
+            fails.append("page.html sets an image width or height: the build sizes figures (SVG_SCALE)")
+        if re.search(r"<svg\b", src):
+            fails.append("page.html has an inline <svg>: put it in a file and use <figure><img>")
+        if re.search(r"\sstyle=", src):
+            fails.append("page.html has a style attribute: styling lives in page.css")
         if render(track_dir) != page:
             fails.append(f"brief/index.html is stale: run page.py build {track_dir}")
     else:

@@ -33,21 +33,21 @@ $ submit.py --limit 3
     (target all of them)
   fabricated figures      <span class="wrong">3</span>
     (target zero, no tolerance)</pre>
-
-  <pre># pipeline.py, as it ships
+<p>Tina's own dev run, before any change, in a sandbox with a 6,000-token budget; <code>submit.py</code> prints yours. The pipeline that produced it:</p>
+<pre># pipeline.py, as it ships
 route:  H.ALL_INDEXES,
         semantic, size 10
 filter: none
 PACK_STRATEGY = "naive"
 attribute, guard:
   return nothing</pre>
-  <p>Tina's own dev run, before any change, in a sandbox with a 6,000-token budget; <code>submit.py</code> prints yours. One search across all three indices, every result packed whole, no claim tied to a passage, and nothing held back: on all three questions the corpus cannot answer, a dollar figure from another file reached the desk.</p>
+<p>One search across all three indices, every result packed whole, no claim tied to a passage, and nothing held back: on all three questions the corpus cannot answer, a dollar figure from another file reached the desk.</p>
 </section>
 
 <section id="slo">
 <h2>The SLO</h2>
 <table>
-  <tr><th>Target</th><th>Value</th></tr>
+  <tr><th>Criterion</th><th>Target</th></tr>
   <tr><td>Precision@10 on the 17 answerable questions</td><td><strong>&ge; 0.80</strong></td></tr>
   <tr><td>Context sent to the model, every answerable question</td><td><strong>&le; your budget</strong>: 6,000 or 9,000 tokens, seeded per sandbox</td></tr>
   <tr><td>Exact figure in the delivered answer</td><td><strong>&ge; 14 of 17</strong></td></tr>

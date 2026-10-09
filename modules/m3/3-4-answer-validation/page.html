@@ -76,7 +76,7 @@ answer
 and nothing else
 
   claim: "the aggregate was $1,546,407.46"
-    passage 1  case memo     <span>supports</span>
+    passage 1  case memo     <span class="right">supports</span>
     passage 2  policy text   neutral
     passage 3  policy text   neutral
   -> case-structuring-001
@@ -85,7 +85,7 @@ and nothing else
     passage 1  neutral
     passage 2  neutral
     passage 3  neutral
-  -> <span>UNSUPPORTED</span>
+  -> <span class="wrong">UNSUPPORTED</span>
 
   an attributor that never says
   UNSUPPORTED is reporting citations it
@@ -104,7 +104,7 @@ and nothing else
     $45,300 in passage 1?  no
     $45,300 in passage 2?  no
     $45,300 in passage 3?  no
-  -> <span>UNSUPPORTED</span>        model calls: 0
+  -> <span class="wrong">UNSUPPORTED</span>        model calls: 0
 
   claim: "the aggregate was $1,546,407.46"
     $1,546,407.46 in passage 1?  yes
@@ -132,15 +132,15 @@ claim
     "the case note records that the Tier Two
      team has a strict mandate to resolve
      escalated alerts within four hours..."
-    -> <span>supports</span>
+    -> <span class="right">supports</span>
 
   policy-006-s5      <span class="hl">source_type: policy</span>
     "the Tier Two team has a strict mandate
      to resolve escalated alerts within four
      hours for intraday domestic payments"
-    -> <span>supports</span>
+    -> <span class="right">supports</span>
 
-  cite <span>policy-006-s5</span></pre>
+  cite <span class="right">policy-006-s5</span></pre>
 
   
   <p>A rule belongs to the library that publishes it. A memo restating a rule is a copy, and a copy goes stale without telling you.</p>
@@ -178,13 +178,13 @@ claim
 <pre>query
   |
   v
-<span>scope_check(query)</span>              hook 1
+<span class="hl">scope_check(query)</span>              hook 1
   |  declines -> nothing is retrieved
   v
 retrieve  ->  reranked passages with scores
   |
   v
-<span>confidence_fallback(results, t)</span> hook 2
+<span class="hl">confidence_fallback(results, t)</span> hook 2
   |  fires -> nothing is generated
   v
 generate  ->  answer
@@ -193,7 +193,7 @@ generate  ->  answer
 split into claims  ->  attribution
   |
   v
-<span>validate_output(answer, attrib)</span> hook 3
+<span class="hl">validate_output(answer, attrib)</span> hook 3
   |  strips, refuses, or passes through
   v
 delivered</pre>
@@ -280,5 +280,11 @@ delivered</pre>
 <li><strong>0.80</strong> recall on the 10 claims no passage supports</li>
 <li><strong>0</strong> figures delivered on the unanswerable class</li>
 </ul>
-<p>Policy cited on 2 of 3 conflicts; 8 of 10 no-passage figures screened without model calls (reported, not graded); 4 of 5 per class, confidence hook firing on unanswerables; 5 drafts: 0 invented, 4 grounded kept.</p>
+<p>Also checked:</p>
+<ul>
+<li>The policy passage cited on at least <strong>2 of 3</strong> conflict claims</li>
+<li>At least <strong>4 of 5</strong> in each class: answerable questions keep the exact figure, <code>confidence_fallback</code> fires on unanswerable ones, <code>scope_check</code> declines out-of-scope ones</li>
+<li>Drafts: <strong>0</strong> invented figures delivered, the grounded figure kept in at least <strong>4 of 5</strong></li>
+<li>Reported, not graded: <strong>8 of 10</strong> no-passage figures screened without a model call</li>
+</ul>
 </section>

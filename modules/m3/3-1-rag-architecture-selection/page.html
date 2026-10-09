@@ -152,7 +152,7 @@ features on every query:
 one query can carry several.
 your order decides which wins.</pre>
 <p>The harness extracts the features. You write the function that maps them to a strategy.</p>
-<p>Order matters when a query carries more than one feature. Tina's current router gets some of those wrong. Build 2's notebook opens with a See it yourself cell that shows which, and what each costs.</p>
+<p>Order matters when a query carries more than one feature. Tina's current router gets some of those wrong. Build 2's notebook opens with a <strong>See it yourself</strong> cell that shows which, and what each costs.</p>
 </section>
 
 <section>
@@ -172,7 +172,7 @@ Q "how much was wired in the investigation
                         second search</pre>
 <p>Under-routing costs accuracy: the filter or the second hop never happens, and the answer is wrong or incomplete.</p>
 <p>Over-routing costs tokens and latency: Tina loops on a lone case reference when one filtered lookup finds the report.</p>
-<p>agentic is never right for a single-hop lookup. naive is never right where a filter is named.</p>
+<p><code>agentic</code> is never right for a single-hop lookup. <code>naive</code> is never right where a filter is named.</p>
 </section>
 
 <section id="rule">
@@ -192,7 +192,7 @@ Q "how much was wired in the investigation
 <ul>
 <li><strong>5</strong> length buckets measured, and the break bucket named</li>
 <li><strong>0.80</strong> router accuracy on 15 held-out queries</li>
-<li><strong>60%</strong> fewer tokens from the fact index, hit rate within one query</li>
+<li><strong>60%</strong> fewer tokens from the fact index, hit rate within one question</li>
 </ul>
 <p>Your per-bucket numbers must land within 0.20 hit rate and 50 percent tokens of the check's, which measures on held-out questions.</p>
 </section>
