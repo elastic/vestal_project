@@ -1,7 +1,7 @@
 <header>
 <p class="track-code">Lab 2.4</p>
 <h1>Lab 2.4: Production cost</h1>
-<p>Every LLM call costs money. You will measure that cost, reduce it with a semantic cache, and route cheaper queries to a fast model tier, without sacrificing answer quality.</p>
+<p>Every LLM call costs money. You will answer counts and sums from data with ES|QL, reduce generation with a semantic cache, and route simple lookups to a cheaper model tier, without sacrificing answer quality.</p>
 <p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
 </header>
 
@@ -56,7 +56,7 @@ generation call 2205 ms | What is the retention period for
 <tr><td>Below 0.8, or nothing sent fast</td><td>Route nothing to the fast tier</td></tr>
 <tr><td>Always</td><td>Multi-part analysis goes to the strong tier</td></tr>
 </table>
-<p>Daily savings = <code>floor(daily volume &times; hit rate &times; cost per call in cents / 100)</code></p>
+<p class="note">Daily savings = floor(<em>daily volume</em> &times; <em>hit rate</em> &times; <em>cost per call in cents</em> / 100)</p>
 </section>
 
 <section id="done">
@@ -64,7 +64,7 @@ generation call 2205 ms | What is the retention period for
 <ul>
 <li>ES|QL: all <strong>3</strong> queries return the reference rows; sums within <strong>0.1%</strong></li>
 <li>Cache: at most <strong>1 of 12</strong> outcomes wrong, <strong>0</strong> near-misses served, one document per miss</li>
-<li>Router: at least <strong>10 of 12</strong> to the right tier, the env model per tier, one live fast-tier call</li>
+<li>Router: at least <strong>10 of 12</strong> to the right tier, <code>ARA_MODEL_FAST</code> and <code>ARA_MODEL_STRONG</code> per tier, one live fast-tier call</li>
 <li>Defend: Question 1 within <strong>$1</strong>; Questions 2 and 3 follow from your fast-tier answer accuracy and the <strong>0.8</strong> bar</li>
 </ul>
 </section>

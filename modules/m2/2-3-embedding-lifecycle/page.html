@@ -18,12 +18,12 @@ around to hide its origin:
 **Loan Layering** [sar-109]: Vance deposited funds into a CD, then borrowed
 against them via a Line of Credit and immediately wired the proceeds to
 third parties ...</pre>
-<p>The case that answers it, sar-103, is not in Tina's top 5. The query has none of its words: layering, shell company, ownership. Keyword search needs them, and the current model's semantic match ranks other cases first. A new embedding model is ready to test, and <code>cortex-corpus-live</code> must stay searchable while you move to it.</p>
+<p>The case that answers it, sar-103, is not among the four cases in Tina's top 5 results. The query has none of its words: layering, shell company, ownership. Keyword search needs them, and the current model's semantic match ranks other cases first. A new embedding model is ready to test, and <code>cortex-corpus-live</code> must stay searchable while you move to it.</p>
 </section>
 
 <section>
 <h2>Benchmark before you switch</h2>
-<p>A newer model is a hypothesis until it is measured on queries shaped like Tina's traffic. Two numbers decide it.</p>
+<p>A newer model is a hypothesis until it is measured on queries shaped like Tina's traffic. Gain and p95 latency decide it.</p>
 <table>
 <tr><th>Measure</th><th>What it tells you</th></tr>
 <tr><td>nDCG@5</td><td>Ranking quality from 0 to 1: the labelled document near the top of the first 5 results scores higher</td></tr>
@@ -74,7 +74,7 @@ third parties ...</pre>
 <li><code>cortex-corpus-live</code> points only to <code>cortex-corpus-candidate</code>; <code>cortex-corpus</code> is kept</li>
 <li>Probe during the move: at least <strong>20</strong> samples, <strong>0</strong> failed and <strong>0</strong> empty searches</li>
 <li>Live index mapping and document count unchanged</li>
-<li><code>rewrite()</code>: at least <strong>8 of 13</strong> held-out queries keyword search misses find their target in the first <strong>5</strong> documents, all calls within <strong>35 seconds</strong></li>
+<li><code>rewrite()</code>: at least <strong>8 of the 13</strong> held-out queries that keyword search misses find their target in the first <strong>5</strong> documents, with all the calls together within <strong>35 seconds</strong></li>
 <li>Defend: gains of <strong>0.02</strong> or less are noise; your p95 budget is <strong>300</strong> or <strong>500 ms</strong></li>
 </ul>
 </section>

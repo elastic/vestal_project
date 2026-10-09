@@ -7,7 +7,7 @@
 
 <section id="problem">
 <h2>The problem</h2>
-<p>An analyst asks Tina for <code>WF-2026-0803A</code>, from wire-fraud-202's case number, MTB-WF-2026-0803A. Tina's only retriever searches by meaning:</p>
+<p>An analyst asks Tina for <code>WF-2026-0803A</code>, which appears in <code>MTB-WF-2026-0803A</code>, the case number of <code>wire-fraud-202</code>. Tina's only retriever searches by meaning:</p>
 <pre>by meaning (Tina today)   168 ms
  1  wire-fraud-204
  2  wire-fraud-207
@@ -22,11 +22,11 @@ by exact words             54 ms
 <section>
 <h2>Four strategies</h2>
 <table>
-<tr><th>Strategy</th><th>Strength</th></tr>
-<tr><td>BM25</td><td>Exact keyword match: wins on identifier queries</td></tr>
-<tr><td>Dense semantic</td><td>Meaning over keywords</td></tr>
-<tr><td>Hybrid (RRF)</td><td>Hedges between the two; it can trail the stronger leg on your corpus</td></tr>
-<tr><td>Hybrid + rerank</td><td>Often the strongest ranking, but adds latency; measure it on your corpus</td></tr>
+<tr><th>Strategy</th><th>Template</th><th>Strength</th></tr>
+<tr><td>BM25</td><td><code>bm25</code></td><td>Exact keyword match: wins on identifier queries</td></tr>
+<tr><td>Dense semantic</td><td><code>dense</code></td><td>Meaning over keywords</td></tr>
+<tr><td>Hybrid (RRF)</td><td><code>hybrid</code></td><td>Hedges between the two; it can trail the stronger leg on your corpus</td></tr>
+<tr><td>Hybrid + rerank</td><td><code>hybrid_rerank</code></td><td>Often the strongest ranking, but adds latency; measure it on your corpus</td></tr>
 </table>
 </section>
 
@@ -38,7 +38,7 @@ by exact words             54 ms
 <tr><td>precision@k</td><td>Relevant results in the top <em>k</em>, divided by <em>k</em></td><td>2 / 5 = 0.40</td></tr>
 <tr><td>recall@k</td><td>Relevant results in the top <em>k</em>, divided by all relevant documents</td><td>2 / 3 = 0.67</td></tr>
 <tr><td>MRR</td><td>1 / the rank of the first relevant result</td><td>1 / 1 = 1.00</td></tr>
-<tr><td>nDCG@k</td><td>Relevant results weighted toward the top, scaled so the ideal order scores 1</td><td>Higher when the hit at rank 3 moves to rank 2</td></tr>
+<tr><td>nDCG@k</td><td>Relevant results weighted toward the top, scaled so the ideal order scores 1</td><td>(1 + 0.5) / (1 + 0.63 + 0.5) = 0.70</td></tr>
 </table>
 <p>This lab grades nDCG@5, and MRR on identifier questions, where one exact document is the answer.</p>
 </section>

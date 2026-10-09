@@ -19,16 +19,16 @@ NotFoundError(404, 'index_not_found_exception', 'no such index [cortex-corpus-li
 <p>Tina answers from her top 5 chunks. An answer split across two chunks reaches her in part, and she answers anyway.</p>
 <table>
 <tr><th>Strategy</th><th>Keeps intact</th><th>Breaks</th></tr>
-<tr><td>Fixed</td><td>Easy to implement</td><td>Tables, numbered steps</td></tr>
+<tr><td>Fixed</td><td>Nothing by design: it cuts at a token count</td><td>Tables, numbered steps</td></tr>
 <tr><td>Heading-aware</td><td>Section text</td><td>Tables spanning a section</td></tr>
-<tr><td>Unit-preserving</td><td>Any unit you define</td><td>Needs explicit boundaries</td></tr>
+<tr><td>Unit-preserving</td><td>Any unit you define</td><td>Nothing, once you define the units</td></tr>
 </table>
 <p class="note"><code>semantic_text</code> also splits each chunk you index into passages before it embeds them (its <code>chunking_settings</code>), so every passage fits the embedding model's input limit. A hit still returns your whole chunk, so your chunk boundaries decide what Tina reads.</p>
 </section>
 
 <section>
 <h2>The alias is the indirection layer</h2>
-<p><code>cortex-corpus-live</code> points at <code>cortex-corpus</code> now. Track 2.3 cuts over to a candidate embedding behind this alias. Tina never changes her query target.</p>
+<p><code>cortex-corpus-live</code> points at <code>cortex-corpus</code> now. Lab 2.3 cuts over to a candidate embedding behind this alias. Tina never changes her query target.</p>
 <table>
 <tr><th>When</th><th><code>cortex-corpus-live</code> points at</th></tr>
 <tr><td>After this lab</td><td><code>cortex-corpus</code></td></tr>
