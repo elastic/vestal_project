@@ -78,10 +78,10 @@ def test_figure_numbers_and_states_numbers():
 
 
 def test_unbacked_reason():
-    texts = {"case-0007": "The aggregate was $1,640,021.35 over 14 days."}
+    texts = {"case-0007": "The aggregate was $842,316.50 over 14 days."}
     retrieved = ["case-0007", "policy-002-s3"]
-    assert H.unbacked_reason("The aggregate was $1,640,021.35.", "case-0007", retrieved, texts) == ""
-    assert H.unbacked_reason("The aggregate was $1,640,021.36.", "case-0007", retrieved,
+    assert H.unbacked_reason("The aggregate was $842,316.50.", "case-0007", retrieved, texts) == ""
+    assert H.unbacked_reason("The aggregate was $842,316.51.", "case-0007", retrieved,
                              texts) == "figure_missing"
     assert H.unbacked_reason("The memo was filed.", "case-0099", retrieved, texts) == "not_retrieved"
     assert H.unbacked_reason("The memo was filed.", "UNSUPPORTED", retrieved, texts) == "unattributed"

@@ -631,7 +631,7 @@ def attribute_by_overlap(claims: list[str], passages: list[dict],
 
       1. every figure in the claim appears in exactly one candidate passage. The
          figure identifies the passage on its own, so word overlap cannot overturn
-         it, and a terse answer such as "The aggregate was $1,640,021.35." is
+         it, and a terse answer such as "The aggregate was $842,316.50." is
          attributed rather than stripped for having three content words.
       2. a figure in the claim that more than one candidate carries, which lowers
          the bar to ``FIGURE_OVERLAP_TARGET`` and lets overlap pick between them.
@@ -712,7 +712,7 @@ _FIGURE_NUMBER_RE = re.compile(r"\d[\d,]*(?:\.\d+)?")
 
 def figure_numbers(claim: str) -> list[str]:
     """The numbers in the dollar figures, day counts and percentages a claim states,
-    without thousands separators: "$1,640,021.35" gives "1640021.35". A cited passage
+    without thousands separators: "$842,316.50" gives "842316.50". A cited passage
     id ("policy-011-s52") is a reference, not a figure."""
     body = _PASSAGE_REF_RE.sub(" ", claim or "")
     out: list[str] = []

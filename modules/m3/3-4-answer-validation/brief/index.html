@@ -102,18 +102,18 @@ A: I cannot answer this question based
 
 answer
  |
- +- claim 0  aggregate volume was
- |           $1,546,407.46 -------------+
- +- claim 1  the trigger is $12,500     |
- |           in 7 days ------------+    |
- +- claim 2  filing is due in      |    |
- |           30 days --------+     |    |
- +- claim 3  the branch paid |     |    |
-             a $45,300 fine  |     |    |
-             <span class="wrong">|</span>               |     |    |
-             <span class="wrong">v</span>               v     v    v
-       <span class="wrong">UNSUPPORTED</span>        policy  pol  case
-                           -011   -001 memo
+ +- claim 0  deposits totaled
+ |           $319,601.19 -----------------+
+ +- claim 1  alerts assigned within       |
+ |           one business day -------+    |
+ +- claim 2  CTR is required at ten  |    |
+ |           thousand dollars -+     |    |
+ +- claim 3  a cash refund of  |     |    |
+             $41,250.00        |     |    |
+             <span class="wrong">|</span>                 |     |    |
+             <span class="wrong">v</span>                 v     v    v
+       <span class="wrong">UNSUPPORTED</span>          policy  pol  case
+                             -003   -009 memo
 
   grounding is a property of each claim
   three right and one invented is one
@@ -129,13 +129,13 @@ answer
 <pre>for one claim, three outcomes
 and nothing else
 
-  claim: "the aggregate was $1,546,407.46"
+  claim: "deposits totaled $319,601.19"
     passage 1  case memo     <span class="right">supports</span>
     passage 2  policy text   neutral
     passage 3  policy text   neutral
-  -> case-structuring-001
+  -> case-structuring-007
 
-  claim: "the branch paid a $45,300 fine"
+  claim: "a $41,250.00 cash refund"
     passage 1  neutral
     passage 2  neutral
     passage 3  neutral
@@ -154,14 +154,14 @@ and nothing else
 <h2>Screen the figure first</h2>
 <pre>screen before you ask
 
-  claim: "the branch paid a $45,300 fine"
-    $45,300 in passage 1?  no
-    $45,300 in passage 2?  no
-    $45,300 in passage 3?  no
+  claim: "a $41,250.00 cash refund"
+    $41,250.00 in passage 1?  no
+    $41,250.00 in passage 2?  no
+    $41,250.00 in passage 3?  no
   -> <span class="wrong">UNSUPPORTED</span>        model calls: 0
 
-  claim: "the aggregate was $1,546,407.46"
-    $1,546,407.46 in passage 1?  yes
+  claim: "deposits totaled $319,601.19"
+    $319,601.19 in passage 1?  yes
   -> ask support() about each passage
                          model calls: 3
 

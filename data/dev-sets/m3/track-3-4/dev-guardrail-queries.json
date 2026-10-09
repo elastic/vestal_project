@@ -1,10 +1,10 @@
 [
   {
     "query_id": "dev-3-4-grd-01",
-    "query_text": "What aggregate cash volume did Bluewater Ventures Holdings Ltd. deposit over the review period?",
+    "query_text": "What aggregate cash volume did Verity Petrosyan deposit over the review period?",
     "query_class": "answerable",
-    "gold_literal": "$2,178,207.89",
-    "relevant_ids": ["case-structuring-002"],
+    "gold_literal": "$97,646.40",
+    "relevant_ids": ["case-structuring-012"],
     "note": "The figure is in exactly one case memo and in no policy document."
   },
   {
