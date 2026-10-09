@@ -7,19 +7,19 @@
   <rect x="16" y="44" width="7" height="60" rx="3.5" fill="#0B64DD"/>
   <text x="34" y="66" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#0B64DD">Data residency</text>
   <text x="34" y="83" font-family="Arial,sans-serif" font-size="11" fill="#343741">Cortex requires EU-hosted inference. The fast tier's provider has no EU region.</text>
-  <text x="34" y="98" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#FF957D">&#x2192; A rule: rules out the fast tier</text>
+  <text x="34" y="98" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#BD271E">&#x2192; A rule: rules out the fast tier</text>
 
   <!-- Cost ceiling row -->
   <rect x="16" y="116" width="428" height="60" rx="8" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
   <rect x="16" y="116" width="7" height="60" rx="3.5" fill="#153385"/>
   <text x="34" y="138" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#153385">Cost ceiling</text>
   <text x="34" y="155" font-family="Arial,sans-serif" font-size="11" fill="#343741">A budget per 1,000 requests. Your measured cost per tier decides.</text>
-  <text x="34" y="170" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#FF957D">&#x2192; A measurement: rules out any tier over it</text>
+  <text x="34" y="170" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#BD271E">&#x2192; A measurement: rules out any tier over it</text>
 
-  <!-- Latency ceiling row -->
+  <!-- Completion-token ceiling row -->
   <rect x="16" y="188" width="428" height="60" rx="8" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
   <rect x="16" y="188" width="7" height="60" rx="3.5" fill="#48EFCF"/>
   <text x="34" y="210" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#101C3F">Completion-token ceiling</text>
   <text x="34" y="227" font-family="Arial,sans-serif" font-size="11" fill="#343741">Completion tokens per reply, reasoning included. Your measured tokens decide.</text>
-  <text x="34" y="242" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#FF957D">&#x2192; A measurement: rules out any tier over it</text>
+  <text x="34" y="242" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#BD271E">&#x2192; A measurement: rules out any tier over it</text>
 </svg>

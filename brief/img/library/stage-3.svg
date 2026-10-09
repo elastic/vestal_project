@@ -31,8 +31,8 @@
     <polygon points="164,168 160,154 174,156" fill="#101C3F"/>
     <text x="142" y="160" text-anchor="end" font-size="10" font-family="Arial, sans-serif" fill="#101C3F">call</text>
     <!-- Tool -> LLM (result) -->
-    <line x1="196" y1="168" x2="204" y2="142" stroke="#48EFCF" stroke-width="2"/>
-    <polygon points="204,142 198,156 212,154" fill="#48EFCF"/>
+    <line x1="196" y1="168" x2="204" y2="142" stroke="#0B64DD" stroke-width="2"/>
+    <polygon points="204,142 194.7,151.8 206.3,155.2" fill="#0B64DD"/>
     <text x="222" y="160" font-size="10" font-family="Arial, sans-serif" fill="#101C3F">result</text>
   </g>
 </svg>

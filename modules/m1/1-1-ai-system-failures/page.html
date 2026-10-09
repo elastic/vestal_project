@@ -33,9 +33,11 @@
 
 <section>
 <h2>Three model types, three jobs</h2>
-<p><img src="../../../../brief/img/library/llm.svg" alt="LLM: generates text"> &nbsp;&nbsp;
-<img src="../../../../brief/img/library/embedding-model.svg" alt="Embedding model: positions text in a vector space"> &nbsp;&nbsp;
-<img src="../../../../brief/img/library/reranker.svg" alt="Reranker: orders candidate documents"></p>
+<figure>
+<img src="../../../../brief/img/library/llm.svg" alt="LLM: generates text">
+<img src="../../../../brief/img/library/embedding-model.svg" alt="Embedding model: positions text in a vector space">
+<img src="../../../../brief/img/library/reranker.svg" alt="Reranker: orders candidate documents">
+</figure>
 <p>An <strong>LLM</strong> generates text. An <strong>embedding model</strong> positions text in a vector space. A <strong>reranker</strong> scores and orders candidate documents. Each type has one job. Giving it the wrong job produces a distinct failure pattern.</p>
 </section>
 
@@ -80,8 +82,8 @@ policy-011 (actual text):
 
 <section>
 <h2>Anatomy of a system prompt</h2>
-<p><img src="../../../../brief/img/library/prompt-anatomy.svg" alt="System prompt anatomy: four regions: role, output schema, constraints, grounding instruction"></p>
-<p>A well-structured prompt has four regions: <strong>Role</strong> (who Tina is), <strong>Schema</strong> (the required output format), <strong>Constraints</strong> (rules to follow) and the <strong>Grounding instruction</strong> (cite retrieved text). Remove any one and Tina's behavior changes.</p>
+<figure><img src="../../../../brief/img/library/prompt-anatomy.svg" alt="System prompt anatomy: four sections: role, output schema, constraints, grounding instruction"></figure>
+<p>A well-structured prompt has four sections: <strong>Role</strong> (who Tina is), <strong>Schema</strong> (the required output format), <strong>Constraints</strong> (rules to follow) and the <strong>Grounding instruction</strong> (cite retrieved text). Remove any one and Tina's behavior changes.</p>
 </section>
 
 <section>
@@ -94,8 +96,9 @@ Element removed | Grounded
 role            | ? / 6
 schema          | ? / 6
 constraints     | ? / 6
-grounding       | ? / 6  &lt;- your results
-                           will differ</pre>
+grounding       | ? / 6
+
+# ? is your own count; results differ per prompt</pre>
 <p>The check runs your prompt against 6 held-out questions, then runs it again with each prompt element removed. The element whose removal drops the grounded count most is the decisive one. Your ablation results decide the Defend answer.</p>
 </section>
 

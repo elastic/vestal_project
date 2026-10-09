@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 220" role="img" aria-label="A harness wraps the model: memory, tool dispatch, control flow and tracing surround the LLM">
+  <!-- harness boundary -->
+  <rect x="4" y="4" width="352" height="212" rx="12" fill="#F5F7FA" stroke="#101C3F" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="180" y="26" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="700" fill="#101C3F">Harness</text>
+
+  <!-- connectors, drawn first so boxes sit on top -->
+  <line x1="136" y1="78" x2="150" y2="94" stroke="#101C3F" stroke-width="1.5"/>
+  <line x1="224" y1="78" x2="210" y2="94" stroke="#101C3F" stroke-width="1.5"/>
+  <line x1="136" y1="146" x2="150" y2="130" stroke="#101C3F" stroke-width="1.5"/>
+  <line x1="224" y1="146" x2="210" y2="130" stroke="#101C3F" stroke-width="1.5"/>
+
+  <!-- the model -->
+  <rect x="140" y="92" width="80" height="40" rx="8" fill="#0B64DD"/>
+  <text x="180" y="117" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#FFFFFF">LLM</text>
+
+  <!-- harness parts -->
+  <rect x="16" y="42" width="120" height="36" rx="6" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
+  <text x="76" y="65" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#101C3F">Memory</text>
+  <rect x="224" y="42" width="120" height="36" rx="6" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
+  <text x="284" y="65" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#101C3F">Tool dispatch</text>
+  <rect x="16" y="146" width="120" height="36" rx="6" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
+  <text x="76" y="169" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#101C3F">Control flow</text>
+  <rect x="224" y="146" width="120" height="36" rx="6" fill="#FFFFFF" stroke="#101C3F" stroke-width="1.5"/>
+  <text x="284" y="169" text-anchor="middle" font-size="13" font-family="Arial, sans-serif" font-weight="600" fill="#101C3F">Tracing</text>
+</svg>

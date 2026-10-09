@@ -26,19 +26,19 @@ to?</span></pre>
 
 <section>
 <h2>What a harness adds</h2>
-<p><img src="../../../../brief/img/library/agent.svg" alt="A harness wraps the model: memory, tool dispatch, control flow, and tracing surround the LLM box"></p>
+<figure><img src="../../../../brief/img/library/harness.svg" alt="A harness wraps the model: memory, tool dispatch, control flow and tracing surround the LLM"></figure>
 <p>The model is one box. A harness wraps it with <strong>memory</strong> (state that persists), <strong>tool dispatch</strong> (calling Elasticsearch), <strong>control flow</strong> (loops, branches) and <strong>tracing</strong> (audit). None of this lives in the model call itself.</p>
 </section>
 
 <section>
 <h2>Three memory scopes</h2>
 <table>
-  <tr><th>Memory type</th><th>Lives where</th><th>Survives</th></tr>
-  <tr><td>Context window</td><td>This API call</td><td>One call</td></tr>
-  <tr><td>Working memory</td><td>This conversation</td><td>This session</td></tr>
-  <tr><td>Persistent memory</td><td>External store</td><td>Across sessions</td></tr>
+  <tr><th>Memory type</th><th>Scope</th><th>Cleared</th></tr>
+  <tr><td>Context window</td><td>This API call</td><td>After the call</td></tr>
+  <tr><td>Working memory</td><td>This conversation</td><td>When the session ends</td></tr>
+  <tr><td>Persistent memory</td><td>Every conversation</td><td>Only when deleted</td></tr>
 </table>
-<p>"That" in turn three needs <strong>working memory</strong>: it must survive the conversation, not necessarily across sessions. Scope is set by when the store is cleared, not where it lives. The right scope avoids storing too much (everything persistent) and too little (the context window only).</p>
+<p>"That" in turn three needs <strong>working memory</strong>: it must last for the whole conversation, not necessarily across sessions. Scope is set by when the store is cleared, not where it lives. The right scope avoids storing too much (everything persistent) and too little (the context window only).</p>
 </section>
 
 <section>

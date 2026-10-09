@@ -48,12 +48,16 @@ CAPSTONE = """<header><h1>Capstone 9.C: Budget</h1><p>Scenario line.</p></header
 """
 
 
+SVG = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">'
+       '<text x="10" y="40" font-size="12">label</text></svg>')
+
+
 def _track(tmp: str, src: str, name: str = "9-1-test") -> pathlib.Path:
     d = pathlib.Path(tmp) / name
     (d / "brief").mkdir(parents=True)
     (d / "page.html").write_text(src)
     (d / "problem.txt").write_text("Q: x < y?\nA: <none>\n")
-    (d / "diagram.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg"/>')
+    (d / "diagram.svg").write_text(SVG)
     return d
 
 
@@ -66,6 +70,37 @@ def test_build_and_check_lab_page():
         assert 'src="data:image/svg+xml;base64,' in out
         assert out.index("This challenge allows 60 minutes.") > out.index("<h2>Select Check to continue</h2>")
         assert page.check(d) == []
+
+
+def test_figures_sized_by_rule_and_fonts_inlined():
+    with tempfile.TemporaryDirectory() as tmp:
+        d = _track(tmp, LAB)
+        out = page.build(d).read_text()
+        assert 'width="250" height="100"' in out                      # 200 x 80 viewBox at 1.25
+        for family, _, _ in page.FONTS:
+            assert f"font-family: '{family}'" in out
+        assert "url(data:font/woff2;base64," in out and "fonts/" not in out
+
+
+def test_figure_rules():
+    with tempfile.TemporaryDirectory() as tmp:
+        cases = {
+            "outside a <figure>": LAB.replace('<figure><img src="diagram.svg" alt="d"></figure>',
+                                              '<p><img src="diagram.svg" alt="d"></p>'),
+            "sets an image width": LAB.replace('alt="d"', 'alt="d" width="300"'),
+            "without a class": LAB.replace("Concept.", "Concept <span>here</span>."),
+            "inline <svg>": LAB.replace("Concept.", '<svg viewBox="0 0 10 10"></svg>'),
+            "style attribute": LAB.replace("<p>Concept.</p>", '<p style="width:900px">Concept.</p>'),
+        }
+        for i, (want, src) in enumerate(cases.items()):
+            d = _track(tmp, src, f"9-{i}-fig")
+            page.build(d)
+            fails = page.check(d)
+            assert any(want in f for f in fails), (want, fails)
+        # small text in a wide figure fails once shrunk to the narrow content width
+        wide = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 100"><text font-size="10">x</text></svg>'
+        assert page.figure_text_fails(wide) and not page.figure_text_fails(SVG)
+        assert page.figure_text_fails('<svg xmlns="http://www.w3.org/2000/svg"/>') == ["SVG has no viewBox"]
 
 
 def test_stale_index_and_leftover_slides_fail():

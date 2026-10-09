@@ -26,14 +26,13 @@
 
 <section>
 <h2>A reasoning trace, step by step</h2>
-<table>
-  <tr><th>A reasoning trace</th></tr>
-  <tr><td>1. Retrieve policy-003 from the index</td></tr>
-  <tr><td>2. Parse the threshold: $10,000</td></tr>
-  <tr><td>3. Compare: $10,000 <span class="wrong">above</span> $10,000 gives false</td></tr>
-  <tr><td>4. Set reportable: false</td></tr>
-  <tr><td>5. Return the decision JSON</td></tr>
-</table>
+<ol>
+  <li>Retrieve policy-003 from the index</li>
+  <li>Parse the threshold: $10,000</li>
+  <li>Compare: $10,000 <span class="wrong">above</span> $10,000 gives false</li>
+  <li>Set reportable: false</li>
+  <li>Return the decision JSON</li>
+</ol>
 <p>Step 3 uses the wrong operator. At exactly $10,000, "above" gives false; "at or above" gives true. The schema says nothing about which operator is correct.</p>
 </section>
 
@@ -51,7 +50,6 @@
 
 <section>
 <h2>The source is in Elasticsearch</h2>
-<p><img src="../../../../brief/img/library/index.svg" alt="cortex-policies Elasticsearch index"></p>
 <p><code>cortex-policies</code> holds 18 policy documents and the risk-scoring reference. Retrieve the governing rule with a semantic search on <code>body_semantic</code>, then compare the decision's threshold and direction with the retrieved text. That is semantic validation.</p>
 </section>
 
@@ -79,7 +77,7 @@
   <tr><td>Policy values</td><td>Retrieval: seconds per update</td></tr>
   <tr><td>Behaviour: format, defined terms</td><td>Fine-tuning</td></tr>
 </table>
-<p>Cortex's values live in the corpus, in <code>cortex-policies</code>, so both rows keep retrieval for them. When the request itself carries every fact, there is nothing to retrieve, and fine-tuning alone can cover the behaviour. Your sandbox has one Cortex requirement, in <code>/home/elastic/cadence-constraint.json</code>, and that requirement decides the approach. Build 2 measures how fast one policy update reaches an answer; the Defend shows that number as evidence of how fast retrieval delivers a change. It does not change which row applies.</p>
+<p>Cortex's values live in the corpus, in <code>cortex-policies</code>, so both rows of the Decision rule keep retrieval for them. When the request itself carries every fact, there is nothing to retrieve, and fine-tuning alone can cover the behaviour. Your sandbox has one Cortex requirement, in <code>/home/elastic/cadence-constraint.json</code>, and that requirement decides the approach. Build 2 measures how fast one policy update reaches an answer; the Defend shows that number as evidence of how fast retrieval delivers a change. It does not change which row applies.</p>
 </section>
 
 <section>

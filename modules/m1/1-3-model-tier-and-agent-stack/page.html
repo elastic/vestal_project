@@ -30,37 +30,37 @@ filing thresholds ...</pre>
 
 <section>
 <h2>What a tier is</h2>
-<p><img src="img/tier-axes.svg" alt="Four tier axes: cost per 1,000 requests, latency p50, capability on task, deployment constraints"></p>
+<figure><img src="img/tier-axes.svg" alt="Four tier axes: cost per 1,000 requests, latency p50, capability on task, deployment constraints"></figure>
 <p>Four axes: <strong>cost</strong> per 1,000 requests, <strong>latency</strong> p50, <strong>capability</strong> on your task, and <strong>deployment constraints</strong> such as data residency or a limit on completion tokens per reply. A benchmark on the wrong axis picks the wrong tier.</p>
 </section>
 
 <section>
 <h2>Choose by constraint, not by benchmark</h2>
-<p><img src="img/tier-constraints.svg" alt="Three Cortex constraints: data residency, a cost ceiling and a completion-token ceiling. Each sandbox gets one."></p>
-<p>Cortex has three possible constraints: a <strong>data-residency</strong> rule, a <strong>cost ceiling</strong> per 1,000 requests, and a <strong>completion-token ceiling</strong> on completion tokens per reply. Your sandbox has one. Residency is a rule; the ceilings are decided by what you measure. Completion tokens include any reasoning a model does before it answers.</p>
+<figure><img src="img/tier-constraints.svg" alt="Three Cortex constraints: data residency, a cost ceiling and a completion-token ceiling. Each sandbox gets one."></figure>
+<p>Cortex has three possible constraints: a <strong>data-residency</strong> rule, a <strong>cost ceiling</strong> per 1,000 requests, and a <strong>completion-token ceiling</strong> per reply. Your sandbox has one. Residency is a rule; the ceilings are decided by what you measure. Completion tokens include any reasoning a model does before it answers.</p>
 </section>
 
 <section>
 <h2>Stage 1: bare completion</h2>
-<p><img src="../../../../brief/img/library/stage-1.svg" alt="Stage 1: User sends a message; LLM generates an answer with no retrieval"></p>
+<figure><img src="../../../../brief/img/library/stage-1.svg" alt="Stage 1: User sends a message; LLM generates an answer with no retrieval"></figure>
 <p>User, then LLM, then answer. No source is consulted: the model generates from its training weights. Gap: <strong>no source</strong>.</p>
 </section>
 
 <section>
 <h2>Stage 2: context injection</h2>
-<p><img src="../../../../brief/img/library/stage-2.svg" alt="Stage 2: the cortex-policies index is retrieved before the LLM call and injected into the prompt"></p>
+<figure><img src="../../../../brief/img/library/stage-2.svg" alt="Stage 2: the cortex-policies index is retrieved before the LLM call and injected into the prompt"></figure>
 <p>Retrieve the top 3 chunks from <code>cortex-policies</code> and put them in the prompt. The model can cite sources. Gap: it can only read what <strong>you pre-loaded</strong>. It cannot ask for different documents mid-answer.</p>
 </section>
 
 <section>
 <h2>Stage 3: tool calling</h2>
-<p><img src="../../../../brief/img/library/stage-3.svg" alt="Stage 3: the LLM calls a search_policies tool during the conversation on demand"></p>
+<figure><img src="../../../../brief/img/library/stage-3.svg" alt="Stage 3: the LLM calls a search_policies tool during the conversation on demand"></figure>
 <p>Register <code>search_policies(query)</code> and the model calls it on demand. <code>finish_reason: tool_calls</code> triggers your dispatch, and the result returns as a <code>role: tool</code> message. Gap: <strong>one shot</strong>. A two-hop question needs two searches.</p>
 </section>
 
 <section>
 <h2>Stage 4: ReAct loop</h2>
-<p><img src="../../../../brief/img/library/stage-4.svg" alt="Stage 4: a loop arrow connects answer back to LLM, enabling multiple tool calls"></p>
+<figure><img src="../../../../brief/img/library/stage-4.svg" alt="Stage 4: a ReAct loop between the LLM and the tool repeats calls until finish_reason is stop"></figure>
 <p>Handle <code>tool_calls</code>, append each result, and continue until <code>finish_reason: stop</code>. The model reasons, searches again, and combines what several calls return. This is the target architecture.</p>
 </section>
 
@@ -71,14 +71,14 @@ filing thresholds ...</pre>
  "tool_calls": [{"id": "call_abc",
    "function": {"name": "search_policies",
      "arguments":
-"{\"query\": \"SAR threshold known suspect\"}"
+       "{\"query\": \"SAR threshold known suspect\"}"
    }}]}
 
 <span class="label"># your dispatch returns:</span>
 {"role": "tool", "tool_call_id": "call_abc",
  "content":
    "[{\"policy_id\": \"policy-003\", ...}]"}</pre>
-<p>Four messages: the <strong>assistant</strong> message with <code>tool_calls</code>, your code's dispatch, a <strong>tool</strong> message with the result, and the model's next turn. You implement the dispatch loop.</p>
+<p>Three messages and your dispatch between them: the <strong>assistant</strong> message with <code>tool_calls</code>, your code's dispatch, a <strong>tool</strong> message with the result, and the model's next turn. You implement the dispatch loop.</p>
 </section>
 
 <section>
