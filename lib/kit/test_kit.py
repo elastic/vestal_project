@@ -125,7 +125,7 @@ def test_old_questions_schema_fails():
 
 def test_kit_gate_is_the_spec_text():
     check = _kit("brief-check-elastic-serverless")
-    assert "about {s['expected_min']} in total" in check
+    assert "about {s['expected_min']} in total, but it can take longer" in check
     assert "Environment provisioning failed during:" in check
     solve = _kit("brief-solve-elastic-serverless")
     assert "seq 1 648" in solve and "54 minutes" in solve
