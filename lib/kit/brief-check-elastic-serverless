@@ -23,7 +23,7 @@ except Exception: s = {}
 step, n, total = s.get("step", "starting"), s.get("step_n", 0), s.get("step_total", 0)
 mins = int((time.time() - s.get("started", time.time())) // 60)
 where = f"step {n} of {total}, {step}" if total else step
-total = f", about {s['expected_min']} in total" if s.get("expected_min") else ""
+total = f", about {s['expected_min']} in total, but it can take longer" if s.get("expected_min") else ""
 print(f"Your environment is still provisioning ({where}; {mins} min elapsed{total}). "
       "Keep reading the Brief and select Check again in a minute.")
 PY
