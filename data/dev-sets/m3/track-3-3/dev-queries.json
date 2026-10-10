@@ -1,7 +1,7 @@
 [
   {
     "query_id": "dev-3-3-01",
-    "query_text": "When reviewing accounts with a pattern of closely-timed, just-below-threshold cash deposits, what was the total amount deposited by Limestone Industrial Supply Inc.?",
+    "query_text": "When reviewing accounts with a pattern of closely-timed, just-below-threshold cash deposits, what was the total amount deposited by Saoirse Galbraith?",
     "relevant_ids": [
       "case-structuring-001",
       "case-structuring-002",
@@ -63,10 +63,10 @@
     },
     "retrieval_pattern": "advanced",
     "gold_doc_ids": [
-      "case-structuring-001"
+      "case-structuring-024"
     ],
-    "gold_literal": "$1,546,407.46",
-    "question_id": "q-case-001"
+    "gold_literal": "$62,177.32",
+    "question_id": "q-dev-3-3-01"
   },
   {
     "query_id": "dev-3-3-02",
@@ -635,7 +635,7 @@
   },
   {
     "query_id": "dev-3-3-26",
-    "query_text": "Which files were opened on or before 30 June 2023, and what value is recorded in the file on Fieldstone Equipment Enterprises LLC?",
+    "query_text": "Which files were opened on or before 30 June 2023, and what value is recorded in the file on Esperanza Schuyler?",
     "relevant_ids": [
       "case-elder-exploitation-003",
       "case-elder-exploitation-010",
@@ -685,9 +685,9 @@
     },
     "retrieval_pattern": "advanced",
     "gold_doc_ids": [
-      "case-sanctions-007"
+      "case-elder-exploitation-020"
     ],
-    "gold_literal": "$1,498,342.82",
+    "gold_literal": "$168,646.94",
     "question_id": "q-dev-3-3-26"
   },
   {

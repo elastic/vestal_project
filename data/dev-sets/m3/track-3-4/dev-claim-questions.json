@@ -1,16 +1,16 @@
 [
   {
     "query_id": "dev-3-4-01",
-    "query_text": "Based on Limestone Industrial Supply Inc.'s activity, did the series of cash deposits warrant a SAR filing according to our structuring red flags?",
+    "query_text": "Based on Saoirse Galbraith's activity, did the series of cash deposits warrant a SAR filing according to our structuring red flags?",
     "relevant_ids": [
-      "case-structuring-001"
+      "case-structuring-024"
     ],
     "relevant_doc_ids": [
-      "case-structuring-001"
+      "case-structuring-024"
     ],
     "case_type": "structuring",
     "policy_topic": "structuring red flags",
-    "gold_literal": "$1,546,407.46",
+    "gold_literal": "$62,177.32",
     "expected_claim_sources": [
       "cortex-cases",
       "cortex-policies"

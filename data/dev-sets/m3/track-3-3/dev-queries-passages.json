@@ -46,7 +46,7 @@
   },
   {
     "query_id": "dev-3-3-pass-04",
-    "query_text": "In the Bluewater Freight LLC SAR, what consolidated transfer went on October 18, 2024 to Crescent Textiles Group LLC at account 76-64981-9?",
+    "query_text": "In the Bluewater Freight LLC SAR, what consolidated transfer went on October 18, 2024 to account 76-64981-9?",
     "set": "B",
     "index": "cortex-sar-passages",
     "relevant_ids": [
