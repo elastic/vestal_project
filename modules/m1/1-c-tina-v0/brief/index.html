@@ -75,14 +75,14 @@ pre .label { color: #ABB4C4; }
       sanctions screening use for
       cross-border SWIFT messages?
 
-Tina: ...triggers a structuring alert
-      when aggregated cash transactions
-      within a seven-day window reach
-      <span class="wrong">**$7,500 USD**</span>... we utilize a
-      fuzzy-match threshold of <span class="wrong">**85%**</span>.
+Tina: ...for security and regulatory
+      reasons, I cannot disclose specific
+      internal thresholds... please submit
+      a request through the <span class="wrong">**Internal
+      Compliance Portal (ICP)**</span>.
 
 <span class="label"># tools registered: 0   tool calls: 0</span></pre>
-<p>She answered with confidence and got both figures wrong: she called no tool, and both figures belong to other Cortex rules, not the ones asked. The harness has a tool registry and a ReAct loop. The notebook's starter <code>search_policies</code> runs the search; you decide what it gives the model. Cortex pays for every token, and an analyst must see which policy each fact came from.</p>
+<p>She gave neither figure. She called no tool, so she had no Cortex policy to read, and she sent the analyst to a request process that no Cortex policy describes. The harness has a tool registry and a ReAct loop. The notebook's starter <code>search_policies</code> runs the search; you decide what it gives the model. Cortex pays for every token, and an analyst must see which policy each fact came from.</p>
 <p>Tina's harness already runs at <strong>temperature 0</strong>, and her answers still vary between runs: the same agent can answer a question correctly once and miss it the next time. So the check runs your agent itself, each question <strong>3 times</strong> on the tier <code>choose_model</code> gives it, grades each question on a majority, <strong>2 of 3 runs</strong>, and reports how many runs were correct.</p>
 </section>
 
