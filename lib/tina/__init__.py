@@ -11,7 +11,7 @@ Exports:
 Environment variables consumed (set by challenge 01 setup or by the learner outside Instruqt):
   LLM_PROXY_URL              LiteLLM proxy base URL (route A)
   LLM_APIKEY                 Proxy API key
-  ARA_MODEL_FAST             Fast-tier model name (e.g. gemini-2.5-flash)
+  ARA_MODEL_FAST             Fast-tier model name (e.g. gemini-3.1-flash)
   ARA_MODEL_STRONG           Strong-tier model name (e.g. claude-sonnet-4.6)
   ARA_INFERENCE_COMPLETION_ID  Elasticsearch _inference endpoint id (route B)
   ES_URL                     Elasticsearch base URL
