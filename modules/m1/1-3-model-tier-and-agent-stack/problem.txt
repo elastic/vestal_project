@@ -1,14 +1,16 @@
 # Lab 1.3 start state: Build 2, stage 1 (a bare completion on ARA_MODEL_FAST, no retrieval), as the
-# notebook's stage 1 record cell prints it. Captured 2026-10-06 from a live 1.3 sandbox (participant
-# trncrloiiouf, test copy ara-p2-1-3-model-tier-and-agent-stack, assets vestal_project m1-assets
-# 581479e) by the Build 2 solve (CALIB build2 stage1_answer). policy-003 sets $3,500 for a known
-# suspect; the reference's stage 4 answered $3,500 (policy-003) in the same run.
+# notebook's stage 1 record cell prints it. Captured 2026-10-10 from a live 1.3 sandbox on
+# gemini-3.1-flash (participant uiwilg7ryrn8, test copy ara-p2-1-3f31-model-tier-and-agent-stack,
+# assets vestal_project m1-f31-1113) by the Build 2 solve (CALIB build2 stage1_answer); the same
+# text in yi38dau6vcas. policy-003 sets $3,500 for a known suspect; the reference's stage 4
+# answered $3,500 (policy-003) in the same run. The section it cites is not in the corpus.
 Q: What is Cortex Bank's internal threshold for filing a Suspicious Activity Report when the
    suspect is known, and is a $4,000 suspicious transfer by a known customer reportable?
 Stage 1 recorded. Tina says:
-Cortex Bank's internal threshold for filing a Suspicious Activity Report (SAR) depends on the nature of the suspect:
+Hello, I am Tina, Cortex Bank’s compliance assistant.
 
-1.  **Known Customer (non-insider):** The internal threshold for filing a SAR when the suspect is a known customer (not an officer, director, employee, or agent of the bank) is **$5,000 or more** for transactions that involve or aggregate to that amount and are deemed suspicious.
-2.  **Insider Abuse:** If the suspect is an insider (e.g., officer, director, employee, agent, or other institution-affiliated party), the threshold for filing a SAR is **any amount**, regardless of how small the transaction.
+Cortex Bank’s internal threshold for filing a Suspicious Activity Report (SAR) when the suspect is known is **$5,000**.
 
-Therefore, a single **$4,000 suspicious transfer by a known customer** is generally **not reportable** under the mandatory FinCEN SAR filing thresholds, as it falls below the $5,000 threshold for non-insider suspicious activity.
+Regarding your specific inquiry: A $4,000 suspicious transfer by a known customer does **not** meet the mandatory internal reporting threshold. However, if the activity is deemed highly suspicious or part of a pattern, you should escalate it to the AML Department for manual review.
+
+**Source:** *Cortex Bank AML Policy Manual, Section 4.2 (Reporting Thresholds).*
