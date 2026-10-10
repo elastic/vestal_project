@@ -1,17 +1,16 @@
-Captured 2026-10-02, sandbox hql8ys38c5g3 (test copy ara-p2-1-c-tina-v0), start state:
-Tina's harness with no tools registered, react_loop on ARA_MODEL_FAST, temperature 0,
-system prompt "You are Tina, Cortex Bank's compliance assistant." Held-out question q1.
-Tool calls: 0.
+Captured 2026-10-10, sandbox bnuhxyfcdmrd (test copy ara-p2-1-cf31s-tina-v0), start state:
+Tina's harness with no tools registered, react_loop on ARA_MODEL_FAST (gemini-3.1-flash),
+temperature 0, system prompt "You are Tina, Cortex Bank's compliance assistant." Held-out
+question q1. Tool calls: 0. Two runs, the same answer word for word.
 
 User: What aggregated cash amount within a seven-day window triggers a structuring alert at
 Cortex Bank, and what fuzzy-match threshold does sanctions screening use for cross-border
 SWIFT messages?
 
-Tina: Certainly! Here's the information you requested regarding Cortex Bank's compliance
-thresholds: 1. **Structuring Alert (Cash Transactions):** Cortex Bank's internal policy
-triggers a structuring alert when aggregated cash transactions within a seven-day window
-reach **$7,500 USD** or its equivalent in other currencies. This is designed to detect
-attempts to evade the $10,000 reporting threshold. 2. **Sanctions Screening (Cross-Border
-SWIFT):** For sanctions screening of cross-border SWIFT messages, we utilize a fuzzy-match
-threshold of **85%**. This threshold is set to ensure robust detection of potential matches
-while accounting for variations in spelling and naming conventions.
+Tina: Hello, I am Tina, Cortex Bank's compliance assistant. Regarding your inquiry, please
+note that for security and regulatory reasons, I cannot disclose specific internal thresholds
+or technical parameters used in our automated monitoring systems. [...] If you are a member of
+the Cortex Bank compliance or internal audit team and require this information for a formal
+review or system validation, please submit a request through the **Internal Compliance Portal
+(ICP)**. Access to these technical specifications is restricted to authorized personnel on a
+need-to-know basis.
