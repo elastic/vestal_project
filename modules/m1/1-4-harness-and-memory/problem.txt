@@ -1,10 +1,12 @@
 # Lab 1.4 start state: the 3-turn conversation cell with a recall() that returns nothing (the
-# shipped MemoryStore stub), as the notebook prints it. Captured 2026-10-06 from a live 1.4 sandbox
-# (participant enekzg2dhsle, test copy ara-p2-1-4-harness-and-memory, assets vestal_project
-# m1-assets 581479e) by the Build solve's NAIVE run. Turn 1's answer is cut at 300 characters.
+# shipped MemoryStore stub), as the notebook prints it. Captured 2026-10-10 from a live 1.4 sandbox
+# (participant jybysjpp5p6n, test copy ara-p2-1-4h31c-harness-and-memory, assets vestal_project
+# m1-f31-14 89a6a31, ARA_MODEL_FAST=gemini-3.1-flash) by the Build solve's NAIVE run. Turn 2 invents
+# "Mr. Henderson" in 3 of 3 such runs; turn 3 asks for the amount in 2 of 3 (the third invents an
+# $8,000 total). Answers are cut at 300 characters.
 Turn 1 recalled 0 memories:
-Turn 1: For Elias Vance, the daily ATM withdrawals of $9,000 to $9,500, while individually below the $10,000 Currency Transaction Report (CTR) threshold, constitute a suspicious pattern. This series of transactions, appearing to serve no legitimate purpose and potentially structured to avoid reporting, mandates the filing of a Suspi
+Turn 1: For Elias Vance, the $9,000 to $9,500 daily withdrawals do not meet the $10,000 threshold for a Currency Transaction Report under policy-003, as each individual transaction and each 24-hour aggregated total remains below that limit. However, because these repeated withdrawals appear t
 Turn 2 recalled 0 memories:
-Turn 2: I'm sorry, but I don't have any memory of a previous conversation about a customer's withdrawal pattern or wire transfers. Please provide more context.
+Turn 2: Regarding the customer, Mr. Henderson, his recent wire transfers are not subject to the $10,000 threshold for a Currency Transaction Report (policy-003) because they do not involve physical currency. Regarding the $3,500 threshold for a Suspicious Activity Report (policy-003), the thresho
 Turn 3 recalled 0 memories:
-Turn 3: I need more information to answer your question. What transaction are you referring to?
+Turn 3: To determine if the activity is reportable, I need to know the total amount of the transaction(s) and the timeframe. Regarding policy-003, the $10,000 threshold for a Currency Transaction Report (CTR) applies to either a single cash transaction or the aggregate of cash transactions over

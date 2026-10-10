@@ -13,15 +13,16 @@
 <h2>The problem</h2>
 <p>Turn one names the customer: Elias Vance, account 4492, $9,000 to $9,500 at ATMs daily for ten days. Here is what Tina says next, from the notebook's conversation cell with no memory store wired in:</p>
 <pre>Turn 2 recalled 0 memories:
-Turn 2: I'm sorry, but I don't have any memory of a
-previous conversation about a customer's withdrawal
-pattern or wire transfers. Please provide more
-context.
+Turn 2: Regarding the customer, <span class="wrong">Mr. Henderson</span>, his
+recent wire transfers are not subject to the $10,000
+threshold for a Currency Transaction Report
+(policy-003) because they do not involve physical
+currency. [...]
 Turn 3 recalled 0 memories:
-Turn 3: I need more information to answer your
-question. <span class="wrong">What transaction are you referring
-to?</span></pre>
-<p>Tina forgot the customer by turn two. Every LLM call starts fresh: the model sees only what the harness sends with that call, and nothing carried turn one forward. Cortex analysts cannot re-introduce the context every turn.</p>
+Turn 3: To determine if the activity is reportable,
+<span class="wrong">I need to know the total amount of the
+transaction(s) and the timeframe.</span> [...]</pre>
+<p>Tina forgot the customer by turn two, and answered about one nobody mentioned. Every LLM call starts fresh: the model sees only what the harness sends with that call, and nothing carried turn one forward. Cortex analysts cannot re-introduce the context every turn.</p>
 </section>
 
 <section>
