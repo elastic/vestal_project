@@ -84,6 +84,7 @@ policy-011 (actual text):
 <h2>Anatomy of a system prompt</h2>
 <figure><img src="../../../../brief/img/library/prompt-anatomy.svg" alt="System prompt anatomy: four sections: role, output schema, constraints, grounding instruction"></figure>
 <p>A well-structured prompt has four sections: <strong>Role</strong> (who Tina is), <strong>Schema</strong> (the required output format), <strong>Constraints</strong> (rules to follow) and the <strong>Grounding instruction</strong> (cite retrieved text). Remove any one and Tina's behavior changes.</p>
+<p>Tina's model often does not notice on its own that nothing was retrieved: asked with no excerpt, it answers from memory. So a grounding instruction says what counts as retrieved, only an excerpt in the message and never Tina's own knowledge, and what she answers when the message has none.</p>
 </section>
 
 <section>
