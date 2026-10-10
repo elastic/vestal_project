@@ -17,11 +17,20 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 # ── ara_metrics new additions ─────────────────────────────────────────────────
 
+def _expected_tokens(text):
+    """What token_count should return: cl100k_base when tiktoken is installed, else words * 1.3."""
+    try:
+        import tiktoken
+        return len(tiktoken.get_encoding("cl100k_base").encode(text))
+    except ImportError:
+        return int(len(text.split()) * 1.3)
+
+
 def test_token_count_basic():
     from ara_metrics import token_count
-    result = token_count("hello world foo bar")
-    # 4 words * 1.3 = 5.2 → 5
-    assert result == 5, f"Expected 5, got {result}"
+    text = "hello world foo bar"
+    result = token_count(text)
+    assert result == _expected_tokens(text), f"Expected {_expected_tokens(text)}, got {result}"
 
 
 def test_token_count_empty():
@@ -38,9 +47,8 @@ def test_count_tokens_approx_alias():
 
 def test_context_fit_within():
     from ara_metrics import context_fit
-    # 5 words * 1.3 = 6 (rounded down to 6)
     text = "one two three four five"
-    tc = int(len(text.split()) * 1.3)  # 6
+    tc = _expected_tokens(text)
     assert context_fit(text, tc) is True
     assert context_fit(text, tc - 1) is False
 
