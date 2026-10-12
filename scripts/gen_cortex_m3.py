@@ -2610,17 +2610,14 @@ def sar_coherence_checks(sars: list, check, warn, name_res=None) -> None:
 # or freeze dated before the wire, on an "investigation opened" date that is not
 # the header's, and on a date implausibly far from the case.  The same checks
 # should run on the M4-M6 generators' output.
-
-# Records whose Key Finding and gold_entity disagree with the facts-index
-# summary about which company is the beneficiary and which the vendor.  The
-# text keeps the facts summary's roles until the gold is ruled on; role
-# mismatches there are warnings, not failures.
-INV_ROLE_HELD = {
-    "inv-002": "KF/gold: beneficiary Obsidian Metals; facts and text: intended Obsidian, beneficiary Falcon Crest",
-    "inv-007": "KF/gold: beneficiary Obsidian Capital; facts and text: intended Obsidian, beneficiary Aperture",
-    "inv-016": "KF/gold: beneficiary Crescent Equipment; facts and text: Crescent Equipment is the vendor",
-    "inv-024": "KF/gold: beneficiary Emberline Imports; facts and text: Emberline Imports is the vendor",
-}
+#
+# Round 2 adds two more.  A Key Finding (or prose, or fact summary) that dates
+# the investigation's own act (it concluded, determined, made a determination)
+# before the header's open date fails.  Dates of events ("the activity was
+# completed", "the loss was confirmed") may precede the opening and are not
+# matched.  And each fact record is an offline extraction of its report, so
+# its `dates` must be exactly the report's full dates and its summary may state
+# no date the report lacks.
 _INV_PROSE_TITLES = ("Case Summary", "Allegation and Referral Source", "Timeline of Events",
                      "Funds Tracing", "Beneficiary and Counterparty Analysis",
                      "Interviews and Documentary Evidence", "Recovery and Indemnification Efforts")
@@ -2666,6 +2663,11 @@ _INV_OPENED_RES = (
     re.compile(r"On ((?:%s) \d{1,2}, \d{4}), the [^.]{0,80}? opened (?:a |an |this |the )?"
                r"(?:formal )?(?:investigation|internal case)" % "|".join(_MONTHS)),
 )
+# The investigation's own conclusion or determination, not an event it dates.
+_INV_DETERMINATION_RE = re.compile(
+    r"\binvestigation (?:concluded|was concluded|was closed)\b|\bconcluded (?:an|the|this|its) "
+    r"investigation\b|\bdetermination was made\b|\bdate of (?:the )?determination\b|"
+    r"\bdate the investigation (?:determined|concluded)\b", re.I)
 
 
 def _inv_sections(inv: dict) -> list:
@@ -2730,9 +2732,12 @@ form confirmation altered legitimate known established invoicing purported actua
 its this that customer's beneficiary funds new different financial institution s which customer""".split())
 
 
-def investigation_coherence_checks(invs: list, check, warn, co_re, verbose_detail=False) -> None:
+def investigation_coherence_checks(invs: list, check, warn, co_re, verbose_detail=False,
+                                   facts: list = None) -> None:
     print("\n=== investigations: party roles and event dates agree with the key finding ===")
-    role_bad, role_held, wire_multi, wire_kf, early, opened_bad, far = [], [], [], [], [], [], []
+    role_bad, wire_multi, wire_kf, early, opened_bad, far = [], [], [], [], [], []
+    determined_early, fact_dates_bad = [], []
+    fact_by_id = {f["doc_id"]: f for f in facts or []}
     for inv in invs:
         did, gold = inv["doc_id"], inv["gold_entity"]
         kf_vendors = _inv_kf_vendors(inv, co_re)
@@ -2754,7 +2759,41 @@ def investigation_coherence_checks(invs: list, check, warn, co_re, verbose_detai
         if bad:
             msg = "%s (beneficiary %s, vendor %s): %s" % (
                 did, gold, "/".join(sorted(kf_vendors)) or "-", "; ".join(bad if verbose_detail else bad[:4]))
-            (role_held if did in INV_ROLE_HELD else role_bad).append(msg)
+            role_bad.append(msg)
+        # The investigation's own conclusion or determination is not dated
+        # before the case was opened (Key Finding, prose, fact summary).
+        fact = fact_by_id.get(did)
+        for title, body in [("Key Finding", inv["key_finding"])] + secs + (
+                [("Fact summary", fact["summary"])] if fact else []):
+            for sent in _sar_sentences(body):
+                ds = _SAR_DATE_RE.findall(sent)
+                if len(ds) == 1 and _INV_DETERMINATION_RE.search(sent) \
+                        and _parse_prose_date(ds[0]) < opened:
+                    determined_early.append("%s %s: %s, opened %s" % (
+                        did, title.split()[0], ds[0], inv["date_opened"]))
+        # The fact record is an extraction of this report: same full dates,
+        # the key date among them, the same open date, and no summary date the
+        # report lacks.
+        if fact is not None:
+            report = []
+            for x in _SAR_DATE_RE.findall(inv["body"]):
+                iso = "%04d-%02d-%02d" % _parse_prose_date(x)
+                if iso not in report:
+                    report.append(iso)
+            probs = []
+            if set(fact.get("dates") or []) != set(report):
+                extra = sorted(set(fact.get("dates") or []) - set(report))
+                missing = sorted(set(report) - set(fact.get("dates") or []))
+                probs.append("dates not in report %s, report dates missing %s" % (extra, missing))
+            if inv["key_date_iso"] not in (fact.get("dates") or []):
+                probs.append("key date %s missing" % inv["key_date_iso"])
+            if fact.get("date_opened") != inv["date_opened"]:
+                probs.append("date_opened %s vs %s" % (fact.get("date_opened"), inv["date_opened"]))
+            stray = [x for x in _SAR_DATE_RE.findall(fact.get("summary", "")) if x not in inv["body"]]
+            if stray:
+                probs.append("summary dates not in report %s" % stray)
+            if probs:
+                fact_dates_bad.append("%s: %s" % (did, "; ".join(probs)))
         # Wire date: every sentence that narrates the subject's wire carries one date.
         wire = {}
         kf_wire = set()
@@ -2807,8 +2846,6 @@ def investigation_coherence_checks(invs: list, check, warn, co_re, verbose_detai
                             did, title.split()[0], ds[0], *wire_date))
     check("investigation_party_roles_match_key_finding", not role_bad,
           "%d record(s): %s" % (len(role_bad), " | ".join(role_bad if verbose_detail else role_bad[:3])))
-    warn("investigation_party_roles_held_for_gold_ruling", not role_held,
-         "%d record(s): %s" % (len(role_held), " | ".join(role_held)))
     check("investigation_wire_narrated_with_one_date", not wire_multi,
           "%d record(s): %s" % (len(wire_multi), " | ".join(wire_multi if verbose_detail else wire_multi[:3])))
     check("investigation_wire_date_matches_key_finding", not wire_kf, " | ".join(wire_kf))
@@ -2817,6 +2854,12 @@ def investigation_coherence_checks(invs: list, check, warn, co_re, verbose_detai
     check("investigation_opened_date_matches_header", not opened_bad, " | ".join(opened_bad))
     check("investigation_dates_near_the_case", not far,
           "%d: %s" % (len(far), " | ".join(far if verbose_detail else far[:4])))
+    check("investigation_determination_not_before_opening", not determined_early,
+          "%d: %s" % (len(determined_early), " | ".join(determined_early)))
+    if facts is not None:
+        check("fact_record_dates_match_report", not fact_dates_bad,
+              "%d record(s): %s" % (len(fact_dates_bad), " | ".join(
+                  fact_dates_bad if verbose_detail else fact_dates_bad[:3])))
 
 
 def validate(sars: list, passages: list, investigations: list, facts: list,
@@ -3079,7 +3122,7 @@ def validate(sars: list, passages: list, investigations: list, facts: list,
         "|".join(map(re.escape, COMPANY_FIRST)), "|".join(map(re.escape, COMPANY_CORE)),
         "|".join(map(re.escape, sorted(COMPANY_SUFFIX, key=len, reverse=True)))))
     sar_coherence_checks(sars, check, warn, (co_re,))
-    investigation_coherence_checks(investigations, check, warn, co_re)
+    investigation_coherence_checks(investigations, check, warn, co_re, facts=facts)
 
     print("\n=== retired names and vendor tokens ===")
     hits = []
