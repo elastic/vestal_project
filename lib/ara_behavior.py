@@ -53,6 +53,10 @@ def run_case(ab: AB, agent_id: str, case: dict, deadline_at: float | None = None
             if spans is not None and resp.get("trace_id") and any(c["tool_id"] == "run_subagent" for c in record):
                 record = splice_delegated(record, trace_calls(poll_spans(spans, resp["trace_id"]), agent_id))
             ok, reason = route_matches(case.get("expected") or [], record, case.get("forbid") or [])
+            if not ok and not record and any(s.get("type") == "ask_user_question" for s in resp.get("steps") or []):
+                # t4c-probe1: on a request with no account, Tina asked the analyst a question instead of acting
+                reason = (f"expected {(case.get('expected') or [{}])[0].get('tool_id')}, but Tina asked the analyst "
+                          "a question instead of calling a tool")
             return {"id": case["id"], "passed": ok, "reason": reason, "route": record,
                     "internal": internal_calls(resp), "conversation_id": resp.get("conversation_id"),
                     "trace_id": resp.get("trace_id"), "seconds": round(time.monotonic() - t0, 1)}
