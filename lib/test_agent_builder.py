@@ -320,3 +320,35 @@ def test_run_outcome_env_and_learner():
                                                    "error": "mapper_parsing_exception: failed to parse field [created_at]"}]}
     out = A.run_outcome(bad)
     assert out["kind"] == "learner" and out["step"] == "write" and "mapper_parsing" in out["error"]
+
+
+def test_env_err_is_narrow():
+    """Review F-2: the learner's own errors stay the learner's; real outages stay outages."""
+    learner = [
+        "line 1:507: mismatched input 'BY' expecting {<EOF>, '|', ','}",       # ES|QL parse position
+        "line 3:500: Unknown column [lookback_timeout]",
+        "verification_exception: Unknown column [request_timeout_ms]",
+        "Unknown field [timeout_s] in step with",
+        "mapper_parsing_exception: failed to parse field [amount] of type [float]: '508'",
+        "ConnectorExecutionError [401] Invalid API key",
+        "index_not_found_exception: no such index [cortex-fraud-cases-500]",
+    ]
+    env = [
+        "Inference failed: status code 429",
+        "Request failed with status code 503",
+        "HTTP 502 from the inference endpoint",
+        "ConnectorExecutionError [429] Too Many Requests",
+        "503 Service Unavailable",
+        "connect ECONNREFUSED 10.0.0.1:443",
+        "The request timed out",
+        "timeout of 30000ms exceeded",
+        "socket hang up",
+        "Rate limit exceeded for the model",
+        "statusCode: 500",
+    ]
+    for text in learner:
+        assert not A.ENV_ERR.search(text), text
+    for text in env:
+        assert A.ENV_ERR.search(text), text
+    parse = {"status": "failed", "stepExecutions": [{"stepId": "detect", "status": "failed", "error": learner[0]}]}
+    assert A.run_outcome(parse)["kind"] == "learner"
