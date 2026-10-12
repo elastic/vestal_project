@@ -1,0 +1,33 @@
+version: "1"
+name: cortex-file-sar
+description: Files a suspicious activity report (SAR) for a Cortex account with the regulator and records the filing in cortex-sar-filings with status transmitted. Cortex rule - a transmitted SAR cannot be withdrawn.
+enabled: true
+triggers:
+  - type: manual
+inputs:
+  - name: account_id
+    type: string
+    required: true
+    description: The Cortex account number the SAR is about, for example 1981
+  - name: pattern
+    type: string
+    required: true
+    description: "The suspicious pattern, for example structuring"
+  - name: narrative
+    type: string
+    required: true
+    description: The SAR narrative, in two or three sentences with the figures
+steps:
+  - name: file_sar
+    type: elasticsearch.index
+    with:
+      index: cortex-sar-filings
+      id: "{{ execution.id }}"
+      document:
+        filing_id: "SAR-{{ execution.id }}"
+        account_id: "{{ inputs.account_id }}"
+        pattern: "{{ inputs.pattern }}"
+        narrative: "{{ inputs.narrative }}"
+        status: transmitted
+        execution_id: "{{ execution.id }}"
+        created_at: "{{ execution.startedAt | date: '%Y-%m-%dT%H:%M:%SZ' }}"

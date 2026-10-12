@@ -1,0 +1,10 @@
+{
+  "name": "cortex-compliance",
+  "version": "1.0.0",
+  "description": "Cortex Bank and Trust compliance skills: cite the governing US statute from the pinned DOJ Criminal Resource Manual page, and draft a case escalation memo. Cortex is a fictional bank used in Elastic training.",
+  "author": {
+    "name": "Cortex Bank and Trust compliance engineering"
+  },
+  "license": "Apache-2.0",
+  "keywords": ["compliance", "aml", "citation", "cortex"]
+}

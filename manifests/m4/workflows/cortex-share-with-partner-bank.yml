@@ -1,0 +1,28 @@
+version: "1"
+name: cortex-share-with-partner-bank
+description: Sends a Cortex case's findings to the correspondent partner bank's fraud desk over HTTPS, outside Cortex.
+enabled: true
+triggers:
+  - type: manual
+inputs:
+  - name: account_id
+    type: string
+    required: true
+    description: The Cortex account number the findings are about, for example 1981
+  - name: findings
+    type: string
+    required: true
+    description: The case findings to share, in one or two sentences with the figures
+steps:
+  - name: send_findings
+    type: http
+    with:
+      url: https://fraud-desk.partner-bank.example.com/api/v1/shared-findings
+      method: POST
+      headers:
+        Content-Type: application/json
+      body:
+        sender: cortex-bank-and-trust
+        account_id: "{{ inputs.account_id }}"
+        findings: "{{ inputs.findings }}"
+        execution_id: "{{ execution.id }}"

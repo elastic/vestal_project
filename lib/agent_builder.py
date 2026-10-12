@@ -198,6 +198,24 @@ class AB:
         code, body = self.get(f"/api/workflows/executions/{execution_id}/step/{step_execution_id}")
         return body if code == 200 else None
 
+    def resume(self, execution_id: str, approved: bool) -> tuple[int, Any]:
+        """Approve or decline a paused waitForApproval step (research 18 section 3.4). A second resume
+        on the same execution returns 409, which is the caller's to read."""
+        return self.request("POST", f"/api/workflows/executions/{execution_id}/resume", {"input": {"approved": approved}})
+
+    def wait_status(self, execution_id: str, statuses: tuple, budget_s: float = 20, poll_s: float = 1.0) -> dict | None:
+        """Poll until the execution reaches one of `statuses` or ends; returns the last read."""
+        end = time.monotonic() + budget_s
+        last = None
+        while True:
+            last = self.execution(execution_id)
+            st = (last or {}).get("status")
+            if st in statuses or st in ("completed", "failed", "cancelled", "timed_out", "skipped"):
+                return last
+            if time.monotonic() + poll_s > end:
+                return last
+            time.sleep(poll_s)
+
     def wait_execution(self, execution_id: str, budget_s: float = 30, poll_s: float = 1.5) -> dict | None:
         """Poll until the execution ends or the budget runs out; returns the last read."""
         end = time.monotonic() + budget_s

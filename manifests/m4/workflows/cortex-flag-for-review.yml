@@ -1,0 +1,28 @@
+version: "1"
+name: cortex-flag-for-review
+description: Flags a Cortex account for a second analyst's review by writing an open flag document to cortex-review-flags. A flag can be closed or removed later.
+enabled: true
+triggers:
+  - type: manual
+inputs:
+  - name: account_id
+    type: string
+    required: true
+    description: The Cortex account number to flag, for example 1981
+  - name: reason
+    type: string
+    required: true
+    description: Why the account needs a second review, in one sentence
+steps:
+  - name: write_flag
+    type: elasticsearch.index
+    with:
+      index: cortex-review-flags
+      id: "{{ execution.id }}"
+      document:
+        flag_id: "FLAG-{{ execution.id }}"
+        account_id: "{{ inputs.account_id }}"
+        reason: "{{ inputs.reason }}"
+        status: open
+        execution_id: "{{ execution.id }}"
+        created_at: "{{ execution.startedAt | date: '%Y-%m-%dT%H:%M:%SZ' }}"

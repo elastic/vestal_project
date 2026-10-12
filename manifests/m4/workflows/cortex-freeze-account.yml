@@ -1,0 +1,28 @@
+version: "1"
+name: cortex-freeze-account
+description: Places a hold on a Cortex account by writing its hold record to cortex-account-holds, keyed by the account number. Lifting the hold updates or removes that record.
+enabled: true
+triggers:
+  - type: manual
+inputs:
+  - name: account_id
+    type: string
+    required: true
+    description: The Cortex account number to hold, for example 1981
+  - name: reason
+    type: string
+    required: true
+    description: Why the account is held, in one sentence
+steps:
+  - name: write_hold
+    type: elasticsearch.index
+    with:
+      index: cortex-account-holds
+      id: "{{ inputs.account_id }}"
+      document:
+        hold_id: "HOLD-{{ execution.id }}"
+        account_id: "{{ inputs.account_id }}"
+        reason: "{{ inputs.reason }}"
+        status: on_hold
+        execution_id: "{{ execution.id }}"
+        created_at: "{{ execution.startedAt | date: '%Y-%m-%dT%H:%M:%SZ' }}"
