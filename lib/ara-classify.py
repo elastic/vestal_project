@@ -6,7 +6,7 @@
 Reads Tina's live configuration as tina-runtime (ARA_TINA_RUNTIME_KEY and KIBANA_URL from ~/env) and
 lists every custom tool she holds. For each, asks for the class, the reason and the control from closed lists, then writes
 ~/cortex-desk/action-classes.json. It never says whether an answer is right: Check does that, from
-the tool definitions (22 section 5.1). Run it again after you change Tina's tools.
+the tool definitions and the Brief's decision rule. Run it again after you change Tina's tools.
 """
 from __future__ import annotations
 

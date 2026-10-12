@@ -132,7 +132,7 @@ def classify_tool(tool: dict, workflow_yaml: str | None, cortex_hosts: set[str],
                 "evidence": f"workflow {wf} writes nothing"}
     # Any other custom type (mcp, for example) is not in table 5.1: side-effecting until a person decides.
     return {"id": tid, "class": "side-effecting", "reason": "writes a Cortex record that can be corrected or removed",
-            "evidence": f"{typ} tool, not in table 5.1"}
+            "evidence": f"{typ} tool, a type the Lab 4.4 decision rule does not cover"}
 
 
 def agent_tool_ids(agent: dict | None) -> list[str]:
