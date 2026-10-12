@@ -7,6 +7,7 @@ Usage:
 
 Authoring tool; nothing in a sandbox runs it. Runs beside ara-lint.sh and align_lint.py. Rules:
   tag        ARA_ASSETS_TAG in the 01 setup is an m4-* tag, never main (D-09)
+  thresholds the 01 setup's THRESHOLDS_EOF copy equals private/thresholds.json
   connector  every check or solve file that converses (converse( or run_cases() builds its client
              with the pinned connector: ARA_AB_CONNECTOR_ID or the track helper's tina()
   message    no grading check (NN-*.py) reads response.message or ["response"] (answer prose is
@@ -48,6 +49,18 @@ def main(argv=None) -> int:
     setup = next(track.glob("01-*/setup-elastic-serverless")).read_text()
     m = re.search(r'^ARA_ASSETS_TAG="([^"]+)"', setup, re.M)
     report("tag", bool(m) and m.group(1).startswith("m4-"), f"ARA_ASSETS_TAG={m.group(1) if m else None}")
+
+    # thresholds: the copy the 01 setup writes to /opt/ara/thresholds.json is private/thresholds.json
+    # (ara-embed does not carry it; a stale copy failed t44-r1 provisioning)
+    tm = re.search(r"<< 'THRESHOLDS_EOF'\n(.*?)\nTHRESHOLDS_EOF\n", setup, re.S)
+    tp = track / "private/thresholds.json"
+    if tp.exists():
+        try:
+            same = bool(tm) and json.loads(tm.group(1)) == json.loads(tp.read_text())
+        except ValueError:
+            same = False
+        report("thresholds", same, "01 setup copy matches private/thresholds.json" if same else
+               "01 setup copy differs from private/thresholds.json (or is missing)")
 
     checks_dir = next(track.glob("private/checks/*/"), None)
     files = sorted(checks_dir.glob("*.py")) if checks_dir else []
