@@ -2,6 +2,14 @@ Analyst, turn 3, sent again after a reconnect (no conversation_id):
   Run that check again now and list only those, newest first,
   with their dates.
 
-Tina's tool calls: pending the first live capture
+Tina's tool calls
+  no Cortex tool called
 
-(to be captured live, 4.3 track test r1, before review)
+Tina: I don't have enough context to know which account or check
+      you're referring to - this appears to be the start of our
+      conversation and there's no prior query to repeat.
+      Could you let me know:
+      - Which account you'd like me to check?
+      - How many days back to look?
+
+(captured live, 4.3 calibration copy t43-cal, claude-sonnet-4.6)
