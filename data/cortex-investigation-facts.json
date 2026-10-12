@@ -480,7 +480,7 @@
     "key_entities": [
       "Greystone Commodities Group LLC",
       "Cornerstone Commodities LLC",
-      "Kestrel Trading Trading Co.",
+      "Kestrel Trading Co.",
       "Mapleford Industrial Supply Inc."
     ],
     "topics": [
@@ -716,7 +716,7 @@
     "subject_name": "Marblehead Logistics LLC",
     "outcome": "ongoing",
     "date_opened": "2024-05-27",
-    "summary": "On May 24, 2024, Marblehead Logistics LLC was the victim of a business email compromise scheme resulting in a fraudulent wire transfer. The customer was deceived into sending $1,661,068.92 to an unauthorized account, believing they were paying an invoice to Crescent Equipment Inc. A portion of the funds was frozen at the receiving institution, and the investigation remains ongoing.",
+    "summary": "On May 24, 2024, Marblehead Logistics LLC was the victim of a business email compromise scheme resulting in a fraudulent wire transfer. The customer was deceived into sending $1,661,068.92 to an account held by Crescent Imports Corp., believing they were paying an invoice to Crescent Equipment Inc. A portion of the funds was frozen at the receiving institution, and the investigation remains ongoing.",
     "answers_questions": [
       "What was the total amount of the fraudulent wire transfer?",
       "Who was the intended beneficiary of the wire transfer?",
@@ -751,7 +751,7 @@
       "2024-03-15",
       "2024-05-29"
     ],
-    "token_count": 77
+    "token_count": 81
   },
   {
     "doc_id": "inv-017",
@@ -1029,12 +1029,11 @@
       "2024-03-20",
       "2024-03-11",
       "2024-07-11",
+      "2024-07-08",
       "2024-03-18",
       "2024-03-21",
       "2024-03-25",
       "2024-03-26",
-      "2024-04-08",
-      "2024-07-08",
       "2024-07-17"
     ],
     "token_count": 81
@@ -1096,7 +1095,7 @@
     "subject_name": "Wilhelmina Braithwaite",
     "outcome": "ongoing",
     "date_opened": "2024-09-13",
-    "summary": "On August 28, 2024, Wilhelmina Braithwaite was the victim of a business email compromise scheme that resulted in a diverted amount of $103,582.40. The customer received a fraudulent invoice from a lookalike domain, directing payment to a new beneficiary instead of the intended vendor, Emberline Imports LLC. A portion of the funds was frozen, but the customer sustained a residual loss of $82,865.92.",
+    "summary": "On August 28, 2024, Wilhelmina Braithwaite was the victim of a business email compromise scheme that resulted in a diverted amount of $103,582.40. The customer received a fraudulent invoice from a lookalike domain, directing payment to a new beneficiary, Falcon Crest Machinery Trading Co., instead of the intended vendor, Emberline Imports LLC. A portion of the funds was frozen, but the customer sustained a residual loss of $82,865.92.",
     "answers_questions": [
       "Who is the subject of the investigation?",
       "What was the diverted amount?",
@@ -1145,6 +1144,6 @@
       "2024-09-05",
       "2024-09-10"
     ],
-    "token_count": 92
+    "token_count": 99
   }
 ]

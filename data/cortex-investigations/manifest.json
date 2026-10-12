@@ -8,8 +8,8 @@
   "token_stats": {
     "min": 3250,
     "max": 5598,
-    "mean": 4658.2,
-    "total": 111798
+    "mean": 4652.9,
+    "total": 111669
   },
   "synthetic": true,
   "notes": [
