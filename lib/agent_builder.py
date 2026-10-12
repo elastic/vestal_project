@@ -72,6 +72,8 @@ class AB:
         ABError for an outage status and RemoteCallFailed for no answer. ok_codes lists statuses in
         _OUTAGE that the caller wants returned instead (a 403 a check expects, for example)."""
         headers = {"Content-Type": "application/json", "Authorization": f"ApiKey {self.api_key}", **KBN_HEADERS}
+        if path.startswith("/internal/"):
+            headers["x-elastic-internal-origin"] = "kibana"  # internal routes refuse calls without it
         data = json.dumps(body).encode() if body is not None else None
         req = urllib.request.Request(f"{self.kibana}{path}", data=data, method=method, headers=headers)
         try:

@@ -82,9 +82,10 @@ def apply(manifest: pathlib.Path, ab: AB, check: bool = False, log=print) -> int
     for path, m in load(manifest):
         settings = {**(BASE_SETTINGS if not m.get("extends") else {}), **(m.get("settings") or {})}
         if settings and not check:
-            code, body = ab.set_settings(settings)
-            if code != 200:
-                raise SystemExit(f"{m['id']}: settings HTTP {code} {str(body)[:200]}")
+            for key, value in settings.items():  # one at a time, so a refusal names its setting
+                code, body = ab.set_settings({key: value})
+                if code != 200:
+                    raise SystemExit(f"{m['id']}: setting {key} HTTP {code} {str(body)[:200]}")
             log(f"{m['id']}: {len(settings)} settings set")
         for wf in m.get("workflows") or []:
             text = (path.parent / wf["yaml_file"]).read_text()
