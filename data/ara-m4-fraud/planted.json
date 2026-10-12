@@ -1,0 +1,183 @@
+{
+  "_doc": "Planted entities and their event ids. Public by design: the tracks name these accounts in their questions.",
+  "cortex-atm-events": {
+    "smurf_event_count": 208,
+    "smurfing_accounts": [
+      "2",
+      "4",
+      "6",
+      "8",
+      "10",
+      "12",
+      "14",
+      "16",
+      "18",
+      "20"
+    ],
+    "smurfing_atms": [
+      6,
+      7,
+      16,
+      18,
+      37,
+      49,
+      60,
+      61,
+      64,
+      68,
+      74,
+      78,
+      87,
+      91,
+      94,
+      100,
+      103,
+      106,
+      107,
+      111,
+      113,
+      116,
+      123,
+      124,
+      126
+    ]
+  },
+  "cortex-brokerage-trades": {
+    "securities_layering": {
+      "accounts": [
+        "1594",
+        "21162",
+        "1874"
+      ],
+      "broker_id": "3",
+      "payout_ratio": 0.93
+    },
+    "unexplained_wealth": {
+      "account": "4096",
+      "broker_id": "7",
+      "payout_ratio": 0.97
+    },
+    "wash_trading": {
+      "accounts": [
+        "2718",
+        "3141",
+        "1618",
+        "1414"
+      ],
+      "broker_id": "19",
+      "rounds": 12,
+      "symbol": "QNTM"
+    }
+  },
+  "cortex-cash-movements": {
+    "chain_events": [
+      "cm-000001",
+      "cm-000002",
+      "cm-000003",
+      "cm-000004",
+      "cm-000005",
+      "cm-000006",
+      "cm-000007",
+      "cm-000008",
+      "cm-000009",
+      "cm-000010",
+      "cm-000011",
+      "cm-000012",
+      "cm-000013",
+      "cm-000014",
+      "cm-000015"
+    ],
+    "layering_chain": [
+      "32687",
+      "16384",
+      "8192",
+      "4096",
+      "2048"
+    ]
+  },
+  "cortex-wire-transfers": {
+    "coordinated_wires": [
+      "wt-000014",
+      "wt-000015",
+      "wt-000016",
+      "wt-000017",
+      "wt-000018",
+      "wt-000019",
+      "wt-000020",
+      "wt-000021",
+      "wt-000022",
+      "wt-000023"
+    ],
+    "decoy_events": {
+      "1234": [
+        "wt-000024",
+        "wt-000025",
+        "wt-000026",
+        "wt-000027",
+        "wt-000037"
+      ],
+      "3456": [
+        "wt-000034",
+        "wt-000035",
+        "wt-000036"
+      ],
+      "5678": [
+        "wt-000028",
+        "wt-000029",
+        "wt-000030"
+      ],
+      "9012": [
+        "wt-000031",
+        "wt-000032",
+        "wt-000033"
+      ]
+    },
+    "structuring_deposits": {
+      "1981": [
+        "wt-000001",
+        "wt-000002",
+        "wt-000003",
+        "wt-000004",
+        "wt-000005",
+        "wt-000006"
+      ],
+      "476": [
+        "wt-000008",
+        "wt-000009",
+        "wt-000010",
+        "wt-000011",
+        "wt-000012"
+      ]
+    },
+    "structuring_out_of_window": {
+      "1981": [
+        "wt-000007"
+      ],
+      "476": [
+        "wt-000013"
+      ]
+    }
+  },
+  "counts": {
+    "cortex-atm-events": 20208,
+    "cortex-brokerage-trades": 10057,
+    "cortex-cash-movements": 20015,
+    "cortex-ref-accounts": 8000,
+    "cortex-ref-banks": 30,
+    "cortex-ref-brokers": 40,
+    "cortex-ref-intbanks": 10,
+    "cortex-ref-merchants": 200,
+    "cortex-wire-transfers": 20073
+  },
+  "flagged_brokers": {
+    "12": "Rania Haddad",
+    "19": "Lin Cao",
+    "23": "Pavel Varga",
+    "3": "Christine Lefevre",
+    "7": "Wei Zeng"
+  },
+  "newest_event": "2026-10-01T04:58:22.000Z",
+  "rebase_rule": "offset = (load time - 1 day) - newest_event, applied to every @timestamp",
+  "seed": 4401,
+  "snapshot_now": "2026-10-01T05:00:00.000Z"
+}

@@ -1,0 +1,341 @@
+{
+  "data": {
+    "cortex-atm-events": {
+      "@timestamp": {
+        "type": "date"
+      },
+      "account_id": {
+        "type": "keyword"
+      },
+      "amount": {
+        "type": "double"
+      },
+      "atm_event": {
+        "type": "keyword"
+      },
+      "atm_id": {
+        "type": "keyword"
+      },
+      "business_hours": {
+        "type": "boolean"
+      },
+      "camera_enabled": {
+        "type": "boolean"
+      },
+      "currency": {
+        "type": "keyword"
+      },
+      "deposit_type": {
+        "type": "keyword"
+      },
+      "event_id": {
+        "type": "keyword"
+      }
+    },
+    "cortex-brokerage-trades": {
+      "@timestamp": {
+        "type": "date"
+      },
+      "account_event": {
+        "type": "keyword"
+      },
+      "account_id": {
+        "type": "keyword"
+      },
+      "amount": {
+        "type": "double"
+      },
+      "broker_id": {
+        "type": "keyword"
+      },
+      "counterparty_account": {
+        "type": "keyword"
+      },
+      "counterparty_bank": {
+        "type": "keyword"
+      },
+      "counterparty_country": {
+        "type": "keyword"
+      },
+      "currency": {
+        "type": "keyword"
+      },
+      "event_id": {
+        "type": "keyword"
+      },
+      "price": {
+        "type": "double"
+      },
+      "quantity": {
+        "type": "long"
+      },
+      "symbol": {
+        "type": "keyword"
+      },
+      "trade_id": {
+        "type": "keyword"
+      },
+      "wire_direction": {
+        "type": "keyword"
+      }
+    },
+    "cortex-cash-movements": {
+      "@timestamp": {
+        "type": "date"
+      },
+      "account_event": {
+        "type": "keyword"
+      },
+      "account_id": {
+        "type": "keyword"
+      },
+      "amount": {
+        "type": "double"
+      },
+      "counterparty_bank": {
+        "type": "keyword"
+      },
+      "counterparty_country": {
+        "type": "keyword"
+      },
+      "currency": {
+        "type": "keyword"
+      },
+      "deposit_type": {
+        "type": "keyword"
+      },
+      "event_id": {
+        "type": "keyword"
+      },
+      "from_account": {
+        "type": "keyword"
+      },
+      "to_account": {
+        "type": "keyword"
+      },
+      "wire_direction": {
+        "type": "keyword"
+      }
+    },
+    "cortex-ref-accounts": {
+      "account_id": {
+        "type": "keyword"
+      },
+      "account_type": {
+        "type": "keyword"
+      },
+      "branch_id": {
+        "type": "keyword"
+      },
+      "city": {
+        "type": "keyword"
+      },
+      "holder_name": {
+        "type": "keyword"
+      },
+      "opened_date": {
+        "type": "date"
+      },
+      "state": {
+        "type": "keyword"
+      }
+    },
+    "cortex-ref-banks": {
+      "bank_id": {
+        "type": "keyword"
+      },
+      "city": {
+        "type": "keyword"
+      },
+      "name": {
+        "type": "keyword"
+      },
+      "routing_number": {
+        "type": "keyword"
+      }
+    },
+    "cortex-ref-brokers": {
+      "broker_id": {
+        "type": "keyword"
+      },
+      "crd": {
+        "type": "keyword"
+      },
+      "firm": {
+        "type": "keyword"
+      },
+      "flagged": {
+        "type": "boolean"
+      },
+      "name": {
+        "type": "keyword"
+      }
+    },
+    "cortex-ref-intbanks": {
+      "country": {
+        "type": "keyword"
+      },
+      "intbank_id": {
+        "type": "keyword"
+      },
+      "name": {
+        "type": "keyword"
+      }
+    },
+    "cortex-ref-merchants": {
+      "city": {
+        "type": "keyword"
+      },
+      "merchant_id": {
+        "type": "keyword"
+      },
+      "name": {
+        "type": "keyword"
+      }
+    },
+    "cortex-wire-transfers": {
+      "@timestamp": {
+        "type": "date"
+      },
+      "account_event": {
+        "type": "keyword"
+      },
+      "account_holder": {
+        "type": "keyword"
+      },
+      "account_id": {
+        "type": "keyword"
+      },
+      "account_type": {
+        "type": "keyword"
+      },
+      "amount": {
+        "type": "double"
+      },
+      "branch_id": {
+        "type": "keyword"
+      },
+      "counterparty_bank": {
+        "type": "keyword"
+      },
+      "counterparty_country": {
+        "type": "keyword"
+      },
+      "currency": {
+        "type": "keyword"
+      },
+      "deposit_type": {
+        "type": "keyword"
+      },
+      "event_id": {
+        "type": "keyword"
+      },
+      "event_type": {
+        "type": "keyword"
+      },
+      "merchant_id": {
+        "type": "keyword"
+      },
+      "wire_direction": {
+        "type": "keyword"
+      }
+    }
+  },
+  "records": {
+    "cortex-audit": {
+      "account_id": {
+        "type": "keyword"
+      },
+      "action": {
+        "type": "keyword"
+      },
+      "actor": {
+        "type": "keyword"
+      },
+      "audit_id": {
+        "type": "keyword"
+      },
+      "created_at": {
+        "type": "date"
+      },
+      "detail": {
+        "type": "text"
+      },
+      "execution_id": {
+        "type": "keyword"
+      },
+      "outcome": {
+        "type": "keyword"
+      }
+    },
+    "cortex-escalations": {
+      "account_id": {
+        "type": "keyword"
+      },
+      "created_at": {
+        "type": "date"
+      },
+      "escalation_id": {
+        "type": "keyword"
+      },
+      "execution_id": {
+        "type": "keyword"
+      },
+      "reason": {
+        "type": "text"
+      },
+      "request": {
+        "type": "text"
+      }
+    },
+    "cortex-fraud-cases": {
+      "account_id": {
+        "type": "keyword"
+      },
+      "case_id": {
+        "type": "keyword"
+      },
+      "created_at": {
+        "type": "date"
+      },
+      "execution_id": {
+        "type": "keyword"
+      },
+      "findings": {
+        "type": "text"
+      },
+      "pattern": {
+        "type": "keyword"
+      },
+      "rationale": {
+        "type": "text"
+      },
+      "risk_rating": {
+        "type": "keyword"
+      },
+      "source": {
+        "type": "keyword"
+      }
+    },
+    "cortex-sar-filings": {
+      "account_id": {
+        "type": "keyword"
+      },
+      "created_at": {
+        "type": "date"
+      },
+      "execution_id": {
+        "type": "keyword"
+      },
+      "filing_id": {
+        "type": "keyword"
+      },
+      "narrative": {
+        "type": "text"
+      },
+      "status": {
+        "type": "keyword"
+      }
+    }
+  }
+}
