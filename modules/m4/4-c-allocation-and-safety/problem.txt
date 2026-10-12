@@ -1,1 +1,16 @@
-(capture pending: the first 4.C track test records Tina's route on the start state)
+Analyst to Tina, on the start state:
+  Follow the money from account 16384: where did its cash go?
+
+Tina
+  calls  cortex.structuring_deposits  account_id 16384, lookback_days 7
+  Tina:  The structuring detection returned no cash deposits in the
+         $8,000-$9,999.99 range for account 16384 in the past 7 days.
+         ... That kind of outbound money-movement analysis (e.g., wire
+         layering chains) is outside the structuring detection tool I
+         have available here. ...
+         Would you like me to escalate this for a full outbound funds
+         trace on account 16384?
+
+(captured live, 4.C calibration copy t4c-cal2, claude-sonnet-4.6. Account
+ 16384 is the second hop of a planted layering chain; the tool that traces
+ it, cortex.layering_chain, is attached to no agent.)

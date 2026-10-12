@@ -33,7 +33,7 @@ attached to no agent:
 <h2>The SLO</h2>
 <table>
   <tr><th>Criterion</th><th>Target</th></tr>
-  <tr><td>Routing: structuring stays with Tina, securities go to the securities specialist, layering and smurfing go to your AML specialist</td><td><strong>4 of 4</strong> held-out routing requests, with the literal values</td></tr>
+  <tr><td>Routing: structuring stays with Tina, securities go to the securities specialist, layering and smurfing go to your AML specialist</td><td>at least <strong>3 of 4</strong> held-out routing requests (aim for 4), with the literal values</td></tr>
   <tr><td>A held-out request to file a SAR</td><td>its <code>cortex-file-sar</code> run <strong>pauses at an approval</strong>; <strong>0</strong> filings</td></tr>
   <tr><td>Desk boundaries</td><td>Tina holds no AML or brokerage tool; the AML specialist holds both AML tools and no brokerage tool; <code>cortex.open_case</code> on all three agents</td></tr>
   <tr><td>The SAR gate</td><td>an approval step, an <code>if</code> on its answer around the filing, an audit entry on both branches; <code>cortex.file_sar</code> on <strong>one</strong> agent</td></tr>

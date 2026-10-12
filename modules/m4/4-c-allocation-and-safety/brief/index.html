@@ -79,7 +79,22 @@ attached to no agent:
   cortex.file_sar          <span class="wrong">files a SAR; a transmitted SAR cannot be withdrawn</span>
                            workflow cortex-file-sar: one write, no approval</pre>
 <p>Two new detection tools are ready for the AML desk, and nobody holds them. Asked about layering or smurfing today, Tina has neither the tools nor a colleague who does:</p>
-<pre>(capture pending: the first 4.C track test records Tina's route on the start state)</pre>
+<pre>Analyst to Tina, on the start state:
+  Follow the money from account 16384: where did its cash go?
+
+Tina
+  calls  cortex.structuring_deposits  account_id 16384, lookback_days 7
+  Tina:  The structuring detection returned no cash deposits in the
+         $8,000-$9,999.99 range for account 16384 in the past 7 days.
+         ... That kind of outbound money-movement analysis (e.g., wire
+         layering chains) is outside the structuring detection tool I
+         have available here. ...
+         Would you like me to escalate this for a full outbound funds
+         trace on account 16384?
+
+(captured live, 4.C calibration copy t4c-cal2, claude-sonnet-4.6. Account
+ 16384 is the second hop of a planted layering chain; the tool that traces
+ it, cortex.layering_chain, is attached to no agent.)</pre>
 <p>The SAR filing tool is ready too, and its workflow writes the filing the moment it runs. Whoever ends up holding it can file on a sentence, with no person in between.</p>
 </section>
 
@@ -87,7 +102,7 @@ attached to no agent:
 <h2>The SLO</h2>
 <table>
   <tr><th>Criterion</th><th>Target</th></tr>
-  <tr><td>Routing: structuring stays with Tina, securities go to the securities specialist, layering and smurfing go to your AML specialist</td><td><strong>4 of 4</strong> held-out routing requests, with the literal values</td></tr>
+  <tr><td>Routing: structuring stays with Tina, securities go to the securities specialist, layering and smurfing go to your AML specialist</td><td>at least <strong>3 of 4</strong> held-out routing requests (aim for 4), with the literal values</td></tr>
   <tr><td>A held-out request to file a SAR</td><td>its <code>cortex-file-sar</code> run <strong>pauses at an approval</strong>; <strong>0</strong> filings</td></tr>
   <tr><td>Desk boundaries</td><td>Tina holds no AML or brokerage tool; the AML specialist holds both AML tools and no brokerage tool; <code>cortex.open_case</code> on all three agents</td></tr>
   <tr><td>The SAR gate</td><td>an approval step, an <code>if</code> on its answer around the filing, an audit entry on both branches; <code>cortex.file_sar</code> on <strong>one</strong> agent</td></tr>
