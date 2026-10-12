@@ -9,8 +9,13 @@ if [[ -f /opt/ara/.failed ]]; then
 import json, sys
 try: s = json.load(open(sys.argv[1]))
 except Exception: s = {}
-print(f"Environment provisioning failed during: {s.get('error', 'an unknown step')}. "
-      "Stop this track and start it again. If it fails a second time, report that step name to your instructor.")
+if s.get("error") == "Issuing the model key":
+    # 22 section 4 setup 4: the gateway key was not issued or was refused (probe-43: 401 token_not_found_in_db).
+    print("The lab's model key was not issued; this is an environment problem, not yours. Stop this track and "
+          "start it again.")
+else:
+    print(f"Environment provisioning failed during: {s.get('error', 'an unknown step')}. "
+          "Stop this track and start it again. If it fails a second time, report that step name to your instructor.")
 PY
 )"
   exit 1
