@@ -66,12 +66,27 @@ pre .label { color: #ABB4C4; }
 
 <section id="problem">
 <h2>The problem</h2>
-<pre>CAPTURE PENDING: replaced from the first sandbox run
-(_solve41.py problem, start state: Tina with
-cortex.policy_search only).</pre>
+<pre>Analyst: Over the last 7 days, did account 1981 make cash deposits
+         just under the 10,000 dollar reporting threshold?
 
-  <p>The analyst asked about one account's deposits. Tina's only tool searches the policy manual, so she searched it, and answered with what Cortex's rules say about structuring instead of what account 1981 did.</p>
-  <p>Nothing was wrong with the model. Tina can only act through her tools, and she picks among them by what their descriptions say.</p>
+Tina's tool calls (start state: one tool, cortex.policy_search)
+  cortex.policy_search
+  search_relevant_skills      x2   (internal)
+  describe_api                     (internal)
+  execute_api                 x14  (internal: raw Elasticsearch requests)
+
+Tina: Yes - there is a clear pattern of sub-$10,000 cash deposits.
+      6 cash deposits in the 7-day window ... every single one just
+      below the $10,000 reporting threshold ...
+      Additionally, on Oct 10, the same account sent 5 rapid outbound
+      wire transfers to Shenzhen Harbour Bank ...
+      This warrants escalation ... and likely a Suspicious Activity
+      Report (SAR) filing.
+
+(captured live, 4.1 track test r3, claude-sonnet-4.6)</pre>
+
+  <p>The answer is right: those are the six deposits. Now try to sign it off. Tina had no tool for the question, so she wrote her own: fourteen raw Elasticsearch requests through the platform's internal API tool, with filters, band and window she chose on the fly. Nobody reviewed that query, the next run may write a different one, and the record shows "execute_api" fourteen times rather than one named check with an account and a window. She also volunteered a wire-transfer finding nobody asked for.</p>
+  <p>A compliance desk needs the opposite: one reviewed query, called by name, with the account and the window as typed values you can read back. That is a tool, and Tina picks it by what its description says.</p>
 </section>
 
 <section>

@@ -14,8 +14,8 @@
 <h2>The problem</h2>
 <pre><!-- include: problem.txt --></pre>
 
-  <p>The analyst asked about one account's deposits. Tina's only tool searches the policy manual, so she searched it, and answered with what Cortex's rules say about structuring instead of what account 1981 did.</p>
-  <p>Nothing was wrong with the model. Tina can only act through her tools, and she picks among them by what their descriptions say.</p>
+  <p>The answer is right: those are the six deposits. Now try to sign it off. Tina had no tool for the question, so she wrote her own: fourteen raw Elasticsearch requests through the platform's internal API tool, with filters, band and window she chose on the fly. Nobody reviewed that query, the next run may write a different one, and the record shows "execute_api" fourteen times rather than one named check with an account and a window. She also volunteered a wire-transfer finding nobody asked for.</p>
+  <p>A compliance desk needs the opposite: one reviewed query, called by name, with the account and the window as typed values you can read back. That is a tool, and Tina picks it by what its description says.</p>
 </section>
 
 <section>

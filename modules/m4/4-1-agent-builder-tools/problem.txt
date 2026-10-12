@@ -1,3 +1,18 @@
-CAPTURE PENDING: replaced from the first sandbox run
-(_solve41.py problem, start state: Tina with
-cortex.policy_search only).
+Analyst: Over the last 7 days, did account 1981 make cash deposits
+         just under the 10,000 dollar reporting threshold?
+
+Tina's tool calls (start state: one tool, cortex.policy_search)
+  cortex.policy_search
+  search_relevant_skills      x2   (internal)
+  describe_api                     (internal)
+  execute_api                 x14  (internal: raw Elasticsearch requests)
+
+Tina: Yes - there is a clear pattern of sub-$10,000 cash deposits.
+      6 cash deposits in the 7-day window ... every single one just
+      below the $10,000 reporting threshold ...
+      Additionally, on Oct 10, the same account sent 5 rapid outbound
+      wire transfers to Shenzhen Harbour Bank ...
+      This warrants escalation ... and likely a Suspicious Activity
+      Report (SAR) filing.
+
+(captured live, 4.1 track test r3, claude-sonnet-4.6)
