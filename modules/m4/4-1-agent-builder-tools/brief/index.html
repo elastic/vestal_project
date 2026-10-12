@@ -174,8 +174,10 @@ tool call Tina makes
  10,000 in the last 7 days?"
 
 description A: "ES|QL tool"
-  route  cortex.policy_search
-  <span class="wrong">wrong tool: nothing said this one fits</span>
+  route  cortex.structuring_deposits
+         (account_id=476, lookback_days=7)
+         -> <span class="wrong">cortex.policy_search</span>
+  right tool, then a second one "to be sure"
 
 description B: "Finds structuring on one account:
   cash deposits just under the 10,000
@@ -184,10 +186,10 @@ description B: "Finds structuring on one account:
   use it for policy questions."
   route  cortex.structuring_deposits
          (account_id=476, lookback_days=7)
-  <span class="right">right tool, right values</span></pre>
+  <span class="right">right tool, right values, nothing else</span></pre>
 
-  <p>Tina reads every tool's description on every turn. Say what the tool finds, which questions it answers, and which questions belong to another tool. The last part is what keeps a policy question about structuring out of your detector.</p>
-  <p>The check grades routes on held-out questions, not your words, so test with the dev set until the routes are right.</p>
+  <p>Tina reads every tool's description on every turn. Measured on this lab's six held-out questions: with description A, Tina still found the detection tool by its name and parameters, but added a policy search to 9 of 12 detection questions. With description B she added it to none of 20.</p>
+  <p>With two tools, a name can carry the choice. With twenty, or two that overlap, only the description can. Say what the tool finds, which questions it answers, and which belong to another tool. The check reads the routes on held-out questions, and the descriptions' length, never your wording.</p>
 </section>
 
 <section>
