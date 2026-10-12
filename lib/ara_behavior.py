@@ -69,3 +69,72 @@ def expected_text(case: dict) -> str:
     if case.get("forbid"):
         text += f"; never {', '.join(case['forbid'])}"
     return text
+
+
+# ── Held-out runs that outlast one check (D-15) ───────────────────────────────
+# Instruqt stops a check at about 60 s, and six converse calls take 30 to 50 s on their own. A
+# BEHAVIOR check therefore starts the held-out run as a detached root process keyed by a
+# fingerprint of what it grades, waits for it inside its own deadline, and grades the record when
+# it is there. If the run outlasts the wait, the check ends with no grade and asks for another
+# Check; the run carries on, and the next Check grades its record. A change to any graded object
+# changes the fingerprint and starts a fresh run. A record with an outage is never graded: the
+# next Check starts the run again (R-P8).
+
+import hashlib  # noqa: E402
+import json  # noqa: E402
+import os  # noqa: E402
+import pathlib  # noqa: E402
+import subprocess  # noqa: E402
+
+STALE_RUN_S = 300  # a run with no record after this long is treated as dead and started again
+
+
+def fingerprint(*objects) -> str:
+    return hashlib.sha256(json.dumps(objects, sort_keys=True, default=str).encode()).hexdigest()[:16]
+
+
+def _read(path: pathlib.Path) -> dict | None:
+    try:
+        return json.loads(path.read_text())
+    except (OSError, ValueError):
+        return None
+
+
+def write_json(path: pathlib.Path, data: dict) -> None:
+    """Root-only, by rename, so a reader never sees half a record."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(f".{path.name}.{os.getpid()}")
+    fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w") as f:
+        json.dump(data, f, indent=2, sort_keys=True, default=str)
+    os.replace(tmp, path)
+
+
+def ensure_run(record: pathlib.Path, fp: str, runner: list[str], wait_s: float, poll_s: float = 1.0) -> tuple[dict | None, float]:
+    """The finished record for fingerprint fp, or None if the run is still going after wait_s.
+    Starts `runner + [fp, started]` (detached, root) when no live run for fp exists. A finished
+    record with an outage counts as no record: the run starts again. The runner must write
+    {"fingerprint": fp, "started": started, ...} to `record`. Returns (record, seconds since start)."""
+    start_p = record.with_suffix(".start")
+    now = time.time()
+    rec = _read(record)
+    if rec and rec.get("fingerprint") == fp and not rec.get("outage"):
+        return rec, now - float(rec.get("started", now))
+    st = _read(start_p)
+    live = (st and st.get("fingerprint") == fp and now - float(st.get("started", 0)) < STALE_RUN_S
+            and not (rec and rec.get("fingerprint") == fp and float(rec.get("started", 0)) >= float(st["started"])))
+    if not live:
+        st = {"fingerprint": fp, "started": now}
+        write_json(start_p, st)
+        subprocess.Popen(runner + [fp, repr(now)], stdin=subprocess.DEVNULL,
+                         stdout=open("/var/log/ara-behavior.log", "a"), stderr=subprocess.STDOUT,
+                         start_new_session=True, close_fds=True)
+    started = float(st["started"])
+    end = time.monotonic() + wait_s
+    while True:
+        rec = _read(record)
+        if rec and rec.get("fingerprint") == fp and float(rec.get("started", 0)) >= started:
+            return rec, time.time() - started
+        if time.monotonic() + poll_s > end:
+            return None, time.time() - started
+        time.sleep(poll_s)
