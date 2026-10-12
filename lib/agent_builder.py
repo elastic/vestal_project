@@ -166,6 +166,13 @@ class AB:
         code, body = self.get(f"/api/agent_builder/conversations/{conversation_id}")
         return body if code == 200 else None
 
+    def conversations(self, agent_id: str | None = None) -> list[dict]:
+        """Conversations visible to this credential's user (listed per user, not per key: probe-43 X2)."""
+        code, body = self.get("/api/agent_builder/conversations" + (f"?agent_id={agent_id}" if agent_id else ""))
+        if code != 200 or not isinstance(body, dict):
+            return []
+        return list(body.get("results") or body.get("conversations") or [])
+
     # ── workflows ────────────────────────────────────────────────────────────
     def get_workflow(self, workflow_id: str) -> dict | None:
         code, body = self.get(f"/api/workflows/workflow/{workflow_id}")

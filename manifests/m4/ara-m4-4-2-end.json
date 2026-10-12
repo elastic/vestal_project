@@ -1,0 +1,73 @@
+{
+  "id": "ara-m4-4-2-end",
+  "_doc": "The 4.2 reference end state (22 section 8.4): the 4.2 start plus the reference sweep, the triage skill, the securities specialist, and Tina as coordinator with the skill, the three rules and the delegation rule. Generated from _solve42.py constants (b1-ref, b2-ref, b3-ref). The 4.3 start extends it.",
+  "extends": "ara-m4-4-2-start",
+  "workflows": [
+    {
+      "id": "cortex-structuring-sweep",
+      "yaml_file": "workflows/cortex-structuring-sweep.yml"
+    }
+  ],
+  "skills": [
+    {
+      "id": "cortex-fraud-triage",
+      "name": "cortex-fraud-triage",
+      "description": "Fraud triage playbook for a structuring question about a named Cortex account: detect, then open a case only on a detection result.",
+      "content": "# Cortex fraud triage\n\n1. Run cortex.structuring_deposits for the account and window the analyst names. Use 7 days when they name no window.\n2. If it returns no deposits, say so and stop: never open a case for an account the detection did not return.\n3. If it returns deposits, open a case with cortex.open_case for that account, pattern structuring, with the deposit count and total as the findings.\n4. Report the case id and the deposits the detection returned.\n",
+      "tool_ids": [
+        "cortex.structuring_deposits",
+        "cortex.open_case"
+      ]
+    }
+  ],
+  "agents": [
+    {
+      "id": "cortex-securities-irregularities",
+      "name": "Securities irregularities",
+      "description": "Securities specialist for Cortex brokerage accounts: wash trading, securities layering and unexplained wealth in brokerage trades, and opening a case on what it finds.",
+      "access_control": {
+        "access_mode": "public"
+      },
+      "configuration": {
+        "instructions": "You investigate brokerage trading irregularities at Cortex Bank and Trust. Use cortex.wash_trading, cortex.securities_layering and cortex.unexplained_wealth, with the window and account the question gives. Open a case with cortex.open_case only when asked to and only for an account a detection returned, with the pattern it matched. Answer only from what your tools return.",
+        "tools": [
+          {
+            "tool_ids": [
+              "cortex.securities_layering",
+              "cortex.wash_trading",
+              "cortex.unexplained_wealth",
+              "cortex.open_case"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "tina-compliance",
+      "name": "Tina",
+      "description": "Compliance assistant for Cortex Bank and Trust.",
+      "access_control": {
+        "access_mode": "public"
+      },
+      "configuration": {
+        "instructions": "You are Tina, the compliance assistant at Cortex Bank and Trust, a retail bank in Austin, Texas. Analysts ask you about customer accounts, transactions and Cortex policy. Grounding: answer questions about Cortex policy only from what cortex.policy_search returns, and say so when it returns nothing relevant. Never answer from memory. Rules of engagement: for a structuring question about a named account, follow the cortex-fraud-triage skill. You may open a case with cortex.open_case on your own, but only for an account the detection returned. Escalation: anything outside fraud detection, case opening and policy questions, and anything that cannot be undone (freezing or closing an account, contacting a customer, filing with a regulator), goes to cortex.escalate. Do not act on it yourself. Delegation: brokerage and securities questions (wash trading, securities layering, unexplained wealth in brokerage accounts) go to the cortex-securities-irregularities sub-agent. Never answer them yourself. ",
+        "tools": [
+          {
+            "tool_ids": [
+              "cortex.policy_search",
+              "cortex.structuring_deposits",
+              "cortex.open_case",
+              "cortex.escalate"
+            ]
+          }
+        ],
+        "skill_ids": [
+          "cortex-fraud-triage"
+        ],
+        "subagent_ids": [
+          "cortex-securities-irregularities"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+<header>
+
+<p class="track-code">Lab 4.3</p>
+
+<h1>Lab 4.3: Multi-turn state and agents outside Kibana</h1>
+
+<p><strong>Tina</strong> now answers the desk all day, and not only in Kibana. An analyst's follow-up broke after a reconnect, and another analyst wants Claude Code to open cases with Tina's tools. Before the desk relies on either, you need to know what a conversation carries and what changes when the tools leave Kibana.</p>
+
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<pre><!-- include: problem.txt --></pre>
+
+  <p>The turn reached Tina without the conversation it belonged to. "That check" and "those" had pointed at an account, a window and an amount from earlier turns. On their own they point at nothing.</p>
+  <p>The same gap opens wider when another agent calls Tina's tools. Each call arrives alone, with no conversation behind it and none of Tina's rules.</p>
+</section>
+
+<section>
+<h2>Conversation state</h2>
+<pre>conversation_id 7f3c...
+  round 1   analyst turn     "Check account 1981 ... last 7 days"
+            tool calls       cortex.structuring_deposits(1981, 7)
+                             + their <span class="hl">results</span>
+            answer           Tina's text
+  round 2   analyst turn     "Of those, which were above 9,300?"
+            ...
+  round 3   analyst turn     <span class="hl">sent with the id: all rounds above come back</span></pre>
+
+  <p>Agent Builder stores every round of a conversation: the analyst's turn, each tool call with its result, and Tina's answer. Send the <code>conversation_id</code> with a new turn and the model reads all of it again. Leave the id out and the turn starts a new conversation with nothing behind it.</p>
+  <p>What a turn without its history does is up to the model. It may ask for the missing account, call a tool without it, guess a value, or answer from nothing. Read the route to see which.</p>
+</section>
+
+<section>
+<h2>Reformulation</h2>
+<pre>depends on earlier turns   "Run that check again and list only those"
+stands alone               "Check account <span class="hl">1981</span> for cash deposits just under
+                            10,000 in the last <span class="hl">7 days</span> and list those above
+                            <span class="hl">9,300</span>, newest first"</pre>
+
+  <p>A reformulated turn carries everything the earlier turns supplied: the account, the window, the amount. It works in a new conversation, from a scheduled job, or from another agent, because it needs no history.</p>
+  <p>The test is the route. Sent alone, the sentence should make Tina call the same tool with the same values the original turn relied on.</p>
+</section>
+
+<section>
+<h2>The endpoint</h2>
+<pre>&lt;kibana&gt;/api/agent_builder/mcp<span class="hl">?namespace=cortex</span>
+  transport   HTTP (streamable)
+  header      Authorization: <span class="hl">ApiKey</span> &lt;encoded key&gt;
+  tools       cortex.open_case  ->  <span class="hl">cortex_open_case</span></pre>
+
+  <p>Agent Builder serves its tools over the Model Context Protocol at one Kibana endpoint. Any MCP client that speaks HTTP can list and call them: Claude Code, a Python client, a LangGraph agent.</p>
+  <p>Agent Builder ids are dotted; over MCP the dots become underscores. A client that asks for <code>cortex.open_case</code> by name finds nothing.</p>
+</section>
+
+<section>
+<h2>MCP exposes tools, not the agent</h2>
+<pre>in Kibana      analyst -> <span class="hl">Tina</span> (instructions, skill, rules) -> tools
+over MCP       analyst -> <span class="hl">Claude Code</span> (its own planning)     -> tools
+                         Tina is not involved</pre>
+
+  <p>Over MCP the client gets Tina's tools, not Tina. The coding agent decides which tool to call and with what values. Tina's instructions, her skill and her escalation rule do not apply to those calls.</p>
+  <p>Each MCP call is stateless: one request, one answer. No Agent Builder conversation is opened, and the workflow runs it starts carry no agent id. The task's turns live in the client's own session, which for Claude Code is a file under <code>~/.claude/projects/</code>.</p>
+</section>
+
+<section>
+<h2>Exposure versus authority</h2>
+<table>
+  <tr><th></th><th>Decided by</th><th>Answers</th></tr>
+  <tr><td>Exposure</td><td>The namespace on the endpoint</td><td>Which tools a client can see</td></tr>
+  <tr><td>Authority</td><td>The key in the header</td><td>What each call can read or write</td></tr>
+</table>
+
+  <p>Tools run as the caller. A workflow tool called with a key that cannot write to the case index runs, fails at its write step, and reports the failure in its result. A tool can be listed and still unable to finish.</p>
+  <p>Least privilege for a coding agent is a key with read on the indices the tools query, write only where a tool must write, and no index wildcards. Your shell's admin key works too, which is exactly why it is the wrong one to hand over.</p>
+</section>
+
+<section>
+<h2>Inbound and outbound MCP</h2>
+<pre>inbound    outside client  --calls-->  <span class="hl">Agent Builder's tools</span>
+outbound   Agent Builder   --calls-->  <span class="hl">another server's tools</span>, as its own</pre>
+
+  <p>This lab is inbound: Claude Code calls Cortex's tools. Outbound is the other direction, where an agent in Agent Builder uses an external MCP server's tools as if they were its own. The connection details in this lab, namespace, header and underscore names, belong to the inbound side.</p>
+</section>
+
+<section>
+<h2>The coding agent's model route</h2>
+<pre>Claude Code  ->  curriculum gateway  ->  model
+  env block in ~/env:  ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN, ANTHROPIC_MODEL, ...</pre>
+
+  <p>Claude Code reaches its model through the lab's gateway with a key issued for this sandbox. The variables are set in your shell; you do not need to touch them. The Elastic CLI, in technical preview, is another way to reach Agent Builder from a terminal; this lab does not use it.</p>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Take the first row that applies.</p>
+<table>
+  <tr><th>Question</th><th>Answered by</th></tr>
+  <tr><td>Does this turn need earlier turns?</td><td>Send the conversation_id, or rewrite the turn so it stands alone</td></tr>
+  <tr><td>Which tools can a client see?</td><td>The namespace on the endpoint</td></tr>
+  <tr><td>What can a call touch?</td><td>The key's privileges: the tool runs as the caller</td></tr>
+  <tr><td>Who plans the steps?</td><td>The client. Over MCP, Tina's instructions do not apply</td></tr>
+</table>
+<p class="rule-line">Exposure is the namespace; authority is the key.</p>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+<li>Your reformulation of turn 3, sent alone, takes Tina's route with the planted account and window on <strong>2 of 3</strong> runs</li>
+<li>Your persisted set and reset outcome match the stored conversations, your own replay included</li>
+<li><code>cortex-mcp</code> lists only Cortex's tools, runs a read tool, and is refused a write to <code>cortex-ref-accounts</code></li>
+<li>Three <code>securities_layering</code> cases, each from a <code>cortex-open-case</code> run your Claude Code session started over MCP</li>
+</ul>
+<p>Also checked:</p>
+<ul>
+<li>The key: read on the four indices the tools query, write only on the case and audit indices, no wildcards, no <code>all</code> or <code>manage</code></li>
+<li>The session: <code>cortex_securities_layering</code> over the last <strong>10</strong> days, <code>cortex_open_case</code> per account, no direct writes from the shell</li>
+</ul>
+</section>

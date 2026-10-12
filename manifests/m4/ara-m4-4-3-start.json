@@ -1,0 +1,5 @@
+{
+  "id": "ara-m4-4-3-start",
+  "_doc": "The 4.3 start state (22 section 4): the 4.2 reference end. Claude Code, the gateway env block and the planted logs are provisioned by the track, not by this manifest.",
+  "extends": "ara-m4-4-2-end"
+}

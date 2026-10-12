@@ -1,0 +1,61 @@
+version: "1"
+name: cortex-structuring-sweep
+description: Every morning, reviews every account with three or more cash deposits just under 10,000 in the past seven days.
+enabled: true
+triggers:
+  - type: scheduled
+    with:
+      every: 1d
+  - type: manual
+steps:
+  - name: detect
+    type: elasticsearch.esql.query
+    with:
+      query: 'FROM cortex-wire-transfers | WHERE account_event == "deposit" AND deposit_type == "cash" AND amount >= 8000 AND amount < 10000 AND DATE_DIFF("day", @timestamp, NOW()) < 7 | STATS deposits = COUNT(*), total = SUM(amount) BY account_id | WHERE deposits >= 3 | KEEP account_id, deposits, total | SORT account_id'
+  - name: each_account
+    type: foreach
+    foreach: "{{ steps.detect.output.values }}"
+    steps:
+      - name: rate
+        type: ai.classify
+        connector-id: "@@CONNECTOR@@"
+        with:
+          input: "Account {{ foreach.item[0] }} made {{ foreach.item[1] }} cash deposits just under 10,000 dollars in seven days, {{ foreach.item[2] }} dollars in all."
+          instructions: Rate the structuring risk for a bank compliance desk. Five or more deposits in a week is high; three or four is medium.
+          categories:
+            - critical
+            - high
+            - medium
+            - low
+          includeRationale: true
+      - name: route
+        type: if
+        condition: "steps.rate.output.category : high or steps.rate.output.category : critical"
+        steps:
+          - name: open_case
+            type: elasticsearch.index
+            with:
+              index: cortex-fraud-cases
+              document:
+                case_id: "SWEEP-{{ execution.id }}-{{ foreach.item[0] }}"
+                account_id: "{{ foreach.item[0] }}"
+                pattern: structuring
+                risk_rating: "{{ steps.rate.output.category }}"
+                rationale: "{{ steps.rate.output.rationale }}"
+                execution_id: "{{ execution.id }}"
+                created_at: "{{ execution.startedAt | date: '%Y-%m-%dT%H:%M:%SZ' }}"
+                source: sweep
+        else:
+          - name: log_review
+            type: elasticsearch.index
+            with:
+              index: cortex-audit
+              document:
+                audit_id: "SWEEP-{{ execution.id }}-{{ foreach.item[0] }}"
+                account_id: "{{ foreach.item[0] }}"
+                action: reviewed
+                actor: cortex-structuring-sweep
+                outcome: "{{ steps.rate.output.category }}"
+                detail: "{{ steps.rate.output.rationale }}"
+                execution_id: "{{ execution.id }}"
+                created_at: "{{ execution.startedAt | date: '%Y-%m-%dT%H:%M:%SZ' }}"

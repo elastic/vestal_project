@@ -16,9 +16,10 @@ Manifest shape (manifests/m4/*.json):
      "workflows": [{"id": "...", "yaml_file": "workflows/x.yml"}],   # relative to the manifest;
                                                                      # @@CONNECTOR@@ -> $ARA_AB_CONNECTOR_ID
      "tools": [{"id": "cortex.x", "type": "esql", "description": "...", "configuration": {...}}],
-     "agents": [{"id": "tina-compliance", "name": "...", "configuration": {...}}]}
+     "skills": [{"id": "cortex-x", "name": "...", "description": "...", "content": "...", "tool_ids": [...]}],
+     "agents": [{"id": "tina-compliance", "name": "...", "configuration": {...}}]}   # sub-agents first
 
-Order: settings, workflows, tools, agents, so every reference exists before it is used.
+Order: settings, workflows, tools, skills, agents, so every reference exists before it is used.
 """
 from __future__ import annotations
 
@@ -120,6 +121,17 @@ def apply(manifest: pathlib.Path, ab: AB, check: bool = False, log=print) -> int
             if code != 200:
                 raise SystemExit(f"{m['id']}: tool {tool['id']} HTTP {code} {str(body)[:300]}")
             log(f"{m['id']}: tool {tool['id']} applied")
+        for skill in m.get("skills") or []:
+            if not differs(skill, ab.get_skill(skill["id"])):
+                continue
+            changed += 1
+            if check:
+                log(f"{m['id']}: skill {skill['id']} differs")
+                continue
+            code, body = ab.put_skill(skill)
+            if code != 200:
+                raise SystemExit(f"{m['id']}: skill {skill['id']} HTTP {code} {str(body)[:300]}")
+            log(f"{m['id']}: skill {skill['id']} applied")
         for agent in m.get("agents") or []:
             if not differs(agent, ab.get_agent(agent["id"])):
                 continue

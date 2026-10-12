@@ -1,0 +1,7 @@
+Analyst, turn 3, sent again after a reconnect (no conversation_id):
+  Run that check again now and list only those, newest first,
+  with their dates.
+
+Tina's tool calls: pending the first live capture
+
+(to be captured live, 4.3 track test r1, before review)
