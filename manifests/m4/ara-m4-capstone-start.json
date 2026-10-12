@@ -1,0 +1,60 @@
+{
+ "id": "ara-m4-capstone-start",
+ "_doc": "The 4.C start state (07 section 1.2): the 4.2 reference end (through ara-m4-4-3-start), plus the two AML detection tools and the ungated cortex-file-sar workflow and its tool cortex.file_sar, none of them attached to any agent. The layering query uses INLINE STATS (probe-4c r1 A1).",
+ "extends": "ara-m4-4-3-start",
+ "workflows": [
+  {
+   "id": "cortex-file-sar",
+   "yaml_file": "workflows/cortex-file-sar.yml"
+  }
+ ],
+ "tools": [
+  {
+   "id": "cortex.layering_chain",
+   "type": "esql",
+   "tags": [
+    "cortex",
+    "aml"
+   ],
+   "description": "Traces cash-movement layering from one Cortex account: the chain of outgoing wires that each pass on nearly the whole amount, from that account through the next accounts and out of the bank, in the last 30 days. Returns one row per hop with the sender, the receiver, the amount and the time. Use it to follow where an account's cash went.",
+   "configuration": {
+    "query": "FROM cortex-cash-movements\n| WHERE account_event == \"wire\" AND wire_direction LIKE \"outgoing*\" AND DATE_DIFF(\"day\", @timestamp, NOW()) < 30\n| EVAL start_amount = CASE(account_id == ?account_id, amount, null), start_time = CASE(account_id == ?account_id, @timestamp, null)\n| INLINE STATS chain_amount = MAX(start_amount), chain_start = MIN(start_time)\n| WHERE amount <= chain_amount AND amount >= chain_amount * 0.95 AND @timestamp >= chain_start\n| SORT @timestamp\n| KEEP @timestamp, account_id, to_account, amount, wire_direction, counterparty_bank, counterparty_country\n| LIMIT 25",
+    "params": {
+     "account_id": {
+      "type": "string",
+      "description": "The Cortex account the cash starts from, as the account number in the question, for example 32687."
+     }
+    }
+   }
+  },
+  {
+   "id": "cortex.atm_smurfing",
+   "type": "esql",
+   "tags": [
+    "cortex",
+    "aml"
+   ],
+   "description": "Finds ATM smurfing in Cortex ATM events: accounts with five or more cash deposits under 1,000 dollars at ATMs whose camera was off, inside the lookback window. Returns one row per account with the deposit count, the total, the number of ATMs and the first and last deposit.",
+   "configuration": {
+    "query": "FROM cortex-atm-events\n| WHERE atm_event == \"deposit\" AND deposit_type == \"cash\" AND camera_enabled == false AND amount < 1000\n  AND DATE_DIFF(\"day\", @timestamp, NOW()) < ?lookback_days\n| STATS deposits = COUNT(*), total = SUM(amount), atms = COUNT_DISTINCT(atm_id), first_seen = MIN(@timestamp), last_seen = MAX(@timestamp) BY account_id\n| WHERE deposits >= 5\n| SORT deposits DESC, account_id\n| LIMIT 25",
+    "params": {
+     "lookback_days": {
+      "type": "integer",
+      "description": "How many days back from today to look, as a whole number of days from the question, for example 8."
+     }
+    }
+   }
+  },
+  {
+   "id": "cortex.file_sar",
+   "type": "workflow",
+   "tags": [
+    "cortex"
+   ],
+   "description": "Files a suspicious activity report (SAR) for a Cortex account with the regulator through the cortex-file-sar workflow, and records the filing in cortex-sar-filings with status transmitted. Cortex rule: a transmitted SAR cannot be withdrawn.",
+   "configuration": {
+    "workflow_id": "cortex-file-sar"
+   }
+  }
+ ]
+}

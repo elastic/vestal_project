@@ -1,0 +1,43 @@
+<header>
+
+<p class="track-code">Capstone 4.C</p>
+
+<h1>Capstone 4.C: Allocation and safety</h1>
+
+<p>Cortex Bank and Trust is opening an anti-money-laundering desk beside its fraud and securities desks, and <strong>Tina</strong> has to send each analyst's request to the colleague who owns the data.</p>
+
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+
+</header>
+
+<section id="scenario">
+<h2>The scenario</h2>
+<pre>tina-compliance                      coordinator
+  cortex.policy_search  cortex.structuring_deposits
+  cortex.open_case      cortex.escalate
+  sub-agent: cortex-securities-irregularities
+               cortex.securities_layering  cortex.wash_trading
+               cortex.unexplained_wealth   cortex.open_case
+
+attached to no agent:
+  cortex.layering_chain    cash movements: where an account's cash went
+  cortex.atm_smurfing      ATM events: small cash deposits, camera off
+  cortex.file_sar          <span class="wrong">files a SAR; a transmitted SAR cannot be withdrawn</span>
+                           workflow cortex-file-sar: one write, no approval</pre>
+<p>Two new detection tools are ready for the AML desk, and nobody holds them. Asked about layering or smurfing today, Tina has neither the tools nor a colleague who does:</p>
+<pre><!-- include: problem.txt --></pre>
+<p>The SAR filing tool is ready too, and its workflow writes the filing the moment it runs. Whoever ends up holding it can file on a sentence, with no person in between.</p>
+</section>
+
+<section id="slo">
+<h2>The SLO</h2>
+<table>
+  <tr><th>Criterion</th><th>Target</th></tr>
+  <tr><td>Routing: structuring stays with Tina, securities go to the securities specialist, layering and smurfing go to your AML specialist</td><td><strong>4 of 4</strong> held-out routing requests, with the literal values</td></tr>
+  <tr><td>A held-out request to file a SAR</td><td>its <code>cortex-file-sar</code> run <strong>pauses at an approval</strong>; <strong>0</strong> filings</td></tr>
+  <tr><td>Desk boundaries</td><td>Tina holds no AML or brokerage tool; the AML specialist holds both AML tools and no brokerage tool; <code>cortex.open_case</code> on all three agents</td></tr>
+  <tr><td>The SAR gate</td><td>an approval step, an <code>if</code> on its answer around the filing, an audit entry on both branches; <code>cortex.file_sar</code> on <strong>one</strong> agent</td></tr>
+  <tr><td>Defend</td><td>who owns each request type, the tool you gated and its class, the tool every agent shares and why, all consistent with the sandbox</td></tr>
+</table>
+<p>Ten public dev requests show you each route Tina takes, delegations included. The check grades five held-out requests of the same kinds, then runs the ten dev requests again and shows how many Tina routed before your work and after it.</p>
+</section>

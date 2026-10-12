@@ -165,3 +165,67 @@ def classify_agent(ab, agent_id: str, cortex_hosts: set[str]) -> list[dict]:
 def hosts_from_env(env: dict) -> set[str]:
     """The project's own hosts: an http step to one of them stays inside Cortex."""
     return {(urlparse(env.get(k, "")).hostname or "").lower() for k in ("ES_URL", "ES_ENDPOINT", "KIBANA_URL")} - {""}
+
+
+# ── The approval gate's shape (4.4 Build 3 and 4.C read the same facts) ─────────
+RECORD_WRITES = {"elasticsearch.index", "elasticsearch.bulk", "elasticsearch.update", "elasticsearch.create"}
+
+
+def _branch(s: dict, key: str) -> list[dict]:
+    return [x for x in (s.get(key) or []) if isinstance(x, dict)]
+
+
+def writes_to(s: dict, index: str) -> bool:
+    """One step writes a record to `index` (an index step, or a non-GET elasticsearch.request on it)."""
+    w = s.get("with") if isinstance(s.get("with"), dict) else {}
+    if s.get("type") in RECORD_WRITES and str(w.get("index") or "") == index:
+        return True
+    if s.get("type") == "elasticsearch.request" and str(w.get("path") or "").lstrip("/").startswith(index):
+        return str(w.get("method") or "GET").upper() != "GET"
+    return False
+
+
+def contains_write(steps: list[dict], index: str) -> bool:
+    return any(writes_to(s, index) or contains_write(_branch(s, "steps"), index)
+               or contains_write(_branch(s, "else"), index) for s in steps)
+
+
+def gate_shape(doc: dict, filing_index: str, audit_index: str) -> dict:
+    """What a workflow definition shows about its approval gate, as named facts a check reads:
+    the top-level waitForApproval step, the top-level `if` whose condition reads that step's
+    output.response.approved, where the writes to filing_index sit, and whether an audit write runs
+    on both branches (after the `if`, or in each of its branches)."""
+    import re
+    top = _branch(doc or {}, "steps")
+    appr = next((i for i, s in enumerate(top) if s.get("type") == "waitForApproval"), None)
+    name = top[appr].get("name") if appr is not None else None
+    cond_re = re.compile(rf"steps\.{re.escape(str(name))}\.output\.response\.approved") if name else None
+    gate = next((i for i, s in enumerate(top) if s.get("type") == "if" and cond_re
+                 and cond_re.search(str(s.get("condition") or ""))), None)
+    out = {"approval": name, "approval_index": appr, "gate_index": gate,
+           "write_anywhere": contains_write(top, filing_index)}
+    if gate is None:
+        return out
+    g = top[gate]
+    then, other = _branch(g, "steps"), _branch(g, "else")
+    outside = [s for i, s in enumerate(top) if i != gate]
+    out.update({
+        "gate_after_approval": appr is not None and gate > appr,
+        "write_in_then": contains_write(then, filing_index),
+        "write_elsewhere": contains_write(other, filing_index) or contains_write(outside, filing_index),
+        "audit_after_gate": contains_write(top[gate + 1:], audit_index),
+        "audit_then": contains_write(then, audit_index), "audit_else": contains_write(other, audit_index),
+    })
+    out["audit_both"] = out["audit_after_gate"] or (out["audit_then"] and out["audit_else"])
+    out["gated"] = bool(out["gate_after_approval"] and out["write_in_then"] and not out["write_elsewhere"])
+    return out
+
+
+def has_approval(yaml_text: str) -> bool:
+    """A workflow with a waitForApproval step anywhere (a gate someone put in front of its actions)."""
+    import yaml
+    try:
+        doc = yaml.safe_load(yaml_text or "") or {}
+    except yaml.YAMLError:
+        return False
+    return any(s.get("type") == "waitForApproval" for s in _steps(doc.get("steps")))

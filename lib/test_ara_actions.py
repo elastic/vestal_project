@@ -83,6 +83,38 @@ def test_read_and_write_is_side_effecting():
     assert A.classify_tool(tool, y, HOSTS, {"cortex-jina-reader": "r.jina.ai"})["class"] == "side-effecting"
 
 
+GATED = ("steps:\n  - name: ok\n    type: waitForApproval\n  - name: gate\n    type: if\n"
+         "    condition: \"steps.ok.output.response.approved : true\"\n    steps:\n      - name: file_sar\n"
+         "        type: elasticsearch.index\n        with:\n          index: cortex-sar-filings\n"
+         "  - name: note\n    type: elasticsearch.index\n    with:\n      index: cortex-audit\n")
+
+
+def shape(y):
+    import yaml
+    return A.gate_shape(yaml.safe_load(y), "cortex-sar-filings", "cortex-audit")
+
+
+def test_gate_shape_reference():
+    s = shape(GATED)
+    assert s["gated"] and s["audit_both"] and s["approval"] == "ok"
+    assert A.has_approval(GATED)
+
+
+def test_gate_shape_no_if_and_ungated():
+    no_if = ("steps:\n  - name: ok\n    type: waitForApproval\n  - name: file_sar\n    type: elasticsearch.index\n"
+             "    with:\n      index: cortex-sar-filings\n")
+    s = shape(no_if)
+    assert s["gate_index"] is None and s["write_anywhere"] and "gated" not in s
+    ungated = (WF / "cortex-file-sar.yml").read_text()
+    assert shape(ungated)["approval"] is None and not A.has_approval(ungated)
+
+
+def test_gate_shape_write_outside_if():
+    y = GATED + "  - name: again\n    type: elasticsearch.index\n    with:\n      index: cortex-sar-filings\n"
+    s = shape(y)
+    assert s["write_in_then"] and s["write_elsewhere"] and not s["gated"]
+
+
 def test_controls_cover_classes():
     assert set(A.CONTROLS) == set(A.CLASSES)
     assert set(A.REASONS.values()) <= set(A.CLASSES)

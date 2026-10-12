@@ -133,6 +133,14 @@ class AB:
     def delete_agent(self, agent_id: str) -> int:
         return self.request("DELETE", f"/api/agent_builder/agents/{agent_id}")[0]
 
+    def agents(self) -> list[dict] | None:
+        """Every agent in the space (built-in ones included); None when the list is refused."""
+        code, body = self.get("/api/agent_builder/agents")
+        if code != 200:
+            return None
+        rows = body if isinstance(body, list) else (body.get("results") or body.get("agents") or []) if isinstance(body, dict) else []
+        return [a for a in rows if isinstance(a, dict)]
+
     # ── skills ───────────────────────────────────────────────────────────────
     def get_skill(self, skill_id: str) -> dict | None:
         code, body = self.get(f"/api/agent_builder/skills/{skill_id}")
@@ -193,6 +201,14 @@ class AB:
     def execution(self, execution_id: str) -> dict | None:
         code, body = self.get(f"/api/workflows/executions/{execution_id}")
         return body if code == 200 else None
+
+    def executions(self, workflow_id: str) -> list[dict] | None:
+        """One workflow's runs, newest first (probe-4c G1: GET /api/workflows/workflow/<id>/executions;
+        each has id, status, startedAt, executedBy). None when the list is refused."""
+        code, body = self.get(f"/api/workflows/workflow/{workflow_id}/executions")
+        if code != 200 or not isinstance(body, dict):
+            return None
+        return [e for e in (body.get("results") or []) if isinstance(e, dict)]
 
     def step_io(self, execution_id: str, step_execution_id: str) -> dict | None:
         code, body = self.get(f"/api/workflows/executions/{execution_id}/step/{step_execution_id}")

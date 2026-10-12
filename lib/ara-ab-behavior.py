@@ -26,6 +26,7 @@ import urllib.request
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from agent_builder import AB, ABError  # noqa: E402
 from ara_behavior import expected_text, route_text, run_cases  # noqa: E402
+from ara_desk import AML, COORDINATOR, find_aml, resolve  # noqa: E402
 
 DEV_DIR = pathlib.Path(os.environ.get("ARA_DEV_SETS", "/home/elastic/dev-sets"))
 
@@ -77,6 +78,21 @@ def main() -> int:
     except KeyError as e:
         print(f"{e.args[0]} is not set. Open a new Terminal tab, or run: set -a; . /home/elastic/env; set +a")
         return 2
+    if AML in json.dumps(cases):
+        # 4.C: the AML specialist's id is yours; it is found the way the check finds it (ara_desk).
+        try:
+            aml_id, is_sub = find_aml(ab.get_agent(COORDINATOR), ab.agents() or [])
+        except ABError as e:
+            print(f"Kibana did not respond ({e}). Wait a moment and run this again.")
+            return 1
+        if aml_id is None:
+            print("No AML specialist yet: no agent other than Tina and the securities specialist holds an AML tool. "
+                  "The AML requests below expect one.")
+        elif not is_sub:
+            print(f"{aml_id} holds an AML tool but is not one of Tina's sub-agents, so she cannot delegate to it.")
+        else:
+            print(f"AML specialist: {aml_id} (one of Tina's sub-agents, holding an AML tool).")
+        cases = resolve(cases, aml_id)
     print(f"Sending {len(cases)} questions to {a.agent}, at most 3 at a time. Each takes about 15 to 30 seconds, "
           "a delegated one about a minute, but it can take longer.")
     try:
