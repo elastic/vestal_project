@@ -559,6 +559,21 @@ def test_support_empty_reply_is_a_failed_call():
         assert fake.calls == 3, (empty, fake.calls)
 
 
+def test_support_empty_reply_message_says_no_answer():
+    """An endpoint that answered with no text was reachable: the message says it
+    returned no answer and what to do, not that it was unreachable. It keeps the
+    'completion' label the grader uses to name the LLM proxy."""
+    import ara_pack
+    try:
+        _support_with(_FakeEmptyThen(3, "supports"))
+    except ara_pack.RemoteCallFailed as exc:
+        msg = str(exc)
+        assert msg.startswith("completion endpoint returned no answer after 3 tries"), msg
+        assert "unreachable" not in msg and "Wait a moment" in msg, msg
+    else:
+        raise AssertionError("support returned a verdict for three empty replies")
+
+
 def test_support_empty_reply_recovers_on_retry():
     fake = _FakeEmptyThen(2, "Supports.")
     assert _support_with(fake) == "supports" and fake.calls == 3

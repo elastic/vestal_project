@@ -53,6 +53,12 @@ def remote_call(label: str, fn, *args, **kwargs):
                       f"retry {attempt + 1} of {REMOTE_ATTEMPTS - 1} in {wait:.0f} s",
                       file=sys.stderr, flush=True)
                 time.sleep(wait)
+    if isinstance(last, EmptyCompletion):
+        # The endpoint answered, with no text: say so, not "unreachable".
+        raise RemoteCallFailed(
+            f"{label} endpoint returned no answer after {REMOTE_ATTEMPTS} tries. "
+            f"Wait a moment and run it again."
+        ) from last
     raise RemoteCallFailed(
         f"{label} endpoint unreachable after {REMOTE_ATTEMPTS} attempts "
         f"({type(last).__name__}: {str(last)[:160]}). Wait a moment and run it again."
