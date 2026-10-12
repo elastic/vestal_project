@@ -1,0 +1,154 @@
+<header>
+
+<p class="track-code">Lab 4.2</p>
+
+<h1>Lab 4.2: Skills, automation, and multi-agent composition</h1>
+
+<p><strong>Tina</strong> can now detect structuring and open a case when an analyst asks. The desk wants three more things: the morning sweep to run without anyone asking, triage done the same way every time with clear limits, and brokerage questions answered by a specialist rather than improvised.</p>
+
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<pre><!-- include: problem.txt --></pre>
+
+  <p>Tina was asked a brokerage question. She has no brokerage tool, so whatever she says rests on tools built for other questions, or on none. Nobody can sign off a securities finding whose route shows no securities check.</p>
+  <p>Two more gaps sit behind it. The sweep for structuring runs only when someone remembers to ask. And triage is whatever Tina decides that turn: nothing written says she must detect before she opens a case, or that a request to close an account is not hers to act on.</p>
+</section>
+
+<section>
+<h2>Standalone automation or a tool an agent calls</h2>
+<pre>standalone workflow
+  <span class="hl">trigger</span> (clock, alert) -> steps -> records
+  no conversation, no agent deciding to start it
+
+workflow tool (Lab 4.1)
+  Tina, mid-conversation -> <span class="hl">tool call</span> -> steps -> result
+  the agent decides when, the steps decide how</pre>
+
+  <p>The same workflow engine runs both. What differs is what starts the run. If someone asks Tina and she picks the moment, the workflow is a tool on her. If nobody asks, a trigger starts it, and no agent is involved in deciding to run it.</p>
+  <p>A standalone workflow can still use AI inside it: a step that rates or classifies is part of the procedure, not an agent choosing what to do next.</p>
+</section>
+
+<section>
+<h2>Triggers</h2>
+<table>
+  <tr><th>Trigger</th><th>Starts the run when</th><th>Cortex example</th></tr>
+  <tr><td><code>manual</code></td><td>Someone selects Run, or calls the run API</td><td>Testing the sweep</td></tr>
+  <tr><td><code>scheduled</code></td><td>An interval passes (<code>every: 1d</code>)</td><td>The morning structuring sweep</td></tr>
+  <tr><td><code>alert</code></td><td>A detection rule raises an alert</td><td>Triage on a new structuring alert</td></tr>
+</table>
+
+  <p>A workflow can carry more than one trigger. Keep <code>manual</code> beside <code>scheduled</code> so you can run it on demand while you build it.</p>
+</section>
+
+<section>
+<h2>Iteration and branching</h2>
+<pre>detect     elasticsearch.esql.query
+           -> values: [["1981", 6, 56277],
+                       ["476",  4, 37710]]
+each       <span class="hl">foreach</span> steps.detect.output.values
+  rate     ai.classify   critical|high|medium|low
+  route    <span class="hl">if</span> rating : high or critical
+             steps  write cortex-fraud-cases
+             else   write cortex-audit</pre>
+
+  <p>A <code>foreach</code> runs its inner steps once per item, and <code>foreach.item</code> is the current item. An ES|QL row is a list in column order, so <code>foreach.item[0]</code> is whichever column the query keeps first. Keep the account first.</p>
+  <p>An <code>if</code> takes a KQL condition on earlier steps' output and runs <code>steps</code> or <code>else</code>. Putting the case write inside the branch is what makes the rating decide it: a write outside the <code>if</code> runs whatever the rating says.</p>
+  <p>Every record carries the run's <code>execution_id</code>, so you can find exactly what one run wrote.</p>
+</section>
+
+<section>
+<h2>Skills: tools plus a playbook</h2>
+<pre>skill cortex-fraud-triage
+  description  when to load it
+  tools        cortex.structuring_deposits
+               cortex.open_case
+  content      1. Detect with cortex.structuring_deposits
+               2. No rows: stop, no case
+               3. Rows: cortex.open_case for that account
+               4. Report what you found</pre>
+
+  <p>A skill is a procedure packaged with the tools it uses. Tina loads it when a request matches its description, and the playbook tells her the order. The tools come with it, so an agent can use a skill's tools without holding them itself.</p>
+  <p>A playbook written as numbered steps, each naming its tool, is easier for Tina to follow and for a reviewer to check than a paragraph.</p>
+</section>
+
+<section>
+<h2>Instructions: grounding, engagement, escalation</h2>
+<table>
+  <tr><th>Rule</th><th>Says</th><th>Names</th></tr>
+  <tr><td>Grounding</td><td>Policy answers come from the policy documents, never from memory</td><td><code>cortex.policy_search</code></td></tr>
+  <tr><td>Engagement</td><td>What Tina does on her own: open a case when a detection returns the account</td><td><code>cortex.open_case</code></td></tr>
+  <tr><td>Escalation</td><td>Out-of-scope or irreversible requests go to a person; she does not act on them</td><td><code>cortex.escalate</code></td></tr>
+</table>
+
+  <p>The skill says how to triage. The instructions say what Tina may do at all, for every request. Name the tool in each rule: it is how she connects a kind of request to the action that handles it.</p>
+  <p>Escalation is an action, not a refusal: <code>cortex.escalate</code> records the request for a person, so it is not lost.</p>
+</section>
+
+<section>
+<h2>Allocation: coordinator and specialists</h2>
+<pre>tina-compliance  (coordinator)
+  tools   policy_search, structuring_deposits,
+          open_case, escalate
+  sub-agents
+    cortex-securities-irregularities
+      tools  securities_layering, wash_trading,
+             unexplained_wealth, <span class="hl">open_case</span></pre>
+
+  <p>A specialist owns the tools only it uses, with instructions for that domain. The coordinator keeps the questions she handles and hands the rest on. A tool both need, such as opening a case, sits on both.</p>
+  <p>Leave a specialist's tool on the coordinator and she can answer the question herself, skipping the specialist you built for it. The check fails that allocation before it asks Tina anything.</p>
+</section>
+
+<section>
+<h2>Two delegation styles</h2>
+<table>
+  <tr><th>Style</th><th>How Tina reaches it</th><th>Where its calls are recorded</th></tr>
+  <tr><td>Native sub-agent (Technical Preview)</td><td><code>configuration.subagent_ids</code>; Tina calls the internal tool <code>run_subagent</code></td><td>Tina's conversation shows the delegation; the specialist's tool calls are in the traces, under the same trace id</td></tr>
+  <tr><td>Agent behind a tool</td><td>A Workflow tool whose step is <code>ai.agent</code></td><td>The workflow's execution</td></tr>
+</table>
+
+  <p>Tina picks a sub-agent by its description, the way she picks a tool. Say which questions it handles in words an analyst would use.</p>
+  <p>A delegated question takes about a minute: Tina plans, the specialist plans and runs its tools, and Tina reads its answer back.</p>
+</section>
+
+<section>
+<h2>What least privilege cannot do here</h2>
+<pre>remove brokerage tools from Tina
+  she still holds <span class="wrong">execute_api</span>   internal, cannot be removed
+  she still runs as <span class="wrong">the caller's key</span>
+  the specialist runs as <span class="wrong">the same key</span></pre>
+
+  <p>Tool lists allocate work; they do not enforce access. Internal tools stay on every agent, and every agent runs with the key of whoever is asking. A key with no read on the trades index makes the specialist's tool fail too.</p>
+  <p>What keeps securities questions with the specialist is Tina's instructions and the specialist's description. What keeps the data safe is the key.</p>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Take the first row that applies.</p>
+<table>
+  <tr><th>What starts it</th><th>Shape</th><th>Why</th></tr>
+  <tr><td>A timetable, with no one asking</td><td>Standalone workflow, scheduled trigger</td><td>It runs on a clock</td></tr>
+  <tr><td>A detection rule raising an alert</td><td>Standalone workflow, alert trigger</td><td>It runs on an alert</td></tr>
+  <tr><td>Tina, in a conversation, for several ordered steps with a write</td><td>Workflow tool</td><td>The agent picks when; the steps run in order</td></tr>
+  <tr><td>Tina, in a conversation, for typed values into one query</td><td>ES|QL tool</td><td>The agent fills one query</td></tr>
+</table>
+<p class="rule-line">Tool lists allocate work between agents; the key decides access.</p>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+<li>The sweep, run by the check: one iteration per account to review, and <strong>one record</strong> per account in the index its rating calls for</li>
+<li><strong>4 of 4</strong> held-out conversations on the expected route: detect before a case, escalate what Tina must not do, policy from the policy search</li>
+<li><strong>7 of 8</strong> held-out questions allocated right: securities to the specialist with the right brokerage tool, everything else kept by Tina</li>
+</ul>
+<p>Also checked:</p>
+<ul>
+<li>The sweep is enabled, scheduled, has a <code>foreach</code> with an AI step, and writes cases only inside an <code>if</code></li>
+<li>The skill holds and names both tools and has at least <strong>3</strong> numbered steps; Tina's instructions name the grounding, engagement and escalation tools</li>
+<li>The specialist's description has at least <strong>8</strong> words; Tina holds no brokerage tool</li>
+</ul>
+</section>

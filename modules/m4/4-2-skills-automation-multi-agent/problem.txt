@@ -1,0 +1,1 @@
+(capture pending: the first live run of challenge 04's solve prints it as CALIB problem lines)
