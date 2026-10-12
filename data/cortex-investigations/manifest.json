@@ -6,10 +6,10 @@
   "model": "gemini-3.1-pro-preview",
   "document_count": 24,
   "token_stats": {
-    "min": 3245,
-    "max": 5590,
-    "mean": 4664.2,
-    "total": 111942
+    "min": 3250,
+    "max": 5596,
+    "mean": 4660.3,
+    "total": 111847
   },
   "synthetic": true,
   "notes": [
