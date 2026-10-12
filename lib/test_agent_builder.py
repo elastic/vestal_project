@@ -332,6 +332,14 @@ def test_env_err_is_narrow():
         "mapper_parsing_exception: failed to parse field [amount] of type [float]: '508'",
         "ConnectorExecutionError [401] Invalid API key",
         "index_not_found_exception: no such index [cortex-fraud-cases-500]",
+        "verification_exception: Unknown column [timeout]",                      # a field the learner named
+        "Unknown input `timeout` in step read",
+        "unknown setting [index.search.timeout_ms]",
+        "TimeoutErrors_total is not a column",
+        "fetch_failed_count is not a column",
+        "rejected_execution_count is not a column",
+        "circuit_breaking_total is not a column",
+        "ECONNABORTEDX is not a code",
     ]
     env = [
         "Inference failed: status code 429",
@@ -345,6 +353,17 @@ def test_env_err_is_narrow():
         "socket hang up",
         "Rate limit exceeded for the model",
         "statusCode: 500",
+        "504 Gateway Time-out",                                                  # Review R2-1
+        "<center><h1>504 Gateway Time-out</h1></center>",
+        "gateway timeout",
+        "TimeoutError: The operation was aborted due to timeout",
+        "Request aborted: timeout",
+        "Timeout waiting for task.",
+        '{"error":"timeout"}',
+        "Error: ECONNABORTED",
+        "TypeError: fetch failed",
+        "es_rejected_execution_exception: rejected execution of coordinating operation",
+        "circuit_breaking_exception: [parent] Data too large",
     ]
     for text in learner:
         assert not A.ENV_ERR.search(text), text

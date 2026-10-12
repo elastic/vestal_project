@@ -46,16 +46,19 @@ RUN_BUDGET_S = 120  # a detached runner waits this long for a workflow run to en
 TERMINAL = ("completed", "failed", "cancelled", "timed_out", "skipped")
 # An error text the environment explains. Review F-2: a status code counts only in an HTTP context
 # ("status code 503", "HTTP 429", "[502]", "503 Service Unavailable"), never a bare number such as an
-# ES|QL parse position ("line 1:507"); a timeout counts only as a phrase ("timed out", "request
-# timeout", "timeout of 30000ms"), never inside an identifier ("lookback_timeout", "timeout_s").
+# ES|QL parse position ("line 1:507"); "timeout" counts as a word of its own ("Request aborted:
+# timeout", "Gateway Time-out", "TimeoutError"), never inside an identifier ("lookback_timeout",
+# "timeout_s") or as a bracketed or quoted field name ("[timeout]"). Review R2-1 added the Node,
+# proxy and Elasticsearch rejection texts.
 ENV_ERR = re.compile(
     r"(?:\bstatus(?:[ _]?code)?|\bstatusCode|\bhttp(?:/\d(?:\.\d)?)?|\bcode|\berror)[\"':=\s(]{0,4}(?:408|429|5\d\d)\b"
     r"|\[(?:408|429|5\d\d)\]"
     r"|\b(?:408|429|5\d\d)\s+(?:request timeout|too many requests|internal server error|bad gateway|service unavailable"
-    r"|gateway timeout)"
-    r"|(?<![\w.])timed out\b|\b(?:request|socket|connection|connect|read|gateway)[ -]timeout\b|\btimeout of \d+\s?ms"
-    r"|\bE(?:CONNRESET|TIMEDOUT|CONNREFUSED|AI_AGAIN|SOCKETTIMEDOUT)\b"
-    r"|socket hang up|\brate[ -]limit|too many requests|\boverloaded\b|service unavailable|bad gateway|gateway timeout"
+    r"|gateway time-?out)"
+    r"|(?<![\w.])timed out\b|(?<![\w.\[`])timeout(?![\w\]`])|\btimeout of \d+\s?ms|\bTimeoutError\b"
+    r"|\bE(?:CONNRESET|TIMEDOUT|CONNREFUSED|CONNABORTED|AI_AGAIN|SOCKETTIMEDOUT)\b|\bfetch failed\b"
+    r"|\bes_rejected_execution_exception\b|\bcircuit_breaking_exception\b"
+    r"|socket hang up|\brate[ -]limit|too many requests|\boverloaded\b|service unavailable|bad gateway|gateway time-?out"
     r"|temporarily unavailable", re.I)
 
 
