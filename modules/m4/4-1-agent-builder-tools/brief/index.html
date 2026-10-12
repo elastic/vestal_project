@@ -83,7 +83,7 @@ Tina: Yes - there is a clear pattern of sub-$10,000 cash deposits.
       This warrants escalation ... and likely a Suspicious Activity
       Report (SAR) filing.
 
-(captured live, 4.1 track test r3, claude-sonnet-4.6)</pre>
+(captured live on this lab's model, 4.1 track test r3)</pre>
 
   <p>The answer is right: those are the six deposits. Now try to sign it off. Tina had no tool for the question, so she wrote her own: fourteen raw Elasticsearch requests through the platform's internal API tool, with filters, band and window she chose on the fly. Nobody reviewed that query, the next run may write a different one, and the record shows "execute_api" fourteen times rather than one named check with an account and a window. She also volunteered a wire-transfer finding nobody asked for.</p>
   <p>A compliance desk needs the opposite: one reviewed query, called by name, with the account and the window as typed values you can read back. That is a tool, and Tina picks it by what its description says.</p>
@@ -138,7 +138,7 @@ fixed chain: the author picks each step
   <tr><th>Type</th><th>Runs</th><th>Fits</th></tr>
   <tr><td>ES|QL</td><td>One query you wrote, with typed parameters</td><td>Filters and aggregates over structured fields</td></tr>
   <tr><td>Index search</td><td>Relevance search over one index, query phrased by the model</td><td>Free text answered by passages</td></tr>
-  <tr><td>Workflow (Technical Preview)</td><td>A whole workflow, as one call</td><td>Several steps in order, often with a write</td></tr>
+  <tr><td>Workflow (Preview)</td><td>A whole workflow, as one call</td><td>Several steps in order, often with a write</td></tr>
   <tr><td>MCP</td><td>A tool served by another system over MCP</td><td>Capabilities that live outside Kibana</td></tr>
 </table>
 
@@ -162,7 +162,7 @@ params
      taken from the question."
 
 tool call Tina makes
-  {"account_id": "1981", "lookback_days": 7}</pre>
+  {"account_id": "3456", "lookback_days": 30}</pre>
 
   <p>Each <code>?name</code> in the query is a value the model supplies. The type and the description are all it knows about that value: a description that only repeats the name gets you whatever the model guesses.</p>
   <p>Parameters fill values, never query syntax. A window is a comparison on a parameter, not a parameter glued to a unit.</p>
@@ -170,12 +170,12 @@ tool call Tina makes
 
 <section>
 <h2>The description is the routing signal</h2>
-<pre>"Did account 476 deposit just under
- 10,000 in the last 7 days?"
+<pre>"Did account 3456 deposit just under
+ 10,000 in the last 30 days?"
 
 description A: "ES|QL tool"
   route  cortex.structuring_deposits
-         (account_id=476, lookback_days=7)
+         (account_id=3456, lookback_days=30)
          -> <span class="wrong">cortex.policy_search</span>
   right tool, then a second one "to be sure"
 
@@ -185,7 +185,7 @@ description B: "Finds structuring on one account:
   an analyst names an account ... Do not
   use it for policy questions."
   route  cortex.structuring_deposits
-         (account_id=476, lookback_days=7)
+         (account_id=3456, lookback_days=30)
   <span class="right">right tool, right values, nothing else</span></pre>
 
   <p>Tina reads every tool's description on every turn. Measured on this lab's six held-out questions: with description A, Tina still found the detection tool by its name and parameters, but added a policy search to 9 of 12 detection questions. With description B she added it to none of 20.</p>
@@ -194,12 +194,12 @@ description B: "Finds structuring on one account:
 
 <section>
 <h2>Workflow tools: many steps, one call</h2>
-<pre>Tina: cortex.open_case(account_id=476,
-                       pattern=structuring,
+<pre>Tina: cortex.open_case(account_id=21162,
+                       pattern=securities_layering,
                        findings=...)
   |
   v
-cortex-open-case (Technical Preview tool)
+cortex-open-case (Workflow tool, Preview)
   1 enrich   elasticsearch.search
              cortex-ref-accounts
   2 rate     <span class="hl">ai.classify</span> -> critical | high
@@ -219,14 +219,14 @@ tool result: execution id, status</pre>
 <pre>converse response
   steps
     tool_call  <span class="hl">cortex.structuring_deposits</span>
-               params  {"account_id": "476",
-                        "lookback_days": 7}
-               results esql_results, 5 rows
+               params  {"account_id": "3456",
+                        "lookback_days": 30}
+               results esql_results, 0 rows
     tool_call  write_todos   <span class="hl">internal</span>
-  response.message  "Account 476 made five ..."
+  response.message  "Account 3456 made no cash ..."
 
 route the check grades
-  cortex.structuring_deposits(476, 7)</pre>
+  cortex.structuring_deposits(3456, 30)</pre>
 
   <p>Every conversation records each tool call with its parameters and results. The check reads that record: which custom tools Tina called, in what order, with what literal values. It never grades her prose, and it ignores the platform's own internal tools.</p>
   <p>A model's route varies a little from run to run, so the check passes at a count of questions, not all of them. The count comes from calibration runs of a reference solution.</p>
@@ -247,7 +247,7 @@ route the check grades
 <section id="done">
 <h2>What done looks like</h2>
 <ul>
-<li><strong>5 of 6</strong> held-out questions routed with the right tool and the literal account and days, and no second Cortex tool</li>
+<li><strong>At least 5 of 6</strong> (aim for 6) held-out questions routed with the right tool and the literal account and days, and no second Cortex tool</li>
 <li><strong>3 of 3</strong> held-out case requests routed, run to completion, and written as one case each</li>
 </ul>
 <p>Also checked:</p>

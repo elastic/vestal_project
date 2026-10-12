@@ -15,4 +15,4 @@ Tina: Yes - there is a clear pattern of sub-$10,000 cash deposits.
       This warrants escalation ... and likely a Suspicious Activity
       Report (SAR) filing.
 
-(captured live, 4.1 track test r3, claude-sonnet-4.6)
+(captured live on this lab's model, 4.1 track test r3)

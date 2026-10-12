@@ -57,6 +57,20 @@ def _host(url: Any) -> str:
     return (urlparse(text).hostname or "").lower()
 
 
+# Elasticsearch endpoints a POST reaches without writing anything (a search sent with POST, for example).
+READ_ENDPOINTS = ("_search", "_count", "_msearch", "_query", "_async_search", "_field_caps", "_mget", "_eql",
+                  "_validate", "_explain", "_terms_enum")
+
+
+def request_writes(w: dict) -> bool:
+    """An elasticsearch.request step that can change data: any method but GET or HEAD, unless its path
+    ends at a read endpoint."""
+    if str(w.get("method") or "GET").upper() in ("GET", "HEAD"):
+        return False
+    segments = [p for p in str(w.get("path") or "").split("?")[0].split("/") if p]
+    return not any(p.startswith(READ_ENDPOINTS) for p in segments)
+
+
 def workflow_effects(yaml_text: str, cortex_hosts: set[str], connector_hosts: dict[str, str] | None = None) -> dict:
     """{"writes": [index...], "sends": [host...], "reads": [host...]} for one workflow's YAML.
     sends: http calls outside Cortex that can carry data out (any method but GET or HEAD, or a body);
@@ -72,7 +86,7 @@ def workflow_effects(yaml_text: str, cortex_hosts: set[str], connector_hosts: di
         w = s.get("with") if isinstance(s.get("with"), dict) else {}
         if typ in WRITE_STEPS:
             writes.append(str(w.get("index") or ""))
-        elif typ == "elasticsearch.request" and str(w.get("method") or "GET").upper() != "GET":
+        elif typ == "elasticsearch.request" and request_writes(w):
             writes.append(str(w.get("path") or "").lstrip("/").split("/")[0])
         elif typ == "http":
             if w.get("url"):
@@ -96,8 +110,12 @@ def classify_tool(tool: dict, workflow_yaml: str | None, cortex_hosts: set[str],
         return {"id": tid, "class": "read-only", "reason": "queries Cortex data and writes nothing",
                 "evidence": f"{typ} tool"}
     if typ == "workflow":
-        eff = workflow_effects(workflow_yaml or "", cortex_hosts, connector_hosts)
         wf = ((tool.get("configuration") or {}).get("workflow_id"))
+        if not workflow_yaml:
+            # Fail closed: a definition the check cannot read is never called read-only.
+            return {"id": tid, "class": "side-effecting", "reason": "its workflow could not be read, so it is not "
+                    "treated as read-only", "evidence": f"workflow {wf} not found"}
+        eff = workflow_effects(workflow_yaml, cortex_hosts, connector_hosts)
         if set(eff["writes"]) & IRREVERSIBLE_INDICES:
             return {"id": tid, "class": "irreversible", "reason": "transmits a SAR, which cannot be withdrawn",
                     "evidence": f"workflow {wf} writes to cortex-sar-filings"}
@@ -181,7 +199,7 @@ def writes_to(s: dict, index: str) -> bool:
     if s.get("type") in RECORD_WRITES and str(w.get("index") or "") == index:
         return True
     if s.get("type") == "elasticsearch.request" and str(w.get("path") or "").lstrip("/").startswith(index):
-        return str(w.get("method") or "GET").upper() != "GET"
+        return request_writes(w)
     return False
 
 

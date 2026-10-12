@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
 import urllib.error
 import urllib.request
@@ -40,6 +41,12 @@ INTERNAL_PREFIXES = ("platform.", "attachments.")
 DELEGATION_TOOLS = {"run_subagent", "send_message_to_agent"}
 
 _OUTAGE = (401, 403, 408, 429)
+
+RUN_BUDGET_S = 120  # a detached runner waits this long for a workflow run to end before calling it the environment's
+TERMINAL = ("completed", "failed", "cancelled", "timed_out", "skipped")
+ENV_ERR = re.compile(r"\b(408|429|50[0-9]|52[0-9])\b|timed? ?out|timeout|ECONNRESET|ETIMEDOUT|ECONNREFUSED|EAI_AGAIN"
+                     r"|socket hang up|rate.?limit|too many requests|overloaded|service unavailable|bad gateway"
+                     r"|temporarily unavailable", re.I)
 
 
 class ABError(Exception):
@@ -174,6 +181,9 @@ class AB:
         code, body = self.get(f"/api/agent_builder/conversations/{conversation_id}")
         return body if code == 200 else None
 
+    def delete_conversation(self, conversation_id: str) -> int:
+        return self.request("DELETE", f"/api/agent_builder/conversations/{conversation_id}")[0]
+
     def conversations(self, agent_id: str | None = None) -> list[dict]:
         """Conversations visible to this credential's user (listed per user, not per key: probe-43 X2)."""
         code, body = self.get("/api/agent_builder/conversations" + (f"?agent_id={agent_id}" if agent_id else ""))
@@ -238,15 +248,52 @@ class AB:
         last = None
         while True:
             last = self.execution(execution_id)
-            if last and last.get("status") in ("completed", "failed", "cancelled", "timed_out", "skipped"):
+            if last and last.get("status") in TERMINAL:
                 return last
             if time.monotonic() + poll_s > end:
                 return last
             time.sleep(poll_s)
 
+    def run_outcome(self, execution_id: str | None, budget_s: float = RUN_BUDGET_S) -> dict:
+        """Wait for a workflow run, then classify it (run_outcome below). An outage reading it raises."""
+        if not execution_id:
+            return {"kind": "env", "status": None, "error": "no execution id"}
+        return run_outcome(self.wait_execution(execution_id, budget_s=budget_s, poll_s=2.0))
+
     # ── settings ─────────────────────────────────────────────────────────────
     def set_settings(self, changes: dict) -> tuple[int, Any]:
         return self.request("POST", "/internal/kibana/settings", {"changes": changes})
+
+
+# ── workflow runs: the environment's failures and the learner's (Principle 8) ──
+# A run's AI step calls the platform model and its writes call Elasticsearch, so a failed or slow run
+# is not by itself the learner's. Shared by every check that runs or reads a workflow (4.1 B2, 4.2 B1,
+# 4.4 B1 and B3, 4.C's gate case): "env" means no grade, "learner" is graded with the step's error.
+
+def run_error(ex: dict | None) -> tuple[str | None, str]:
+    """(failed step id, error text) of one execution: its own error and each failed step's."""
+    ex = ex or {}
+    failed = next((s for s in ex.get("stepExecutions") or [] if s.get("status") == "failed"), None)
+    parts = [str(ex.get("error") or "")] + [str(s.get("error")) for s in ex.get("stepExecutions") or [] if s.get("error")]
+    return (failed or {}).get("stepId"), " ".join(p for p in parts if p and p != "None")[:400]
+
+
+def run_outcome(ex: dict | None) -> dict:
+    """kind: completed; env (not readable, still not finished, timed out, cancelled, or failed on a 429,
+    a 5xx, a timeout or an unreachable service); learner (failed on anything else: a template, a field,
+    a mapping, a credential the learner set)."""
+    if not ex:
+        return {"kind": "env", "status": None, "error": "the run could not be read"}
+    status = ex.get("status")
+    step, err = run_error(ex)
+    out = {"status": status, "step": step, "error": err, "execution_id": ex.get("id")}
+    if status == "completed":
+        return {**out, "kind": "completed"}
+    if status not in TERMINAL:
+        return {**out, "kind": "env", "error": f"still {status or 'unknown'} after the wait"}
+    if status in ("timed_out", "cancelled") or ENV_ERR.search(err):
+        return {**out, "kind": "env"}
+    return {**out, "kind": "learner"}
 
 
 # ── route records (09 section 5a) ─────────────────────────────────────────────

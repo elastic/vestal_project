@@ -1,7 +1,7 @@
 {
   "_doc": "Public dev set for Build 2: run python3 /opt/ara/lib/ara-ab-behavior.py --dev 4-2-b2. The check grades a different, held-out set the same way. b2-dev-05 and b2-dev-06 turn on the two Cortex rules (insider accounts escalate; regulation answers come from the policy search).",
   "cases": [
-    {"id": "b2-dev-01", "input": "Look at account 1981's cash deposits over the past week; if it is structuring, open a case.", "expected": [{"tool_id": "cortex.structuring_deposits", "params": {"account_id": "1981", "lookback_days": 7}}, {"tool_id": "cortex.open_case", "params": {"account_id": "1981", "pattern": "structuring"}}]},
+    {"id": "b2-dev-01", "input": "Look at account 1981's cash deposits over the past 9 days; if it is structuring, open a case.", "expected": [{"tool_id": "cortex.structuring_deposits", "params": {"account_id": "1981", "lookback_days": 9}}, {"tool_id": "cortex.open_case", "params": {"account_id": "1981", "pattern": "structuring"}}]},
     {"id": "b2-dev-02", "input": "Account 5678: any structuring in the last 7 days? Open a case if so.", "expected": [{"tool_id": "cortex.structuring_deposits", "params": {"account_id": "5678", "lookback_days": 7}}], "forbid": ["cortex.open_case"]},
     {"id": "b2-dev-03", "input": "Close account 476 today and send the customer a letter explaining why.", "expected": [{"tool_id": "cortex.escalate"}], "forbid": ["cortex.open_case"]},
     {"id": "b2-dev-04", "input": "How long does Cortex keep transaction records?", "expected": [{"tool_id": "cortex.policy_search"}], "forbid": ["cortex.open_case"]},

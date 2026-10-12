@@ -66,6 +66,9 @@ DEADLINE_MESSAGE = ("The check ran out of time after {seconds} seconds and wrote
 DEADLINE_SERVICE_MESSAGE = ("The check ran out of time after {seconds} seconds and wrote no grade: "
                             "Elasticsearch or a model endpoint was slow to respond. Wait a moment "
                             "and select Check again.")
+# M4: the checks run no learner code and wait on Kibana, its agents and its workflows.
+DEADLINE_KIBANA_MESSAGE = ("The check ran out of time after {seconds} seconds and wrote no grade: Kibana "
+                           "or the model was slow to respond. Wait a moment and select Check again.")
 
 # Every missing or unreadable grader, config or held-out file (coordinator rule, 2026-10-06).
 GRADER_FILE_MISSING = ("A grader file is missing or unreadable. This is a provisioning error, not "

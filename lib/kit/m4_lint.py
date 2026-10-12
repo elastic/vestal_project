@@ -16,7 +16,8 @@ Authoring tool; nothing in a sandbox runs it. Runs beside ara-lint.sh and align_
              (22 section 8.1), in thresholds.json and the start manifest
   manifest   every agent and tool id a check reads (thresholds.json, AGENT_ID) is in the start
              manifest or built by the Builds (thresholds tool_id / workflow_id)
-  model      a model or vendor id appears only on a line marked "# ARA_MODEL" (22 section 1)
+  model      a model or vendor id appears only on a line marked "# ARA_MODEL" (22 section 1); the
+             track's assets pages (modules/m4/<track>/: page.html, brief/, problem.txt) carry none
   identity   no grading check converses with ES_API_KEY (checks converse as tina-runtime)
 Exit 1 on any FAIL.
 """
@@ -107,6 +108,16 @@ def main(argv=None) -> int:
         for n, line in enumerate(f.read_text(errors="replace").splitlines(), 1):
             if MODEL_RE.search(line) and "# ARA_MODEL" not in line:
                 report("model", False, f"{f.relative_to(track)}:{n}: {line.strip()[:90]}")
+    # The track's assets pages (Brief source, built Brief, problem capture) carry no model id either.
+    pages = a.assets / "modules/m4" / track.name.removeprefix("cert-sk-ara-")
+    report("model", pages.is_dir(), f"assets pages {pages.relative_to(a.assets)}"
+           + ("" if pages.is_dir() else " not found"))
+    for f in sorted(pages.rglob("*")) if pages.is_dir() else []:
+        if not f.is_file() or f.suffix not in (".html", ".txt", ".md", ".py"):
+            continue
+        for n, line in enumerate(f.read_text(errors="replace").splitlines(), 1):
+            if MODEL_RE.search(line):
+                report("model", False, f"{f.relative_to(a.assets)}:{n}: {line.strip()[:90]}")
     print(f"  {fails} FAIL")
     return 1 if fails else 0
 

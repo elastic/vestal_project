@@ -49,6 +49,7 @@ import re
 import sys
 
 LEAK_MIN_CHARS = 20          # shorter strings ("q1", a figure) are not evidence of a leak
+PARAM_WINDOW = 160          # characters either side of an account literal that count as "the same example"
 LEAK_SUFFIXES = {".md", ".ipynb", ".html", ".txt", ".json", ".jsonl", ".py", ".csv"}
 QUERY_FIELDS = ("query_text", "question", "query", "text", "input")
 ID_FIELDS = ("query_id", "unit_id", "id", "qid")
@@ -64,6 +65,8 @@ class Ctx:
     def __init__(self, track: pathlib.Path, assets: pathlib.Path, spec: dict):
         self.track, self.assets, self.spec = track, assets, spec
         self.docs: dict[str, str] = {}
+        self.all_dev: list[dict] = []
+        self.all_dev_paths: set[pathlib.Path] = set()
         self.fails = 0
         self.warns = 0
 
@@ -214,6 +217,54 @@ def check_leaks(ctx: Ctx, label: str, held: list[dict], dev: list[dict],
                       for f, body in corpus.items() if t in body)
         if hits:
             ctx.fail(f"P14 {label}:{qid}: held-out text appears where the learner can read it: {hits}")
+    # Parameters: every dev set of the track by exact tuple (a JSON window would run across items),
+    # every other learner-visible page by proximity. The dev comparison skips (account, pattern)
+    # pairs: each planted account has one pattern, so the pair follows from the account and a dev
+    # set must be able to practise it.
+    dev_tuples = {(a, tuple(o)) for _, a, o in param_tuples(dev + ctx.all_dev)
+                  if any(v.isdigit() for _, v in o)}
+    for qid in sorted({q for q, a, o in param_tuples(held) if (a, tuple(o)) in dev_tuples}):
+        ctx.fail(f"P14 {label}:{qid}: a dev item asks for the same account and window")
+    dev_paths = {dev_path, *ctx.all_dev_paths}
+    check_param_leaks(ctx, label, held, {f: b for f, b in corpus.items() if f not in dev_paths})
+
+
+def param_tuples(items: list[dict]) -> list[tuple[str, str, list[str]]]:
+    """(item id, account literal, the other parameter literals) for every expected tool call that
+    names an account: a Brief example that pairs the same account with the same window or pattern
+    shows the learner a graded answer even when no sentence matches (G-S8)."""
+    out = []
+    for q in items:
+        for call in q.get("expected") or []:
+            params = call.get("params") if isinstance(call, dict) else None
+            if not isinstance(params, dict) or params.get("account_id") in (None, ""):
+                continue
+            others = [(k, str(v).lower()) for k, v in params.items()
+                      if k != "account_id" and isinstance(v, (str, int)) and str(v).strip()]
+            if others:
+                out.append((item_id(q), str(params["account_id"]).lower(), others))
+    return out
+
+
+def check_param_leaks(ctx: Ctx, label: str, held: list[dict], corpus: dict[pathlib.Path, str],
+                      window: int = PARAM_WINDOW) -> None:
+    found: dict[str, set[str]] = {}
+    for qid, acct, others in param_tuples(held):
+        acct_re = re.compile(rf"(?<![\w.,]){re.escape(acct)}(?![\w]|[.,]\d)")
+        # A number counts only as that parameter ("lookback_days": 7, "7 days"), not as any figure.
+        other_res = [re.compile(rf"{re.escape(k.lower())}\W{{0,4}}{v}(?!\d)|(?<![\w.,]){v}\s*-?\s*days?\b")
+                     if v.isdigit() else re.compile(rf"(?<![\w.,]){re.escape(v)}(?![\w]|[.,]\d)")
+                     for k, v in others]
+        for f, body in corpus.items():
+            for m in acct_re.finditer(body):
+                near = body[max(0, m.start() - window):m.end() + window]
+                if all(r.search(near) for r in other_res):
+                    found.setdefault(qid, set()).add(
+                        str(f.relative_to(ctx.assets) if ctx.assets in f.parents else f.relative_to(ctx.track)))
+                    break
+    for qid, hits in sorted(found.items()):
+        ctx.fail(f"P14 {label}:{qid}: a learner-visible page pairs the held-out account with the same "
+                 f"parameters: {sorted(hits)}")
 
 
 def run(track: pathlib.Path, assets: pathlib.Path, spec_path: pathlib.Path | None = None) -> Ctx:
@@ -224,6 +275,11 @@ def run(track: pathlib.Path, assets: pathlib.Path, spec_path: pathlib.Path | Non
     ctx = Ctx(track, assets, json.loads(spec_path.read_text()))
     load_corpus(ctx)
     print(f"corpus: {len(ctx.docs)} documents from {assets}")
+    for s in ctx.spec.get("sets", []):  # every dev set of the track, for the parameter scan
+        dp = ctx.path(s["dev"]) if s.get("dev") else None
+        if dp and dp.exists():
+            ctx.all_dev += load_items(dp)
+            ctx.all_dev_paths.add(dp)
     for s in ctx.spec.get("sets", []):
         hp = ctx.path(s["heldout"])
         held = load_items(hp)

@@ -85,7 +85,7 @@ Tina: I found 7 accounts in the top results showing the hallmark
       ... The aggregation only captured the top 200 accounts by
       trade volume, so there may be additional lower-volume hits ...
 
-(captured live, 4.2 track test r3, claude-sonnet-4.6)</pre>
+(captured live on this lab's model, 4.2 track test r3)</pre>
 
   <p>Tina has no brokerage tool, so she invented a definition of wash trading on the spot (one account buying and selling the same symbol) and wrote her own queries for it. The planted ring is four accounts trading QNTM with each other. She found two of them, missed two, and named five accounts whose one buy and one sell are ordinary trading. Her own answer says the search was cut off at 200 accounts.</p>
   <p>Nobody can sign off a securities finding whose route shows no securities check. Cortex has those checks; they belong to a specialist who knows when to use them.</p>
@@ -113,6 +113,7 @@ workflow tool (Lab 4.1)
   <tr><td><code>manual</code></td><td>Someone selects Run, or calls the run API</td><td>Testing the sweep</td></tr>
   <tr><td><code>scheduled</code></td><td>An interval passes (<code>every: 1d</code>)</td><td>The morning structuring sweep</td></tr>
   <tr><td><code>alert</code></td><td>A detection rule raises an alert</td><td>Triage on a new structuring alert</td></tr>
+  <tr><td>Event-driven, such as <code>workflows.failed</code></td><td>A platform event happens: another workflow's run fails, or a case changes</td><td>Tell the desk when the morning sweep fails</td></tr>
 </table>
 
   <p>A workflow can carry more than one trigger. Keep <code>manual</code> beside <code>scheduled</code> so you can run it on demand while you build it.</p>
@@ -121,8 +122,8 @@ workflow tool (Lab 4.1)
 <section>
 <h2>Iteration and branching</h2>
 <pre>detect     elasticsearch.esql.query
-           -> values: [["1981", 6, 56277],
-                       ["476",  4, 37710]]
+           -> values: [["1981", 6, 55971.15],
+                       ["476",  5, 46809.7]]
 each       <span class="hl">foreach</span> steps.detect.output.values
   rate     ai.classify   critical|high|medium|low
   route    <span class="hl">if</span> rating : high or critical
@@ -160,7 +161,7 @@ each       <span class="hl">foreach</span> steps.detect.output.values
 
   <p>The skill says how to triage. The instructions say what Tina may do at all, for every request. Name the tool in each rule: it is how she connects a kind of request to the action that handles it.</p>
   <p>Escalation is an action, not a refusal: <code>cortex.escalate</code> records the request for a person, so it is not lost.</p>
-  <p>A general rule often covers what the model does anyway: in our runs, Tina escalated a request to freeze an account with no escalation rule at all. A rule earns its place when it says what Tina cannot guess, such as which requests Cortex keeps from the fraud desk. Those are the Cortex rules in the decision rule below.</p>
+  <p>A general rule often covers what the model does anyway. A rule earns its place when it says what Tina cannot guess. In our runs, with a general escalation rule, Tina ran triage on an account held by a Cortex employee and opened a case on it, because nothing told her that Cortex sends insider cases to the Board Risk Committee instead. Those are the Cortex rules in the decision rule below.</p>
 </section>
 
 <section>
@@ -185,6 +186,7 @@ each       <span class="hl">foreach</span> steps.detect.output.values
   <tr><td>Agent behind a tool</td><td>A Workflow tool whose step is <code>ai.agent</code></td><td>The workflow's execution</td></tr>
 </table>
 
+  <p>A third route, agent-to-agent (A2A), lets an agent call an agent served by another system. It is Experimental in Agent Builder, and this lab does not build it.</p>
   <p>Tina picks a sub-agent by its description, the way she picks a tool. Say which questions it handles in words an analyst would use.</p>
   <p>A delegated question takes about a minute: Tina plans, the specialist plans and runs its tools, and Tina reads its answer back.</p>
 </section>
@@ -226,7 +228,7 @@ each       <span class="hl">foreach</span> steps.detect.output.values
 <ul>
 <li>The sweep, run by the check: one iteration per account to review, and <strong>one record</strong> per account in the index its rating calls for</li>
 <li><strong>4 of 4</strong> held-out conversations on the expected route: detect before a case, escalate what Tina must not do, policy from the policy search, each under the Cortex rules</li>
-<li><strong>7 of 8</strong> held-out questions allocated right: securities to the specialist with the right brokerage tool, everything else kept by Tina, under the Cortex rules</li>
+<li><strong>At least 7 of 8</strong> (aim for 8) held-out questions allocated right: securities to the specialist with the right brokerage tool, everything else kept by Tina, under the Cortex rules</li>
 </ul>
 <p>Also checked:</p>
 <ul>

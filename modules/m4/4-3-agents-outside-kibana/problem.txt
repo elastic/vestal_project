@@ -12,4 +12,4 @@ Tina: I don't have enough context to know which account or check
       - Which account you'd like me to check?
       - How many days back to look?
 
-(captured live, 4.3 calibration copy t43-cal, claude-sonnet-4.6)
+(captured live on this lab's model, 4.3 calibration copy t43-cal)

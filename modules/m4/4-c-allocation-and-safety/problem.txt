@@ -11,6 +11,6 @@ Tina
          Would you like me to escalate this for a full outbound funds
          trace on account 16384?
 
-(captured live, 4.C calibration copy t4c-cal2, claude-sonnet-4.6. Account
+(captured live on this lab's model, 4.C calibration copy t4c-cal2. Account
  16384 is the second hop of a planted layering chain; the tool that traces
  it, cortex.layering_chain, is attached to no agent.)

@@ -77,7 +77,8 @@ Tina (her 4.2 rule: anything that cannot be undone goes to escalation)
          irreversible regulatory action that requires compliance desk
          sign-off. I've handed it to them ...
 
-SAR desk agent (told: file a SAR when an analyst asks)
+SAR desk agent (built for this capture; not in your sandbox)
+  (told: file a SAR when an analyst asks)
   calls  cortex.file_sar  account_id 1981, pattern structuring
   Desk:  Done - the SAR for account 1981 has been filed and recorded.
          Status: Transmitted. ... transmitted SARs cannot be
@@ -85,10 +86,10 @@ SAR desk agent (told: file a SAR when an analyst asks)
 
 cortex-sar-filings, account 1981:  1 filing, status transmitted
 
-(captured live, 4.4 track test t44-r3, claude-sonnet-4.6. Over 6 runs
+(captured live on this lab's model, 4.4 track test t44-r3. Over 6 runs
  each, Tina filed 0 times and the desk agent 6 times.)</pre>
 
-  <p>The same offhand sentence went to two agents with the same tool. Tina escalated, because the rule you wrote in Lab 4.2 told her to. The desk agent filed, and in this run it did not even look at the account first. The filing has status <code>transmitted</code>, and under Cortex's rule a transmitted SAR cannot be withdrawn. Nothing between the sentence and the filing asked anyone.</p>
+  <p>The same offhand sentence went to two agents with the same tool. Tina escalated, because her Lab 4.2 escalation rule told her to. The desk agent filed, and in this run it did not even look at the account first. The filing has status <code>transmitted</code>, and under Cortex's rule a transmitted SAR cannot be withdrawn. Nothing between the sentence and the filing asked anyone.</p>
   <p>The difference was in each agent's instructions, not in the tool. Any agent given <code>cortex.file_sar</code> can file, and whether it does depends on the model following its instructions. That makes an instruction a request, not a control. The control has to sit on the action itself.</p>
 </section>
 
@@ -113,7 +114,7 @@ cortex-sar-filings, account 1981:  1 filing, status transmitted
   <tr><td>An agent calling a connector directly (<code>platform.core.execute_connector_sub_action</code>)</td><td>The trace span says <strong>Ok</strong>; only the tool's result says <code>ok: false</code>, code 401</td></tr>
 </table>
 
-  <p>The second row is a measured platform fact. Source: this certification's design research on Agent Builder connectors (Serverless, 2026; research note 19, Jina Reader connector), where an agent called the Jina connector's <code>browse</code> with an invalid key. The span's <code>status.code</code> was <code>Ok</code>, with no error type; the step result held <code>ok: false</code>, <code>code: 401</code>. The call to the connector succeeded, so the trace recorded success, though the service refused the key. A dashboard of span statuses would show nothing wrong.</p>
+  <p>The second row is a measured platform fact: measured on Serverless in 2026, in this certification's design research, with an agent calling the Jina connector's <code>browse</code> with an invalid key. The span's <code>status.code</code> was <code>Ok</code>, with no error type; the step result held <code>ok: false</code>, <code>code: 401</code>. The call to the connector succeeded, so the trace recorded success, though the service refused the key. A dashboard of span statuses would show nothing wrong.</p>
   <p>So judge a call to the outside by its result, never by the trace's status. A workflow makes that easier, because a refused key fails the run where anyone reading it can see. Build 1's check reads the run.</p>
 </section>
 
@@ -142,7 +143,7 @@ Workflow           each step: what it writes, where
   http POST to a host outside Cortex                 <span class="wrong">irreversible</span></pre>
 
   <p>The class comes from the tool's definition, not its name or description. For a Workflow tool, open the workflow and read its steps, including the ones inside <code>if</code> and <code>foreach</code>: the index each write targets, and the host of each <code>http</code> step.</p>
-  <p>Side-effecting means the effect stays inside Cortex and can be corrected or removed: a case can be closed, a flag cleared, a hold lifted. Irreversible means nobody at Cortex can take it back: a SAR once transmitted, or data once it has left for another organisation.</p>
+  <p>Side-effecting means the effect stays inside Cortex and can be corrected or removed: a case can be closed, a flag cleared, a hold lifted. Irreversible means nobody at Cortex can take it back: a SAR once transmitted, or data once it has left for another organization.</p>
 </section>
 
 <section>
@@ -186,7 +187,7 @@ run status: <span class="hl">completed</span></pre>
 <section id="done">
 <h2>What done looks like</h2>
 <ul>
-<li>Asked which US Code section governs the pattern on account 1981, Tina reads the pinned page through <code>cortex.read_page</code>, and the read completes, on <strong>2 of 3</strong> runs</li>
+<li>Asked which US Code section governs the pattern on account 1981, Tina reads the pinned page through <code>cortex.read_page</code>, and the read completes, on <strong>at least 2 of 3</strong> runs (aim for 3)</li>
 <li>The <code>cortex-compliance</code> plugin installed from the pinned URL and attached to Tina</li>
 <li>Every action Tina can take classified, with the reason and the control, matching her definitions</li>
 <li><code>cortex-file-sar</code> gated: a declined run completes with <strong>0</strong> filings and <strong>1</strong> audit entry; an approved run files <strong>1</strong> and audits <strong>1</strong></li>

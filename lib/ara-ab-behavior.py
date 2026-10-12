@@ -56,8 +56,8 @@ def trace_spans(trace_id: str) -> list[dict]:
     try:
         with urllib.request.urlopen(req, timeout=20) as r:
             return [h["_source"] for h in json.loads(r.read()).get("hits", {}).get("hits", [])]
-    except Exception:
-        return []
+    except Exception as e:  # reported for this case, never shown as a route with the specialist missing
+        raise ABError(f"the trace store did not answer: {type(e).__name__}", 503) from None
 
 
 def main() -> int:
@@ -96,7 +96,7 @@ def main() -> int:
     print(f"Sending {len(cases)} questions to {a.agent}, at most 3 at a time. Each takes about 15 to 30 seconds, "
           "a delegated one about a minute, but it can take longer.")
     try:
-        results = run_cases(ab, a.agent, cases, concurrency=3, spans=trace_spans)
+        results = run_cases(ab, a.agent, cases, concurrency=3, spans=trace_spans, cleanup=False)
     except ABError as e:
         print(f"Kibana did not respond ({e}). Wait a moment and run this again.")
         return 1
@@ -104,7 +104,12 @@ def main() -> int:
         print()
         print(f"[{case['id']}] {case['input']}")
         if r.get("error"):
-            print(f"  no answer from Kibana ({r['error'][:120]}); run this case again with --only {case['id']}")
+            what = ("the traces of this delegation are not available yet" if "trace" in r["error"]
+                    else "no answer from Kibana")
+            print(f"  {what} ({r['error'][:120]}); run this case again with --only {case['id']}")
+            continue
+        if r.get("learner_error"):
+            print(f"  {r['reason']}")
             continue
         print(f"  Tina:     {route_text(r['route'])}")
         print(f"  expected: {expected_text(case)}")

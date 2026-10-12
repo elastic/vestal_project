@@ -171,26 +171,152 @@ def test_delegation_route_from_steps_and_trace():
     assert A.route_matches([], full, forbid=["run_subagent"]) == (False, "called run_subagent")
 
 
-def test_ensure_run_grades_fresh_records_only(tmp_path, monkeypatch):
-    # D-15: a run is started detached, its record is returned only for the current fingerprint and
-    # start, and an outage record is never returned as finished (the next call starts a new run).
+LIB = str(pathlib.Path(__file__).resolve().parent)
+
+
+def _runner(tmp_path, record, body: str = "") -> list[str]:
+    """A runner that publishes {fingerprint, started, outage?} after an optional delay (env SLEEP)."""
+    src = tmp_path / "runner.py"
+    src.write_text(
+        "import os, sys, time, pathlib\n"
+        f"sys.path.insert(0, {LIB!r})\n"
+        "import ara_behavior as B\n"
+        "fp, started = sys.argv[1], float(sys.argv[2])\n"
+        "time.sleep(float(os.environ.get('SLEEP', '0')))\n"
+        "if os.path.exists(os.environ.get('DIE', '/nonexistent')):\n"
+        "    sys.exit(3)\n"
+        "outage = 'Kibana down' if os.path.exists(os.environ['FLAG']) else None\n"
+        + body +
+        f"B.publish(pathlib.Path({str(record)!r}), {{'fingerprint': fp, 'started': started, 'outage': outage}})\n")
+    return [sys.executable, str(src)]
+
+
+def test_ensure_run_outage_once_then_fresh(tmp_path, monkeypatch):
+    # D-15 and R-P8: an outage record is returned once (the check says no grade) and the next call
+    # measures again; a finished good record is reused while the fingerprint holds.
     monkeypatch.setenv("ARA_BEHAVIOR_LOG", str(tmp_path / "log"))
     record = tmp_path / "rec.json"
-    runner_src = tmp_path / "runner.py"
-    runner_src.write_text(
-        "import json, os, sys\n"
-        "fp, started = sys.argv[1], float(sys.argv[2])\n"
-        "outage = 'Kibana down' if os.path.exists(os.environ['FLAG']) else None\n"
-        f"json.dump({{'fingerprint': fp, 'started': started, 'outage': outage}}, open({str(record)!r}, 'w'))\n")
     flag = tmp_path / "flag"
     monkeypatch.setenv("FLAG", str(flag))
+    runner = _runner(tmp_path, record)
     flag.write_text("1")
-    rec, _ = B.ensure_run(record, "fp1", [sys.executable, str(runner_src)], wait_s=10, poll_s=0.1)
-    assert rec and rec["outage"] == "Kibana down"  # the caller turns this into unreachable()
+    rec, _ = B.ensure_run(record, "fp1", runner, wait_s=10, poll_s=0.1)
+    assert rec and rec["outage"] == "Kibana down"
     flag.unlink()
-    rec2, _ = B.ensure_run(record, "fp1", [sys.executable, str(runner_src)], wait_s=10, poll_s=0.1)
-    assert rec2 and rec2["outage"] is None and rec2["started"] >= rec["started"]  # rerun, not the outage
-    rec3, _ = B.ensure_run(record, "fp1", [sys.executable, str(runner_src)], wait_s=0.5, poll_s=0.1)
-    assert rec3 == rec2  # finished record for the same fingerprint is reused, no new run
-    rec4, _ = B.ensure_run(record, "fp2", [sys.executable, "-c", "import time; time.sleep(3)"], wait_s=0.3, poll_s=0.1)
-    assert rec4 is None  # a changed object starts a fresh run; the old record is never graded
+    rec2, _ = B.ensure_run(record, "fp1", runner, wait_s=10, poll_s=0.1)
+    assert rec2 and rec2["outage"] is None and rec2["started"] > rec["started"]
+    rec3, _ = B.ensure_run(record, "fp1", runner, wait_s=0.5, poll_s=0.1)
+    assert rec3 == rec2
+
+
+def test_ensure_run_consume_measures_again(tmp_path, monkeypatch):
+    monkeypatch.setenv("ARA_BEHAVIOR_LOG", str(tmp_path / "log"))
+    monkeypatch.setenv("FLAG", str(tmp_path / "noflag"))
+    record = tmp_path / "rec.json"
+    runner = _runner(tmp_path, record)
+    rec, _ = B.ensure_run(record, "fp1", runner, wait_s=10, poll_s=0.1)
+    B.consume(record, "fp1")  # graded and failed: never graded again
+    rec2, _ = B.ensure_run(record, "fp1", runner, wait_s=10, poll_s=0.1)
+    assert rec2 and rec2["started"] > rec["started"]
+
+
+def test_ensure_run_kills_superseded_run_and_guards_its_write(tmp_path, monkeypatch):
+    monkeypatch.setenv("ARA_BEHAVIOR_LOG", str(tmp_path / "log"))
+    monkeypatch.setenv("FLAG", str(tmp_path / "noflag"))
+    record = tmp_path / "rec.json"
+    runner = _runner(tmp_path, record)
+    monkeypatch.setenv("SLEEP", "30")
+    rec, _ = B.ensure_run(record, "fp1", runner, wait_s=0.5, poll_s=0.1)
+    assert rec is None
+    st1 = json.loads(record.with_suffix(".start").read_text())
+    assert B._alive(st1)
+    monkeypatch.setenv("SLEEP", "0")
+    rec2, _ = B.ensure_run(record, "fp2", runner, wait_s=10, poll_s=0.1)
+    assert rec2 and rec2["fingerprint"] == "fp2"
+    assert not B._alive(st1)  # the fp1 run was killed when fp2 started
+    # a late write from a superseded run is refused
+    assert not B.publish(record, {"fingerprint": "fp1", "started": st1["started"], "outage": None})
+    assert json.loads(record.read_text())["fingerprint"] == "fp2"
+
+
+def test_ensure_run_restarts_a_dead_run(tmp_path, monkeypatch):
+    monkeypatch.setenv("ARA_BEHAVIOR_LOG", str(tmp_path / "log"))
+    monkeypatch.setenv("FLAG", str(tmp_path / "noflag"))
+    die = tmp_path / "die"
+    monkeypatch.setenv("DIE", str(die))
+    record = tmp_path / "rec.json"
+    runner = _runner(tmp_path, record)
+    die.write_text("1")
+    rec, _ = B.ensure_run(record, "fp1", runner, wait_s=0.2, poll_s=0.05)
+    assert rec is None
+    time_limit = 50
+    while B._alive(json.loads(record.with_suffix(".start").read_text())) and time_limit:
+        import time as _t
+        _t.sleep(0.1)
+        time_limit -= 1
+    die.unlink()
+    rec2, _ = B.ensure_run(record, "fp1", runner, wait_s=10, poll_s=0.1)
+    assert rec2 and rec2["outage"] is None  # the dead run was detected and started again
+
+
+def test_poll_spans_incomplete_trace_is_an_outage():
+    import ara_grade
+    try:
+        B.poll_spans(lambda t: [{"span_id": "a", "parent_span_id": "r"}], "t", budget_s=0.3, poll_s=0.1)
+    except B.TraceNotReady as e:
+        assert ara_grade.is_outage(e)
+        return
+    raise AssertionError("an unrooted trace was returned as complete")
+
+
+class _H4(BaseHTTPRequestHandler):
+    deleted: list = []
+
+    def do_POST(self):
+        n = int(self.headers.get("Content-Length") or 0)
+        self.rfile.read(n)
+        self.send_response(404)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(b'{"message":"agent tina-compliance not found"}')
+
+    def do_DELETE(self):
+        type(self).deleted.append(self.path)
+        self.send_response(200)
+        self.end_headers()
+
+    def log_message(self, *a):
+        pass
+
+
+def test_run_case_4xx_is_a_learner_miss_and_cleanup_deletes():
+    srv = HTTPServer(("127.0.0.1", 0), _H4)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    ab = A.AB(f"http://127.0.0.1:{srv.server_port}", "k", "conn-x", timeout=5)
+    r = B.run_case(ab, "tina-compliance", {"id": "a", "input": "q", "expected": [{"tool_id": "x"}]})
+    assert not r["passed"] and r.get("learner_error") and not r.get("error") and "refused" in r["reason"]
+    srv.shutdown()
+    srv = _server(200)
+    ab = A.AB(f"http://127.0.0.1:{srv.server_port}", "k", "conn-x", timeout=5)
+    deleted = []
+    ab.delete_conversation = lambda cid: deleted.append(cid) or 200
+    r = B.run_case(ab, "tina-compliance", {"id": "a", "input": "q", "expected": []})
+    assert r["conversation_deleted"] and deleted == ["c1"]
+    r = B.run_case(ab, "tina-compliance", {"id": "a", "input": "q", "expected": []}, cleanup=False)
+    assert "conversation_deleted" not in r and deleted == ["c1"]
+    srv.shutdown()
+
+
+def test_run_outcome_env_and_learner():
+    assert A.run_outcome(None)["kind"] == "env"
+    assert A.run_outcome({"status": "completed"})["kind"] == "completed"
+    assert A.run_outcome({"status": "running"})["kind"] == "env"
+    assert A.run_outcome({"status": "waiting_for_input"})["kind"] == "env"
+    assert A.run_outcome({"status": "timed_out"})["kind"] == "env"
+    fail_429 = {"status": "failed", "stepExecutions": [{"stepId": "rate", "status": "failed",
+                                                        "error": "Inference failed: status code 429"}]}
+    assert A.run_outcome(fail_429)["kind"] == "env"
+    bad = {"status": "failed", "stepExecutions": [{"stepId": "write", "status": "failed",
+                                                   "error": "mapper_parsing_exception: failed to parse field [created_at]"}]}
+    out = A.run_outcome(bad)
+    assert out["kind"] == "learner" and out["step"] == "write" and "mapper_parsing" in out["error"]

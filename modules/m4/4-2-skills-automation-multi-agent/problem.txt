@@ -17,4 +17,4 @@ Tina: I found 7 accounts in the top results showing the hallmark
       ... The aggregation only captured the top 200 accounts by
       trade volume, so there may be additional lower-volume hits ...
 
-(captured live, 4.2 track test r3, claude-sonnet-4.6)
+(captured live on this lab's model, 4.2 track test r3)

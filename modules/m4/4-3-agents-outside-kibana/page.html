@@ -21,11 +21,11 @@
 <section>
 <h2>Conversation state</h2>
 <pre>conversation_id 7f3c...
-  round 1   analyst turn     "Check account 1981 ... last 7 days"
-            tool calls       cortex.structuring_deposits(1981, 7)
+  round 1   analyst turn     "Check account 3456 ... last 30 days"
+            tool calls       cortex.structuring_deposits(3456, 30)
                              + their <span class="hl">results</span>
             answer           Tina's text
-  round 2   analyst turn     "Of those, which were above 9,300?"
+  round 2   analyst turn     "Of those, which were above 9,000?"
             ...
   round 3   analyst turn     <span class="hl">sent with the id: all rounds above come back</span></pre>
 
@@ -36,9 +36,9 @@
 <section>
 <h2>Reformulation</h2>
 <pre>depends on earlier turns   "Run that check again and list only those"
-stands alone               "Check account <span class="hl">1981</span> for cash deposits just under
-                            10,000 in the last <span class="hl">7 days</span> and list those above
-                            <span class="hl">9,300</span>, newest first"</pre>
+stands alone               "Check account <span class="hl">3456</span> for cash deposits just under
+                            10,000 in the last <span class="hl">30 days</span> and list those above
+                            <span class="hl">9,000</span>, newest first"</pre>
 
   <p>A reformulated turn carries everything the earlier turns supplied: the account, the window, the amount. It works in a new conversation, from a scheduled job, or from another agent, because it needs no history.</p>
   <p>The test is the route. Sent alone, the sentence should make Tina call the same tool with the same values the original turn relied on.</p>
@@ -109,7 +109,7 @@ outbound   Agent Builder   --calls-->  <span class="hl">another server's tools</
 <section id="done">
 <h2>What done looks like</h2>
 <ul>
-<li>Your reformulation of turn 3, sent alone, takes Tina's route with the planted account and window on <strong>2 of 3</strong> runs</li>
+<li>Your reformulation of turn 3, sent alone, takes Tina's route with the planted account and window on <strong>at least 2 of 3</strong> runs (aim for 3)</li>
 <li>Your persisted set and reset outcome match the stored conversations, your own replay included</li>
 <li><code>cortex-mcp</code> lists only Cortex's tools, runs a read tool, and is refused a write to <code>cortex-ref-accounts</code></li>
 <li>Three <code>securities_layering</code> cases, each from a <code>cortex-open-case</code> run your Claude Code session started over MCP</li>

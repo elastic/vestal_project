@@ -115,6 +115,21 @@ def test_gate_shape_write_outside_if():
     assert s["write_in_then"] and s["write_elsewhere"] and not s["gated"]
 
 
+def test_search_by_post_is_not_a_write():
+    y = ("name: s\nsteps:\n  - name: find\n    type: elasticsearch.request\n    with:\n      method: POST\n"
+         "      path: /cortex-sar-filings/_search\n      body: {}\n")
+    assert A.workflow_effects(y, HOSTS)["writes"] == []
+    assert not A.writes_to({"type": "elasticsearch.request", "with": {"method": "POST", "path": "/cortex-sar-filings/_count"}},
+                           "cortex-sar-filings")
+    assert A.writes_to({"type": "elasticsearch.request", "with": {"method": "POST", "path": "/cortex-sar-filings/_doc"}},
+                       "cortex-sar-filings")
+
+
+def test_missing_workflow_fails_closed():
+    out = A.classify_tool(tool("cortex.x", "gone"), None, HOSTS)
+    assert out["class"] == "side-effecting" and "not found" in out["evidence"]
+
+
 def test_controls_cover_classes():
     assert set(A.CONTROLS) == set(A.CLASSES)
     assert set(A.REASONS.values()) <= set(A.CLASSES)
