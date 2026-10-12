@@ -50,7 +50,7 @@ import sys
 
 LEAK_MIN_CHARS = 20          # shorter strings ("q1", a figure) are not evidence of a leak
 LEAK_SUFFIXES = {".md", ".ipynb", ".html", ".txt", ".json", ".jsonl", ".py", ".csv"}
-QUERY_FIELDS = ("query_text", "question", "query", "text")
+QUERY_FIELDS = ("query_text", "question", "query", "text", "input")
 ID_FIELDS = ("query_id", "unit_id", "id", "qid")
 
 
@@ -89,7 +89,7 @@ def load_items(path: pathlib.Path) -> list[dict]:
         return [json.loads(l) for l in path.read_text().splitlines() if l.strip()]
     data = json.loads(path.read_text())
     if isinstance(data, dict):
-        for key in ("questions", "items", "queries", "units", "decisions"):
+        for key in ("questions", "items", "queries", "units", "decisions", "cases"):
             if isinstance(data.get(key), list):
                 return data[key]
         return []
