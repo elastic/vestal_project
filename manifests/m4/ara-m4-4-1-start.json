@@ -1,0 +1,27 @@
+{
+  "id": "ara-m4-4-1-start",
+  "_doc": "Track 4.1 start state (22 sections 2 and 8.4). Data, corpus and record indices are loaded by provision.sh; tina-runtime is minted there. This manifest holds the Agent Builder objects and settings.",
+  "extends": null,
+  "settings": {},
+  "tools": [
+    {
+      "id": "cortex.policy_search",
+      "type": "index_search",
+      "tags": ["cortex"],
+      "description": "Searches the Cortex Bank and Trust compliance policy manual: rules, thresholds, deadlines and procedures. Use it for questions about what Cortex policy requires. It holds no transactions and no account data.",
+      "configuration": {"pattern": "cortex-policies"}
+    }
+  ],
+  "agents": [
+    {
+      "id": "tina-compliance",
+      "name": "Tina",
+      "description": "Compliance assistant for Cortex Bank and Trust.",
+      "access_control": {"access_mode": "public"},
+      "configuration": {
+        "instructions": "You are Tina, the compliance assistant at Cortex Bank and Trust, a retail bank in Austin, Texas. Analysts ask you about customer accounts, transactions and Cortex policy. Answer only from what your tools return, never from memory, and say so when your tools return nothing relevant. Name the account ids and figures your tools gave you.",
+        "tools": [{"tool_ids": ["cortex.policy_search"]}]
+      }
+    }
+  ]
+}
