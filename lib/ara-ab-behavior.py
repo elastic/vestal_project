@@ -10,7 +10,9 @@ different, held-out set the same way (ara_behavior.py). Runs as tina-runtime wit
 connector, at most 3 questions at a time, so what you see is what the check sees.
 
 For a set whose cases open workflow runs (4-1-b2), it also prints each execution's status and the
-case document that run wrote.
+case document that run wrote. When Tina delegates to a sub-agent, the sub-agent's own tool calls are
+read from the traces (traces-agent_builder.otel-*) and shown after the delegation, as the check
+reads them.
 """
 from __future__ import annotations
 
@@ -43,6 +45,20 @@ def case_doc(execution_id: str) -> dict | None:
     return hits[0]["_source"] if hits else {}
 
 
+def trace_spans(trace_id: str) -> list[dict]:
+    es, key = os.environ.get("ES_URL"), os.environ.get("ES_API_KEY")
+    if not (es and key):
+        return []
+    body = json.dumps({"size": 500, "sort": [{"@timestamp": "asc"}], "query": {"term": {"trace_id": trace_id}}}).encode()
+    req = urllib.request.Request(f"{es.rstrip('/')}/traces-agent_builder.otel-*/_search", data=body, method="POST",
+                                 headers={"Content-Type": "application/json", "Authorization": f"ApiKey {key}"})
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            return [h["_source"] for h in json.loads(r.read()).get("hits", {}).get("hits", [])]
+    except Exception:
+        return []
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--dev", required=True, help="dev set name, for example 4-1-b1")
@@ -57,13 +73,14 @@ def main() -> int:
     if a.only:
         cases = [c for c in cases if c["id"] == a.only]
     try:
-        ab = AB.from_env(timeout=120)
+        ab = AB.from_env(timeout=150)
     except KeyError as e:
         print(f"{e.args[0]} is not set. Open a new Terminal tab, or run: set -a; . /home/elastic/env; set +a")
         return 2
-    print(f"Sending {len(cases)} questions to {a.agent}, at most 3 at a time. Each takes about 15 to 30 seconds.")
+    print(f"Sending {len(cases)} questions to {a.agent}, at most 3 at a time. Each takes about 15 to 30 seconds, "
+          "a delegated one about a minute, but it can take longer.")
     try:
-        results = run_cases(ab, a.agent, cases, concurrency=3)
+        results = run_cases(ab, a.agent, cases, concurrency=3, spans=trace_spans)
     except ABError as e:
         print(f"Kibana did not respond ({e}). Wait a moment and run this again.")
         return 1

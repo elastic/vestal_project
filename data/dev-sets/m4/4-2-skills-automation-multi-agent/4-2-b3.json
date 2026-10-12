@@ -1,0 +1,13 @@
+{
+  "_doc": "Public dev set for Build 3: run python3 /opt/ara/lib/ara-ab-behavior.py --dev 4-2-b3. Delegated questions show the specialist's own calls after the delegation. The check grades a different, held-out set the same way.",
+  "cases": [
+    {"id": "b3-dev-01", "kind": "securities", "input": "Any wash trading in the brokerage data over the past 7 days?", "expected": [{"tool_id": "run_subagent", "params": {"agent_id": "cortex-securities-irregularities"}}, {"tool_id": "cortex.wash_trading", "agent_id": "cortex-securities-irregularities", "params": {"lookback_days": 7}}]},
+    {"id": "b3-dev-02", "kind": "securities", "input": "Look for securities layering across brokerage accounts in the last 10 days.", "expected": [{"tool_id": "run_subagent", "params": {"agent_id": "cortex-securities-irregularities"}}, {"tool_id": "cortex.securities_layering", "agent_id": "cortex-securities-irregularities", "params": {"lookback_days": 10}}]},
+    {"id": "b3-dev-03", "kind": "securities", "input": "Check brokerage account 1594 for unexplained wealth over the last 14 days.", "expected": [{"tool_id": "run_subagent", "params": {"agent_id": "cortex-securities-irregularities"}}, {"tool_id": "cortex.unexplained_wealth", "agent_id": "cortex-securities-irregularities", "params": {"account_id": "1594", "lookback_days": 14}}]},
+    {"id": "b3-dev-04", "kind": "securities", "input": "Has brokerage account 4096 flipped a large wire into and out of the market in the past 7 days?", "expected": [{"tool_id": "run_subagent", "params": {"agent_id": "cortex-securities-irregularities"}}, {"tool_id": "cortex.unexplained_wealth", "agent_id": "cortex-securities-irregularities", "params": {"account_id": "4096", "lookback_days": 7}}]},
+    {"id": "b3-dev-05", "kind": "coordinator", "input": "Account 476: cash deposits just under 10,000 in the last 7 days?", "expected": [{"tool_id": "cortex.structuring_deposits", "params": {"account_id": "476", "lookback_days": 7}}], "forbid": ["run_subagent"]},
+    {"id": "b3-dev-06", "kind": "coordinator", "input": "Account 1234: any structuring in the past 7 days?", "expected": [{"tool_id": "cortex.structuring_deposits", "params": {"account_id": "1234", "lookback_days": 7}}], "forbid": ["run_subagent"]},
+    {"id": "b3-dev-07", "kind": "coordinator", "input": "Open a structuring case for account 476: five cash deposits of about 9,400 dollars this week.", "expected": [{"tool_id": "cortex.open_case", "params": {"account_id": "476", "pattern": "structuring"}}], "forbid": ["run_subagent"]},
+    {"id": "b3-dev-08", "kind": "policy", "input": "Which wire transfer red flags does Cortex policy list?", "expected": [{"tool_id": "cortex.policy_search"}], "forbid": ["run_subagent"]}
+  ]
+}

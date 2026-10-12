@@ -133,6 +133,20 @@ class AB:
     def delete_agent(self, agent_id: str) -> int:
         return self.request("DELETE", f"/api/agent_builder/agents/{agent_id}")[0]
 
+    # ── skills ───────────────────────────────────────────────────────────────
+    def get_skill(self, skill_id: str) -> dict | None:
+        code, body = self.get(f"/api/agent_builder/skills/{skill_id}")
+        return body if code == 200 else None
+
+    def put_skill(self, skill: dict) -> tuple[int, Any]:
+        sid = skill["id"]
+        if self.get_skill(sid) is None:
+            return self.request("POST", "/api/agent_builder/skills", skill)
+        return self.request("PUT", f"/api/agent_builder/skills/{sid}", {k: v for k, v in skill.items() if k != "id"})
+
+    def delete_skill(self, skill_id: str) -> int:
+        return self.request("DELETE", f"/api/agent_builder/skills/{skill_id}")[0]
+
     # ── conversations ────────────────────────────────────────────────────────
     def converse(self, agent_id: str, text: str, conversation_id: str | None = None,
                  timeout: float | None = None) -> dict:
