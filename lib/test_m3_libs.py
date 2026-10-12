@@ -524,10 +524,55 @@ def test_support_reads_the_leading_label():
         "does not support": "neutral", "partially supports": "neutral",
         "unsupported": "neutral", "Unsupported.": "neutral",
         "The passage supports the claim.": "neutral",
-        "": "neutral", "...": "neutral",
+        "...": "neutral",
     }
     for reply, verdict in cases.items():
         assert _support_with(_FakeReply(reply)) == verdict, (reply, verdict)
+
+
+class _FakeEmptyThen:
+    """es.inference stand-in: ``empties`` empty replies, then ``text``."""
+
+    def __init__(self, empties, text, empty=""):
+        self.empties, self.text, self.empty, self.calls = empties, text, empty, 0
+
+    def inference(self, **kwargs):
+        self.calls += 1
+        if self.calls <= self.empties:
+            return {"completion": [{"result": self.empty}]}
+        return {"completion": [{"result": self.text}]}
+
+
+def test_support_empty_reply_is_a_failed_call():
+    """Principle 8: an empty or whitespace-only completion is no verdict. It is
+    retried like an outage, then raised as RemoteCallFailed, never read as neutral."""
+    import ara_attrib
+    import ara_pack
+    for empty in ("", "   ", "\n\t ", None):
+        fake = _FakeEmptyThen(3, "supports", empty)
+        try:
+            out = _support_with(fake)
+        except ara_pack.RemoteCallFailed as exc:
+            assert isinstance(exc.__cause__, ara_attrib.EmptyCompletion), exc
+        else:
+            raise AssertionError(f"support returned {out!r} for an empty reply {empty!r}")
+        assert fake.calls == 3, (empty, fake.calls)
+
+
+def test_support_empty_reply_recovers_on_retry():
+    fake = _FakeEmptyThen(2, "Supports.")
+    assert _support_with(fake) == "supports" and fake.calls == 3
+
+
+def test_support_verdict_empty_raises():
+    import ara_attrib
+    for empty in ("", " \n", None):
+        try:
+            ara_attrib.support_verdict(empty)
+        except ara_attrib.EmptyCompletion:
+            pass
+        else:
+            raise AssertionError(f"support_verdict read {empty!r} as a verdict")
 
 
 def test_import_ara_metrics():

@@ -35,15 +35,16 @@ def remote_call(label: str, fn, *args, **kwargs):
 
     Grading standard 09 principle 8, as the 3.4 checks apply it: a call that still
     fails raises ``RemoteCallFailed``, and a request the endpoint rejected (a 4xx other
-    than 401, 403, 408, 429) is raised at once, unchanged. Nothing falls back to other
-    input, so the notebook and the Check see the same failure.
+    than 401, 403, 408, 429) is raised at once, unchanged. An empty completion
+    (``EmptyCompletion``) is retried and raised like an outage. Nothing falls back to
+    other input, so the notebook and the Check see the same failure.
     """
     last: Exception | None = None
     for attempt in range(REMOTE_ATTEMPTS):
         try:
             return fn(*args, **kwargs)
         except Exception as exc:  # noqa: BLE001 - outages are retried, then raised
-            if not is_remote_failure(exc):
+            if not (is_remote_failure(exc) or isinstance(exc, EmptyCompletion)):
                 raise
             last = exc
             if attempt < REMOTE_ATTEMPTS - 1:
@@ -126,6 +127,10 @@ def split_claims(answer: str) -> list[str]:
 SUPPORT_LABELS = ("supports", "contradicts", "neutral")
 
 
+class EmptyCompletion(RuntimeError):
+    """The completion endpoint answered with no text. A failed call, not a verdict."""
+
+
 def support_verdict(raw: str) -> str:
     """The verdict in a support() reply: its leading word, after any whitespace,
     punctuation, quotes or markdown and an optional "Verdict:" or "Answer:" label.
@@ -133,7 +138,12 @@ def support_verdict(raw: str) -> str:
     is supports; one that starts with "contradict" is contradicts. Anything else
     ("neutral", or "neutral" explained with the word support, "does not support",
     "partially supports", "unsupported", "Final verdict: supports") is neutral,
-    never supports. Kept identical in _ara34.py and vestal lib/ara_attrib.py."""
+    never supports. An empty or whitespace-only reply is no verdict: it raises
+    EmptyCompletion, which the caller retries and then raises as a failed call
+    (grading standard 09 principle 8), never neutral. Kept identical in _ara34.py
+    and vestal lib/ara_attrib.py."""
+    if not (raw or "").strip():
+        raise EmptyCompletion("the completion endpoint returned an empty reply")
     match = re.match(r"[^a-z]*(?:(?:verdict|answer)[^a-z]+)?([a-z]+)", (raw or "").lower())
     word = match.group(1) if match else ""
     if word.startswith("support"):
@@ -156,9 +166,10 @@ def support(claim: str, passage: str, completion_id: str) -> str:
       "Does the following passage support, contradict, or have no bearing on
        this claim? Answer with one word: supports, contradicts, or neutral."
 
-    A failed call is retried twice, then ``RemoteCallFailed`` is raised. It never
-    returns a verdict it did not get: "neutral" for a failed call would read as
-    "no passage supports this" (grading standard 09 principle 8).
+    A failed call, or one that returns an empty reply, is retried twice, then
+    ``RemoteCallFailed`` is raised. It never returns a verdict it did not get:
+    "neutral" for a failed call would read as "no passage supports this" (grading
+    standard 09 principle 8).
 
     Args:
         claim:         A single factual claim string.
@@ -177,15 +188,18 @@ def support(claim: str, passage: str, completion_id: str) -> str:
         f"Passage: {passage}"
     )
     es = es_client()
-    resp = remote_call(
-        "completion", es.inference.inference,
-        inference_id=completion_id,
-        body={
-            "input": prompt,
-            "task_settings": {"temperature": 0},
-        },
-    )
-    return support_verdict(resp["completion"][0]["result"] or "")
+
+    def ask() -> str:
+        resp = es.inference.inference(
+            inference_id=completion_id,
+            body={
+                "input": prompt,
+                "task_settings": {"temperature": 0},
+            },
+        )
+        return support_verdict(resp["completion"][0]["result"] or "")
+
+    return remote_call("completion", ask)
 
 
 # ── Attribution record ────────────────────────────────────────────────────────
