@@ -49,8 +49,38 @@ def test_gated_sar_stays_irreversible():
 
 
 def test_http_to_project_host_stays_inside():
-    y = 'steps:\n  - name: s\n    type: http\n    with:\n      url: https://project.kb.example.cloud/api/x\n'
-    assert A.workflow_effects(y, HOSTS)["outside"] == []
+    y = 'steps:\n  - name: s\n    type: http\n    with:\n      url: https://project.kb.example.cloud/api/x\n      method: POST\n'
+    eff = A.workflow_effects(y, HOSTS)
+    assert eff["sends"] == [] and eff["reads"] == []
+
+
+READ_PAGE = ('steps:\n  - name: read\n    type: http\n    connector-id: cortex-jina-reader\n    with:\n'
+             '      method: GET\n      path: "/{{ inputs.url }}"\n')
+
+
+def test_read_page_through_connector_is_read_only():
+    tool = {"id": "cortex.read_page", "type": "workflow", "configuration": {"workflow_id": "cortex-read-page"}}
+    out = A.classify_tool(tool, READ_PAGE, HOSTS, {"cortex-jina-reader": "r.jina.ai"})
+    assert (out["class"], out["reason"]) == ("read-only", "reads a web page on the open internet and writes nothing")
+    assert "r.jina.ai" in out["evidence"]
+
+
+def test_get_with_body_or_post_sends():
+    post = READ_PAGE.replace("method: GET", "method: POST")
+    body = READ_PAGE + '      body:\n        account_id: "{{ inputs.account_id }}"\n'
+    for y in (post, body):
+        assert A.workflow_effects(y, HOSTS, {"cortex-jina-reader": "r.jina.ai"})["sends"] == ["r.jina.ai"]
+
+
+def test_templated_host_is_outside():
+    y = 'steps:\n  - name: s\n    type: http\n    with:\n      url: "https://{{ inputs.host }}/x"\n'
+    assert A.workflow_effects(y, HOSTS)["reads"] == ["<unknown host>"]
+
+
+def test_read_and_write_is_side_effecting():
+    y = READ_PAGE + "  - name: note\n    type: elasticsearch.index\n    with:\n      index: cortex-audit\n"
+    tool = {"id": "x", "type": "workflow", "configuration": {"workflow_id": "x"}}
+    assert A.classify_tool(tool, y, HOSTS, {"cortex-jina-reader": "r.jina.ai"})["class"] == "side-effecting"
 
 
 def test_controls_cover_classes():

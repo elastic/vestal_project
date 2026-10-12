@@ -1,0 +1,120 @@
+<header>
+
+<p class="track-code">Lab 4.4</p>
+
+<h1>Lab 4.4: Action safety and extension</h1>
+
+<p><strong>Tina</strong> can now file a suspicious activity report (SAR) with the regulator, and the desk wants her to cite the statute behind each pattern from a page on the open internet. Before either goes further, you need to know which of her actions can be taken back, and what stands between a request and the ones that cannot.</p>
+
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<pre><!-- include: problem.txt --></pre>
+
+  <p>An analyst said something offhand, and Tina did what it asked. The tool she called writes a filing with status <code>transmitted</code>, and under Cortex's rule a transmitted SAR cannot be withdrawn. Nothing between the sentence and the filing asked anyone.</p>
+  <p>Her instructions did not stop it, and instructions are not where this belongs. A control that depends on the model choosing to follow it is a request, not a control.</p>
+</section>
+
+<section>
+<h2>Reaching outside Cortex</h2>
+<pre>Tina --calls--> cortex.read_page            <span class="hl">Workflow tool</span>
+                  -> cortex-read-page        workflow: one http GET
+                       connector-id: <span class="hl">cortex-jina-reader</span>
+                         url  https://r.jina.ai       (the service)
+                         secrets  none here           (where a key would live)
+                  -> https://r.jina.ai/&lt;page URL&gt;  ->  page text</pre>
+
+  <p>Every tool so far stayed inside Cortex. To cite a statute, Tina has to read a page on the open internet. The Jina Reader takes any page URL and returns its text, which an agent can read; it is free without a key at 20 requests a minute.</p>
+  <p>Three objects give her that reach. A <strong>connector</strong> holds the outside service's address and, when the service needs one, its credential, so the secret lives in one place and no workflow carries it. A <strong>workflow</strong> step names the connector with <code>connector-id</code> and gives only a path. A <strong>Workflow tool</strong> (Preview) turns the workflow into something Tina can call, and her tool list decides whether she can.</p>
+</section>
+
+<section>
+<h2>A bad credential: seen or hidden</h2>
+<table>
+  <tr><th>Path</th><th>A bad key shows up as</th></tr>
+  <tr><td>A workflow <code>http</code> step through a connector</td><td>The step and the run fail: <code>ConnectorExecutionError [401] Invalid API key</code></td></tr>
+  <tr><td>An agent calling a connector directly (<code>platform.core.execute_connector_sub_action</code>)</td><td>The trace span says <strong>Ok</strong>; only the tool's result says <code>ok: false</code>, code 401</td></tr>
+</table>
+
+  <p>The second row is a measured platform fact. Source: this certification's design research on Agent Builder connectors (Serverless, 2026; research note 19, Jina Reader connector), where an agent called the Jina connector's <code>browse</code> with an invalid key. The span's <code>status.code</code> was <code>Ok</code>, with no error type; the step result held <code>ok: false</code>, <code>code: 401</code>. The call to the connector succeeded, so the trace recorded success, though the service refused the key. A dashboard of span statuses would show nothing wrong.</p>
+  <p>So judge a call to the outside by its result, never by the trace's status. A workflow makes that easier, because a refused key fails the run where anyone reading it can see. Build 1's check reads the run.</p>
+</section>
+
+<section>
+<h2>Plugins and hand-written skills</h2>
+<pre>hand-written skill   cortex-fraud-triage
+  lives in           this space; edited in place
+  names              <span class="hl">this space's tools</span>: cortex.structuring_deposits, cortex.open_case
+
+plugin               cortex-compliance
+  installs from      <span class="hl">a source URL at a fixed ref</span>   (/tree/&lt;ref&gt;/...)
+  skills             cortex-compliance-regulatory-citation   <span class="hl">read-only</span>
+                     cortex-compliance-case-escalation-memo  <span class="hl">read-only</span></pre>
+
+  <p>A plugin (Preview) is a package of skills in the Claude agent plugin format, installed from a URL. The ref in the URL fixes the version: every project that installs from it gets the same skills, and nobody edits them in place. Installing puts the plugin in the space; an agent uses it only when its id is in the agent's <code>plugin_ids</code>.</p>
+  <p>A hand-written skill is the opposite trade. It is edited where it lives and can name the exact tools of its space, which is why it suits a playbook built around one desk's tools. A plugin carries skills and tool definitions, not the backends behind them: tools it names must already exist where it lands.</p>
+</section>
+
+<section>
+<h2>Three action classes</h2>
+<pre>tool type          what to read                      class
+ES|QL, search      the query                         <span class="hl">read-only</span>
+Workflow           each step: what it writes, where
+  writes cortex-fraud-cases, cortex-audit, flags     <span class="hl">side-effecting</span>
+  writes cortex-sar-filings (transmitted)            <span class="wrong">irreversible</span>
+  http POST to a host outside Cortex                 <span class="wrong">irreversible</span></pre>
+
+  <p>The class comes from the tool's definition, not its name or description. For a Workflow tool, open the workflow and read its steps, including the ones inside <code>if</code> and <code>foreach</code>: the index each write targets, and the host of each <code>http</code> step.</p>
+  <p>Side-effecting means the effect stays inside Cortex and can be corrected or removed: a case can be closed, a flag cleared, a hold lifted. Irreversible means nobody at Cortex can take it back: a SAR once transmitted, or data once it has left for another organisation.</p>
+</section>
+
+<section>
+<h2>Controls per class</h2>
+<table>
+  <tr><th>Class</th><th>Required control</th><th>Why</th></tr>
+  <tr><td>read-only</td><td>none</td><td>Nothing changes</td></tr>
+  <tr><td>side-effecting</td><td>audit entry</td><td>A mistake can be found and reversed</td></tr>
+  <tr><td>irreversible</td><td>approval gate plus audit entry</td><td>A mistake cannot be reversed, so a person decides first, and the decision is recorded</td></tr>
+</table>
+
+  <p>The gate goes in the workflow, where the action happens, so it holds whoever calls it: Tina, a scheduled run, or a coding agent over MCP. Agent Builder also lets a Workflow tool ask the chat user to confirm before it runs; that protects one caller, in one interface, and is not built in this lab.</p>
+</section>
+
+<section>
+<h2>Approval: pause, resume, decline</h2>
+<pre>run  -> <span class="hl">waitForApproval</span>   status waiting_for_input
+           resume {"input": {"approved": false}}
+        -> step completes, output.response.approved = false
+        -> <span class="hl">if</span> steps.approve.output.response.approved : true
+             steps:  file_sar        <span class="wrong">skipped</span>
+        -> audit                     runs
+run status: <span class="hl">completed</span></pre>
+
+  <p>A <code>waitForApproval</code> step (Preview) pauses the run until someone answers it. Resuming with <code>approved: false</code> does not fail the step or cancel the run: the step completes with that answer and the run carries on. Only an <code>if</code> that reads the answer keeps the filing from running.</p>
+  <p>So the audit entry belongs on both branches. A decline is a decision too, and the record of who declined what is part of the control.</p>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Take the first row that applies.</p>
+<table>
+  <tr><th>Tool definition shows</th><th>Class</th><th>Required control</th></tr>
+  <tr><td>A workflow that writes to <code>cortex-sar-filings</code> (transmitted, cannot be withdrawn), or sends data outside Cortex (a POST or a body to a non-Cortex host)</td><td>irreversible</td><td>approval gate plus audit entry</td></tr>
+  <tr><td>A workflow that writes only Cortex records that can be corrected or removed (cases, escalations, audit, flags, holds)</td><td>side-effecting</td><td>audit entry</td></tr>
+  <tr><td>An ES|QL or index search tool; a workflow whose only outside call is a GET of a web page, sending no Cortex data</td><td>read-only</td><td>none</td></tr>
+</table>
+<p class="rule-line">Read the definition, not the name: what is written, where, and can it be undone.</p>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+<li>Asked which US Code section governs the pattern on account 1981, Tina reads the pinned page through <code>cortex.read_page</code>, and the read completes, on <strong>2 of 3</strong> runs</li>
+<li>The <code>cortex-compliance</code> plugin installed from the pinned URL and attached to Tina</li>
+<li>Every action Tina can take classified, with the reason and the control, matching her definitions</li>
+<li><code>cortex-file-sar</code> gated: a declined run completes with <strong>0</strong> filings and <strong>1</strong> audit entry; an approved run files <strong>1</strong> and audits <strong>1</strong></li>
+</ul>
+</section>

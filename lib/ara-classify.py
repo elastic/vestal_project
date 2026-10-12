@@ -4,8 +4,7 @@
     python3 /opt/ara/lib/ara-classify.py
 
 Reads Tina's live configuration as tina-runtime (ARA_TINA_RUNTIME_KEY and KIBANA_URL from ~/env) and
-lists every custom tool she holds, plus the Jina browse when she holds both grants for a .jina
-connector. For each, asks for the class, the reason and the control from closed lists, then writes
+lists every custom tool she holds. For each, asks for the class, the reason and the control from closed lists, then writes
 ~/cortex-desk/action-classes.json. It never says whether an answer is right: Check does that, from
 the tool definitions (22 section 5.1). Run it again after you change Tina's tools.
 """
@@ -18,7 +17,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from agent_builder import AB  # noqa: E402
-from ara_actions import CLASSES, CONTROLS, JINA_ITEM, REASONS, SUB_ACTION_TOOL, agent_tool_ids  # noqa: E402
+from ara_actions import CLASSES, CONTROLS, REASONS, agent_tool_ids  # noqa: E402
 from record import collect  # noqa: E402
 
 OUT = pathlib.Path.home() / "cortex-desk" / "action-classes.json"
@@ -28,14 +27,7 @@ def items(ab: AB) -> list[str]:
     agent = ab.get_agent("tina-compliance")
     if agent is None:
         sys.exit("Tina (tina-compliance) was not found. Has provisioning finished?")
-    ids = sorted({t for t in agent_tool_ids(agent) if not t.startswith("platform.") and not t.startswith(".")})
-    granted = set((agent.get("configuration") or {}).get("connector_ids") or [])
-    code, conns = ab.get("/api/actions/connectors")
-    jina = [c for c in (conns if code == 200 and isinstance(conns, list) else [])
-            if c.get("connector_type_id") == ".jina" and c.get("id") in granted]
-    if SUB_ACTION_TOOL in agent_tool_ids(agent) and jina:
-        ids.append(JINA_ITEM)
-    return ids
+    return sorted({t for t in agent_tool_ids(agent) if not t.startswith("platform.") and not t.startswith(".")})
 
 
 def main() -> int:
@@ -46,7 +38,7 @@ def main() -> int:
     ids = items(ab)
     print("Tina can take these actions:")
     for i in ids:
-        print(f"  - {i}" + ("  (the Jina Reader browse through execute_connector_sub_action)" if i == JINA_ITEM else ""))
+        print(f"  - {i}")
     print("\nFor each one: its class, the reason from its definition, and the control its class requires.")
     schema = []
     for i in ids:

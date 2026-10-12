@@ -1,8 +1,10 @@
 """ara_extensions.py - connectors, the two grants, plugins, and connector calls in a route (22 section 1).
 
-Used by the 4.4 Build 1 check and solve, the 4.4 Defend Q1, and the end-state manifest checks.
+Used by the 4.4 Build 1 check and solve (plugins, norm_url) and the 4.4 Defend Q1. Since D-28, 4.4
+reaches the page through a Workflow tool, so grants() and connector_calls() serve agent-level
+connector sub-actions (22's original design, and M5 if it uses them); no 4.4 grader calls them.
 
-    conns = connectors_of_type(ab, ".jina")
+    conns = connectors_of_type(ab, ".http")
     grants(agent, connector_id) -> {"tool": bool, "connector": bool}
     plugin_by_source(ab, url) -> plugin dict or None (source_url compared after normalising)
     connector_calls(resp, connector_ids) -> [{"connector_id", "sub_action", "url", "ok", "code", "status"}]
