@@ -17,6 +17,7 @@ command's own exit status.
 """
 from __future__ import annotations
 
+import fcntl
 import json
 import os
 import pathlib
@@ -25,21 +26,32 @@ import re
 import select
 import subprocess
 import sys
+import termios
 import time
 
 PROMPT_CHOICE = "Choice (number): "
 PROMPT_VALUE = "Value: "
 INVALID = "Please enter a number between"
 STEP_S = 20  # record.py answers each keystroke at once; a missing prompt after this long is a fail
+# Terminal control sequences (bash's bracketed-paste mode, colours, window titles). Stripped from what
+# is read, so prompts match at the start of a line and the transcript shows what the learner reads.
+CONTROL = re.compile(r"\x1b\[[0-9;?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b[()][0-9A-Za-z]|\x1b[=>]")
+PARTIAL = re.compile(r"\x1b(?:\[[0-9;?]*[ -/]*|\][^\x07\x1b]*\x1b?|[()])?\Z")
+
+
+def _controlling_tty() -> None:
+    """In the child, after setsid: make the pty its controlling terminal, as a terminal emulator does."""
+    fcntl.ioctl(0, termios.TIOCSCTTY, 0)
 
 
 class Term:
     def __init__(self, argv: list[str]):
         self.master, slave = pty.openpty()
         self.proc = subprocess.Popen(argv, stdin=slave, stdout=slave, stderr=slave, close_fds=True,
-                                     start_new_session=True)
+                                     start_new_session=True, preexec_fn=_controlling_tty)
         os.close(slave)
         self.buf = ""
+        self.raw = ""  # read but not yet stripped: an unfinished control sequence
         self.seen = 0
 
     def _read(self, wait: float) -> bool:
@@ -52,7 +64,11 @@ class Term:
             chunk = b""
         if not chunk:
             return False
-        self.buf += chunk.decode(errors="replace").replace("\r", "")
+        text = CONTROL.sub("", self.raw + chunk.decode(errors="replace"))
+        # A sequence split across two reads: hold back its unfinished start until the rest arrives.
+        tail = PARTIAL.search(text)
+        self.raw = tail.group(0) if tail else ""
+        self.buf += text[:tail.start() if tail else len(text)].replace("\r", "")
         return True
 
     def wait_for(self, pattern: str, budget_s: float = STEP_S, regex: bool = False) -> re.Match | None:
