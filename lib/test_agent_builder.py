@@ -125,3 +125,47 @@ def test_outage_is_ara_grade_outage():
     import ara_grade
     assert ara_grade.is_outage(A.ABError("x", 503)) and ara_grade.is_outage(A.RemoteCallFailed("x"))
     assert not ara_grade.is_outage(A.ABError("x", 400))
+
+
+def _span(sid, parent, name, ts, agent=None, tool=None, args=None, status="Ok"):
+    a = {}
+    if agent:
+        a["gen_ai.agent.id"] = agent
+    if tool:
+        a["gen_ai.tool.name"] = tool
+    if args is not None:
+        a["gen_ai.tool.call.arguments"] = json.dumps(args)
+    return {"span_id": sid, "parent_span_id": parent, "name": name, "@timestamp": ts, "attributes": a,
+            "status": {"code": status}}
+
+
+def test_delegation_route_from_steps_and_trace():
+    # shapes from probe-42 r1: run_subagent in converse steps, the specialist's calls only in spans
+    resp = {"steps": [
+        {"type": "tool_call", "tool_id": "write_todos", "tool_origin": "internal", "params": {}, "results": [{"type": "other"}]},
+        {"type": "tool_call", "tool_id": "run_subagent", "tool_origin": "internal",
+         "params": {"agent_id": "cortex-securities-irregularities", "prompt": "..."}, "results": [{"type": "other", "data": {}}]}]}
+    rec = A.route_record(resp)
+    assert [c["tool_id"] for c in rec] == ["run_subagent"] and A.internal_calls(resp) == ["write_todos"]
+    spans = [_span("r", None, "invoke_agent Tina", "1", agent="tina-compliance"),
+             _span("a", "r", "invoke_agent Tina", "2", agent="tina-compliance"),
+             _span("d", "a", "execute_tool run_subagent", "3", tool="run_subagent", args={"agent_id": "x"}),
+             _span("s", "d", "invoke_agent Securities", "4", agent="cortex-securities-irregularities"),
+             _span("t1", "s", "execute_tool cortex.wash_trading", "5", tool="cortex.wash_trading", args={"lookback_days": 7}),
+             _span("t2", "s", "execute_tool attachments.add", "6", tool="attachments.add", args={}),
+             _span("t3", "s", "execute_tool cortex.unexplained_wealth", "7", tool="cortex.unexplained_wealth",
+                   args={"account_id": "4096", "lookback_days": 30}, status="Error"),
+             _span("c1", "a", "execute_tool cortex.structuring_deposits", "8", tool="cortex.structuring_deposits", args={})]
+    deleg = A.trace_calls(spans, "tina-compliance")
+    assert [(c["tool_id"], c["agent_id"], c["ok"]) for c in deleg] == [
+        ("cortex.wash_trading", "cortex-securities-irregularities", True),
+        ("cortex.unexplained_wealth", "cortex-securities-irregularities", False)]
+    full = A.splice_delegated(rec, deleg)
+    want = [{"tool_id": "run_subagent", "params": {"agent_id": "cortex-securities-irregularities"}},
+            {"tool_id": "cortex.unexplained_wealth", "agent_id": "cortex-securities-irregularities", "params": {"account_id": 4096}}]
+    assert A.route_matches(want, full) == (True, "route matches")
+    # the same tool called by the coordinator itself does not satisfy a delegated expectation
+    direct = [{"tool_id": "cortex.unexplained_wealth", "params": {"account_id": "4096"}, "agent_id": None}]
+    assert not A.route_matches(want[1:], direct)[0]
+    # a coordinator-owned case forbids delegation
+    assert A.route_matches([], full, forbid=["run_subagent"]) == (False, "called run_subagent")

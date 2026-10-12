@@ -29,8 +29,15 @@ KBN_HEADERS = {"kbn-xsrf": "true", "elastic-api-version": "2023-10-31"}
 
 # Tools the platform calls on its own (planning, skills, API discovery). They are never part of a
 # graded route (22 section 1).
-INTERNAL_TOOLS = {"write_todos", "load_skill", "describe_api", "execute_api", "search_relevant_skills"}
-INTERNAL_PREFIXES = ("platform.",)
+# Internal tools every agent has and no configuration removes (research 14 section 6.4, probe-42).
+# Converse steps also mark them tool_origin "internal"; trace spans do not, so the names are kept.
+INTERNAL_TOOLS = {"write_todos", "load_skill", "describe_api", "describe_api_type", "execute_api",
+                  "search_relevant_skills", "read_file", "list_files", "sleep", "ask_user_question",
+                  "attachments_read", "attachments_update", "attachments_add", "attachments_list", "attachments_diff"}
+INTERNAL_PREFIXES = ("platform.", "attachments.")
+# Delegation tools: internal, but they are the record of a delegation (22 section 3, 21a ruling 4),
+# so the route keeps them as {"tool_id": "run_subagent", "params": {"agent_id": <specialist>}}.
+DELEGATION_TOOLS = {"run_subagent", "send_message_to_agent"}
 
 _OUTAGE = (401, 403, 408, 429)
 
@@ -204,21 +211,88 @@ def _result_ok(results: Any) -> bool:
     return bool(rs) and not any(r.get("type") == "error" for r in rs)
 
 
+def _step_internal(s: dict) -> bool:
+    return s.get("tool_origin") == "internal" or is_internal(s.get("tool_id"))
+
+
 def route_record(resp: dict) -> list[dict]:
-    """The ordered custom tool calls in one converse response, internal tools filtered."""
+    """The ordered custom tool calls in one converse response, internal tools filtered and
+    delegations kept. Every entry is the coordinator's own call (agent_id None); a specialist's
+    calls come from the trace (trace_calls) and are spliced in with splice_delegated()."""
     out = []
     for s in (resp or {}).get("steps") or []:
-        if not isinstance(s, dict) or s.get("type") != "tool_call" or is_internal(s.get("tool_id")):
+        if not isinstance(s, dict) or s.get("type") != "tool_call":
+            continue
+        tid = s.get("tool_id")
+        if tid in DELEGATION_TOOLS:
+            target = (s.get("params") or {}).get("agent_id")
+            out.append({"tool_id": "run_subagent", "params": {"agent_id": target}, "ok": _result_ok(s.get("results")),
+                        "execution_id": None, "execution_status": None, "agent_id": None})
+            continue
+        if _step_internal(s):
             continue
         ex_id, ex_status = _execution(s.get("results"))
-        out.append({"tool_id": s.get("tool_id"), "params": s.get("params") or {},
-                    "ok": _result_ok(s.get("results")), "execution_id": ex_id, "execution_status": ex_status})
+        out.append({"tool_id": tid, "params": s.get("params") or {}, "ok": _result_ok(s.get("results")),
+                    "execution_id": ex_id, "execution_status": ex_status, "agent_id": None})
     return out
 
 
 def internal_calls(resp: dict) -> list[str]:
     return [s.get("tool_id") for s in (resp or {}).get("steps") or []
-            if isinstance(s, dict) and s.get("type") == "tool_call" and is_internal(s.get("tool_id"))]
+            if isinstance(s, dict) and s.get("type") == "tool_call" and s.get("tool_id") not in DELEGATION_TOOLS
+            and _step_internal(s)]
+
+
+def trace_calls(spans: list[dict], coordinator_id: str) -> list[dict]:
+    """A specialist's custom tool calls from one converse round's spans (traces-agent_builder.otel-*,
+    one trace_id). Each execute_tool span is attributed to its nearest invoke_agent ancestor; calls by
+    any agent other than the coordinator are returned in time order as route entries with agent_id
+    set. Internal tools are filtered. Parameters come from gen_ai.tool.call.arguments."""
+    by_id = {sp.get("span_id"): sp for sp in spans if isinstance(sp, dict)}
+
+    def owner(sp: dict) -> str | None:
+        seen = set()
+        cur = by_id.get(sp.get("parent_span_id"))
+        while cur is not None and cur.get("span_id") not in seen:
+            seen.add(cur.get("span_id"))
+            aid = (cur.get("attributes") or {}).get("gen_ai.agent.id")
+            if str(cur.get("name", "")).startswith("invoke_agent") and aid:
+                return aid
+            cur = by_id.get(cur.get("parent_span_id"))
+        return None
+
+    out = []
+    for sp in sorted(by_id.values(), key=lambda x: str(x.get("@timestamp"))):
+        a = sp.get("attributes") or {}
+        tid = a.get("gen_ai.tool.name")
+        if not str(sp.get("name", "")).startswith("execute_tool") or not tid or is_internal(tid) or tid in DELEGATION_TOOLS:
+            continue
+        aid = owner(sp)
+        if not aid or aid == coordinator_id:
+            continue
+        try:
+            params = json.loads(a.get("gen_ai.tool.call.arguments") or "{}")
+        except ValueError:
+            params = {}
+        status = (sp.get("status") or {}).get("code") if isinstance(sp.get("status"), dict) else sp.get("status")
+        out.append({"tool_id": tid, "params": params if isinstance(params, dict) else {}, "ok": status != "Error",
+                    "execution_id": None, "execution_status": None, "agent_id": aid})
+    return out
+
+
+def splice_delegated(record: list[dict], delegated: list[dict]) -> list[dict]:
+    """The coordinator's record with each specialist's calls placed right after the delegation to
+    that specialist (after the last coordinator entry if no delegation names it)."""
+    out, placed = [], set()
+    for c in record:
+        out.append(c)
+        if c["tool_id"] == "run_subagent":
+            target = c["params"].get("agent_id")
+            if target not in placed:
+                out.extend(d for d in delegated if d["agent_id"] == target)
+                placed.add(target)
+    out.extend(d for d in delegated if d["agent_id"] not in placed)
+    return out
 
 
 def esql_rows(execute_resp: dict) -> tuple[list[str], list[list]] | None:
@@ -253,9 +327,10 @@ def literal_equal(expected: Any, got: Any) -> bool:
 
 
 def route_matches(expected: list[dict], record: list[dict], forbid: list[str] = ()) -> tuple[bool, str]:
-    """Grade one case. expected is an ordered list of {"tool_id", "params": {name: literal}}; every
-    expected call must appear in the record in that order with its literals (other calls may sit
-    between them). forbid lists tool ids that must not appear at all. Returns (passed, reason)."""
+    """Grade one case. expected is an ordered list of {"tool_id", "params": {name: literal}} with an
+    optional "agent_id" (the call must be that specialist's, from the trace); every expected call
+    must appear in the record in that order with its literals (other calls may sit between them).
+    A delegation is expected as {"tool_id": "run_subagent", "params": {"agent_id": <specialist>}}. forbid lists tool ids that must not appear at all. Returns (passed, reason)."""
     for bad in forbid:
         if any(c["tool_id"] == bad for c in record):
             return False, f"called {bad}"
@@ -264,7 +339,7 @@ def route_matches(expected: list[dict], record: list[dict], forbid: list[str] = 
         while i < len(record):
             c = record[i]
             i += 1
-            if c["tool_id"] == want["tool_id"] and all(
+            if c["tool_id"] == want["tool_id"] and ("agent_id" not in want or c.get("agent_id") == want["agent_id"]) and all(
                     literal_equal(v, c["params"].get(k)) for k, v in (want.get("params") or {}).items()):
                 break
         else:
