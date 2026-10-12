@@ -169,3 +169,28 @@ def test_delegation_route_from_steps_and_trace():
     assert not A.route_matches(want[1:], direct)[0]
     # a coordinator-owned case forbids delegation
     assert A.route_matches([], full, forbid=["run_subagent"]) == (False, "called run_subagent")
+
+
+def test_ensure_run_grades_fresh_records_only(tmp_path, monkeypatch):
+    # D-15: a run is started detached, its record is returned only for the current fingerprint and
+    # start, and an outage record is never returned as finished (the next call starts a new run).
+    monkeypatch.setenv("ARA_BEHAVIOR_LOG", str(tmp_path / "log"))
+    record = tmp_path / "rec.json"
+    runner_src = tmp_path / "runner.py"
+    runner_src.write_text(
+        "import json, os, sys\n"
+        "fp, started = sys.argv[1], float(sys.argv[2])\n"
+        "outage = 'Kibana down' if os.path.exists(os.environ['FLAG']) else None\n"
+        f"json.dump({{'fingerprint': fp, 'started': started, 'outage': outage}}, open({str(record)!r}, 'w'))\n")
+    flag = tmp_path / "flag"
+    monkeypatch.setenv("FLAG", str(flag))
+    flag.write_text("1")
+    rec, _ = B.ensure_run(record, "fp1", [sys.executable, str(runner_src)], wait_s=10, poll_s=0.1)
+    assert rec and rec["outage"] == "Kibana down"  # the caller turns this into unreachable()
+    flag.unlink()
+    rec2, _ = B.ensure_run(record, "fp1", [sys.executable, str(runner_src)], wait_s=10, poll_s=0.1)
+    assert rec2 and rec2["outage"] is None and rec2["started"] >= rec["started"]  # rerun, not the outage
+    rec3, _ = B.ensure_run(record, "fp1", [sys.executable, str(runner_src)], wait_s=0.5, poll_s=0.1)
+    assert rec3 == rec2  # finished record for the same fingerprint is reused, no new run
+    rec4, _ = B.ensure_run(record, "fp2", [sys.executable, "-c", "import time; time.sleep(3)"], wait_s=0.3, poll_s=0.1)
+    assert rec4 is None  # a changed object starts a fresh run; the old record is never graded

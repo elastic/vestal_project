@@ -127,7 +127,7 @@ def ensure_run(record: pathlib.Path, fp: str, runner: list[str], wait_s: float, 
         st = {"fingerprint": fp, "started": now}
         write_json(start_p, st)
         subprocess.Popen(runner + [fp, repr(now)], stdin=subprocess.DEVNULL,
-                         stdout=open("/var/log/ara-behavior.log", "a"), stderr=subprocess.STDOUT,
+                         stdout=open(os.environ.get("ARA_BEHAVIOR_LOG", "/var/log/ara-behavior.log"), "a"), stderr=subprocess.STDOUT,
                          start_new_session=True, close_fds=True)
     started = float(st["started"])
     end = time.monotonic() + wait_s
