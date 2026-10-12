@@ -1,0 +1,11 @@
+{
+  "_doc": "Public dev set for Build 2: run python3 /opt/ara/lib/ara-ab-behavior.py --dev 4-1-b2. It prints Tina's route, each workflow execution and the case document it wrote. The check grades a different, held-out set the same way.",
+  "cases": [
+    {"id": "b2-dev-01", "input": "Open a structuring case for account 1981. Findings: six cash deposits just under 10,000 dollars in six days.",
+     "expected": [{"tool_id": "cortex.open_case", "params": {"account_id": "1981", "pattern": "structuring"}}]},
+    {"id": "b2-dev-02", "input": "Open a case on account 1594 with pattern securities_layering. Findings: deposits move to broker 3 and leave within days.",
+     "expected": [{"tool_id": "cortex.open_case", "params": {"account_id": "1594", "pattern": "securities_layering"}}]},
+    {"id": "b2-dev-03", "input": "Open a layering_chain case for account 32687. Findings: funds hop through accounts 16384, 8192, 4096 and 2048 within hours.",
+     "expected": [{"tool_id": "cortex.open_case", "params": {"account_id": "32687", "pattern": "layering_chain"}}]}
+  ]
+}

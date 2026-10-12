@@ -1,0 +1,186 @@
+<header>
+
+<p class="track-code">Lab 4.1</p>
+
+<h1>Lab 4.1: Agent Builder fundamentals and core tools</h1>
+
+<p><strong>Tina</strong> now lives in Elastic Agent Builder, over Cortex's wire, cash, ATM and brokerage data. She has one tool, a policy search. You give her the two tools her analysts need first, and prove she reaches for each one when she should.</p>
+
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<pre><!-- include: problem.txt --></pre>
+
+  <p>The analyst asked about one account's deposits. Tina's only tool searches the policy manual, so she searched it, and answered with what Cortex's rules say about structuring instead of what account 1981 did.</p>
+  <p>Nothing was wrong with the model. Tina can only act through her tools, and she picks among them by what their descriptions say.</p>
+</section>
+
+<section>
+<h2>Fixed chain or agent loop</h2>
+<pre>agent loop: the model picks each step
+
+  question
+    |
+    v
+  <span class="hl">plan</span>     which tool, with what values?
+    |
+    v
+  <span class="hl">act</span>      call it
+    |
+    v
+  <span class="hl">observe</span>  read the result
+    |
+    +--> enough?  no: plan again
+    |             yes: answer
+    v
+  answer
+
+fixed chain: the author picks each step
+
+  inputs -> enrich -> rate -> write
+            the same order, every run</pre>
+
+  <p>An agent decides its next step after it reads the last result, so the same question can take a different path. A workflow runs the steps its definition lists, in that order, every time.</p>
+  <p>Neither is better. A lookup an analyst phrases a hundred ways wants the loop; filing a case the same way every time wants the chain. A chain can still hold one step that is itself an agent.</p>
+</section>
+
+<section>
+<h2>Five components</h2>
+<table>
+  <tr><th>Component</th><th>What it is</th><th>Cortex example</th></tr>
+  <tr><td>Agent</td><td>Instructions, a model, and a set of tools</td><td><code>tina-compliance</code></td></tr>
+  <tr><td>Tool</td><td>One action the agent can call, with a schema it fills</td><td><code>cortex.policy_search</code></td></tr>
+  <tr><td>Skill</td><td>A procedure packaged with the tools that carry it out</td><td>Structuring triage, Lab 4.2</td></tr>
+  <tr><td>Plugin</td><td>A bundle of skills that installs as one unit</td><td>Compliance pack, Lab 4.4</td></tr>
+  <tr><td>Connector</td><td>The endpoint and credentials for a service outside Elastic</td><td>A web reader, Lab 4.4</td></tr>
+</table>
+
+  <p>When a new capability comes along, name what is being added before you build it: one action, a procedure, a bundle, an outside service, or a separate worker with its own instructions.</p>
+</section>
+
+<section>
+<h2>Tool types</h2>
+<table>
+  <tr><th>Type</th><th>Runs</th><th>Fits</th></tr>
+  <tr><td>ES|QL</td><td>One query you wrote, with typed parameters</td><td>Filters and aggregates over structured fields</td></tr>
+  <tr><td>Index search</td><td>Relevance search over one index, query phrased by the model</td><td>Free text answered by passages</td></tr>
+  <tr><td>Workflow (Technical Preview)</td><td>A whole workflow, as one call</td><td>Several steps in order, often with a write</td></tr>
+  <tr><td>MCP</td><td>A tool served by another system over MCP</td><td>Capabilities that live outside Kibana</td></tr>
+</table>
+
+  <p>The query in an ES|QL tool is yours: the model fills only the parameters. The query in an index search tool is the model's: it phrases it from the question. That difference decides which one a request needs.</p>
+</section>
+
+<section>
+<h2>Parameters are a contract</h2>
+<pre>FROM cortex-wire-transfers
+| WHERE account_id == <span class="hl">?account_id</span>
+    AND ...
+    AND DATE_DIFF("day", @timestamp, NOW())
+        < <span class="hl">?lookback_days</span>
+
+params
+  account_id     <span class="hl">string</span>
+    "The Cortex account number, exactly as
+     the analyst wrote it, for example 1981."
+  lookback_days  <span class="hl">integer</span>
+    "How many days back from today to look,
+     taken from the question."
+
+tool call Tina makes
+  {"account_id": "1981", "lookback_days": 7}</pre>
+
+  <p>Each <code>?name</code> in the query is a value the model supplies. The type and the description are all it knows about that value: a description that only repeats the name gets you whatever the model guesses.</p>
+  <p>Parameters fill values, never query syntax. A window is a comparison on a parameter, not a parameter glued to a unit.</p>
+</section>
+
+<section>
+<h2>The description is the routing signal</h2>
+<pre>"Did account 476 deposit just under
+ 10,000 in the last 7 days?"
+
+description A: "ES|QL tool"
+  route  cortex.policy_search
+  <span class="wrong">wrong tool: nothing said this one fits</span>
+
+description B: "Finds structuring on one account:
+  cash deposits just under the 10,000
+  threshold in the last N days. Use it when
+  an analyst names an account ... Do not
+  use it for policy questions."
+  route  cortex.structuring_deposits
+         (account_id=476, lookback_days=7)
+  <span class="right">right tool, right values</span></pre>
+
+  <p>Tina reads every tool's description on every turn. Say what the tool finds, which questions it answers, and which questions belong to another tool. The last part is what keeps a policy question about structuring out of your detector.</p>
+  <p>The check grades routes on held-out questions, not your words, so test with the dev set until the routes are right.</p>
+</section>
+
+<section>
+<h2>Workflow tools: many steps, one call</h2>
+<pre>Tina: cortex.open_case(account_id=476,
+                       pattern=structuring,
+                       findings=...)
+  |
+  v
+cortex-open-case (Technical Preview tool)
+  1 enrich   elasticsearch.search
+             cortex-ref-accounts
+  2 rate     <span class="hl">ai.classify</span> -> critical | high
+                              medium | low
+  3 write    elasticsearch.index
+             cortex-fraud-cases
+  |
+  v
+tool result: execution id, status</pre>
+
+  <p>A Workflow tool hands Tina a whole procedure as one call. She decides when to open a case and with what values; the workflow decides how, in an order she cannot change. Rate before you write, or the record is written without its rating.</p>
+  <p>An AI step inside a workflow uses a model too: <code>ai.classify</code> picks one of your categories, and <code>ai.agent</code> runs an agent and can return a schema. Workflows run as the caller, so Tina's key decides what the write may touch.</p>
+</section>
+
+<section>
+<h2>The record of what Tina did</h2>
+<pre>converse response
+  steps
+    tool_call  <span class="hl">cortex.structuring_deposits</span>
+               params  {"account_id": "476",
+                        "lookback_days": 7}
+               results esql_results, 5 rows
+    tool_call  write_todos   <span class="hl">internal</span>
+  response.message  "Account 476 made five ..."
+
+route the check grades
+  cortex.structuring_deposits(476, 7)</pre>
+
+  <p>Every conversation records each tool call with its parameters and results. The check reads that record: which custom tools Tina called, in what order, with what literal values. It never grades her prose, and it ignores the platform's own internal tools.</p>
+  <p>A model's route varies a little from run to run, so the check passes at a count of questions, not all of them. The count comes from calibration runs of a reference solution.</p>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Take the first row that applies.</p>
+<table>
+  <tr><th>The request</th><th>Tool type</th><th>Why</th></tr>
+  <tr><td>Several steps in a fixed order, one of them writes a record</td><td>Workflow tool</td><td>Ordered steps with a side effect</td></tr>
+  <tr><td>Typed values (an account, a number of days, an amount) into one query over fields</td><td>ES|QL tool</td><td>Typed parameters, fixed query</td></tr>
+  <tr><td>Free text answered by the passages that match it best</td><td>Index search tool</td><td>Ranked text</td></tr>
+</table>
+<p class="rule-line">One type, one reason. The type that could do the job badly is still the wrong type.</p>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+<li><strong>5 of 6</strong> held-out questions routed with the right tool and the literal account and days</li>
+<li><strong>3 of 3</strong> held-out case requests routed, run to completion, and written as one case each</li>
+</ul>
+<p>Also checked:</p>
+<ul>
+<li>Your detection tool, run for account 1981 over 7 days, returns every cash deposit just under the threshold in that window and nothing at or over <strong>10,000</strong>; for account 1234 it returns nothing</li>
+<li>Descriptions: at least <strong>20</strong> words for the tool, <strong>8</strong> for each parameter</li>
+<li>The workflow rates before it writes, and every case carries its own execution id</li>
+</ul>
+</section>

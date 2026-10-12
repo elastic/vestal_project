@@ -1,0 +1,17 @@
+{
+  "_doc": "Public dev set for Build 1: run python3 /opt/ara/lib/ara-ab-behavior.py --dev 4-1-b1. The check grades a different, held-out set the same way: the route Tina takes and the literal parameters she passes.",
+  "cases": [
+    {"id": "b1-dev-01", "input": "Over the last 7 days, did account 1981 make cash deposits just under the 10,000 dollar reporting threshold?",
+     "expected": [{"tool_id": "cortex.structuring_deposits", "params": {"account_id": "1981", "lookback_days": 7}}]},
+    {"id": "b1-dev-02", "input": "Check account 1234 for cash deposits just below the reporting limit in the past 7 days.",
+     "expected": [{"tool_id": "cortex.structuring_deposits", "params": {"account_id": "1234", "lookback_days": 7}}]},
+    {"id": "b1-dev-03", "input": "Any structuring by account 476 in the last 3 days?",
+     "expected": [{"tool_id": "cortex.structuring_deposits", "params": {"account_id": "476", "lookback_days": 3}}]},
+    {"id": "b1-dev-04", "input": "Account 3456: any cash deposits just under 10,000 dollars over the past 30 days?",
+     "expected": [{"tool_id": "cortex.structuring_deposits", "params": {"account_id": "3456", "lookback_days": 30}}]},
+    {"id": "b1-dev-05", "input": "What does the Cortex policy manual say about politically exposed persons?",
+     "expected": [{"tool_id": "cortex.policy_search"}], "forbid": ["cortex.structuring_deposits"]},
+    {"id": "b1-dev-06", "input": "Which wire transfer red flags does Cortex policy list?",
+     "expected": [{"tool_id": "cortex.policy_search"}], "forbid": ["cortex.structuring_deposits"]}
+  ]
+}

@@ -1,0 +1,3 @@
+CAPTURE PENDING: replaced from the first sandbox run
+(_solve41.py problem, start state: Tina with
+cortex.policy_search only).
