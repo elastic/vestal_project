@@ -1,1 +1,20 @@
-(capture pending: the first live run of challenge 04's solve prints it as CALIB problem lines)
+Analyst: Is there any wash trading in Cortex brokerage trades over
+         the last 10 days?
+
+Tina's tool calls (start state: no brokerage tool, no specialist)
+  no Cortex tool called
+  search_relevant_skills      x2   (internal)
+  describe_api                     (internal)
+  execute_api                 x6   (internal: raw Elasticsearch requests)
+  read_file                        (internal)
+
+Tina: I found 7 accounts in the top results showing the hallmark
+      wash trading pattern: buying and selling the same security in
+      the same 10-day window.
+      1618  QNTM  4 buys, 6 sells
+      3141  QNTM  3 buys, 4 sells
+      1506, 1538, 2026  MRDN    1360  BRVL    1615  NOVA
+      ... The aggregation only captured the top 200 accounts by
+      trade volume, so there may be additional lower-volume hits ...
+
+(captured live, 4.2 track test r3, claude-sonnet-4.6)
