@@ -16,7 +16,7 @@
       "tags": [
         "cortex"
       ],
-      "description": "Hands a request to the Cortex compliance desk and records it in cortex-escalations. Use it when an analyst asks for something you must not do yourself: anything outside fraud detection, case opening and policy questions, and anything irreversible such as freezing an account, closing an account, filing a report with a regulator or contacting a customer.",
+      "description": "Records a request for the Cortex compliance desk in cortex-escalations: the request as the analyst wrote it, the reason it is being handed on, and the account when there is one.",
       "configuration": {
         "workflow_id": "cortex-escalate"
       }
