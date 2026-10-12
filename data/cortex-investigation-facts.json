@@ -5,7 +5,7 @@
     "subject_name": "Rudolpho Castellanos",
     "outcome": "closed_no_action",
     "date_opened": "2024-11-15",
-    "summary": "On November 11, 2024, Cortex Bank and Trust closed an investigation into a business email compromise targeting Rudolpho Castellanos. The customer was deceived into sending a wire transfer of $464,164.87 to a fraudulent beneficiary, Quarrystone Exports Enterprises LLC, instead of the intended vendor. The investigation concluded that the customer was a victim of wire fraud and closed the case with no action.",
+    "summary": "Cortex Bank and Trust investigated a business email compromise targeting Rudolpho Castellanos, fixing November 11, 2024 as the date of determination. The customer was deceived into sending a wire transfer of $464,164.87 to a fraudulent beneficiary, Quarrystone Exports Enterprises LLC, instead of the intended vendor. The investigation concluded that the customer was a victim of wire fraud and closed the case with no action.",
     "answers_questions": [
       "What was the amount of the fraudulent wire transfer?",
       "Who was the intended vendor for the payment?",
@@ -40,7 +40,7 @@
       "2024-07-30",
       "2024-11-11"
     ],
-    "token_count": 84
+    "token_count": 87
   },
   {
     "doc_id": "inv-002",
@@ -171,12 +171,10 @@
       "2024-10-02",
       "2024-07-11",
       "2024-07-10",
-      "2024-07-03",
       "2024-05-20",
       "2024-09-23",
       "2024-08-12",
       "2024-05-30",
-      "2024-06-13",
       "2024-07-17",
       "2024-07-31",
       "2024-09-17"
@@ -977,7 +975,7 @@
     "subject_name": "Saltmarsh Equipment LLC",
     "outcome": "closed_no_action",
     "date_opened": "2024-07-24",
-    "summary": "On July 18, 2024, Cortex Bank and Trust concluded an investigation into a business email compromise targeting Saltmarsh Equipment LLC. The customer was deceived by a lookalike domain into bypassing internal controls and authorizing a wire transfer of $2,911,781.08 to Aperture Commodities Group LLC. The bank recovered a portion of the funds, but the customer sustained a significant residual loss, and the investigation was closed with no further action.",
+    "summary": "Cortex Bank and Trust investigated a business email compromise targeting Saltmarsh Equipment LLC; the loss became determinative on July 18, 2024. The customer was deceived by a lookalike domain into bypassing internal controls and authorizing a wire transfer of $2,911,781.08 to Aperture Commodities Group LLC. The bank recovered a portion of the funds, but the customer sustained a significant residual loss, and the investigation was closed with no further action.",
     "answers_questions": [
       "What was the total amount of the fraudulent wire transfer?",
       "Who was the intended beneficiary of the wire transfer?",
@@ -1019,7 +1017,7 @@
       "2024-06-27",
       "2024-07-18"
     ],
-    "token_count": 93
+    "token_count": 96
   },
   {
     "doc_id": "inv-022",
