@@ -1,0 +1,55 @@
+version: "1"
+name: cortex-open-case
+description: Opens a Cortex fraud case. Enriches the account, rates the risk with AI, writes the case record.
+enabled: true
+triggers:
+  - type: manual
+inputs:
+  - name: account_id
+    type: string
+    required: true
+    description: The Cortex account number the case is about, for example 1981
+  - name: pattern
+    type: string
+    required: true
+    description: "The fraud pattern, exactly one of: structuring, securities_layering, wash_trading, unexplained_wealth, layering_chain, atm_smurfing"
+  - name: findings
+    type: string
+    required: true
+    description: What the detection found, in one or two sentences with the figures
+steps:
+  - name: enrich
+    type: elasticsearch.search
+    with:
+      index: cortex-ref-accounts
+      query:
+        term:
+          account_id: "{{ inputs.account_id }}"
+      size: 1
+  - name: rate
+    type: ai.classify
+    connector-id: "@@CONNECTOR@@"
+    with:
+      input: "Pattern {{ inputs.pattern }} on account {{ inputs.account_id }}. Findings: {{ inputs.findings }}"
+      instructions: Rate the money-laundering risk of this finding for a bank compliance desk. Critical means funds are leaving or a chain of accounts is involved; low means a single weak signal.
+      categories:
+        - critical
+        - high
+        - medium
+        - low
+      includeRationale: true
+  - name: write_case
+    type: elasticsearch.index
+    with:
+      index: cortex-fraud-cases
+      id: "{{ execution.id }}"
+      document:
+        case_id: "CASE-{{ execution.id }}"
+        account_id: "{{ inputs.account_id }}"
+        pattern: "{{ inputs.pattern }}"
+        findings: "{{ inputs.findings }}"
+        risk_rating: "{{ steps.rate.output.category }}"
+        rationale: "{{ steps.rate.output.rationale }}"
+        execution_id: "{{ execution.id }}"
+        created_at: "{{ execution.startedAt | date: '%Y-%m-%dT%H:%M:%SZ' }}"
+        source: tina

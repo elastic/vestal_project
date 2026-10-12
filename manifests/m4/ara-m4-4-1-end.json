@@ -1,0 +1,68 @@
+{
+  "id": "ara-m4-4-1-end",
+  "_doc": "Track 4.1 reference end state (22 section 8.4): the Build 1 detection tool, the Build 2 case workflow and its tool, all attached to Tina. Same objects as the 4.1 solves apply (_solve41.py b1-ref, b2-ref); m4_lint checks they agree.",
+  "extends": "ara-m4-4-1-start",
+  "settings": {},
+  "workflows": [
+    {
+      "id": "cortex-open-case",
+      "yaml_file": "workflows/cortex-open-case.yml"
+    }
+  ],
+  "tools": [
+    {
+      "id": "cortex.structuring_deposits",
+      "type": "esql",
+      "tags": [
+        "cortex"
+      ],
+      "description": "Finds structuring on one Cortex account: cash deposits that sit just under the 10,000 dollar reporting threshold, from 8,000 to 9,999.99 dollars, within the last N days. Use it when an analyst names an account and asks about deposits just under the threshold, split cash deposits or structuring on that account. Do not use it for questions about Cortex policy, rules or deadlines; those go to cortex.policy_search.",
+      "configuration": {
+        "query": "FROM cortex-wire-transfers\n| WHERE account_id == ?account_id\n    AND account_event == \"deposit\" AND deposit_type == \"cash\"\n    AND amount >= 8000 AND amount < 10000\n    AND DATE_DIFF(\"day\", @timestamp, NOW()) < ?lookback_days\n| KEEP event_id, @timestamp, amount, branch_id\n| SORT @timestamp DESC",
+        "params": {
+          "account_id": {
+            "type": "string",
+            "description": "The Cortex account number to check, exactly as the analyst wrote it, for example 1981."
+          },
+          "lookback_days": {
+            "type": "integer",
+            "description": "How many days back from today to look, as a whole number of days taken from the question."
+          }
+        }
+      }
+    },
+    {
+      "id": "cortex.open_case",
+      "type": "workflow",
+      "tags": [
+        "cortex"
+      ],
+      "description": "Opens a Cortex fraud case for one account: looks the account up, rates the risk with AI and writes the case record to cortex-fraud-cases. Use it when an analyst asks to open or record a case and names the account and the pattern. Pass the pattern exactly as one of the workflow's allowed values. Do not use it to look up transactions.",
+      "configuration": {
+        "workflow_id": "cortex-open-case"
+      }
+    }
+  ],
+  "agents": [
+    {
+      "id": "tina-compliance",
+      "name": "Tina",
+      "description": "Compliance assistant for Cortex Bank and Trust.",
+      "access_control": {
+        "access_mode": "public"
+      },
+      "configuration": {
+        "instructions": "You are Tina, the compliance assistant at Cortex Bank and Trust, a retail bank in Austin, Texas. Analysts ask you about customer accounts, transactions and Cortex policy. Answer only from what your tools return, never from memory, and say so when your tools return nothing relevant. Name the account ids and figures your tools gave you.",
+        "tools": [
+          {
+            "tool_ids": [
+              "cortex.policy_search",
+              "cortex.structuring_deposits",
+              "cortex.open_case"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

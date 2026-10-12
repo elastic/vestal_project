@@ -1,0 +1,106 @@
+{
+  "id": "ara-m4-4-2-start",
+  "_doc": "Track 4.2 start state (22 sections 3 and 8.4): the 4.1 reference end, plus cortex-escalate and cortex.escalate (attached, so Build 2's escalation rule has a tool to name), plus the three brokerage ES|QL tools, attached to no agent.",
+  "extends": "ara-m4-4-1-end",
+  "settings": {},
+  "workflows": [
+    {
+      "id": "cortex-escalate",
+      "yaml_file": "workflows/cortex-escalate.yml"
+    }
+  ],
+  "tools": [
+    {
+      "id": "cortex.escalate",
+      "type": "workflow",
+      "tags": [
+        "cortex"
+      ],
+      "description": "Hands a request to the Cortex compliance desk and records it in cortex-escalations. Use it when an analyst asks for something you must not do yourself: anything outside fraud detection, case opening and policy questions, and anything irreversible such as freezing an account, closing an account, filing a report with a regulator or contacting a customer.",
+      "configuration": {
+        "workflow_id": "cortex-escalate"
+      }
+    },
+    {
+      "id": "cortex.securities_layering",
+      "type": "esql",
+      "tags": [
+        "cortex",
+        "brokerage"
+      ],
+      "description": "Finds securities-based layering in Cortex brokerage accounts: a large inbound wire, buys, a liquidation, and an outbound wire of most of the money, spread over several days. Returns one row per account with the amounts, payout ratio and brokers. Use it for layering questions about brokerage accounts.",
+      "configuration": {
+        "query": "FROM cortex-brokerage-trades\n| WHERE DATE_DIFF(\"day\", @timestamp, NOW()) < ?lookback_days\n| EVAL in_wire = CASE(account_event == \"wire\" AND wire_direction == \"inbound\", amount, 0.0),\n       out_wire = CASE(account_event == \"wire\" AND wire_direction == \"outbound\", amount, 0.0),\n       liq = CASE(account_event == \"liquidation\", amount, 0.0)\n| STATS wired_in = SUM(in_wire), liquidated = SUM(liq), wired_out = SUM(out_wire),\n        first_event = MIN(@timestamp), last_event = MAX(@timestamp), brokers = VALUES(broker_id) BY account_id\n| WHERE wired_in >= 100000 AND liquidated > 0 AND wired_out > 0\n| EVAL payout_ratio = ROUND(wired_out / wired_in, 2), lifecycle_days = DATE_DIFF(\"day\", first_event, last_event)\n| WHERE lifecycle_days >= 2\n| SORT wired_out DESC\n| LIMIT 25",
+        "params": {
+          "lookback_days": {
+            "type": "integer",
+            "description": "How many days back from today to look, as a whole number of days from the question. Layering takes a week or more to play out, so use at least 10 when the question gives no window."
+          }
+        }
+      }
+    },
+    {
+      "id": "cortex.wash_trading",
+      "type": "esql",
+      "tags": [
+        "cortex",
+        "brokerage"
+      ],
+      "description": "Finds wash trading in Cortex brokerage trades: a buy and a matching sell of the same trade between two accounts within two minutes. Returns one row per symbol with the trade count, notional and the accounts involved. Use it for wash trading questions.",
+      "configuration": {
+        "query": "FROM cortex-brokerage-trades\n| WHERE DATE_DIFF(\"day\", @timestamp, NOW()) < ?lookback_days AND account_event IN (\"buy\", \"sell\") AND trade_id IS NOT NULL\n| STATS legs = COUNT(*), traders = COUNT_DISTINCT(account_id), accounts = VALUES(account_id), symbol = VALUES(symbol),\n        amt = MAX(amount), first_ts = MIN(@timestamp), last_ts = MAX(@timestamp) BY trade_id\n| EVAL span_sec = DATE_DIFF(\"second\", first_ts, last_ts)\n| WHERE legs >= 2 AND traders >= 2 AND span_sec <= 120\n| STATS wash_trades = COUNT(*), total_notional = SUM(amt), accounts = VALUES(accounts),\n        first_trade = MIN(first_ts), last_trade = MAX(first_ts) BY symbol\n| SORT total_notional DESC\n| LIMIT 25",
+        "params": {
+          "lookback_days": {
+            "type": "integer",
+            "description": "How many days back from today to look, as a whole number of days from the question, for example 7."
+          }
+        }
+      }
+    },
+    {
+      "id": "cortex.unexplained_wealth",
+      "type": "esql",
+      "tags": [
+        "cortex",
+        "brokerage"
+      ],
+      "description": "Checks one Cortex brokerage account for unexplained wealth: an inbound wire that is bought into, liquidated within 36 hours and wired out again. Returns the amounts, hold hours, payout ratio and brokers. Use it when a question names a brokerage account and asks about sudden wealth or a rapid flip.",
+      "configuration": {
+        "query": "FROM cortex-brokerage-trades\n| WHERE account_id == ?account_id AND DATE_DIFF(\"day\", @timestamp, NOW()) < ?lookback_days\n| EVAL in_amt = CASE(account_event == \"wire\" AND wire_direction == \"inbound\", amount, 0.0),\n       liq_amt = CASE(account_event == \"liquidation\", amount, 0.0),\n       out_amt = CASE(account_event == \"wire\" AND wire_direction == \"outbound\", amount, 0.0),\n       in_ts = CASE(account_event == \"wire\" AND wire_direction == \"inbound\", @timestamp, null),\n       liq_ts = CASE(account_event == \"liquidation\", @timestamp, null)\n| STATS wired_in = SUM(in_amt), liquidated = SUM(liq_amt), wired_out = SUM(out_amt),\n        first_inbound = MIN(in_ts), liq_time = MAX(liq_ts), brokers = VALUES(broker_id) BY account_id\n| WHERE wired_in > 0 AND liquidated > 0 AND wired_out > 0\n| EVAL hold_hours = DATE_DIFF(\"hour\", first_inbound, liq_time), payout_ratio = ROUND(wired_out / wired_in, 2)\n| WHERE hold_hours >= 0 AND hold_hours <= 36",
+        "params": {
+          "account_id": {
+            "type": "string",
+            "description": "The Cortex brokerage account number to check, exactly as the question gives it, for example 4096."
+          },
+          "lookback_days": {
+            "type": "integer",
+            "description": "How many days back from today to look, as a whole number of days from the question, for example 30."
+          }
+        }
+      }
+    }
+  ],
+  "agents": [
+    {
+      "id": "tina-compliance",
+      "name": "Tina",
+      "description": "Compliance assistant for Cortex Bank and Trust.",
+      "access_control": {
+        "access_mode": "public"
+      },
+      "configuration": {
+        "instructions": "You are Tina, the compliance assistant at Cortex Bank and Trust, a retail bank in Austin, Texas. Analysts ask you about customer accounts, transactions and Cortex policy. Answer only from what your tools return, never from memory, and say so when your tools return nothing relevant. Name the account ids and figures your tools gave you.",
+        "tools": [
+          {
+            "tool_ids": [
+              "cortex.policy_search",
+              "cortex.structuring_deposits",
+              "cortex.open_case",
+              "cortex.escalate"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

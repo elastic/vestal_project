@@ -17,16 +17,41 @@ from __future__ import annotations
 import time
 from concurrent.futures import ThreadPoolExecutor
 
-from agent_builder import AB, ABError, internal_calls, route_matches, route_record
+from agent_builder import (AB, ABError, internal_calls, route_matches, route_record, splice_delegated,
+                           trace_calls)
+
+TRACE_BUDGET_S = 30  # 22 section 1: sub-agent calls are read from traces, polling up to 30 s
 
 
-def run_case(ab: AB, agent_id: str, case: dict, deadline_at: float | None = None, attempts: int = 2) -> dict:
+def poll_spans(fetch, trace_id: str, budget_s: float = TRACE_BUDGET_S, poll_s: float = 2.0) -> list[dict]:
+    """All spans of one trace once they stop arriving: the root span is present and two reads in a
+    row return the same count (probe-42: complete 5 to 10 s after converse returned). fetch(trace_id)
+    returns the span documents; an outage in it raises and is the caller's to handle."""
+    end = time.monotonic() + budget_s
+    last_n, spans = -1, []
+    while True:
+        spans = fetch(trace_id) or []
+        rooted = any(not sp.get("parent_span_id") for sp in spans)
+        if rooted and len(spans) == last_n:
+            return spans
+        last_n = len(spans)
+        if time.monotonic() + poll_s > end:
+            return spans
+        time.sleep(poll_s)
+
+
+def run_case(ab: AB, agent_id: str, case: dict, deadline_at: float | None = None, attempts: int = 2,
+             spans=None) -> dict:
+    """One case. spans, when given, is fetch(trace_id) -> span documents: a route that delegates
+    (run_subagent) then gets the specialist's own calls spliced in from the trace."""
     t0 = time.monotonic()
     last = None
     for attempt in range(attempts):
         try:
             resp = ab.converse(agent_id, case["input"])
             record = route_record(resp)
+            if spans is not None and resp.get("trace_id") and any(c["tool_id"] == "run_subagent" for c in record):
+                record = splice_delegated(record, trace_calls(poll_spans(spans, resp["trace_id"]), agent_id))
             ok, reason = route_matches(case.get("expected") or [], record, case.get("forbid") or [])
             return {"id": case["id"], "passed": ok, "reason": reason, "route": record,
                     "internal": internal_calls(resp), "conversation_id": resp.get("conversation_id"),
@@ -42,10 +67,10 @@ def run_case(ab: AB, agent_id: str, case: dict, deadline_at: float | None = None
 
 
 def run_cases(ab: AB, agent_id: str, cases: list[dict], concurrency: int = 3,
-              deadline_at: float | None = None) -> list[dict]:
+              deadline_at: float | None = None, spans=None) -> list[dict]:
     """Every case, at most `concurrency` in flight, results in the input order."""
     with ThreadPoolExecutor(max(1, concurrency)) as pool:
-        return list(pool.map(lambda c: run_case(ab, agent_id, c, deadline_at), cases))
+        return list(pool.map(lambda c: run_case(ab, agent_id, c, deadline_at, spans=spans), cases))
 
 
 def route_text(record: list[dict], show_params: bool = True) -> str:
@@ -56,15 +81,23 @@ def route_text(record: list[dict], show_params: bool = True) -> str:
     for c in record:
         params = {k: v for k, v in (c.get("params") or {}).items() if not isinstance(v, (dict, list))}
         shown = ", ".join(f"{k}={v}" for k, v in params.items() if len(str(v)) <= 40) if show_params else ""
-        parts.append(f"{c['tool_id']}({shown})" if shown else c["tool_id"])
+        if c["tool_id"] == "run_subagent":
+            parts.append(f"delegate to {c['params'].get('agent_id')}")
+            continue
+        name = f"{c['agent_id']}: {c['tool_id']}" if c.get("agent_id") else c["tool_id"]
+        parts.append(f"{name}({shown})" if shown else name)
     return " -> ".join(parts)
 
 
 def expected_text(case: dict) -> str:
     parts = []
     for e in case.get("expected") or []:
+        if e["tool_id"] == "run_subagent":
+            parts.append(f"delegate to {(e.get('params') or {}).get('agent_id')}")
+            continue
         shown = ", ".join(f"{k}={v}" for k, v in (e.get("params") or {}).items())
-        parts.append(f"{e['tool_id']}({shown})" if shown else e["tool_id"])
+        name = f"{e['agent_id']}: {e['tool_id']}" if e.get("agent_id") else e["tool_id"]
+        parts.append(f"{name}({shown})" if shown else name)
     text = " -> ".join(parts) or "no custom tool"
     if case.get("forbid"):
         text += f"; never {', '.join(case['forbid'])}"

@@ -13,7 +13,8 @@ Manifest shape (manifests/m4/*.json):
     {"id": "ara-m4-4-1-start",
      "extends": "ara-m4-...-start" | null,         # applied first, recursively
      "settings": {"agentBuilder:tracing:enabled": true, ...},
-     "workflows": [{"id": "...", "yaml_file": "workflows/x.yml"}],   # relative to the manifest
+     "workflows": [{"id": "...", "yaml_file": "workflows/x.yml"}],   # relative to the manifest;
+                                                                     # @@CONNECTOR@@ -> $ARA_AB_CONNECTOR_ID
      "tools": [{"id": "cortex.x", "type": "esql", "description": "...", "configuration": {...}}],
      "agents": [{"id": "tina-compliance", "name": "...", "configuration": {...}}]}
 
@@ -42,6 +43,8 @@ BASE_SETTINGS = {
     "agentBuilder:experimentalFeatures": True,
     "workflows:ui:enabled": True,
 }
+
+CONNECTOR_PLACEHOLDER = "@@CONNECTOR@@"
 
 # Fields the server adds or that a PUT does not take; ignored when comparing.
 _SERVER_FIELDS = {"readonly", "created_at", "updated_at", "createdAt", "updatedAt", "created_by", "updated_by",
@@ -89,6 +92,12 @@ def apply(manifest: pathlib.Path, ab: AB, check: bool = False, log=print) -> int
             log(f"{m['id']}: {len(settings)} settings set")
         for wf in m.get("workflows") or []:
             text = (path.parent / wf["yaml_file"]).read_text()
+            # Workflow AI steps name the pinned connector (D-18); the manifest holds a placeholder.
+            if CONNECTOR_PLACEHOLDER in text:
+                conn = os.environ.get("ARA_AB_CONNECTOR_ID")
+                if not conn:
+                    raise SystemExit(f"{m['id']}: workflow {wf['id']} needs ARA_AB_CONNECTOR_ID")
+                text = text.replace(CONNECTOR_PLACEHOLDER, conn)
             have = ab.get_workflow(wf["id"])
             if have is not None and (have.get("yaml") or "").strip() == text.strip():
                 continue

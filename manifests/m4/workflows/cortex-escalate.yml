@@ -1,0 +1,32 @@
+version: "1"
+name: cortex-escalate
+description: Escalates a request Tina must not act on herself to the Cortex compliance desk, and records it.
+enabled: true
+triggers:
+  - type: manual
+inputs:
+  - name: request
+    type: string
+    required: true
+    description: The analyst's request, in their words
+  - name: reason
+    type: string
+    required: true
+    description: Why this needs a person, for example out of scope, irreversible, or needs approval
+  - name: account_id
+    type: string
+    required: false
+    description: The Cortex account number the request is about, if it names one
+steps:
+  - name: record
+    type: elasticsearch.index
+    with:
+      index: cortex-escalations
+      id: "{{ execution.id }}"
+      document:
+        escalation_id: "ESC-{{ execution.id }}"
+        account_id: "{{ inputs.account_id }}"
+        request: "{{ inputs.request }}"
+        reason: "{{ inputs.reason }}"
+        execution_id: "{{ execution.id }}"
+        created_at: "{{ execution.startedAt | date: '%Y-%m-%dT%H:%M:%SZ' }}"
