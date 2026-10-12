@@ -2597,6 +2597,228 @@ def sar_coherence_checks(sars: list, check, warn, name_res=None) -> None:
          % (len(competing), sum(len(s["questions"]) for s in sars), ", ".join(competing)))
 
 
+# ── Investigation coherence: party roles and event dates (O1, 2026-10-12) ─────
+#
+# Each investigation section is generated on its own from a dossier that lists
+# the counterparties and dates without saying which is which.  Sections then
+# disagree: one names the invoicing vendor as the beneficiary, another dates the
+# wire a month later than the next.  The Key Finding and gold_entity are the
+# canonical record: gold_entity is the beneficiary of the diverted wire, and a
+# company the Key Finding calls the vendor is the vendor.  These checks read the
+# prose sections sentence by sentence and fail on any mention that contradicts
+# that record, on a wire narrated with more than one date, on a recall, report
+# or freeze dated before the wire, on an "investigation opened" date that is not
+# the header's, and on a date implausibly far from the case.  The same checks
+# should run on the M4-M6 generators' output.
+
+# Records whose Key Finding and gold_entity disagree with the facts-index
+# summary about which company is the beneficiary and which the vendor.  The
+# text keeps the facts summary's roles until the gold is ruled on; role
+# mismatches there are warnings, not failures.
+INV_ROLE_HELD = {
+    "inv-002": "KF/gold: beneficiary Obsidian Metals; facts and text: intended Obsidian, beneficiary Falcon Crest",
+    "inv-007": "KF/gold: beneficiary Obsidian Capital; facts and text: intended Obsidian, beneficiary Aperture",
+    "inv-016": "KF/gold: beneficiary Crescent Equipment; facts and text: Crescent Equipment is the vendor",
+    "inv-024": "KF/gold: beneficiary Emberline Imports; facts and text: Emberline Imports is the vendor",
+}
+_INV_PROSE_TITLES = ("Case Summary", "Allegation and Referral Source", "Timeline of Events",
+                     "Funds Tracing", "Beneficiary and Counterparty Analysis",
+                     "Interviews and Documentary Evidence", "Recovery and Indemnification Efforts")
+# A cue must end within this many characters before the company name.
+_ROLE_WINDOW = 60
+_VENDOR_CUE_RE = re.compile(
+    r"\b(?:vendors?|suppliers?|(?:intended|expected|anticipated|customary) (?:payee|recipient|"
+    r"beneficiary)|payee|domain (?:of|for)|purport(?:ing|ed)(?: to be)? (?:from|to originate from)|"
+    r"(?:invoices?|logo|branding) (?:from|of|issued by)|contact at|intended to pay|"
+    r"intended (?:for|to remit (?:funds |payment )?to)|the legitimate|the authentic|"
+    r"the genuine|subsidiary or (?:a )?(?:newly established )?holding company for)\b", re.I)
+_BENEF_CUE_RE = re.compile(r"\bbeneficiary\b(?! (?:institution|bank|financial))|\bpayable to\b", re.I)
+# "intended beneficiary" is the vendor; "secondary beneficiary" an onward party.
+_BENEF_NOT_RE = re.compile(
+    r"(?:intended|expected|anticipated|customary|secondary|subsequent|onward|ultimate|"
+    r"previous|other|tertiary|multiple|third[- ]party)\s+$", re.I)
+_ONWARD_CUE_RE = re.compile(
+    r"\b(?:onward|secondary|subsequent(?:ly)?|third[- ]party|another entity|transferred to|"
+    r"transfers? (?:was |were )?(?:sent |directed )?to|wire (?:was )?(?:sent )?to|disbursed to|"
+    r"moved to|layers?|counterpart(?:y|ies))\b", re.I)
+_INV_EVENT_RE = re.compile(
+    r"recall request|requested (?:a|the) recall|to report (?:the |a )?suspected fraud|"
+    r"reported the suspected fraud|notified Cortex Bank and Trust|became aware|realized|"
+    r"(?:had been|was|were) (?:successfully )?frozen|placed a hold|returned (?:the )?(?:frozen )?funds|"
+    r"credited back", re.I)
+_INV_WIRE_VERB_RE = re.compile(
+    r"\b(?:initiated|executed|authorized|submitted|processed|transmitted|originated|posted|"
+    r"debited|wired|remitted)\b", re.I)
+_INV_WIRE_NOT_RE = re.compile(
+    r"recall|return|refund|indemn|notif|report|inquir|contacted|freez|frozen|hold|credited back|"
+    r"realiz|discover|aware|onward|subsequent|secondary|third|incoming|received from|"
+    r"previous|prior|historical|cancel|trace|314\(b\)|from the [A-Z][\w ]+ account|"
+    r"other victims|outgoing wire transfers|series of|investigat|review|referr|escalat|communication|"
+    r"instructions received", re.I)
+_INV_WIRE_SUBJ_RE = re.compile(
+    r"customer|subject|signer|controller|principal|accounts payable|Cortex Bank and Trust account|"
+    r"account \d|employee|wire department|the company", re.I)
+_INV_OPENED_RES = (
+    re.compile(r"investigation(?: of [^.]{0,80}?)? (?:was )?(?:opened|initiated)"
+               r"(?: by the Financial Intelligence Unit)? on ((?:%s) \d{1,2}, \d{4})" % "|".join(_MONTHS)),
+    re.compile(r"(?:opened|initiated) (?:a |an |this |the )?(?:formal )?investigation"
+               r"(?: [^.]{0,40}?)? on ((?:%s) \d{1,2}, \d{4})" % "|".join(_MONTHS)),
+    re.compile(r"On ((?:%s) \d{1,2}, \d{4}), the [^.]{0,80}? opened (?:a |an |this |the )?"
+               r"(?:formal )?(?:investigation|internal case)" % "|".join(_MONTHS)),
+)
+
+
+def _inv_sections(inv: dict) -> list:
+    out = []
+    for chunk in inv["body"].split("\n## ")[1:]:
+        title, _, body = chunk.partition("\n\n")
+        if title in _INV_PROSE_TITLES:
+            out.append((title, body))
+    return out
+
+
+def _inv_kf_vendors(inv: dict, co_re) -> set:
+    """Companies the Key Finding names as the vendor or intended payee."""
+    out = set()
+    for sent in _sar_sentences(inv["key_finding"]):
+        for m in co_re.finditer(sent):
+            role = _inv_mention_role(sent, m, co_re)
+            if role == "vendor" and m.group(0) != inv["gold_entity"]:
+                out.add(m.group(0))
+    return out
+
+
+def _inv_mention_role(sent: str, m, co_re) -> str:
+    """'vendor', 'beneficiary', 'onward' or '' for one company mention, from the
+    cue closest before it.  A company name between the cue and the mention
+    blocks the cue."""
+    start = m.start()
+    pre = sent[max(0, start - _ROLE_WINDOW):start]
+    best, role, cstart = -1, "", 0
+    for rx, r in ((_VENDOR_CUE_RE, "vendor"), (_BENEF_CUE_RE, "beneficiary"),
+                  (_ONWARD_CUE_RE, "onward")):
+        for c in rx.finditer(pre):
+            if r == "beneficiary" and _BENEF_NOT_RE.search(pre[:c.start()]):
+                r2 = "vendor" if re.search(r"(?:intended|expected|anticipated|customary)\s+$",
+                                           pre[:c.start()], re.I) else "onward"
+            else:
+                r2 = r
+            if c.end() >= best:
+                best, role, cstart = c.end(), r2, c.start()
+    if best < 0:
+        return ""
+    # A negated or hypothetical cue ("had not intended to pay X", "whether the
+    # customer intended to remit funds to X", "other vendors, including X") says
+    # nothing about X's role.
+    if re.search(r"\b(?:not|never|no|other)\s+(?:\w+\s+)?$|\b(?:if|whether)\b[^.]{0,60}$",
+                 sent[:start - len(pre) + cstart], re.I):
+        return ""
+    # Only filler may sit between the cue and the name; anything else
+    # ("did not correspond to", "relationships for", "rather than") detaches it.
+    between = pre[best:]
+    if co_re.search(between):
+        return ""
+    if any(w.lower() not in _ROLE_FILLER for w in re.findall(r"[A-Za-z']+", between)):
+        return ""
+    return role
+
+
+_ROLE_FILLER = set("""was is were named identified listed recorded as being stated to be on of
+for the a an in name account accounts held by associated with at entity entered provided
+designated wire transfer instructions payment invoice fraudulent outbound executed request
+form confirmation altered legitimate known established invoicing purported actual receiving
+its this that customer's beneficiary funds new different financial institution s which customer""".split())
+
+
+def investigation_coherence_checks(invs: list, check, warn, co_re, verbose_detail=False) -> None:
+    print("\n=== investigations: party roles and event dates agree with the key finding ===")
+    role_bad, role_held, wire_multi, wire_kf, early, opened_bad, far = [], [], [], [], [], [], []
+    for inv in invs:
+        did, gold = inv["doc_id"], inv["gold_entity"]
+        kf_vendors = _inv_kf_vendors(inv, co_re)
+        y, mo, d = (int(x) for x in inv["date_opened"].split("-"))
+        opened = (y, mo, d)
+        secs = _inv_sections(inv)
+        # Roles.
+        bad = []
+        for title, body in secs:
+            for sent in _sar_sentences(body):
+                for m in co_re.finditer(sent):
+                    if m.group(0) == inv["subject_name"]:
+                        continue
+                    name, role = m.group(0), _inv_mention_role(sent, m, co_re)
+                    if role == "beneficiary" and name != gold:
+                        bad.append("%s: '%s' as beneficiary" % (title.split()[0], name) + ((" <<" + sent[:220] + ">>") if verbose_detail else ""))
+                    elif role == "vendor" and (name == gold or (kf_vendors and name not in kf_vendors)):
+                        bad.append("%s: '%s' as vendor" % (title.split()[0], name) + ((" <<" + sent[:220] + ">>") if verbose_detail else ""))
+        if bad:
+            msg = "%s (beneficiary %s, vendor %s): %s" % (
+                did, gold, "/".join(sorted(kf_vendors)) or "-", "; ".join(bad if verbose_detail else bad[:4]))
+            (role_held if did in INV_ROLE_HELD else role_bad).append(msg)
+        # Wire date: every sentence that narrates the subject's wire carries one date.
+        wire = {}
+        kf_wire = set()
+        for title, body in secs + [("Key Finding", inv["key_finding"])]:
+            for sent in _sar_sentences(body):
+                ds = _SAR_DATE_RE.findall(sent)
+                if len(ds) != 1 or not _INV_WIRE_VERB_RE.search(sent):
+                    continue
+                if not re.search(r"wire|transfer|payment|funds", sent, re.I):
+                    continue
+                if _INV_WIRE_NOT_RE.search(sent):
+                    continue
+                if inv["gold_amount"] not in sent and not _INV_WIRE_SUBJ_RE.search(sent) \
+                        and inv["subject_name"] not in sent:
+                    continue
+                dt = _parse_prose_date(ds[0])
+                if title == "Key Finding":
+                    kf_wire.add(dt)
+                else:
+                    wire.setdefault(dt, []).append(title.split()[0])
+        if len(wire) > 1:
+            wire_multi.append("%s: %s" % (did, ", ".join(
+                "%04d-%02d-%02d (%s)" % (k + (",".join(sorted(set(v))),)) for k, v in sorted(wire.items()))))
+        if kf_wire and wire and set(wire) - kf_wire:
+            wire_kf.append("%s: key finding %s, text %s" % (
+                did, ",".join("%04d-%02d-%02d" % k for k in sorted(kf_wire)),
+                ",".join("%04d-%02d-%02d" % k for k in sorted(set(wire) - kf_wire))))
+        wire_date = min(kf_wire) if kf_wire else (min(wire) if len(wire) == 1 else None)
+        for title, body in secs:
+            for sent in _sar_sentences(body):
+                ds = _SAR_DATE_RE.findall(sent)
+                # Opened date.
+                for rx in _INV_OPENED_RES:
+                    for mm in rx.finditer(sent):
+                        if _parse_prose_date(mm.group(1)) != opened:
+                            opened_bad.append("%s %s: '%s' vs header %s" % (
+                                did, title.split()[0], mm.group(1), inv["date_opened"]))
+                # Plausible range: within 400 days before and 120 days after opening.
+                for x in ds:
+                    dt = _parse_prose_date(x)
+                    delta = (date(*dt) - date(*opened)).days
+                    if delta < -400 or delta > 120:
+                        far.append("%s %s: %s" % (did, title.split()[0], x))
+                # Post-wire events dated before the wire.
+                if wire_date and len(ds) == 1 and _INV_EVENT_RE.search(sent) \
+                        and not re.search(r"prior|previous|earlier|historical|other victims|between", sent, re.I):
+                    dt = _parse_prose_date(ds[0])
+                    if dt < wire_date:
+                        early.append("%s %s: %s before wire %04d-%02d-%02d" % (
+                            did, title.split()[0], ds[0], *wire_date))
+    check("investigation_party_roles_match_key_finding", not role_bad,
+          "%d record(s): %s" % (len(role_bad), " | ".join(role_bad if verbose_detail else role_bad[:3])))
+    warn("investigation_party_roles_held_for_gold_ruling", not role_held,
+         "%d record(s): %s" % (len(role_held), " | ".join(role_held)))
+    check("investigation_wire_narrated_with_one_date", not wire_multi,
+          "%d record(s): %s" % (len(wire_multi), " | ".join(wire_multi if verbose_detail else wire_multi[:3])))
+    check("investigation_wire_date_matches_key_finding", not wire_kf, " | ".join(wire_kf))
+    check("investigation_recall_report_freeze_not_before_wire", not early,
+          "%d: %s" % (len(early), " | ".join(early if verbose_detail else early[:3])))
+    check("investigation_opened_date_matches_header", not opened_bad, " | ".join(opened_bad))
+    check("investigation_dates_near_the_case", not far,
+          "%d: %s" % (len(far), " | ".join(far if verbose_detail else far[:4])))
+
+
 def validate(sars: list, passages: list, investigations: list, facts: list,
              cases: list, case_questions: list, dev_sets: dict = None,
              verbose: bool = True) -> dict:
@@ -2857,6 +3079,7 @@ def validate(sars: list, passages: list, investigations: list, facts: list,
         "|".join(map(re.escape, COMPANY_FIRST)), "|".join(map(re.escape, COMPANY_CORE)),
         "|".join(map(re.escape, sorted(COMPANY_SUFFIX, key=len, reverse=True)))))
     sar_coherence_checks(sars, check, warn, (co_re,))
+    investigation_coherence_checks(investigations, check, warn, co_re)
 
     print("\n=== retired names and vendor tokens ===")
     hits = []
