@@ -2632,7 +2632,7 @@ _VENDOR_CUE_RE = re.compile(
 _BENEF_CUE_RE = re.compile(r"\bbeneficiary\b(?! (?:institution|bank|financial))|\bpayable to\b", re.I)
 # "intended beneficiary" is the vendor; "secondary beneficiary" an onward party.
 _BENEF_NOT_RE = re.compile(
-    r"(?:intended|expected|anticipated|customary|secondary|subsequent|onward|ultimate|"
+    r"\b(?:intended|expected|anticipated|customary|secondary|subsequent|onward|ultimate|"
     r"previous|other|tertiary|multiple|third[- ]party)\s+$", re.I)
 _ONWARD_CUE_RE = re.compile(
     r"\b(?:onward|secondary|subsequent(?:ly)?|third[- ]party|another entity|transferred to|"
@@ -2701,7 +2701,7 @@ def _inv_mention_role(sent: str, m, co_re) -> str:
                   (_ONWARD_CUE_RE, "onward")):
         for c in rx.finditer(pre):
             if r == "beneficiary" and _BENEF_NOT_RE.search(pre[:c.start()]):
-                r2 = "vendor" if re.search(r"(?:intended|expected|anticipated|customary)\s+$",
+                r2 = "vendor" if re.search(r"\b(?:intended|expected|anticipated|customary)\s+$",
                                            pre[:c.start()], re.I) else "onward"
             else:
                 r2 = r
@@ -2709,10 +2709,12 @@ def _inv_mention_role(sent: str, m, co_re) -> str:
                 best, role, cstart = c.end(), r2, c.start()
     if best < 0:
         return ""
-    # A negated or hypothetical cue ("had not intended to pay X", "whether the
-    # customer intended to remit funds to X", "other vendors, including X") says
-    # nothing about X's role.
-    if re.search(r"\b(?:not|never|no|other)\s+(?:\w+\s+)?$|\b(?:if|whether)\b[^.]{0,60}$",
+    # A negated, hypothetical or other-party cue ("had not intended to pay X",
+    # "whether the customer intended to remit funds to X", "other vendors,
+    # including X", "another supplier, X", "the historical vendor X") says
+    # nothing about X's role in this wire.
+    if re.search(r"\b(?:not|never|no|other|another|second|historical|previous|former)\s+(?:\w+\s+)?$"
+                 r"|\b(?:if|whether)\b[^.]{0,60}$",
                  sent[:start - len(pre) + cstart], re.I):
         return ""
     # Only filler may sit between the cue and the name; anything else
@@ -2723,6 +2725,48 @@ def _inv_mention_role(sent: str, m, co_re) -> str:
     if any(w.lower() not in _ROLE_FILLER for w in re.findall(r"[A-Za-z']+", between)):
         return ""
     return role
+
+
+# The cue reader above only sees a cue before the name, and reads "transfer was
+# directed to X" as onward.  These patterns name the recipient of the case's own
+# wire directly, in the shapes that reader misses: "directed/sent to X",
+# "designated X as the beneficiary", "X as the beneficiary", "X, the named
+# beneficiary", "the receiving account held by X".
+_PRIMARY_TO_RE = re.compile(
+    r"\b(?:directed|sent|wired|remitted|credited|transmitted)\s+to\s+(?:(?:an?|the)\s+"
+    r"(?:beneficiary\s+|receiving\s+)?account\s+(?:held\s+by|in\s+the\s+name\s+of)\s+)?$", re.I)
+_PRIMARY_DESIGNATED_RE = re.compile(r"\bdesignated\s+$", re.I)
+_PRIMARY_AS_BENEF_RE = re.compile(r"^,?\s+(?:as\s+the\s+beneficiary|the\s+named\s+beneficiary)\b", re.I)
+_PRIMARY_ACCOUNT_RE = re.compile(
+    r"\b(?:the|this)\s+(?:receiving|beneficiary)\s+account\s+(?:was\s+)?(?:held\s+(?:by|in\s+the\s+name\s+of)|"
+    r"in\s+the\s+name\s+of)\s+$", re.I)
+# Words that make a recipient sentence about an onward hop, not the case's wire.
+_PRIMARY_ONWARD_RE = re.compile(
+    r"\b(?:onward|subsequent(?:ly)?|secondary|further|additional|portions?|remaining|remainder|"
+    r"dissipat\w*|layer\w*|third[- ]party|from the [^.]{0,60}? account)\b", re.I)
+
+
+def _inv_primary_recipients(sent: str, co_re, gold_amount: str, wire_prose: str) -> list:
+    """Companies a sentence names as the recipient of the case's own wire."""
+    own_wire = gold_amount in sent or re.search(
+        r"\b(?:this|the)\s+(?:%s\s+)?(?:outbound\s+|fraudulent\s+|diverted\s+|original\s+)?"
+        r"(?:wire\s+)?transfer\b" % (re.escape(wire_prose) if wire_prose else "(?!)"), sent, re.I)
+    onward = _PRIMARY_ONWARD_RE.search(sent)
+    out = []
+    for m in co_re.finditer(sent):
+        pre, post = sent[:m.start()], sent[m.end():]
+        # "had not been sent to X", "rather than X": X is named as not the recipient.
+        if re.search(r"\b(?:not|never|instead of|rather than)\b[^.]{0,40}$", pre, re.I):
+            continue
+        if _PRIMARY_ACCOUNT_RE.search(pre):
+            # "the receiving account held by X" is the case's wire by definition.
+            out.append(m.group(0))
+        elif own_wire and not onward and (
+                _PRIMARY_TO_RE.search(pre) or
+                (_PRIMARY_DESIGNATED_RE.search(pre) and _PRIMARY_AS_BENEF_RE.search(post)) or
+                _PRIMARY_AS_BENEF_RE.search(post)):
+            out.append(m.group(0))
+    return out
 
 
 _ROLE_FILLER = set("""was is were named identified listed recorded as being stated to be on of
@@ -2736,7 +2780,7 @@ def investigation_coherence_checks(invs: list, check, warn, co_re, verbose_detai
                                    facts: list = None) -> None:
     print("\n=== investigations: party roles and event dates agree with the key finding ===")
     role_bad, wire_multi, wire_kf, early, opened_bad, far = [], [], [], [], [], []
-    determined_early, fact_dates_bad = [], []
+    determined_early, fact_dates_bad, primary_bad, summary_gold_bad = [], [], [], []
     fact_by_id = {f["doc_id"]: f for f in facts or []}
     for inv in invs:
         did, gold = inv["doc_id"], inv["gold_entity"]
@@ -2766,11 +2810,17 @@ def investigation_coherence_checks(invs: list, check, warn, co_re, verbose_detai
         for title, body in [("Key Finding", inv["key_finding"])] + secs + (
                 [("Fact summary", fact["summary"])] if fact else []):
             for sent in _sar_sentences(body):
-                ds = _SAR_DATE_RE.findall(sent)
-                if len(ds) == 1 and _INV_DETERMINATION_RE.search(sent) \
-                        and _parse_prose_date(ds[0]) < opened:
+                dm = _INV_DETERMINATION_RE.search(sent)
+                ds = list(_SAR_DATE_RE.finditer(sent))
+                if not dm or not ds:
+                    continue
+                # With several dates, the one nearest the determination phrase
+                # is the determination's own ("On December 4, 2024, the
+                # investigation concluded that the October 23, 2024 wire ...").
+                near = min(ds, key=lambda x: min(abs(x.start() - dm.end()), abs(dm.start() - x.end())))
+                if _parse_prose_date(near.group(0)) < opened:
                     determined_early.append("%s %s: %s, opened %s" % (
-                        did, title.split()[0], ds[0], inv["date_opened"]))
+                        did, title.split()[0], near.group(0), inv["date_opened"]))
         # The fact record is an extraction of this report: same full dates,
         # the key date among them, the same open date, and no summary date the
         # report lacks.
@@ -2794,6 +2844,12 @@ def investigation_coherence_checks(invs: list, check, warn, co_re, verbose_detai
                 probs.append("summary dates not in report %s" % stray)
             if probs:
                 fact_dates_bad.append("%s: %s" % (did, "; ".join(probs)))
+            # The extraction contract: the summary states the gold amount, the
+            # beneficiary and the key date verbatim.
+            lacks = [k for k in ("gold_amount", "gold_entity", "key_date")
+                     if inv[k] not in fact.get("summary", "")]
+            if lacks:
+                summary_gold_bad.append("%s lacks %s" % (did, ", ".join(lacks)))
         # Wire date: every sentence that narrates the subject's wire carries one date.
         wire = {}
         kf_wire = set()
@@ -2822,6 +2878,15 @@ def investigation_coherence_checks(invs: list, check, warn, co_re, verbose_detai
                 did, ",".join("%04d-%02d-%02d" % k for k in sorted(kf_wire)),
                 ",".join("%04d-%02d-%02d" % k for k in sorted(set(wire) - kf_wire))))
         wire_date = min(kf_wire) if kf_wire else (min(wire) if len(wire) == 1 else None)
+        # The recipient of the case's own wire is gold_entity, in every section.
+        wire_prose = ("%s %d, %d" % (_MONTHS[wire_date[1] - 1], wire_date[2], wire_date[0])
+                      if wire_date else "")
+        for title, body in secs:
+            for sent in _sar_sentences(body):
+                for name in _inv_primary_recipients(sent, co_re, inv["gold_amount"], wire_prose):
+                    if name not in (gold, inv["subject_name"]):
+                        primary_bad.append("%s %s: '%s'" % (did, title.split()[0], name) + (
+                            (" <<" + sent[:220] + ">>") if verbose_detail else ""))
         for title, body in secs:
             for sent in _sar_sentences(body):
                 ds = _SAR_DATE_RE.findall(sent)
@@ -2846,6 +2911,8 @@ def investigation_coherence_checks(invs: list, check, warn, co_re, verbose_detai
                             did, title.split()[0], ds[0], *wire_date))
     check("investigation_party_roles_match_key_finding", not role_bad,
           "%d record(s): %s" % (len(role_bad), " | ".join(role_bad if verbose_detail else role_bad[:3])))
+    check("investigation_primary_wire_recipient_is_gold", not primary_bad,
+          "%d: %s" % (len(primary_bad), " | ".join(primary_bad if verbose_detail else primary_bad[:4])))
     check("investigation_wire_narrated_with_one_date", not wire_multi,
           "%d record(s): %s" % (len(wire_multi), " | ".join(wire_multi if verbose_detail else wire_multi[:3])))
     check("investigation_wire_date_matches_key_finding", not wire_kf, " | ".join(wire_kf))
@@ -2860,12 +2927,25 @@ def investigation_coherence_checks(invs: list, check, warn, co_re, verbose_detai
         check("fact_record_dates_match_report", not fact_dates_bad,
               "%d record(s): %s" % (len(fact_dates_bad), " | ".join(
                   fact_dates_bad if verbose_detail else fact_dates_bad[:3])))
+        check("fact_summary_states_the_gold", not summary_gold_bad, " | ".join(summary_gold_bad))
+
+
+def default_company_re():
+    """Company names as this generator builds them: first + core + suffix, or
+    first + a suffix that already carries a core word ("Kestrel Trading Co.").
+    The role and recipient checks see only names this pattern matches, so a
+    port to another generator passes its own pattern as validate(company_re=)."""
+    core_suffix = [s for s in COMPANY_SUFFIX if s.split()[0] in COMPANY_CORE]
+    alt = lambda xs: "|".join(map(re.escape, sorted(xs, key=len, reverse=True)))
+    return re.compile(r"(?:%s) (?:(?:%s) (?:%s)|(?:%s))" % (
+        alt(COMPANY_FIRST), alt(COMPANY_CORE), alt(COMPANY_SUFFIX), alt(core_suffix)))
 
 
 def validate(sars: list, passages: list, investigations: list, facts: list,
              cases: list, case_questions: list, dev_sets: dict = None,
-             verbose: bool = True) -> dict:
-    """The T9 structural checks the private validate_heldout.py delegates to."""
+             verbose: bool = True, company_re=None) -> dict:
+    """The T9 structural checks the private validate_heldout.py delegates to.
+    company_re: the corpus's company-name pattern (default_company_re() here)."""
     failures, warnings = [], []
 
     def check(label, ok, detail=""):
@@ -3118,9 +3198,7 @@ def validate(sars: list, passages: list, investigations: list, facts: list,
         check("devset_3_3_bank_questions_resolve_to_the_case_question_bank", not drift,
               ",".join(drift[:5]))
 
-    co_re = re.compile(r"(?:%s) (?:%s) (?:%s)" % (
-        "|".join(map(re.escape, COMPANY_FIRST)), "|".join(map(re.escape, COMPANY_CORE)),
-        "|".join(map(re.escape, sorted(COMPANY_SUFFIX, key=len, reverse=True)))))
+    co_re = company_re or default_company_re()
     sar_coherence_checks(sars, check, warn, (co_re,))
     investigation_coherence_checks(investigations, check, warn, co_re, facts=facts)
 
