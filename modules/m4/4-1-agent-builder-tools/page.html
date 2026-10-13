@@ -117,8 +117,9 @@ description B: "Finds structuring on one account:
          (account_id=3456, lookback_days=30)
   <span class="right">right tool, right values, nothing else</span></pre>
 
-  <p>Tina reads every tool's description on every turn. Measured on this lab's six held-out questions: with description A, Tina still found the detection tool by its name and parameters, but added a policy search to 9 of 12 detection questions. With description B she added it to none of 20.</p>
+  <p>Tina reads every tool's description on every turn. Measured in this lab's calibration runs: with description A, Tina still found the detection tool by its name and parameters, but added a policy search to 9 of 12 detection questions. With description B she added it to none of 20.</p>
   <p>With two tools, a name can carry the choice. With twenty, or two that overlap, only the description can. Say what the tool finds, which questions it answers, and which belong to another tool. The check reads the routes on held-out questions, where a second tool "to be sure" counts as a miss, and the descriptions' length, never your wording.</p>
+  <p><strong>Use the words your analysts use.</strong> Cortex's transaction monitoring calls structuring scenario CX-7, and analysts ask for it by that code: "run CX-7 on this account", "did it trip CX-7?". Nothing in <code>structuring_deposits</code> or its parameters says CX-7, so a description that never mentions it leaves Tina to guess. A question about what Cortex policy says to do once a CX-7 alert fires still belongs to the policy search, and the description should say that too.</p>
 </section>
 
 <section>

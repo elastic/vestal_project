@@ -35,7 +35,7 @@
   },
   {
    "id": "b1-dev-03",
-   "input": "Any structuring by account 476 in the last 3 days?",
+   "input": "CX-7 on account 476 for the last 3 days, please.",
    "expected": [
     {
      "tool_id": "cortex.structuring_deposits",
@@ -51,7 +51,7 @@
   },
   {
    "id": "b1-dev-04",
-   "input": "Account 3456: any cash deposits just under 10,000 dollars over the past 30 days?",
+   "input": "Has account 3456 set off a CX-7 alert in the past 30 days?",
    "expected": [
     {
      "tool_id": "cortex.structuring_deposits",
@@ -79,7 +79,7 @@
   },
   {
    "id": "b1-dev-06",
-   "input": "Which wire transfer red flags does Cortex policy list?",
+   "input": "Who reviews a CX-7 alert under Cortex policy, and how quickly?",
    "expected": [
     {
      "tool_id": "cortex.policy_search"
