@@ -66,29 +66,29 @@ pre .label { color: #ABB4C4; }
 
 <section id="problem">
 <h2>The problem</h2>
-<pre>Analyst: Is there any wash trading in Cortex brokerage trades over
-         the last 10 days?
+<pre>Analyst: Anything suspicious in Cortex brokerage trades over the last
+         10 days?
 
-Tina's tool calls (start state: no brokerage tool, no specialist)
-  no Cortex tool called
-  search_relevant_skills      x2   (internal)
-  describe_api                     (internal)
-  execute_api                 x6   (internal: raw Elasticsearch requests)
-  read_file                        (internal)
+Tina's tool calls (every tool on Tina, the three brokerage checks too;
+no specialist)
+  cortex.wash_trading          10 days
+  cortex.securities_layering   10 days
+  (cortex.unexplained_wealth takes an account; not called)
 
-Tina: I found 7 accounts in the top results showing the hallmark
-      wash trading pattern: buying and selling the same security in
-      the same 10-day window.
-      1618  QNTM  4 buys, 6 sells
-      3141  QNTM  3 buys, 4 sells
-      1506, 1538, 2026  MRDN    1360  BRVL    1615  NOVA
-      ... The aggregation only captured the top 200 accounts by
-      trade volume, so there may be additional lower-volume hits ...
+Tina: Yes. Both brokerage detections returned hits for the last 10
+      days.
+      Wash trading: 1 symbol, QNTM ... accounts 2718, 3141, 1618
+      and 1414.
+      Securities layering: 3 accounts, all through broker 3 ...
+      1594, 1874, 21162.
+      I haven't opened any cases. ... I can also run the
+      unexplained-wealth check on any single account.
 
-(captured live on this lab's model, 4.2 track test r3)</pre>
+(captured live on this lab's model, a 4.2 calibration run. Account 4096
+ was named in 0 of 5 runs.)</pre>
 
-  <p>Tina has no brokerage tool, so she invented a definition of wash trading on the spot (one account buying and selling the same symbol) and wrote her own queries for it. The planted ring is four accounts trading QNTM with each other. She found two of them, missed two, and named five accounts whose one buy and one sell are ordinary trading. Her own answer says the search was cut off at 200 accounts.</p>
-  <p>Nobody can sign off a securities finding whose route shows no securities check. Cortex has those checks; they belong to a specialist who knows when to use them.</p>
+  <p>Every brokerage check was on Tina, and she used two of them well: the QNTM ring and the three layering accounts are the ones planted in the data. She skipped the third. <code>cortex.unexplained_wealth</code> takes an account, the question named none, and her answer reports "both brokerage detections" as if that were all of them. Account 4096, planted with unexplained wealth, never came up.</p>
+  <p>Nothing in the route says who owns brokerage, or what "anything suspicious" covers on Cortex's securities desk. With every tool on one agent, Tina settles that on the fly, between cash, cases and escalations. Brokerage work belongs to a specialist that holds those tools and knows when to use each one; Tina's job is to know when to hand off.</p>
   <p>Two more gaps sit behind it. The sweep for structuring runs only when someone remembers to ask. And triage is whatever Tina decides that turn: nothing written says she must detect before she opens a case, or that a request to close an account is not hers to act on.</p>
 </section>
 

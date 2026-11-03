@@ -1,18 +1,20 @@
-Analyst: Over the last 7 days, did account 1981 make cash deposits
-         just under the 10,000 dollar reporting threshold?
+Analyst: Did account 1981 trip CX-7 in the last 7 days?
 
-Tina's tool calls (start state: one tool, cortex.policy_search)
+Tina's tools: cortex.policy_search, and a detection tool described in
+one line: "Cash deposits for an account."
+
+Tina's tool calls
   cortex.policy_search
-  search_relevant_skills      x2   (internal)
-  describe_api                     (internal)
-  execute_api                 x14  (internal: raw Elasticsearch requests)
+  cortex.structuring_deposits   account 1981, 7 days  -> 6 deposits
+  cortex.policy_search          ("CX-7")
+  cortex.policy_search
 
-Tina: Yes - there is a clear pattern of sub-$10,000 cash deposits.
-      6 cash deposits in the 7-day window ... every single one just
-      below the $10,000 reporting threshold ...
-      Additionally, on Oct 10, the same account sent 5 rapid outbound
-      wire transfers to Shenzhen Harbour Bank ...
-      This warrants escalation ... and likely a Suspicious Activity
-      Report (SAR) filing.
+Tina: I can't confirm whether account 1981 tripped CX-7. The policy
+      manual doesn't define a rule called "CX-7". I searched for it
+      three ways and found no rule, alert or code with that name. I
+      won't guess which threshold it refers to.
+      Account 1981 cash deposits, last 7 days ...
 
-(captured live on this lab's model, 4.1 track test r3)
+(captured live on this lab's model, a 4.1 calibration run. In 5 of 5
+ runs she went to the policy manual first; in 4 she would not confirm,
+ in the other she guessed CX-7 was a different rule.)

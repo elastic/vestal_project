@@ -14,7 +14,7 @@
 <h2>The problem</h2>
 <pre><!-- include: problem.txt --></pre>
 
-  <p>The same offhand sentence went to two agents with the same tool. Tina escalated, because her Lab 4.2 escalation rule told her to. The desk agent filed, and in this run it did not even look at the account first. The filing has status <code>transmitted</code>, and under Cortex's rule a transmitted SAR cannot be withdrawn. Nothing between the sentence and the filing asked anyone.</p>
+  <p>The same offhand sentence went to two agents with the same tool. Tina escalated, because her Lab 4.2 escalation rule told her to. The desk agent looked up the deposits, chose its own 30-day window, wrote the narrative and filed. The filing has status <code>transmitted</code>, and under Cortex's rule a transmitted SAR cannot be withdrawn. Nothing between the sentence and the filing asked anyone.</p>
   <p>The difference was in each agent's instructions, not in the tool. Any agent given <code>cortex.file_sar</code> can file, and whether it does depends on the model following its instructions. That makes an instruction a request, not a control. The control has to sit on the action itself.</p>
 </section>
 
@@ -35,11 +35,11 @@
 <h2>A bad credential: seen or hidden</h2>
 <table>
   <tr><th>Path</th><th>A bad key shows up as</th></tr>
-  <tr><td>A workflow <code>http</code> step through a connector</td><td>The step and the run fail: <code>ConnectorExecutionError [401] Invalid API key</code></td></tr>
-  <tr><td>An agent calling a connector directly (<code>platform.core.execute_connector_sub_action</code>)</td><td>The trace span says <strong>Ok</strong>; only the tool's result says <code>ok: false</code>, code 401</td></tr>
+  <tr><td>A workflow <code>http</code> step through a connector</td><td>The step and the run fail with <code>ConnectorExecutionError</code>: <code>[401] Invalid API key</code></td></tr>
+  <tr><td>An agent calling a connector directly (the <code>execute_connector_sub_action</code> tool)</td><td>The trace span says <strong>Ok</strong>; only the tool's result says <code>ok: false</code>, code 401</td></tr>
 </table>
 
-  <p>The second row is a measured platform fact: measured on Serverless in 2026, in this certification's design research, with an agent calling the Jina connector's <code>browse</code> with an invalid key. The span's <code>status.code</code> was <code>Ok</code>, with no error type; the step result held <code>ok: false</code>, <code>code: 401</code>. The call to the connector succeeded, so the trace recorded success, though the service refused the key. A dashboard of span statuses would show nothing wrong.</p>
+  <p>The second row is a measured platform fact: measured on Serverless in 2026, in this certification's design research, with an agent calling the Jina connector's <code>browse</code> through <code>platform.core.execute_connector_sub_action</code> with an invalid key. The span's <code>status.code</code> was <code>Ok</code>, with no error type; the step result held <code>ok: false</code>, <code>code: 401</code>. The call to the connector succeeded, so the trace recorded success, though the service refused the key. A dashboard of span statuses would show nothing wrong.</p>
   <p>So judge a call to the outside by its result, never by the trace's status. A workflow makes that easier, because a refused key fails the run where anyone reading it can see. Build 1's check reads the run.</p>
 </section>
 

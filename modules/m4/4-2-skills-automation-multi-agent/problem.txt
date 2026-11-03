@@ -1,20 +1,20 @@
-Analyst: Is there any wash trading in Cortex brokerage trades over
-         the last 10 days?
+Analyst: Anything suspicious in Cortex brokerage trades over the last
+         10 days?
 
-Tina's tool calls (start state: no brokerage tool, no specialist)
-  no Cortex tool called
-  search_relevant_skills      x2   (internal)
-  describe_api                     (internal)
-  execute_api                 x6   (internal: raw Elasticsearch requests)
-  read_file                        (internal)
+Tina's tool calls (every tool on Tina, the three brokerage checks too;
+no specialist)
+  cortex.wash_trading          10 days
+  cortex.securities_layering   10 days
+  (cortex.unexplained_wealth takes an account; not called)
 
-Tina: I found 7 accounts in the top results showing the hallmark
-      wash trading pattern: buying and selling the same security in
-      the same 10-day window.
-      1618  QNTM  4 buys, 6 sells
-      3141  QNTM  3 buys, 4 sells
-      1506, 1538, 2026  MRDN    1360  BRVL    1615  NOVA
-      ... The aggregation only captured the top 200 accounts by
-      trade volume, so there may be additional lower-volume hits ...
+Tina: Yes. Both brokerage detections returned hits for the last 10
+      days.
+      Wash trading: 1 symbol, QNTM ... accounts 2718, 3141, 1618
+      and 1414.
+      Securities layering: 3 accounts, all through broker 3 ...
+      1594, 1874, 21162.
+      I haven't opened any cases. ... I can also run the
+      unexplained-wealth check on any single account.
 
-(captured live on this lab's model, 4.2 track test r3)
+(captured live on this lab's model, a 4.2 calibration run. Account 4096
+ was named in 0 of 5 runs.)

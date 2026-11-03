@@ -14,8 +14,8 @@
 <h2>The problem</h2>
 <pre><!-- include: problem.txt --></pre>
 
-  <p>The answer is right: those are the six deposits. Now try to sign it off. Tina had no tool for the question, so she wrote her own: fourteen raw Elasticsearch requests through the platform's internal API tool, with filters, band and window she chose on the fly. Nobody reviewed that query, the next run may write a different one, and the record shows "execute_api" fourteen times rather than one named check with an account and a window. She also volunteered a wire-transfer finding nobody asked for.</p>
-  <p>A compliance desk needs the opposite: one reviewed query, called by name, with the account and the window as typed values you can read back. That is a tool, and Tina picks it by what its description says.</p>
+  <p>The data was in her hands: the detection tool returned six cash deposits from 9,257.73 to 9,454.45 dollars, one a day for six days. She still would not answer. Cortex analysts ask "did it trip CX-7?", and nothing in the tool said CX-7, so Tina went to the policy manual to learn what CX-7 meant, found no rule by that name, and stopped. In one run of five she guessed instead, and picked the wrong rule: a 12,500 dollar seven-day aggregate.</p>
+  <p>A compliance desk needs the opposite: one reviewed query, called by name, with the account and the window as typed values you can read back, that answers in the words the analysts use. That is a tool, and Tina picks it, and trusts it, by what its description says. "Cash deposits for an account." told her neither what the tool finds nor that it is CX-7.</p>
 </section>
 
 <section>
@@ -117,7 +117,7 @@ description B: "Finds structuring on one account:
          (account_id=3456, lookback_days=30)
   <span class="right">right tool, right values, nothing else</span></pre>
 
-  <p>Tina reads every tool's description on every turn. Measured in this lab's calibration runs: with description A, Tina still found the detection tool by its name and parameters, but added a policy search to 9 of 12 detection questions. With description B she added it to none of 20.</p>
+  <p>Tina reads every tool's description on every turn. Measured in this lab's calibration runs: with description A, Tina still found the detection tool by its name and parameters, but added a policy search to 24 of 24 detection questions. With description B she added it to none of 20.</p>
   <p>With two tools, a name can carry the choice. With twenty, or two that overlap, only the description can. Say what the tool finds, which questions it answers, and which belong to another tool. The check reads the routes on held-out questions, where a second tool "to be sure" counts as a miss, and the descriptions' length, never your wording.</p>
   <p><strong>Use the words your analysts use.</strong> Cortex's transaction monitoring calls structuring scenario CX-7, and analysts ask for it by that code: "run CX-7 on this account", "did it trip CX-7?". Nothing in <code>structuring_deposits</code> or its parameters says CX-7, so a description that never mentions it leaves Tina to guess. A question about what Cortex policy says to do once a CX-7 alert fires still belongs to the policy search, and the description should say that too.</p>
 </section>

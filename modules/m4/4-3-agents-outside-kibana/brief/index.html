@@ -73,14 +73,13 @@ pre .label { color: #ABB4C4; }
 Tina's tool calls
   no Cortex tool called
 
-Tina: I don't have enough context to know which account or check
-      you're referring to - this appears to be the start of our
-      conversation and there's no prior query to repeat.
-      Could you let me know:
-      - Which account you'd like me to check?
-      - How many days back to look?
+Tina asks back, with no answer text:
+  Which account should I run the structuring check on?
+      I'll type the account number
+  What lookback window should I use?
+      7 days  /  30 days  /  90 days
 
-(captured live on this lab's model, 4.3 calibration copy t43-cal)</pre>
+(captured live on this lab's model, a 4.3 calibration run)</pre>
 
   <p>The turn reached Tina without the conversation it belonged to. "That check" and "those" had pointed at an account, a window and an amount from earlier turns. On their own they point at nothing, so Tina asked for the account and the window the analyst had already given her.</p>
   <p>The same gap opens wider when another agent calls Tina's tools. Each call arrives alone, with no conversation behind it and none of Tina's rules.</p>
