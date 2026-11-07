@@ -1,7 +1,8 @@
 {
-  "_doc": "M4 reference question set (21 section 10), built by lib/kit/build_m4_reference.py from the M4 dev sets plus 4.4's fixed statute question; do not edit by hand. Each case is in the M4 case schema and runs against ara-m4-end with ara_behavior.run_case. kind is the desk that answers. A case with page expects cortex.read_page on that page (url compared normalised). Left out: the 4.C AML-desk cases, whose tools ara-m4-end (the 4.4 reference end, 25 section 8.3) does not hold.",
+  "_doc": "M4 reference question set (21 section 10), built by lib/kit/build_m4_reference.py from the M4 dev sets plus 4.4's fixed statute question; do not edit by hand. Each case is in the M4 case schema and runs against ara-m4-end with ara_behavior.run_case. kind is the desk that answers. A case with page expects cortex.read_page on that page (url compared normalised). Left out: the 4.C AML-desk cases, whose tools ara-m4-end (the 4.4 reference end, 25 section 8.3) does not hold; 4-1-b2:b2-dev-03, which opens a layering_chain case on Tina's own word; the end state's rules of engagement let her open a case only for an account a detection returned, and no detection covers layering_chain, so she escalates.",
   "version": "v1",
   "left_out": [
+    "4-1-b2:b2-dev-03",
     "4-c-dev:c-dev-04",
     "4-c-dev:c-dev-05",
     "4-c-dev:c-dev-06",
@@ -134,21 +135,6 @@
           "params": {
             "account_id": "1594",
             "pattern": "securities_layering"
-          }
-        }
-      ]
-    },
-    {
-      "id": "4-1-b2-03",
-      "kind": "coordinator",
-      "source": "4-1-b2:b2-dev-03",
-      "input": "Open a layering_chain case for account 32687. Findings: funds hop through accounts 16384, 8192, 4096 and 2048 within hours.",
-      "expected": [
-        {
-          "tool_id": "cortex.open_case",
-          "params": {
-            "account_id": "32687",
-            "pattern": "layering_chain"
           }
         }
       ]

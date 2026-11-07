@@ -38,6 +38,12 @@ SPECIALISTS = {AML_ID: "aml", "cortex-securities-irregularities": "securities"}
 END_REACH = {"cortex.policy_search", "cortex.structuring_deposits", "cortex.open_case", "cortex.escalate",
              "cortex.file_sar", "cortex.read_page", "run_subagent", "cortex-securities-irregularities",
              "cortex.securities_layering", "cortex.wash_trading", "cortex.unexplained_wealth"}
+# Cases whose 4.1 expectation a later M4 track's reference overrules in ara-m4-end (probe r6, 2 of 2 runs).
+SUPERSEDED = {
+    "4-1-b2:b2-dev-03": ("opens a layering_chain case on Tina's own word; the end state's rules of engagement let "
+                         "her open a case only for an account a detection returned, and no detection covers "
+                         "layering_chain, so she escalates"),
+}
 
 # 4.4 Build 1's fixed question (thresholds.json build1, extension; assignment step 5). The check
 # passes a run that calls cortex.read_page on the pinned page; Tina first looks up the account.
@@ -81,7 +87,7 @@ def build(assets: pathlib.Path) -> dict:
     for name, rel in SETS:
         for i, c in enumerate(json.loads((assets / "data/dev-sets/m4" / rel).read_text())["cases"], 1):
             c = resolve(c)
-            if not reachable(c):
+            if not reachable(c) or f"{name}:{c['id']}" in SUPERSEDED:
                 left_out.append(f"{name}:{c['id']}")
                 continue
             entry = {"id": f"{name}-{i:02d}", "kind": kind_of(c), "source": f"{name}:{c['id']}",
@@ -95,7 +101,8 @@ def build(assets: pathlib.Path) -> dict:
                  "sets plus 4.4's fixed statute question; do not edit by hand. Each case is in the M4 case schema "
                  "and runs against ara-m4-end with ara_behavior.run_case. kind is the desk that answers. A case "
                  "with page expects cortex.read_page on that page (url compared normalised). Left out: the "
-                 "4.C AML-desk cases, whose tools ara-m4-end (the 4.4 reference end, 25 section 8.3) does not hold."),
+                 "4.C AML-desk cases, whose tools ara-m4-end (the 4.4 reference end, 25 section 8.3) does not hold; "
+                 + "; ".join(f"{k}, which {v}" for k, v in SUPERSEDED.items()) + "."),
         "version": "v1",
         "left_out": left_out,
         "cases": cases,
