@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-m4_lint.py - the M4 lint lines (22 section 1, standard seed), for one traqs track.
+m4_lint.py - the M4 lint lines (22 section 1, standard seed) and M5's additions (25 section 1), for one
+traqs track. The module comes from the slug (cert-sk-ara-<N>-...): tag prefix m<N>-, manifests/m<N>,
+modules/m<N>.
 
 Usage:
   python3 lib/kit/m4_lint.py <traqs track dir> [--assets <vestal_project root>]
@@ -19,6 +21,10 @@ Authoring tool; nothing in a sandbox runs it. Runs beside ara-lint.sh and align_
   model      a model or vendor id appears only on a line marked "# ARA_MODEL" (22 section 1); the
              track's assets pages (modules/m4/<track>/: page.html, brief/, problem.txt) carry none
   identity   no grading check converses with ES_API_KEY (checks converse as tina-runtime)
+M5 and later (25 section 1):
+  ragas      no RAGAS package in any import, requirement or pip install line (RAGAS is vocabulary only)
+  reason     no grading check reads a judge's written reason (judge.raw, ["raw"], ["reason"])
+  traces     no grading check reads traces-* (harness numbers come from the converse response)
 Exit 1 on any FAIL.
 """
 from __future__ import annotations
@@ -47,9 +53,11 @@ def main(argv=None) -> int:
         fails += 0 if ok else 1
 
     print(track.name)
+    mm = re.match(r"(?:cert-sk-ara|ara-m\d)-(\d)-", track.name)
+    mod = f"m{mm.group(1)}" if mm else "m4"
     setup = next(track.glob("01-*/setup-elastic-serverless")).read_text()
     m = re.search(r'^ARA_ASSETS_TAG="([^"]+)"', setup, re.M)
-    report("tag", bool(m) and m.group(1).startswith("m4-"), f"ARA_ASSETS_TAG={m.group(1) if m else None}")
+    report("tag", bool(m) and m.group(1).startswith(f"{mod}-"), f"ARA_ASSETS_TAG={m.group(1) if m else None}")
 
     # thresholds: the copy the 01 setup writes to /opt/ara/thresholds.json is private/thresholds.json
     # (ara-embed does not carry it; a stale copy failed t44-r1 provisioning)
@@ -73,6 +81,9 @@ def main(argv=None) -> int:
         if re.match(r"\d\d-", f.name):
             report("message", not re.search(r"response\.message|\[\"response\"\]|\.get\(\"response\"\)", text), f.name)
             report("identity", not re.search(r"AB\([^)]*ES_API_KEY[^)]*\)\.converse|admin\(\)\.converse", text), f.name)
+            if mod >= "m5":
+                report("reason", not re.search(r"judge\.raw|\[[\"']raw[\"']\]|\[[\"']reason[\"']\]|\.get\([\"'](?:raw|reason)[\"']", text), f.name)
+                report("traces", "traces-" not in text, f.name)
 
     thresholds = json.loads((track / "private/thresholds.json").read_text())
     ids = [(k, v) for sec in thresholds.values() if isinstance(sec, dict) for k, v in sec.items()
@@ -80,15 +91,15 @@ def main(argv=None) -> int:
     for k, v in ids:
         ok = TOOL_ID_RE.match(v) if k == "tool_id" else HYPHEN_ID_RE.match(v)
         report("ids", bool(ok), f"{k}={v}")
-    mpath = re.search(r"manifests/m4/([\w.-]+\.json)", setup)
+    mpath = re.search(rf"manifests/{mod}/([\w.-]+\.json)", setup)
     manifest_ids: set[str] = set()
     if mpath:
-        mf = a.assets / "manifests/m4" / mpath.group(1)
+        mf = a.assets / f"manifests/{mod}" / mpath.group(1)
         chain = []
         while mf.exists():
             m4 = json.loads(mf.read_text())
             chain.append(m4)
-            mf = mf.parent / f"{m4['extends']}.json" if m4.get("extends") else pathlib.Path("/nonexistent")
+            mf = (mf.parent / f"{m4['extends']}.json").resolve() if m4.get("extends") else pathlib.Path("/nonexistent")
         for m4 in chain:
             for t in m4.get("tools") or []:
                 manifest_ids.add(t["id"])
@@ -109,7 +120,13 @@ def main(argv=None) -> int:
             if MODEL_RE.search(line) and "# ARA_MODEL" not in line:
                 report("model", False, f"{f.relative_to(track)}:{n}: {line.strip()[:90]}")
     # The track's assets pages (Brief source, built Brief, problem capture) carry no model id either.
-    pages = a.assets / "modules/m4" / track.name.removeprefix("cert-sk-ara-")
+    if mod >= "m5":
+        for f in sorted(track.rglob("*")):
+            if f.is_file() and "__pycache__" not in f.parts and (f.suffix in (".py", ".txt", ".sh") or f.name.startswith(("setup-", "solve-", "check-"))):
+                for n, line in enumerate(f.read_text(errors="replace").splitlines(), 1):
+                    if re.search(r"^\s*(import ragas|from ragas)|pip[^#\n]*\bragas\b|^ragas\b", line, re.I):
+                        report("ragas", False, f"{f.relative_to(track)}:{n}: {line.strip()[:90]}")
+    pages = a.assets / f"modules/{mod}" / track.name.removeprefix("cert-sk-ara-")
     report("model", pages.is_dir(), f"assets pages {pages.relative_to(a.assets)}"
            + ("" if pages.is_dir() else " not found"))
     for f in sorted(pages.rglob("*")) if pages.is_dir() else []:

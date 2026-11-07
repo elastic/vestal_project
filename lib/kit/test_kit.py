@@ -268,6 +268,33 @@ def test_m4_reference_set_is_current_and_well_formed():
         assert ("page" in c) == any(e["tool_id"] == "cortex.read_page" for e in c["expected"]), c["id"]
 
 
+def test_m4_lint_m5_rules():
+    # 25 section 1: an M5 track takes m5-* tags and fails on a RAGAS import, a judge reason read and traces-*.
+    import m4_lint
+    with tempfile.TemporaryDirectory() as tmp:
+        root = pathlib.Path(tmp)
+        t = root / "cert-sk-ara-5-1-access-control"
+        (t / "01-brief").mkdir(parents=True)
+        (t / "01-brief/setup-elastic-serverless").write_text('ARA_ASSETS_TAG="m5-v0.1"\n')
+        (t / "private/checks/x").mkdir(parents=True)
+        (t / "private/thresholds.json").write_text("{}")
+        check = t / "private/checks/x/02-predict.py"
+        check.write_text("score = rec['judge']['faithfulness']\n")
+        assets = root / "assets"
+        (assets / "modules/m5/5-1-access-control").mkdir(parents=True)
+        run = lambda: m4_lint.main([str(t), "--assets", str(assets)])
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            run()
+        assert "ok   tag ARA_ASSETS_TAG=m5-v0.1" in out.getvalue() and "FAIL reason" not in out.getvalue(), out.getvalue()
+        check.write_text("why = rec['judge']['raw']\nr = es('POST', '/traces-agent_builder.otel-*/_search')\n")
+        (t / "private/checks/x/_eval.py").write_text("from ragas import evaluate\n")
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            rc = run()
+        text = out.getvalue()
+        assert rc == 1 and "FAIL reason 02-predict.py" in text and "FAIL traces 02-predict.py" in text, text
+        assert "FAIL ragas private/checks/x/_eval.py:1" in text, text
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0
