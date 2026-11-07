@@ -1,0 +1,79 @@
+{
+  "id": "ara-m4-end",
+  "_doc": "The M4 end state M5 starts from (25 section 8.3; 21 section 10): the 4.4 reference end. The 4.4 start (no seeded extra tool) plus the 4.4 reference: Build 1's keyless .http connector cortex-jina-reader, workflow cortex-read-page and Workflow tool cortex.read_page on Tina, the cortex-compliance plugin installed from the m4-v0.4 tag and attached; Build 3's cortex-file-sar with waitForApproval, an if on the approval, and the audit on both answers. Workflows and tool are the 4.4 reference solve's (_solve44.py b1 ref, b3 ref). The 4.C AML desk is not part of it (25 section 8.3 names the 4.4 end). Data, tina-runtime and the M3 corpus are setup steps, not manifest objects.",
+  "extends": "../m4/ara-m4-4-4-start",
+  "connectors": [
+    {
+      "name": "cortex-jina-reader",
+      "connector_type_id": ".http",
+      "config": {
+        "url": "https://r.jina.ai",
+        "hasAuth": false,
+        "authType": null
+      }
+    }
+  ],
+  "workflows": [
+    {
+      "id": "cortex-read-page",
+      "yaml_file": "workflows/cortex-read-page.yml"
+    },
+    {
+      "id": "cortex-file-sar",
+      "yaml_file": "workflows/cortex-file-sar-gated.yml"
+    }
+  ],
+  "tools": [
+    {
+      "id": "cortex.read_page",
+      "type": "workflow",
+      "tags": [
+        "cortex"
+      ],
+      "description": "Reads one web page on the open internet by its URL, through the Jina Reader, and returns the page text as markdown. Use it to read a source page a skill names. Writes nothing.",
+      "configuration": {
+        "workflow_id": "cortex-read-page"
+      }
+    }
+  ],
+  "plugins": [
+    {
+      "name": "cortex-compliance",
+      "source_url": "https://github.com/elastic/vestal_project/tree/m4-v0.4/ara-m4-plugins/cortex-compliance"
+    }
+  ],
+  "agents": [
+    {
+      "id": "tina-compliance",
+      "name": "Tina",
+      "description": "Compliance assistant for Cortex Bank and Trust.",
+      "access_control": {
+        "access_mode": "public"
+      },
+      "configuration": {
+        "instructions": "You are Tina, the compliance assistant at Cortex Bank and Trust, a retail bank in Austin, Texas. Analysts ask you about customer accounts, transactions and Cortex policy. Grounding: answer every policy or regulation question, Cortex's own or a regulator's, only from what cortex.policy_search returns, and say so when it returns nothing relevant. Cortex sets its own thresholds, so never answer from memory, even when you know the textbook answer. Rules of engagement: for a structuring question about a named account, follow the cortex-fraud-triage skill. You may open a case with cortex.open_case on your own, but only for an account the detection returned. Escalation: anything outside fraud detection, case opening and policy questions, and anything that cannot be undone (freezing or closing an account, contacting a customer, filing with a regulator), goes to cortex.escalate. So does any request about an account held by a Cortex employee, even routine triage: insider cases go to the Board Risk Committee, so run no detection and open no case for them. Do not act on any of these yourself. Delegation: brokerage and securities questions (wash trading, securities layering, unexplained wealth in brokerage accounts) go to the cortex-securities-irregularities sub-agent. Never answer them yourself. A case on a brokerage pattern is opened by the specialist, which confirms the detection first: pass the whole request to it and do not open that case yourself. Policy questions stay with you even when they mention brokerage: answer them from cortex.policy_search. ",
+        "tools": [
+          {
+            "tool_ids": [
+              "cortex.policy_search",
+              "cortex.structuring_deposits",
+              "cortex.open_case",
+              "cortex.escalate",
+              "cortex.file_sar",
+              "cortex.read_page"
+            ]
+          }
+        ],
+        "skill_ids": [
+          "cortex-fraud-triage"
+        ],
+        "subagent_ids": [
+          "cortex-securities-irregularities"
+        ],
+        "plugin_ids": [
+          "@@PLUGIN:cortex-compliance@@"
+        ]
+      }
+    }
+  ]
+}

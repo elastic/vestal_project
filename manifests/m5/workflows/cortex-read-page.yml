@@ -1,0 +1,18 @@
+version: "1"
+name: cortex-read-page
+description: Reads one web page on the open internet through the Jina Reader and returns its text as markdown. Writes nothing.
+enabled: true
+triggers:
+  - type: manual
+inputs:
+  - name: url
+    type: string
+    required: true
+    description: The full URL of the page to read
+steps:
+  - name: read
+    type: http
+    connector-id: cortex-jina-reader
+    with:
+      method: GET
+      path: "/{{ inputs.url }}"
