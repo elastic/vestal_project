@@ -107,6 +107,25 @@ def test_check_reports_a_plugin_not_installed_and_a_changed_connector():
     assert any("plugin cortex-compliance not installed" in x for x in lines)
 
 
+def test_every_committed_chain_reapplies_as_a_no_op():
+    os.environ.setdefault("ARA_AB_CONNECTOR_ID", ".anthropic-claude-5.5-sonnet-chat_completion")
+    for p in sorted((LIB.parent / "manifests").glob("m[45]/*.json")):
+        kb = FakeKibana()
+        APPLY.apply(p, kb, log=lambda *_: None)
+        assert APPLY.apply(p, kb, check=True, log=lambda *_: None) == 0, p.name
+
+
+def test_5_1_start_adds_the_two_tools_and_the_house_rule():
+    os.environ.setdefault("ARA_AB_CONNECTOR_ID", ".anthropic-claude-5.5-sonnet-chat_completion")
+    kb = FakeKibana()
+    APPLY.apply(LIB.parent / "manifests/m5/ara-m5-5-1-start.json", kb, log=lambda *_: None)
+    tina = kb.agents["tina-compliance"]
+    assert {"cortex.case_lookup", "cortex.sar_search", "cortex.read_page"} <= set(tina["configuration"]["tools"][0]["tool_ids"])
+    assert "never repeat a customer identifier" in tina["configuration"]["instructions"]
+    assert tina["access_control"]["access_mode"] == "public"
+    assert "subject_tin" in kb.tools["cortex.case_lookup"]["configuration"]["query"]
+
+
 if __name__ == "__main__":
     for k, fn in sorted(globals().items()):
         if k.startswith("test_"):
