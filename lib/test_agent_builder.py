@@ -371,3 +371,31 @@ def test_env_err_is_narrow():
         assert A.ENV_ERR.search(text), text
     parse = {"status": "failed", "stepExecutions": [{"stepId": "detect", "status": "failed", "error": learner[0]}]}
     assert A.run_outcome(parse)["kind"] == "learner"
+
+
+def test_round_usage_counts_cached_inside_input_and_prices_on_one_card():
+    # Shape of a Sonnet 5.5 round in Phase 0 r2 (a tool call, an internal call, a delegation, two models).
+    rnd = {"conversation_id": "c1",
+           "steps": [{"type": "tool_call", "tool_id": "cortex.policy_search", "params": {}, "results": [{"type": "resource_list"}]},
+                     {"type": "tool_call", "tool_id": "load_skill", "params": {}, "results": [{}]},
+                     {"type": "tool_call", "tool_id": "run_subagent", "params": {"agent_id": "aml"}, "results": [{"type": "other"}]}],
+           "model_usage": {"input_tokens": 34363, "output_tokens": 600, "llm_calls": 4, "cached_input_tokens": 15223,
+                           "connectors": [{"model": "anthropic-claude-5.5-sonnet", "input_tokens": 33363, "output_tokens": 550,
+                                           "llm_calls": 3, "cached_input_tokens": 15223},
+                                          {"model": "anthropic-claude-4.5-haiku", "input_tokens": 1000, "output_tokens": 50, "llm_calls": 1}]}}
+    u = A.round_usage(rnd, latency_ms=15000)
+    assert u["tool_call_count"] == 2
+    assert (u["input_tokens"], u["cached_input_tokens"], u["fresh_input_tokens"]) == (34363, 15223, 19140)
+    assert (u["output_tokens"], u["llm_calls"]) == (600, 4)
+    assert u["models"] == ["anthropic-claude-4.5-haiku", "anthropic-claude-5.5-sonnet"]
+    assert u["cached_share"] == round(15223 / 34363, 4) and u["conversation_id"] == "c1" and u["latency_ms"] == 15000
+    card = {"fresh_input": 3.0, "cached_input": 0.3, "output": 15.0}
+    assert abs(A.token_cost(u, card) - (19140 * 3.0 + 15223 * 0.3 + 600 * 15.0) / 1e6) < 1e-12
+
+
+def test_round_usage_without_cache_reporting_or_usage():
+    # Sonnet 4.6 reports no cached_input_tokens and no per-model list beyond itself.
+    u = A.round_usage({"steps": [], "model_usage": {"input_tokens": 25314, "output_tokens": 366, "llm_calls": 3}})
+    assert (u["cached_input_tokens"], u["fresh_input_tokens"], u["cached_share"]) == (0, 25314, 0.0)
+    empty = A.round_usage({})
+    assert empty["input_tokens"] == 0 and empty["cached_share"] is None and empty["tool_call_count"] == 0

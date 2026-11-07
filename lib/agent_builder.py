@@ -175,6 +175,37 @@ class AB:
     def delete_skill(self, skill_id: str) -> int:
         return self.request("DELETE", f"/api/agent_builder/skills/{skill_id}")[0]
 
+    # ── connectors and plugins (22 section 1; 4.4 built these inline, M5 needs them for ara-m4-end) ──
+    def connectors(self) -> list[dict]:
+        code, body = self.get("/api/actions/connectors")
+        return [c for c in (body if code == 200 and isinstance(body, list) else []) if isinstance(c, dict)]
+
+    def connector_by_name(self, name: str) -> dict | None:
+        return next((c for c in self.connectors() if c.get("name") == name), None)
+
+    def put_connector(self, name: str, type_id: str, config: dict, secrets: dict | None = None) -> tuple[int, Any]:
+        """Create the connector, or update the one with this name in place (its id is server-assigned,
+        so a workflow's connector-id names it by name)."""
+        cur = self.connector_by_name(name)
+        body = {"name": name, "config": config, "secrets": secrets or {}}
+        if cur is None:
+            return self.request("POST", "/api/actions/connector", dict(body, connector_type_id=type_id))
+        return self.request("PUT", f"/api/actions/connector/{cur['id']}", body)
+
+    def delete_connector(self, connector_id: str) -> int:
+        return self.request("DELETE", f"/api/actions/connector/{connector_id}")[0]
+
+    def plugins(self) -> list[dict]:
+        code, body = self.get("/api/agent_builder/plugins")
+        return [p for p in ((body or {}).get("results") or [] if code == 200 and isinstance(body, dict) else []) if isinstance(p, dict)]
+
+    def install_plugin(self, url: str, timeout: float = 120) -> tuple[int, Any]:
+        """Install from a source URL; the plugin id is server-assigned (find it with plugins())."""
+        return self.request("POST", "/api/agent_builder/plugins/install", {"url": url}, timeout=timeout)
+
+    def delete_plugin(self, plugin_id: str) -> int:
+        return self.request("DELETE", f"/api/agent_builder/plugins/{plugin_id}")[0]
+
     # ── conversations ────────────────────────────────────────────────────────
     def converse(self, agent_id: str, text: str, conversation_id: str | None = None,
                  timeout: float | None = None) -> dict:
@@ -189,6 +220,13 @@ class AB:
         if code != 200:  # an outage status already raised ABError in request()
             raise ValueError(f"converse {agent_id}: HTTP {code} {str(resp)[:300]}")
         return resp
+
+    def converse_timed(self, agent_id: str, text: str, conversation_id: str | None = None,
+                       timeout: float | None = None) -> tuple[dict, int]:
+        """converse() and its wall time in ms, measured here (25 section 1: the harness's latency)."""
+        t0 = time.monotonic()
+        resp = self.converse(agent_id, text, conversation_id, timeout)
+        return resp, round((time.monotonic() - t0) * 1000)
 
     def conversation(self, conversation_id: str) -> dict | None:
         code, body = self.get(f"/api/agent_builder/conversations/{conversation_id}")
@@ -356,6 +394,44 @@ def internal_calls(resp: dict) -> list[str]:
     return [s.get("tool_id") for s in (resp or {}).get("steps") or []
             if isinstance(s, dict) and s.get("type") == "tool_call" and s.get("tool_id") not in DELEGATION_TOOLS
             and _step_internal(s)]
+
+
+# ── usage: tool calls, tokens, latency per round (25 section 1, usage reader) ──
+# One rule for the harness, the integrity check, compare and the budget, over a converse response or a
+# stored round (GET /conversations/{id} rounds[i]), which carry the same steps and model_usage.
+# model_usage.input_tokens already includes cached input (Phase 0 r2: the round's three LLM spans sum to
+# it, and the span with a 15,223-token cache read reports 16,625 input), so total input is input_tokens
+# and fresh input is total minus cached. A model that reports no cached_input_tokens counts 0 cached.
+
+def _usage_entries(mu: Any) -> list[dict]:
+    """Every model in the round: model_usage.connectors when present, else model_usage itself."""
+    if not isinstance(mu, dict):
+        return []
+    per_model = [c for c in mu.get("connectors") or [] if isinstance(c, dict)]
+    return per_model or [mu]
+
+
+def round_usage(rnd: dict, latency_ms: int | None = None, conversation_id: str | None = None) -> dict:
+    """Counts and tokens of one round. tool_call_count is the route record's length: custom tool
+    calls after the internal filter, plus delegations."""
+    entries = _usage_entries((rnd or {}).get("model_usage"))
+    total = sum(int(e.get("input_tokens") or 0) for e in entries)
+    cached = sum(int(e.get("cached_input_tokens") or 0) for e in entries)
+    return {"tool_call_count": len(route_record(rnd)),
+            "input_tokens": total, "cached_input_tokens": cached, "fresh_input_tokens": total - cached,
+            "output_tokens": sum(int(e.get("output_tokens") or 0) for e in entries),
+            "llm_calls": sum(int(e.get("llm_calls") or 0) for e in entries),
+            "models": sorted({str(e.get("model")) for e in entries if e.get("model")}),
+            "cached_share": round(cached / total, 4) if total else None,
+            "latency_ms": latency_ms,
+            "conversation_id": conversation_id or (rnd or {}).get("conversation_id")}
+
+
+def token_cost(usage: dict, card: dict) -> float:
+    """Cost of one round on a rate card {"fresh_input", "cached_input", "output"}, each a price per
+    million tokens; every model in the round is priced on the same card (25 section 1)."""
+    return (usage["fresh_input_tokens"] * card["fresh_input"] + usage["cached_input_tokens"] * card["cached_input"]
+            + usage["output_tokens"] * card["output"]) / 1_000_000
 
 
 def trace_calls(spans: list[dict], coordinator_id: str) -> list[dict]:
