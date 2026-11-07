@@ -62,9 +62,15 @@ class ES:
         self.timeout = timeout
 
     def request(self, method: str, path: str, body: Any = None) -> tuple[int, Any]:
-        headers = {"Content-Type": "application/json", "Authorization": self.auth}
-        data = json.dumps(body).encode() if body is not None else None
-        req = urllib.request.Request(f"{self.url}{path}", data=data, method=method, headers=headers)
+        return self._send(method, path, json.dumps(body).encode() if body is not None else None, "application/json")
+
+    def request_ndjson(self, method: str, path: str, ndjson: str) -> tuple[int, Any]:
+        """_bulk and the other NDJSON endpoints."""
+        return self._send(method, path, ndjson.encode(), "application/x-ndjson")
+
+    def _send(self, method: str, path: str, data: bytes | None, content_type: str) -> tuple[int, Any]:
+        headers = {"Content-Type": content_type, "Authorization": self.auth}
+        req =urllib.request.Request(f"{self.url}{path}", data=data, method=method, headers=headers)
         try:
             with urllib.request.urlopen(req, timeout=self.timeout) as resp:
                 code, txt = resp.status, resp.read().decode()

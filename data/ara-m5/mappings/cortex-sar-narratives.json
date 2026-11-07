@@ -1,0 +1,37 @@
+{
+  "mappings": {
+    "properties": {
+      "sar_id": {
+        "type": "keyword"
+      },
+      "case_reference": {
+        "type": "keyword"
+      },
+      "case_type": {
+        "type": "keyword"
+      },
+      "risk_tier": {
+        "type": "keyword"
+      },
+      "filing_date": {
+        "type": "date"
+      },
+      "body_text": {
+        "type": "text"
+      },
+      "body": {
+        "type": "semantic_text",
+        "inference_id": ".jina-embeddings-v5-text-small"
+      },
+      "subject_name": {
+        "type": "keyword"
+      },
+      "subject_account": {
+        "type": "keyword"
+      },
+      "subject_tin": {
+        "type": "keyword"
+      }
+    }
+  }
+}
