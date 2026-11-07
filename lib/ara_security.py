@@ -37,7 +37,8 @@ MECHANISMS = ("dls_filtered", "fls_hidden", "query_names_hidden_field", "missing
 HIDDEN_FIELD_ERR = re.compile(r"Unknown column \[", re.I)
 # r2 X: a key without workflow_execute gets "Unauthorized to execute workflow '<id>'. The
 # 'workflowsManagement' execute privilege is required." The Elasticsearch forms (security_exception,
-# "is unauthorized for API key") are for a tool over an index the key cannot read; probe r6 confirms them.
+# "is unauthorized for API key") are for a tool over an index the key cannot read: probe r6 got
+# security_exception from _execute for an ES|QL tool and an index search tool.
 NOT_AUTHORIZED_ERR = re.compile(r"\bUnauthorized to\b|privilege is required|security_exception|is unauthorized for", re.I)
 
 _OUTAGE = (401, 408, 429)  # 403 is left to the caller: under a learner or check key it is an observation
