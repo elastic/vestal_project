@@ -351,6 +351,31 @@ def ndcg_at_k(results: list[dict], queries: list[dict], k: int = 10) -> float:
     return statistics.mean(scores) if scores else 0.0
 
 
+def rank_eval_at_k(retrieved: dict[str, list[str]], relevant: dict[str, set[str]], k: int = 5) -> dict:
+    """Precision, recall and nDCG at k over binary ratings, computed the way Elasticsearch _rank_eval
+    computes them, so M5 can cross-check a _rank_eval run (25 section 4, acceptance 3: within 0.005).
+
+    retrieved: request id -> hit ids in rank order (as _rank_eval saw them; duplicates dropped).
+    relevant:  request id -> the ids rated relevant (every other id counts as rating 0).
+    Differences from precision_at_k and recall_at_k above, which M3 grades with and which stay as
+    they are: precision divides by the hits returned within k, not by k (precision with
+    ignore_unlabeled false); a request with no relevant rating scores recall 0 and stays in the mean.
+    nDCG uses gain 2^rel - 1 (1 for a relevant hit) over log2(rank + 1), normalised by the ideal DCG of
+    the relevant ratings cut at k. The overall score of each metric is the mean over requests."""
+    p, r, n = [], [], []
+    for rid in sorted(set(retrieved) | set(relevant)):
+        rel = relevant.get(rid, set())
+        hits = _dedup(retrieved.get(rid, []))[:k]
+        tp = sum(1 for h in hits if h in rel)
+        p.append(tp / len(hits) if hits else 0.0)
+        r.append(tp / len(rel) if rel else 0.0)
+        dcg = sum(1 / math.log2(i + 2) for i, h in enumerate(hits) if h in rel)
+        idcg = sum(1 / math.log2(i + 2) for i in range(min(len(rel), k)))
+        n.append(dcg / idcg if idcg > 0 else 0.0)
+    mean = lambda xs: statistics.mean(xs) if xs else 0.0
+    return {"precision_at_k": mean(p), "recall_at_k": mean(r), "ndcg_at_k": mean(n), "k": k, "requests": len(p)}
+
+
 def mrr(results: list[dict], queries: list[dict]) -> float:
     """Mean reciprocal rank."""
     relevance = {q["query_id"]: _gold(q) for q in queries}

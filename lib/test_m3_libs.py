@@ -660,3 +660,18 @@ def test_score_attribution_matches_labels():
     s = ara_attrib.score_attribution(records, first_passage)
     assert s["unsupported_recall"] == 0.0 and not s["returned_any_unsupported"]
     assert s["conflict"]["memo_passage"] == 2
+
+
+def test_rank_eval_at_k_matches_elasticsearch_definitions():
+    import math
+    import ara_metrics as M
+    retrieved = {"q1": ["a", "x", "b", "y", "z", "c"], "q2": ["d", "e"], "q3": ["m", "n", "o", "p", "q"]}
+    relevant = {"q1": {"a", "b", "c"}, "q2": {"e"}, "q3": set()}
+    out = M.rank_eval_at_k(retrieved, relevant, k=5)
+    # q1: 2 of 5 hits relevant (c sits at rank 6); q2: 1 of the 2 hits returned; q3: none
+    assert abs(out["precision_at_k"] - (2 / 5 + 1 / 2 + 0) / 3) < 1e-12
+    assert abs(out["recall_at_k"] - (2 / 3 + 1 + 0) / 3) < 1e-12  # q3 has no relevant rating: 0, kept
+    q1 = (1 + 1 / math.log2(4)) / (1 + 1 / math.log2(3) + 1 / math.log2(4))
+    q2 = (1 / math.log2(3)) / 1
+    assert abs(out["ndcg_at_k"] - (q1 + q2 + 0) / 3) < 1e-12
+    assert out["requests"] == 3
