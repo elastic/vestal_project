@@ -428,10 +428,11 @@ def round_usage(rnd: dict, latency_ms: int | None = None, conversation_id: str |
 
 
 def token_cost(usage: dict, card: dict) -> float:
-    """Cost of one round on a rate card {"fresh_input", "cached_input", "output"}, each a price per
-    million tokens; every model in the round is priced on the same card (25 section 1)."""
-    return (usage["fresh_input_tokens"] * card["fresh_input"] + usage["cached_input_tokens"] * card["cached_input"]
-            + usage["output_tokens"] * card["output"]) / 1_000_000
+    """Cost of one round on a rate card {"price_fresh_input", "price_cached_input", "price_output"}, each a
+    price per million tokens (25 section 5, as thresholds.json states it); every model in the round is
+    priced on the same card (25 section 1)."""
+    return (usage["fresh_input_tokens"] * card["price_fresh_input"] + usage["cached_input_tokens"] * card["price_cached_input"]
+            + usage["output_tokens"] * card["price_output"]) / 1_000_000
 
 
 def trace_calls(spans: list[dict], coordinator_id: str) -> list[dict]:

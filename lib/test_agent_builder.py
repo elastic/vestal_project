@@ -389,7 +389,7 @@ def test_round_usage_counts_cached_inside_input_and_prices_on_one_card():
     assert (u["output_tokens"], u["llm_calls"]) == (600, 4)
     assert u["models"] == ["anthropic-claude-4.5-haiku", "anthropic-claude-5.5-sonnet"]
     assert u["cached_share"] == round(15223 / 34363, 4) and u["conversation_id"] == "c1" and u["latency_ms"] == 15000
-    card = {"fresh_input": 3.0, "cached_input": 0.3, "output": 15.0}
+    card = {"price_fresh_input": 3.0, "price_cached_input": 0.3, "price_output": 15.0}
     assert abs(A.token_cost(u, card) - (19140 * 3.0 + 15223 * 0.3 + 600 * 15.0) / 1e6) < 1e-12
 
 
