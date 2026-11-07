@@ -29,6 +29,8 @@ class FakeKibana:
         return next((c for c in self.connectors_ if c["name"] == name), None)
 
     def put_connector(self, name, type_id, config, secrets=None):
+        # The server fills the .http config's unset fields (probe r6's GET after create and after update)
+        config = {"headers": None, "hasAuth": False, "authType": None, "proxyUrl": None, "hasProxyAuth": False, **config}
         cur = self.connector_by_name(name)
         if cur:
             cur["config"] = config
@@ -105,6 +107,17 @@ def test_check_reports_a_plugin_not_installed_and_a_changed_connector():
     assert APPLY.apply(END, kb, check=True, log=lines.append) >= 3  # connector, plugin, agent
     assert any("connector cortex-jina-reader differs" in x for x in lines)
     assert any("plugin cortex-compliance not installed" in x for x in lines)
+
+
+def test_check_reports_a_header_the_manifest_does_not_state():
+    os.environ.setdefault("ARA_AB_CONNECTOR_ID", ".anthropic-claude-5.5-sonnet-chat_completion")
+    kb = FakeKibana()
+    APPLY.apply(END, kb, log=lambda *_: None)
+    assert APPLY.apply(END, kb, check=True, log=lambda *_: None) == 0
+    kb.connectors_[0]["config"]["headers"] = {"x-probe": "1"}
+    lines = []
+    assert APPLY.apply(END, kb, check=True, log=lines.append) == 1
+    assert any("connector cortex-jina-reader differs" in x for x in lines)
 
 
 def test_every_committed_chain_reapplies_as_a_no_op():

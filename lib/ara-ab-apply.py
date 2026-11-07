@@ -83,6 +83,14 @@ def _norm(obj, keep_type: bool = False):
     return obj
 
 
+def _config_same(want: dict, have: dict) -> bool:
+    """A connector config matches when every key the manifest states matches and every key the server
+    added is unset (None, False or empty: the server fills headers, proxyUrl, hasProxyAuth and the like,
+    probe r6). A header added by hand is still a difference."""
+    return all(_norm(want.get(k)) == _norm(have.get(k)) for k in want) \
+        and not any(have[k] for k in have if k not in want)
+
+
 def differs(want: dict, have: dict | None) -> bool:
     if have is None:
         return True
@@ -150,7 +158,7 @@ def apply(manifest: pathlib.Path, ab: AB, check: bool = False, log=print) -> int
         for conn in m.get("connectors") or []:
             have = ab.connector_by_name(conn["name"])
             if have is not None and have.get("connector_type_id") == conn["connector_type_id"] \
-                    and _norm(have.get("config") or {}) == _norm(conn.get("config") or {}):
+                    and _config_same(conn.get("config") or {}, have.get("config") or {}):
                 continue
             changed += 1
             if check:
