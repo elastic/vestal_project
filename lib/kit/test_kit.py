@@ -254,6 +254,20 @@ def test_grader_rule_fails_when_both_forms_present():
         assert rc == 0 and "info grader: shared install line" in out, out
 
 
+def test_m4_reference_set_is_current_and_well_formed():
+    # 21 section 10: the committed set is a fresh build of the M4 dev sets, so the two cannot drift.
+    import build_m4_reference as ref
+    assets = KIT.parents[1]
+    built = ref.build(assets)
+    assert (assets / ref.OUT).read_text() == json.dumps(built, indent=2) + "\n", "rebuild the reference set"
+    ids = [c["id"] for c in built["cases"]]
+    assert len(ids) == len(set(ids))
+    for c in built["cases"]:
+        assert c["kind"] in {"coordinator", "securities", "aml", "policy", "extension"}, c["id"]
+        assert c["expected"] and "@aml" not in json.dumps(c), c["id"]
+        assert ("page" in c) == any(e["tool_id"] == "cortex.read_page" for e in c["expected"]), c["id"]
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0
