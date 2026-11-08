@@ -47,7 +47,7 @@
       "id": "sar_search",
       "tool_id": "cortex.sar_search",
       "params": {
-        "query": "cash deposits split to stay under the reporting threshold"
+        "nlQuery": "cash deposits split to stay under the reporting threshold"
       }
     },
     {
