@@ -2,7 +2,7 @@
 """
 ara-leftover.py - 5.2's seeded leftover reach on Tina (25 section 3 start state). Root only.
 
-  ara-leftover.py seed     apply the sandbox's leftover (from /opt/ara/heldout/5-2/variant.json)
+  ara-leftover.py seed     apply the sandbox's leftover (from /opt/ara/heldout/5-2-variant.json)
 
 One of two per sandbox:
   webhook    an outbound .webhook connector cortex-partner-webhook, assigned to Tina (connector_ids)
@@ -25,7 +25,7 @@ from agent_builder import AB  # noqa: E402
 from ara_extensions import SUB_ACTION_TOOL  # noqa: E402
 
 AGENT = "tina-compliance"
-VARIANT = pathlib.Path("/opt/ara/heldout/5-2/variant.json")
+VARIANT = pathlib.Path("/opt/ara/heldout/5-2-variant.json")
 CONNECTOR = "cortex-partner-webhook"
 APPROVALS = {"auto_approved_apis": {"elasticsearch": ["indices.*"], "kibana": []}}
 

@@ -1,0 +1,13 @@
+{
+  "mappings": {
+    "properties": {
+      "corr_id": {"type": "keyword"},
+      "case_id": {"type": "keyword"},
+      "case_type": {"type": "keyword"},
+      "risk_tier": {"type": "keyword"},
+      "from_party": {"type": "keyword"},
+      "received_at": {"type": "date"},
+      "body": {"type": "text"}
+    }
+  }
+}

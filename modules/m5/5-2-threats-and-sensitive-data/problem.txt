@@ -1,0 +1,4 @@
+CAPTURE PENDING. Not for release.
+The first 5.2 track test prints one landed before run in full
+(solve 02, CAPTURE lines); its question, letter, tool calls and
+answer replace this text before the Brief ships.
