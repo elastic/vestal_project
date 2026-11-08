@@ -16,6 +16,7 @@ substring guard, so every Check runs the whole seeded pool; the seed varies only
 """
 from __future__ import annotations
 
+import json
 import re
 from typing import Any
 from urllib.parse import quote
@@ -95,18 +96,17 @@ def run_url(ab, workflow_id: str, url: str, http_step: str, budget_s: float = 45
            "output": None, "error": (step or {}).get("error") or ex.get("error")}
     if step is not None and step.get("id"):
         io = ab.step_io(ex_id, step["id"]) or {}
-        out["output"] = io.get("output")
+        out["output"] = io.get("output") if io.get("output") is not None else step.get("output")
         out["error"] = out["error"] or io.get("error")
     return out
 
 
 def page_text(output: Any) -> str:
-    """The http step's body as text, whatever shape the step output has."""
-    if isinstance(output, dict):
-        for k in ("data", "body", "text"):
-            if output.get(k) is not None:
-                return page_text(output[k])
-    return output if isinstance(output, str) else str(output or "")
+    """The http step's output as searchable text, whatever its shape: the whole output serialised, as 4.4's
+    page_read does (a marker search over specific keys missed the page live, t52-r4)."""
+    if output is None:
+        return ""
+    return output if isinstance(output, str) else json.dumps(output, default=str)
 
 
 def transient(error: Any) -> bool:
