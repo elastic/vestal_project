@@ -1,0 +1,71 @@
+{
+  "_doc": "Role descriptors Cortex IT wrote for the internal auditor's API key (Lab 5.1, Build 1). Create cortex-auditor-key with exactly these role descriptors.",
+  "variant": "b",
+  "title": "Internal audit: structuring thematic review",
+  "purpose": "Audit reviews every structuring case and every SAR narrative. The review reads; it does not run Cortex workflows.",
+  "role_descriptors": {
+    "cortex-auditor": {
+      "cluster": [
+        "monitor_inference"
+      ],
+      "indices": [
+        {
+          "names": [
+            "cortex-wire-transfers",
+            "cortex-cash-movements",
+            "cortex-atm-events",
+            "cortex-brokerage-trades",
+            "cortex-ref-*",
+            "cortex-policies"
+          ],
+          "privileges": [
+            "read",
+            "view_index_metadata"
+          ]
+        },
+        {
+          "names": [
+            "cortex-cases"
+          ],
+          "privileges": [
+            "read",
+            "view_index_metadata"
+          ],
+          "query": "{\"term\": {\"case_type\": \"structuring\"}}"
+        },
+        {
+          "names": [
+            "cortex-sar-narratives"
+          ],
+          "privileges": [
+            "read",
+            "view_index_metadata"
+          ]
+        },
+        {
+          "names": [
+            "cortex-escalations",
+            "cortex-audit",
+            "cortex-fraud-cases"
+          ],
+          "privileges": [
+            "read",
+            "index"
+          ]
+        }
+      ],
+      "applications": [
+        {
+          "application": "kibana-.kibana",
+          "resources": [
+            "*"
+          ],
+          "privileges": [
+            "feature_agentBuilder.read",
+            "feature_actions.read"
+          ]
+        }
+      ]
+    }
+  }
+}

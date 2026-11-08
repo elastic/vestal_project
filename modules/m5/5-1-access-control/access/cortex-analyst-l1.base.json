@@ -1,0 +1,59 @@
+{
+  "_doc": "Base privileges for cortex-analyst-l1 (Lab 5.1, Build 2): the index and Kibana privileges from Cortex's access policy, with no document or field restriction yet. Add the restriction the policy states for cortex-cases and cortex-sar-narratives.",
+  "policy_sees": "documents with risk_tier low or medium, every case type; never subject_name, subject_account, subject_tin",
+  "role": {
+    "cluster": [
+      "monitor_inference"
+    ],
+    "indices": [
+      {
+        "names": [
+          "cortex-wire-transfers",
+          "cortex-cash-movements",
+          "cortex-atm-events",
+          "cortex-brokerage-trades",
+          "cortex-ref-*",
+          "cortex-policies"
+        ],
+        "privileges": [
+          "read",
+          "view_index_metadata"
+        ]
+      },
+      {
+        "names": [
+          "cortex-cases",
+          "cortex-sar-narratives"
+        ],
+        "privileges": [
+          "read",
+          "view_index_metadata"
+        ]
+      },
+      {
+        "names": [
+          "cortex-fraud-cases",
+          "cortex-escalations",
+          "cortex-audit"
+        ],
+        "privileges": [
+          "read",
+          "index"
+        ]
+      }
+    ],
+    "applications": [
+      {
+        "application": "kibana-.kibana",
+        "resources": [
+          "*"
+        ],
+        "privileges": [
+          "feature_agentBuilder.read",
+          "feature_actions.read",
+          "feature_workflowsManagement.workflow_execute"
+        ]
+      }
+    ]
+  }
+}

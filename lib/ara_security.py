@@ -295,3 +295,42 @@ def diff_prediction(prediction: dict, observation: dict) -> list[dict]:
             if want.get(item) != got[item]:
                 out.append({"section": section, "item": item, "predicted": want.get(item), "observed": got[item]})
     return out
+
+
+ID_FIELDS = {"cortex-cases": "case_id", "cortex-sar-narratives": "sar_id"}
+
+
+def observe_probes(key: ES, ab, probes: dict, admin_ab=None) -> dict:
+    """Make 5.1 B1's observations under one key, in diff_prediction's shape. probes is
+    modules/m5/5-1-access-control/access/probes.json. Documents: retrievable when _search under the key
+    returns it. Fields: visible when any document _search returns carries it (an index the key cannot
+    read shows every field hidden). Calls: the tool's outcome class through _execute. "detail" keeps
+    what each observation rests on, for the verifier's printout and the check's messages; a call whose
+    class is None did not reach a classified outcome (environment), and the caller must not grade it."""
+    reach = {ix: search_reach(key, ix, ID_FIELDS.get(ix))
+             for ix in sorted({d["index"] for d in probes["documents"]} | {probes["fields"]["index"]})}
+    docs = {d["id"]: "retrievable" if d["id"] in reach[d["index"]]["ids"] else "blocked" for d in probes["documents"]}
+    seen = reach[probes["fields"]["index"]]["fields"]
+    fields = {f: "visible" if f in seen else "hidden" for f in probes["fields"]["names"]}
+    calls, detail = {}, {}
+    for t in probes["tools"]:
+        oc = execute_outcome(ab, t["tool_id"], t["params"], admin_ab=admin_ab)
+        calls[t["id"]] = oc["class"]
+        detail[t["id"]] = {"error": oc["error"], "execution_id": oc["execution_id"]}
+    detail["search"] = {ix: {"status": r["status"], "count": len(r["ids"])} for ix, r in reach.items()}
+    return {"documents": docs, "fields": fields, "calls": calls, "detail": detail}
+
+
+def judge_prediction(prediction: dict, observation: dict, truth: dict) -> dict:
+    """5.1 B1 DIAGNOSE. Passes when the prediction matches every observation, or when every mismatched
+    item carries the mechanism the variant's truth table names. truth has diff_prediction's sections,
+    each item -> mechanism; prediction carries "mechanisms" {"<section>/<item>": mechanism}.
+    Returns {"passed", "mismatches", "wrong": [mismatches whose mechanism is missing or wrong], "score"}:
+    score is the share of items the first prediction got right (calibration and the QA record)."""
+    mism = diff_prediction(prediction, observation)
+    named = prediction.get("mechanisms") or {}
+    wrong = [dict(m, mechanism=named.get(f"{m['section']}/{m['item']}"), expected=truth[m["section"]][m["item"]])
+             for m in mism if named.get(f"{m['section']}/{m['item']}") != truth[m["section"]][m["item"]]]
+    total = sum(len(observation.get(s) or {}) for s in ("documents", "fields", "calls"))
+    return {"passed": not wrong, "mismatches": mism, "wrong": wrong,
+            "score": round((total - len(mism)) / total, 3) if total else None}

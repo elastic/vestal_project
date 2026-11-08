@@ -1,0 +1,63 @@
+{
+  "_doc": "The probes Build 1 predicts and the verifier runs, under the key being tested. Fixed for every sandbox.",
+  "documents": [
+    {
+      "id": "case-structuring-001",
+      "index": "cortex-cases"
+    },
+    {
+      "id": "case-structuring-017",
+      "index": "cortex-cases"
+    },
+    {
+      "id": "case-wire-fraud-009",
+      "index": "cortex-cases"
+    },
+    {
+      "id": "sar-006",
+      "index": "cortex-sar-narratives"
+    },
+    {
+      "id": "sar-008",
+      "index": "cortex-sar-narratives"
+    },
+    {
+      "id": "sar-022",
+      "index": "cortex-sar-narratives"
+    }
+  ],
+  "fields": {
+    "index": "cortex-cases",
+    "names": [
+      "subject_name",
+      "subject_account",
+      "subject_tin",
+      "filing_date"
+    ]
+  },
+  "tools": [
+    {
+      "id": "case_lookup",
+      "tool_id": "cortex.case_lookup",
+      "params": {
+        "case_type": "structuring"
+      }
+    },
+    {
+      "id": "sar_search",
+      "tool_id": "cortex.sar_search",
+      "params": {
+        "query": "cash deposits split to stay under the reporting threshold"
+      }
+    },
+    {
+      "id": "open_case",
+      "tool_id": "cortex.open_case",
+      "params": {
+        "account_id": "1981",
+        "pattern": "structuring",
+        "findings": "Lab 5.1 access probe."
+      }
+    }
+  ]
+}

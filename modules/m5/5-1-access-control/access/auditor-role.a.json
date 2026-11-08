@@ -1,0 +1,80 @@
+{
+  "_doc": "Role descriptors Cortex IT wrote for the internal auditor's API key (Lab 5.1, Build 1). Create cortex-auditor-key with exactly these role descriptors.",
+  "variant": "a",
+  "title": "Internal audit: low-risk file review",
+  "purpose": "Audit samples low-risk files across every case type. Customer TINs are out of scope for this review.",
+  "role_descriptors": {
+    "cortex-auditor": {
+      "cluster": [
+        "monitor_inference"
+      ],
+      "indices": [
+        {
+          "names": [
+            "cortex-wire-transfers",
+            "cortex-cash-movements",
+            "cortex-atm-events",
+            "cortex-brokerage-trades",
+            "cortex-ref-*",
+            "cortex-policies"
+          ],
+          "privileges": [
+            "read",
+            "view_index_metadata"
+          ]
+        },
+        {
+          "names": [
+            "cortex-cases",
+            "cortex-sar-narratives"
+          ],
+          "privileges": [
+            "read",
+            "view_index_metadata"
+          ],
+          "query": "{\"term\": {\"risk_tier\": \"low\"}}",
+          "field_security": {
+            "grant": [
+              "*"
+            ],
+            "except": [
+              "subject_tin"
+            ]
+          }
+        },
+        {
+          "names": [
+            "cortex-escalations",
+            "cortex-audit"
+          ],
+          "privileges": [
+            "read",
+            "index"
+          ]
+        },
+        {
+          "names": [
+            "cortex-fraud-cases"
+          ],
+          "privileges": [
+            "read",
+            "view_index_metadata"
+          ]
+        }
+      ],
+      "applications": [
+        {
+          "application": "kibana-.kibana",
+          "resources": [
+            "*"
+          ],
+          "privileges": [
+            "feature_agentBuilder.read",
+            "feature_actions.read",
+            "feature_workflowsManagement.workflow_execute"
+          ]
+        }
+      ]
+    }
+  }
+}

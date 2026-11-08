@@ -1,0 +1,71 @@
+{
+  "_doc": "Role descriptors Cortex IT wrote for the internal auditor's API key (Lab 5.1, Build 1). Create cortex-auditor-key with exactly these role descriptors.",
+  "variant": "c",
+  "title": "Internal audit: wire-fraud case review",
+  "purpose": "Audit reviews wire-fraud cases only. SAR narratives and customer account numbers are out of scope.",
+  "role_descriptors": {
+    "cortex-auditor": {
+      "cluster": [
+        "monitor_inference"
+      ],
+      "indices": [
+        {
+          "names": [
+            "cortex-wire-transfers",
+            "cortex-cash-movements",
+            "cortex-atm-events",
+            "cortex-brokerage-trades",
+            "cortex-ref-*",
+            "cortex-policies"
+          ],
+          "privileges": [
+            "read",
+            "view_index_metadata"
+          ]
+        },
+        {
+          "names": [
+            "cortex-cases"
+          ],
+          "privileges": [
+            "read",
+            "view_index_metadata"
+          ],
+          "query": "{\"term\": {\"case_type\": \"wire_fraud\"}}",
+          "field_security": {
+            "grant": [
+              "*"
+            ],
+            "except": [
+              "subject_account"
+            ]
+          }
+        },
+        {
+          "names": [
+            "cortex-escalations",
+            "cortex-audit",
+            "cortex-fraud-cases"
+          ],
+          "privileges": [
+            "read",
+            "index"
+          ]
+        }
+      ],
+      "applications": [
+        {
+          "application": "kibana-.kibana",
+          "resources": [
+            "*"
+          ],
+          "privileges": [
+            "feature_agentBuilder.read",
+            "feature_actions.read",
+            "feature_workflowsManagement.workflow_execute"
+          ]
+        }
+      ]
+    }
+  }
+}
