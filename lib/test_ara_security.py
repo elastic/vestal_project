@@ -110,6 +110,22 @@ def test_diff_prediction_and_contains_any():
     assert S.contains_any({"a": ["900-55-0003"]}, ["900-55-0003", "C9"]) == ["900-55-0003"]
 
 
+def test_judge_prediction_needs_the_truth_tables_mechanism_on_every_mismatch():
+    obs = {"documents": {"C1": "retrievable", "C9": "blocked"}, "fields": {"subject_tin": "hidden"},
+           "calls": {"case_lookup": "error_hidden_field"}}
+    truth = {"documents": {"C1": "not_restricted", "C9": "dls_filtered"}, "fields": {"subject_tin": "fls_hidden"},
+             "calls": {"case_lookup": "query_names_hidden_field"}}
+    assert S.judge_prediction(dict(obs), obs, truth) == {"passed": True, "mismatches": [], "wrong": [], "score": 1.0}
+    # The common wrong model: rows without the hidden field, explained as FLS hiding it.
+    common = dict(obs, calls={"case_lookup": "rows"}, mechanisms={"calls/case_lookup": "fls_hidden"})
+    j = S.judge_prediction(common, obs, truth)
+    assert not j["passed"] and j["wrong"][0]["expected"] == "query_names_hidden_field" and j["score"] == 0.75
+    fixed = dict(common, mechanisms={"calls/case_lookup": "query_names_hidden_field"})
+    assert S.judge_prediction(fixed, obs, truth)["passed"]
+    # An item left out of the prediction is a mismatch with no mechanism.
+    assert not S.judge_prediction({"documents": {"C1": "retrievable"}}, obs, truth)["passed"]
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns:
