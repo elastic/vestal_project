@@ -1,0 +1,55 @@
+[
+  {
+    "key": "ingest_control",
+    "label": "Stage ingest (what customers type into message): control",
+    "options": [
+      "redact_at_ingest",
+      "none"
+    ]
+  },
+  {
+    "key": "ingest_justification",
+    "label": "Stage ingest: justification",
+    "options": [
+      "value_never_needed_downstream",
+      "free_text_cannot_be_field_filtered",
+      "needed_downstream_in_full"
+    ]
+  },
+  {
+    "key": "retrieval_control",
+    "label": "Stage retrieval (what first-line can read in cortex-intake): control",
+    "options": [
+      "fls_hide_field",
+      "dls_filter_docs",
+      "none"
+    ]
+  },
+  {
+    "key": "retrieval_justification",
+    "label": "Stage retrieval: justification",
+    "options": [
+      "role_must_not_see_field",
+      "role_must_not_see_record",
+      "every_role_may_see"
+    ]
+  },
+  {
+    "key": "context_control",
+    "label": "Stage context (what cortex.intake_lookup hands the model): control",
+    "options": [
+      "mask_in_tool_output",
+      "drop_from_tool_output",
+      "none"
+    ]
+  },
+  {
+    "key": "context_justification",
+    "label": "Stage context: justification",
+    "options": [
+      "model_never_needs_full_value",
+      "model_needs_no_value",
+      "model_needs_full_value"
+    ]
+  }
+]

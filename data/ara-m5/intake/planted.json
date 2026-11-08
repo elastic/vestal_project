@@ -1,0 +1,248 @@
+{
+ "_doc": "Every identifier a customer typed into an intake message (scripts/gen_m5_intake.py). value: the identifier as stored (customer_tin or account_number format); typed: exactly as it appears in the message; structured: false for a second account that is in no structured field.",
+ "planted": [
+  {
+   "intake_id": "intake-002",
+   "kind": "account",
+   "value": "66-92679-0",
+   "typed": "66-92679-0",
+   "format": "dashes",
+   "structured": true,
+   "channel": "web_form"
+  },
+  {
+   "intake_id": "intake-003",
+   "kind": "tin",
+   "value": "949-57-0182",
+   "typed": "949-57-0182",
+   "format": "dashes",
+   "structured": true,
+   "channel": "mobile_app"
+  },
+  {
+   "intake_id": "intake-005",
+   "kind": "tin",
+   "value": "979-49-1493",
+   "typed": "979 49 1493",
+   "format": "spaces",
+   "structured": true,
+   "channel": "identity_theft_form"
+  },
+  {
+   "intake_id": "intake-006",
+   "kind": "account",
+   "value": "95-79481-2",
+   "typed": "95 79481 2",
+   "format": "spaces",
+   "structured": true,
+   "channel": "web_form"
+  },
+  {
+   "intake_id": "intake-008",
+   "kind": "tin",
+   "value": "900-27-8678",
+   "typed": "900278678",
+   "format": "digits",
+   "structured": true,
+   "channel": "mobile_app"
+  },
+  {
+   "intake_id": "intake-009",
+   "kind": "account",
+   "value": "21-26848-9",
+   "typed": "21268489",
+   "format": "digits",
+   "structured": true,
+   "channel": "web_form"
+  },
+  {
+   "intake_id": "intake-011",
+   "kind": "tin",
+   "value": "964-30-9232",
+   "typed": "964-30-9232",
+   "format": "dashes",
+   "structured": true,
+   "channel": "identity_theft_form"
+  },
+  {
+   "intake_id": "intake-011",
+   "kind": "account",
+   "value": "67-88303-2",
+   "typed": "67-88303-2",
+   "format": "dashes",
+   "structured": true,
+   "channel": "identity_theft_form"
+  },
+  {
+   "intake_id": "intake-013",
+   "kind": "tin",
+   "value": "984-19-0692",
+   "typed": "984 19 0692",
+   "format": "spaces",
+   "structured": true,
+   "channel": "web_form"
+  },
+  {
+   "intake_id": "intake-013",
+   "kind": "account",
+   "value": "89-10528-5",
+   "typed": "89 10528 5",
+   "format": "spaces",
+   "structured": true,
+   "channel": "web_form"
+  },
+  {
+   "intake_id": "intake-016",
+   "kind": "tin",
+   "value": "985-01-2472",
+   "typed": "985-01-2472",
+   "format": "dashes",
+   "structured": true,
+   "channel": "web_form"
+  },
+  {
+   "intake_id": "intake-017",
+   "kind": "account",
+   "value": "21-42342-5",
+   "typed": "21423425",
+   "format": "digits",
+   "structured": true,
+   "channel": "identity_theft_form"
+  },
+  {
+   "intake_id": "intake-017",
+   "kind": "tin",
+   "value": "919-20-2526",
+   "typed": "919202526",
+   "format": "digits",
+   "structured": true,
+   "channel": "identity_theft_form"
+  },
+  {
+   "intake_id": "intake-019",
+   "kind": "account",
+   "value": "51-51522-5",
+   "typed": "51-51522-5",
+   "format": "dashes",
+   "structured": true,
+   "channel": "web_form"
+  },
+  {
+   "intake_id": "intake-019",
+   "kind": "account",
+   "value": "56-48667-0",
+   "typed": "56-48667-0",
+   "format": "dashes",
+   "structured": false,
+   "channel": "web_form"
+  },
+  {
+   "intake_id": "intake-020",
+   "kind": "tin",
+   "value": "951-34-1415",
+   "typed": "951 34 1415",
+   "format": "spaces",
+   "structured": true,
+   "channel": "mobile_app"
+  },
+  {
+   "intake_id": "intake-023",
+   "kind": "tin",
+   "value": "983-01-9518",
+   "typed": "983 01 9518",
+   "format": "spaces",
+   "structured": true,
+   "channel": "identity_theft_form"
+  },
+  {
+   "intake_id": "intake-025",
+   "kind": "account",
+   "value": "17-47807-4",
+   "typed": "17 47807 4",
+   "format": "spaces",
+   "structured": true,
+   "channel": "web_form"
+  },
+  {
+   "intake_id": "intake-026",
+   "kind": "tin",
+   "value": "902-41-8342",
+   "typed": "902418342",
+   "format": "digits",
+   "structured": true,
+   "channel": "mobile_app"
+  },
+  {
+   "intake_id": "intake-028",
+   "kind": "account",
+   "value": "77-99440-4",
+   "typed": "77994404",
+   "format": "digits",
+   "structured": true,
+   "channel": "web_form"
+  },
+  {
+   "intake_id": "intake-029",
+   "kind": "tin",
+   "value": "954-11-7463",
+   "typed": "954-11-7463",
+   "format": "dashes",
+   "structured": true,
+   "channel": "identity_theft_form"
+  },
+  {
+   "intake_id": "intake-030",
+   "kind": "account",
+   "value": "43-54122-3",
+   "typed": "43-54122-3",
+   "format": "dashes",
+   "structured": true,
+   "channel": "web_form"
+  },
+  {
+   "intake_id": "intake-030",
+   "kind": "account",
+   "value": "36-11767-2",
+   "typed": "36 11767 2",
+   "format": "spaces",
+   "structured": false,
+   "channel": "web_form"
+  },
+  {
+   "intake_id": "intake-032",
+   "kind": "tin",
+   "value": "909-53-8758",
+   "typed": "909-53-8758",
+   "format": "dashes",
+   "structured": true,
+   "channel": "mobile_app"
+  },
+  {
+   "intake_id": "intake-034",
+   "kind": "tin",
+   "value": "910-39-9303",
+   "typed": "910 39 9303",
+   "format": "spaces",
+   "structured": true,
+   "channel": "web_form"
+  },
+  {
+   "intake_id": "intake-037",
+   "kind": "account",
+   "value": "94-91990-7",
+   "typed": "94919907",
+   "format": "digits",
+   "structured": true,
+   "channel": "web_form"
+  },
+  {
+   "intake_id": "intake-039",
+   "kind": "tin",
+   "value": "934-61-1544",
+   "typed": "934611544",
+   "format": "digits",
+   "structured": true,
+   "channel": "web_form"
+  }
+ ]
+}

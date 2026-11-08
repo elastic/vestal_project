@@ -1,0 +1,27 @@
+{
+  "mappings": {
+    "properties": {
+      "intake_id": {
+        "type": "keyword"
+      },
+      "received_at": {
+        "type": "date"
+      },
+      "channel": {
+        "type": "keyword"
+      },
+      "customer_name": {
+        "type": "keyword"
+      },
+      "customer_tin": {
+        "type": "keyword"
+      },
+      "account_number": {
+        "type": "keyword"
+      },
+      "message": {
+        "type": "text"
+      }
+    }
+  }
+}
