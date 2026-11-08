@@ -29,7 +29,8 @@ import ara_security as S  # noqa: E402
 from agent_builder import AB, route_record  # noqa: E402
 
 HOME = pathlib.Path(os.environ.get("ARA_ACCESS_HOME", pathlib.Path.home() / "cortex-access"))
-PROBES = pathlib.Path(os.environ.get("ARA_ACCESS_PROBES", "/opt/ara/src/modules/m5/5-1-access-control/access/probes.json"))
+# The setup stages probes.json here, root-owned and world-readable: /opt/ara/src closes after provisioning.
+PROBES = pathlib.Path(os.environ.get("ARA_ACCESS_PROBES", "/opt/ara/access/probes.json"))
 CHOICES = {"documents": ("retrievable", "blocked"), "fields": ("visible", "hidden"), "calls": S.OUTCOMES}
 AGENT = "tina-compliance"
 
