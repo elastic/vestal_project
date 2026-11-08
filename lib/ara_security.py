@@ -205,10 +205,29 @@ def _walk_keys(o: Any, out: set) -> None:
             _walk_keys(v, out)
 
 
+def result_fields(results) -> set[str]:
+    """Field names one tool call's results expose: ES|QL column names, and index search resource content
+    keys (snippets and highlights excluded: those are text, and FLS hides fields, not text)."""
+    fields: set[str] = set()
+    for r in results or []:
+        if not isinstance(r, dict):
+            continue
+        t, d = r.get("type"), r.get("data") or {}
+        if t == "esql_results":
+            fields.update(c.get("name") for c in d.get("columns") or [])
+        elif t == "resource_list":
+            for x in d.get("resources") or []:
+                content = x.get("content")
+                if isinstance(content, dict):
+                    _walk_keys({k: v for k, v in content.items() if k not in ("snippets", "highlights")}, fields)
+    return fields
+
+
 def execute_outcome(ab, tool_id: str, params: dict, admin_ab=None, id_field: str | None = None,
                     run_budget_s: float = 60) -> dict:
     """Run one tool through tools/_execute under the key ab is bound to, and classify the outcome into
-    OUTCOMES. Returns {"class", "ids", "fields", "error", "execution_id"}; class None means the call
+    OUTCOMES. Returns {"class", "ids", "fields", "error", "execution_id", "results"} (results: the raw
+    result list, for a leak scan); class None means the call
     did not reach an outcome the closed list covers (a refused request, an environment error, an
     unknown result shape): that is the check's fault or the environment's, never the learner's.
 
@@ -221,15 +240,17 @@ def execute_outcome(ab, tool_id: str, params: dict, admin_ab=None, id_field: str
     # A 403 under a role key is an observation (AB.execute_tool would raise it as an outage).
     code, body = ab.request("POST", "/api/agent_builder/tools/_execute",
                             {"tool_id": tool_id, "tool_params": params}, ok_codes=(403,))
-    out ={"class": None, "ids": [], "fields": [], "error": None, "execution_id": None}
+    out = {"class": None, "ids": [], "fields": [], "error": None, "execution_id": None, "results": []}
     if code != 200:
         out["error"] = f"HTTP {code} {str(body)[:300]}"
         if code == 403:
             out["class"] = "error_not_authorized"
         return out
-    ids, fields = set(), set()
+    results = (body or {}).get("results") or []
+    out["results"] = results
+    ids, fields = set(), result_fields(results)
     cls = None
-    for r in (body or {}).get("results") or []:
+    for r in results:
         if not isinstance(r, dict):
             continue
         t, d = r.get("type"), r.get("data") or {}
@@ -244,7 +265,6 @@ def execute_outcome(ab, tool_id: str, params: dict, admin_ab=None, id_field: str
         if t == "esql_results":
             cols = [c.get("name") for c in d.get("columns") or []]
             vals = list(d.get("values") or [])
-            fields.update(cols)
             if id_field in cols:
                 ids.update(str(v[cols.index(id_field)]) for v in vals)
             cls = "rows" if vals else "no_rows"
@@ -254,9 +274,6 @@ def execute_outcome(ab, tool_id: str, params: dict, admin_ab=None, id_field: str
                 ref = x.get("reference") or {}
                 if ref.get("id") is not None:
                     ids.add(str(ref["id"]))
-                content = x.get("content")
-                if isinstance(content, dict):
-                    _walk_keys({k: v for k, v in content.items() if k not in ("snippets", "highlights")}, fields)
             cls = "rows" if res else "no_rows"
         elif isinstance(d.get("execution"), dict):
             ex = d["execution"]

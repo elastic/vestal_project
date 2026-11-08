@@ -48,6 +48,15 @@ def test_index_search_reads_reference_ids():
     o = ex(res)
     assert o["class"] == "rows" and o["ids"] == ["C002", "C003"] and "subject_tin" in o["fields"]
     assert ex([{"type": "resource_list", "data": {"resources": []}}])["class"] == "no_rows"
+    assert o["results"] == res
+
+
+def test_result_fields_reads_columns_and_keys_never_text():
+    res = [{"type": "query", "data": {"esql": "FROM cortex-cases | DROP subject_name"}},
+           {"type": "esql_results", "data": {"columns": [{"name": "case_id"}, {"name": "title"}], "values": []}},
+           {"type": "resource_list", "data": {"resources": [
+               {"content": {"snippets": ["subject_tin 900-55-0002"], "sar_id": "sar-1"}}]}}]
+    assert S.result_fields(res) == {"case_id", "title", "sar_id"}
 
 
 def test_workflow_outcomes_and_the_403_is_an_observation():
