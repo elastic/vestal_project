@@ -1,0 +1,24 @@
+{
+ "id": "ara-m5-5-1-end",
+ "_doc": "The 5.1 reference end's Agent Builder objects (25 section 8.4): ara-m5-5-1-start with cortex.case_lookup as Build 2's reference changes it (DROP the bodies instead of KEEP naming the identifier fields, so the tool works under both reference roles and returns identifiers only where the role may see them). The reference roles are setup steps (data/ara-m5/roles/), not manifest objects.",
+ "extends": "ara-m5-5-1-start",
+ "tools": [
+  {
+   "id": "cortex.case_lookup",
+   "type": "esql",
+   "tags": [
+    "cortex"
+   ],
+   "description": "Lists the Cortex case files of one case type, with each case's risk tier, filing date, title and subject. Use it when an analyst asks which cases of a type are on file or who they are about. Case types: structuring, wire_fraud, sanctions, kyc_gap, elder_exploitation.",
+   "configuration": {
+    "query": "FROM cortex-cases\n| WHERE case_type == ?case_type\n| DROP body, body_text\n| SORT filing_date DESC",
+    "params": {
+     "case_type": {
+      "type": "string",
+      "description": "The case type, one of structuring, wire_fraud, sanctions, kyc_gap, elder_exploitation."
+     }
+    }
+   }
+  }
+ ]
+}

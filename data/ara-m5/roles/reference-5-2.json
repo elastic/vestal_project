@@ -1,0 +1,192 @@
+{
+ "_doc": "5.1's reference roles (Build 2's reference: one index block per restricted index, DLS on both corpus indices, first-line FLS hiding the three subject fields), extended for 5.2: both read cortex-case-correspondence with the same DLS as cortex-cases, and cortex-intake with no DLS or FLS (5.2 Build 3 adds what the PII scenario requires).",
+ "cortex-analyst-l1": {
+  "cluster": [
+   "monitor_inference"
+  ],
+  "indices": [
+   {
+    "names": [
+     "cortex-wire-transfers",
+     "cortex-cash-movements",
+     "cortex-atm-events",
+     "cortex-brokerage-trades",
+     "cortex-ref-*",
+     "cortex-policies"
+    ],
+    "privileges": [
+     "read",
+     "view_index_metadata"
+    ]
+   },
+   {
+    "names": [
+     "cortex-cases"
+    ],
+    "privileges": [
+     "read",
+     "view_index_metadata"
+    ],
+    "query": "{\"terms\": {\"risk_tier\": [\"low\", \"medium\"]}}",
+    "field_security": {
+     "grant": [
+      "*"
+     ],
+     "except": [
+      "subject_name",
+      "subject_account",
+      "subject_tin"
+     ]
+    }
+   },
+   {
+    "names": [
+     "cortex-sar-narratives"
+    ],
+    "privileges": [
+     "read",
+     "view_index_metadata"
+    ],
+    "query": "{\"terms\": {\"risk_tier\": [\"low\", \"medium\"]}}",
+    "field_security": {
+     "grant": [
+      "*"
+     ],
+     "except": [
+      "subject_name",
+      "subject_account",
+      "subject_tin"
+     ]
+    }
+   },
+   {
+    "names": [
+     "cortex-fraud-cases",
+     "cortex-escalations",
+     "cortex-audit"
+    ],
+    "privileges": [
+     "read",
+     "index"
+    ]
+   },
+   {
+    "names": [
+     "cortex-case-correspondence"
+    ],
+    "privileges": [
+     "read",
+     "view_index_metadata"
+    ],
+    "query": "{\"terms\": {\"risk_tier\": [\"low\", \"medium\"]}}"
+   },
+   {
+    "names": [
+     "cortex-intake"
+    ],
+    "privileges": [
+     "read",
+     "view_index_metadata"
+    ]
+   }
+  ],
+  "applications": [
+   {
+    "application": "kibana-.kibana",
+    "resources": [
+     "*"
+    ],
+    "privileges": [
+     "feature_agentBuilder.read",
+     "feature_actions.read",
+     "feature_workflowsManagement.workflow_execute"
+    ]
+   }
+  ]
+ },
+ "cortex-investigator": {
+  "cluster": [
+   "monitor_inference"
+  ],
+  "indices": [
+   {
+    "names": [
+     "cortex-wire-transfers",
+     "cortex-cash-movements",
+     "cortex-atm-events",
+     "cortex-brokerage-trades",
+     "cortex-ref-*",
+     "cortex-policies"
+    ],
+    "privileges": [
+     "read",
+     "view_index_metadata"
+    ]
+   },
+   {
+    "names": [
+     "cortex-cases"
+    ],
+    "privileges": [
+     "read",
+     "view_index_metadata"
+    ],
+    "query": "{\"terms\": {\"case_type\": [\"structuring\", \"wire_fraud\", \"sanctions\"]}}"
+   },
+   {
+    "names": [
+     "cortex-sar-narratives"
+    ],
+    "privileges": [
+     "read",
+     "view_index_metadata"
+    ],
+    "query": "{\"terms\": {\"case_type\": [\"structuring\", \"wire_fraud\", \"sanctions\"]}}"
+   },
+   {
+    "names": [
+     "cortex-fraud-cases",
+     "cortex-escalations",
+     "cortex-audit",
+     "cortex-sar-filings"
+    ],
+    "privileges": [
+     "read",
+     "index"
+    ]
+   },
+   {
+    "names": [
+     "cortex-case-correspondence"
+    ],
+    "privileges": [
+     "read",
+     "view_index_metadata"
+    ],
+    "query": "{\"terms\": {\"case_type\": [\"structuring\", \"wire_fraud\", \"sanctions\"]}}"
+   },
+   {
+    "names": [
+     "cortex-intake"
+    ],
+    "privileges": [
+     "read",
+     "view_index_metadata"
+    ]
+   }
+  ],
+  "applications": [
+   {
+    "application": "kibana-.kibana",
+    "resources": [
+     "*"
+    ],
+    "privileges": [
+     "feature_agentBuilder.read",
+     "feature_actions.read",
+     "feature_workflowsManagement.workflow_execute"
+    ]
+   }
+  ]
+ }
+}
