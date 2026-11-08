@@ -11,7 +11,8 @@ Authoring tool; nothing in a sandbox runs it. Runs beside ara-lint.sh and align_
   tag        ARA_ASSETS_TAG in the 01 setup is an m4-* tag, never main (D-09)
   thresholds the 01 setup's THRESHOLDS_EOF copy equals private/thresholds.json
   connector  every check or solve file that converses (converse( or run_cases() builds its client
-             with the pinned connector: ARA_AB_CONNECTOR_ID or the track helper's tina()
+             with the pinned connector: ARA_AB_CONNECTOR_ID, or the track helper's tina() or (M5) check_key(),
+             which build it with ARA_AB_CONNECTOR_ID
   message    no grading check (NN-*.py) reads response.message or ["response"] (answer prose is
              never graded, 22 section 1)
   ids        custom tool ids are dotted cortex.<name>; agent and workflow ids are hyphenated
@@ -23,7 +24,8 @@ Authoring tool; nothing in a sandbox runs it. Runs beside ara-lint.sh and align_
   identity   no grading check converses with ES_API_KEY (checks converse as tina-runtime)
 M5 and later (25 section 1):
   ragas      no RAGAS package in any import, requirement or pip install line (RAGAS is vocabulary only)
-  reason     no grading check reads a judge's written reason (judge.raw, ["raw"], ["reason"])
+  reason     no grading check reads a judge's written reason (judge.raw, ["raw"], ["reason"]); a Defend
+             check is exempt: its "reason" is the learner's closed-list reason id, not a judge's text
   traces     no grading check reads traces-* (harness numbers come from the converse response)
 Exit 1 on any FAIL.
 """
@@ -76,12 +78,12 @@ def main(argv=None) -> int:
     for f in files:
         text = f.read_text()
         if re.search(r"\.converse\(|run_cases\(", text):
-            ok = "ARA_AB_CONNECTOR_ID" in text or re.search(r"\btina\(\)", text)
+            ok = "ARA_AB_CONNECTOR_ID" in text or re.search(r"\btina\(\)|\bcheck_key\(", text)
             report("connector", bool(ok), f.name)
         if re.match(r"\d\d-", f.name):
             report("message", not re.search(r"response\.message|\[\"response\"\]|\.get\(\"response\"\)", text), f.name)
             report("identity", not re.search(r"AB\([^)]*ES_API_KEY[^)]*\)\.converse|admin\(\)\.converse", text), f.name)
-            if mod >= "m5":
+            if mod >= "m5" and "-defend-" not in f.name:
                 report("reason", not re.search(r"judge\.raw|\[[\"']raw[\"']\]|\[[\"']reason[\"']\]|\.get\([\"'](?:raw|reason)[\"']", text), f.name)
                 report("traces", "traces-" not in text, f.name)
 

@@ -293,6 +293,14 @@ def test_m4_lint_m5_rules():
         text = out.getvalue()
         assert rc == 1 and "FAIL reason 02-predict.py" in text and "FAIL traces 02-predict.py" in text, text
         assert "FAIL ragas private/checks/x/_eval.py:1" in text, text
+        # A Defend check reads its closed-list reason ids; a check conversing through check_key() is pinned.
+        (t / "private/checks/x/_eval.py").unlink()
+        check.write_text("ab = H.check_key('b2', rd)[1]\nab.converse(AGENT_ID, q)\n")
+        (t / "private/checks/x/04-defend-x.py").write_text("ok = r1 == row['reason']\n")
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            rc = run()
+        text = out.getvalue()
+        assert "FAIL reason" not in text and "FAIL connector" not in text, text
 
 
 if __name__ == "__main__":
