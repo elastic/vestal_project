@@ -1,0 +1,131 @@
+<header>
+
+<p class="track-code">Lab 5.1</p>
+
+<h1>Lab 5.1: Access control</h1>
+
+<p><strong>Tina</strong> is about to serve more desks at Cortex Bank and Trust. A first-line analyst may see low- and medium-risk cases but never a customer's identifiers; an investigator on the financial-crimes desk sees every field of the case types the desk owns. Before the rollout, you need to know what each caller's key lets Tina retrieve, and to make the policy hold where it counts.</p>
+
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<pre><!-- include: problem.txt --></pre>
+
+  <p>Tina kept the house rule: her answer named no one. Her tool did not. The tool result held every structuring case, the high-risk ones a first-line analyst may not see, each with the subject's name and TIN. That result sits in the conversation, where the next question, the next model call or anyone reading the conversation can reach it.</p>
+  <p>The house rule shaped what Tina said. It did not decide what she retrieved, and nothing in her instructions can. What a tool returns is decided by the privileges of the key that called it.</p>
+</section>
+
+<section>
+<h2>Two layers of access</h2>
+<pre>caller's key ──> may it use Tina?          <span class="hl">agent access</span>: public, shared with
+                                           named users, or private
+             ──> what may Tina retrieve?   <span class="hl">the key's privileges</span>, on every
+                                           index her tools read</pre>
+
+  <p>The first layer decides who reaches Tina at all. Tina is public, so any key whose owner may use Agent Builder reaches her. Sharing names individual users, never roles, and a private agent is invisible to a role key even when the key's owner made the agent.</p>
+  <p>The second layer decides what she can bring back for that caller. Tina has no privileges of her own: every tool she calls runs with the caller's key. This lab is about the second layer.</p>
+</section>
+
+<section>
+<h2>API keys</h2>
+<pre>POST /_security/api_key
+  { "name": "cortex-auditor-key",
+    "role_descriptors": { "cortex-auditor": { indices, applications, ... } } }
+
+effective access  =  <span class="hl">role_descriptors</span>  ∩  <span class="hl">limited_by</span> (the creator's privileges)</pre>
+
+  <p>A key's <code>role_descriptors</code> say what it may do. Elasticsearch also records <code>limited_by</code>, the privileges of the user who created it, and the key never exceeds them: descriptors broader than the creator's role give nothing extra. Two cases follow from the same rule. A key created with <strong>empty</strong> role descriptors carries a snapshot of its creator's privileges. A key created <strong>by another API key</strong>, rather than by a user, can only be created with no privileges, and has no authority to call Elasticsearch: it reaches nothing.</p>
+  <p>A key does not take a role by name. To give a key a role's privileges, put the role's body in its descriptors.</p>
+</section>
+
+<section>
+<h2>Tools run as the caller</h2>
+<table>
+  <tr><th>Tool type</th><th>Runs as</th><th>Under a restricted key</th></tr>
+  <tr><td>ES|QL</td><td>the caller</td><td>its query sees only what the key may read</td></tr>
+  <tr><td>Index search</td><td>the caller</td><td>its results come only from documents the key may read</td></tr>
+  <tr><td>Workflow (Preview)</td><td>the caller, step by step</td><td>Kibana checks <code>workflow_execute</code> before any step runs; each step then reads and writes with the key's index privileges</td></tr>
+  <tr><td>HTTP API</td><td>the caller</td><td>the request carries the caller's privileges</td></tr>
+</table>
+
+  <p>This holds whether the tool is called by Tina in a chat or directly through <code>POST kbn:/api/agent_builder/tools/_execute</code>, which is how the helpers and the checks in this lab probe a key. A call ends in one of five ways: <code>rows</code>, <code>no_rows</code>, <code>error_hidden_field</code> (an ES|QL query named a field the key cannot see), <code>error_not_authorized</code> (refused before the tool could do anything), or <code>error_at_write</code> (a workflow started and failed when it wrote).</p>
+</section>
+
+<section>
+<h2>Document and field security</h2>
+<pre>{ "names": ["cortex-cases"],
+  "privileges": ["read", "view_index_metadata"],
+  "query": <span class="hl">{"terms": {"risk_tier": ["low", "medium"]}}</span>,            document security
+  "field_security": <span class="hl">{"grant": ["*"], "except": ["subject_tin"]}</span> }   field security</pre>
+
+  <p>Document security (DLS) is a query on an index block: the key sees only the documents it matches, in every search, ES|QL query and tool. Field security (FLS) removes fields from every document the key sees. Both bind only the indices the block names; an index the role does not restrict stays open, and an index it holds no privilege on is refused outright.</p>
+  <p>FLS hides fields, not text. A case's title and body name the customer and often the account, and those stay readable to a first-line analyst; the policy here covers the identifier fields. Removing an identifier from free text is a different control, redaction at ingest, which Lab 5.2 builds.</p>
+</section>
+
+<section>
+<h2>A tool that names a hidden field</h2>
+<pre>cortex.case_lookup under a key whose field security hides subject_tin:
+  verification_exception ... line 3:73: <span class="wrong">Unknown column [subject_tin]</span>,
+  did you mean [subject_name]?</pre>
+
+  <p>An ES|QL query that names a field the key cannot see does not skip it: the whole query fails, and the caller gets nothing. That includes <code>KEEP</code> with a pattern that matches only hidden fields. So a tool written for the widest role can stop working for a narrower one. A query that names no restricted field returns what each caller's role shows: identifiers for a caller who may see them, none for one who may not.</p>
+  <p>(Real output from this lab's 5.1 calibration, under one of the auditor roles you may draw in Build 1.)</p>
+</section>
+
+<section>
+<h2>What a role key needs to use Tina</h2>
+<table>
+  <tr><th>To</th><th>The key needs (Kibana application <code>kibana-.kibana</code>, all resources)</th></tr>
+  <tr><td>Run an ES|QL or index search tool through <code>_execute</code></td><td><code>feature_agentBuilder.read</code></td></tr>
+  <tr><td>Run a workflow tool through <code>_execute</code></td><td>also <code>feature_workflowsManagement.workflow_execute</code> (<code>workflowsManagement.read</code> is not enough)</td></tr>
+  <tr><td>Chat with Tina</td><td><code>feature_agentBuilder.read</code> and <code>feature_actions.read</code> (her model connector), and cluster <code>monitor_inference</code></td></tr>
+  <tr><td>Chat with Tina when she calls a workflow tool</td><td>also <code>feature_workflowsManagement.workflow_execute</code></td></tr>
+</table>
+
+  <p>Measured on Serverless in this certification's design research. On top of these, the key needs index privileges on whatever Tina's tools read and write, and Tina must be public or shared with the key's user. Cortex's base roles in this lab already carry these privileges.</p>
+</section>
+
+<section>
+<h2>The audit trail</h2>
+<pre>workflow run under cortex-analyst-l1-key    executedBy: <span class="hl">admin</span>
+workflow run under the admin user           executedBy: <span class="hl">admin</span>
+conversation started under any key          author: admin, access: private to admin</pre>
+
+  <p>A workflow run records the user who owns the key, never the key. Every key in this sandbox is created by the same project admin user, so the run record is the same whichever key called Tina. Conversations belong to that user too, not to the key.</p>
+  <p>Measured while this lab was built: a first-line key posted a new question into a conversation an investigator's key had started. Tina made no new tool call: the TIN came from the earlier round's tool results, already in her context. With the house rule she refused to repeat it, every time. No tool ran, so field security had nothing to filter; only her instruction stood in the way.</p>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">A restricted document or field reached a restricted role. Take the first row that applies.</p>
+<table>
+  <tr><th>When</th><th>It indicates</th></tr>
+  <tr><td>The tool reads an index the role's document and field security do not name</td><td>The tool reads data the role's restrictions do not cover</td></tr>
+  <tr><td>The calling key was created with empty role descriptors, so it carries its creator's privileges</td><td>The key does not carry the role's restrictions</td></tr>
+  <tr><td>Only an instruction to the agent was meant to keep it out</td><td>An instruction stood in for access control</td></tr>
+</table>
+<p class="rule-line">Build 1: what a key observed, and the mechanism behind it.</p>
+<table>
+  <tr><th>What the key observed</th><th>Mechanism</th></tr>
+  <tr><td>A document is left out by the <code>query</code> in the block that covers its index</td><td><code>dls_filtered</code></td></tr>
+  <tr><td>A tool returns nothing because that query leaves out every match</td><td><code>dls_filtered</code></td></tr>
+  <tr><td>A field is missing because <code>field_security</code> excludes it</td><td><code>fls_hidden</code></td></tr>
+  <tr><td>An ES|QL tool errors with <code>Unknown column</code> for a field the key cannot see</td><td><code>query_names_hidden_field</code></td></tr>
+  <tr><td>Kibana refuses the call before it starts: a feature privilege is missing</td><td><code>missing_kibana_privilege</code></td></tr>
+  <tr><td>Elasticsearch refuses a read or a write: the key holds no such privilege on that index</td><td><code>missing_index_privilege</code></td></tr>
+  <tr><td>It was retrieved, visible, or returned rows: nothing restricts it</td><td><code>not_restricted</code></td></tr>
+</table>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+<li>Build 1: your prediction for the auditor key recorded before the key exists, and every miss explained by the mechanism that produced it</li>
+<li>Build 2: under the first-line key, <code>cortex.case_lookup</code> returns <strong>16</strong> structuring cases without identifiers; under the investigator key, <strong>24</strong> with them</li>
+<li>Build 2: <code>_search</code> under each key returns exactly the policy's documents (<strong>80</strong> cases and <strong>25</strong> narratives for first-line, <strong>72</strong> and <strong>24</strong> for the investigator), and <code>cortex.sar_search</code> and every earlier Cortex tool still work under both</li>
+<li>Build 2: asked who the structuring cases are about, Tina's tool results under the first-line key hold no high-risk case and no identifier, on every run</li>
+</ul>
+</section>
