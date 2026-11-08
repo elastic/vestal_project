@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from typing import Any
 from urllib.parse import quote
 
@@ -82,7 +83,7 @@ def guard_shape(doc: dict) -> dict:
             "other_target": other, "guard": any(s.get("type") == "if" for s, _ in found)}
 
 
-def run_url(ab, workflow_id: str, url: str, http_step: str, budget_s: float = 45) -> dict:
+def run_url(ab, workflow_id: str, url: str, http_step: str, budget_s: float = 45, io_tries: int = 5) -> dict:
     """One direct run. http_ran: the http step has a step execution (it ran, whatever its result)."""
     ex_id = ab.run_workflow(workflow_id, {"url": url})
     if not ex_id:
@@ -95,9 +96,14 @@ def run_url(ab, workflow_id: str, url: str, http_step: str, budget_s: float = 45
     out = {"status": ex.get("status"), "http_ran": step is not None, "http_status": (step or {}).get("status"),
            "output": None, "error": (step or {}).get("error") or ex.get("error")}
     if step is not None and step.get("id"):
-        io = ab.step_io(ex_id, step["id"]) or {}
-        out["output"] = io.get("output") if io.get("output") is not None else step.get("output")
-        out["error"] = out["error"] or io.get("error")
+        # A completed step's I/O can lag the execution's end (t52-r5: unreadable once, 8 s after a readable run).
+        for i in range(io_tries):
+            io = ab.step_io(ex_id, step["id"]) or {}
+            out["output"] = io.get("output") if io.get("output") is not None else step.get("output")
+            out["error"] = out["error"] or io.get("error")
+            if out["output"] is not None or step.get("status") != "completed":
+                break
+            time.sleep(2)
     return out
 
 
