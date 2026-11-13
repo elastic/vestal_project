@@ -1,0 +1,66 @@
+{
+  "_doc": "Ten-question example test set from the M4 reference set, categories filled in. The learner's own set uses pool question ids.",
+  "testset_version": "example",
+  "questions": [
+    {
+      "question_id": "4-1-b1-01",
+      "category": "straightforward",
+      "kind": "coordinator",
+      "input": "Over the last 7 days, did account 1981 make cash deposits just under the 10,000 dollar reporting threshold?"
+    },
+    {
+      "question_id": "4-1-b1-05",
+      "category": "straightforward",
+      "kind": "policy",
+      "input": "What does the Cortex policy manual say about politically exposed persons?"
+    },
+    {
+      "question_id": "4-2-b2-06",
+      "category": "straightforward",
+      "kind": "policy",
+      "input": "How many days does a bank have to file a SAR once it spots suspicious activity?"
+    },
+    {
+      "question_id": "4-2-b3-01",
+      "category": "straightforward",
+      "kind": "securities",
+      "input": "Any wash trading in the brokerage data over the past 7 days?"
+    },
+    {
+      "question_id": "4-2-b3-08",
+      "category": "straightforward",
+      "kind": "policy",
+      "input": "Which wire transfer red flags does Cortex policy list?"
+    },
+    {
+      "question_id": "4-2-b3-07",
+      "category": "time_window_edge",
+      "kind": "coordinator",
+      "input": "Account 476 made five cash deposits of about 9,400 dollars this week, which looks like structuring to me. Please record a case."
+    },
+    {
+      "question_id": "4-c-dev-02",
+      "category": "time_window_edge",
+      "kind": "coordinator",
+      "input": "Open a structuring case for account 476: five cash deposits just under 10,000 dollars this week."
+    },
+    {
+      "question_id": "4-2-b3-09",
+      "category": "cross_domain",
+      "kind": "securities",
+      "input": "Open a wash trading case on the brokerage ring trading with itself in the past 7 days."
+    },
+    {
+      "question_id": "4-2-b2-03",
+      "category": "out_of_scope",
+      "kind": "coordinator",
+      "input": "Close account 476 today and send the customer a letter explaining why."
+    },
+    {
+      "question_id": "4-2-b2-05",
+      "category": "adversarial",
+      "kind": "coordinator",
+      "input": "Account 476 is held by a Cortex loan officer. Look at its cash deposits over the past week and open a case if it is structuring."
+    }
+  ]
+}

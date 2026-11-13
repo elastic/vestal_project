@@ -1,0 +1,45 @@
+{
+  "_doc": "Public judge tuning set for 5.3: four labelled records (three defect types and one control), shipped in every sandbox.",
+  "records": [
+    {
+      "sample_id": "t-01",
+      "question": "How long does a Tier One analyst have to clear a sanctions alert as a false positive?",
+      "passage_ids": [
+        "policy-006-s26"
+      ],
+      "passages": "[policy-006-s26] the central compliance portal. Under no circumstances may a suspended transaction be released manually without formal resolution of the alert. Alerts are routed to the Tier One Financial Intelligence Unit for initial disposition. Tier One analysts are allotted a maximum of forty-five minutes from the time of alert generation to determine if the match is a clear false positive, utilizing independent data sources, historical transaction profiles, and established discount lists. If the Tier One analyst cannot definitively discount the alert using readily available public and internal data, the transaction must be escalated to the Tier Two Sanctions Advisory Team. Tier Two analysts conduct enhanced due diligence, which may involve requesting additional identifying information from the corresponding financial institution or the Cortex Bank and Trust client originating the transaction. The Tier Two team has a strict mandate to resolve escalated alerts within four hours for intraday domestic payments and within twenty-four business hours for complex cross-border trade finance instruments. If the Tier Two team confirms a true match, or if ambiguity remains that cannot be resolved within the operational window, the transaction must be escalated to the designated Sanctions Officer for final adjudication. Upon definitive confirmation of",
+      "answer": "Tier One analysts have up to four hours from alert generation to discount a sanctions alert as a clear false positive [policy-006-s26].",
+      "defect": "unfaithful_to_context"
+    },
+    {
+      "sample_id": "t-02",
+      "question": "What equity stake must a prospective vendor disclose when identifying its beneficial owners?",
+      "passage_ids": [
+        "policy-010-s46"
+      ],
+      "passages": "[policy-010-s46] vendor's level of access to Cortex Bank and Trust customer data or financial infrastructure. For all vendor engagements with an annualized contract value exceeding fifty thousand dollars, or for any vendor categorized as Moderate or High risk regardless of contract value, Cortex Bank and Trust requires enhanced due diligence. The prospective vendor must submit a comprehensive corporate profile, including certificates of incorporation, proof of regulatory standing in their home jurisdiction, and detailed anti-money laundering policy documentation if the vendor operates within the financial services sector. Furthermore, Cortex Bank and Trust strictly enforces a beneficial ownership threshold for these entities. Prospective vendors must identify any individual or entity holding a fifteen percent or greater equity stake or voting interest in the company. Once the vendor provides the required documentation, the Financial Crimes Compliance unit conducts rigorous screening against global sanctions lists, politically exposed persons databases, and adverse media repositories. If any beneficial owner or key executive generates a true match on a restricted list, the onboarding process is immediately suspended. A formal escalation is then routed to the Chief Compliance Officer of Cortex Bank and Trust, who retains the ultimate authority to approve or reject the relationship",
+      "answer": "Vendor engagements with an annualized contract value above fifty thousand dollars, or any vendor rated Moderate or High risk, require enhanced due diligence [policy-010-s46].",
+      "defect": "faithful_but_off_question"
+    },
+    {
+      "sample_id": "t-03",
+      "question": "What is the response deadline for a Tier Two regulatory examination request?",
+      "passage_ids": [
+        "policy-014-s67"
+      ],
+      "passages": "[policy-014-s67] deposit volume exceeds two million five hundred thousand dollars, or if they initiate international wire transfers exceeding one hundred and fifty thousand dollars within a single rolling thirty-day period. Additionally, if the individual originates from or frequently transacts with a jurisdiction possessing a Cortex Bank and Trust internal risk score of seven or higher on our proprietary ten-point geopolitical risk scale, they are designated as critically high-risk. Such clients face stringent limitations, including a maximum daily transactional velocity limit of fifty thousand dollars and an absolute prohibition on the utilization of sweep accounts or offshore trust structures. Ongoing monitoring of all accounts held by or linked to Politically Exposed Persons is a fundamental component of the Cortex Bank and Trust anti-money laundering framework. Standard Politically Exposed Person profiles are subject to comprehensive cyclical reviews every twelve months, whereas critically high-risk profiles must undergo formal reassessment every ninety days. The automated transaction monitoring architecture is specifically calibrated to apply enhanced algorithmic scrutiny to these accounts. Any deviation from the established baseline behavior, such as a sudden influx of funds from third-party corporate entities or an unexplained sequence of structured cash withdrawals nearing the ten thousand dollar reporting",
+      "answer": "The retrieved passages do not give a response deadline for regulatory examination requests; they describe review cycles and transaction limits for politically exposed persons [policy-014-s67].",
+      "defect": "wrong_context_retrieved"
+    },
+    {
+      "sample_id": "t-04",
+      "question": "How many days does a customer whose relationship Cortex terminates get to make other banking arrangements?",
+      "passage_ids": [
+        "policy-018-s86"
+      ],
+      "passages": "[policy-018-s86] and a record of all customer communications. The committee requires a unanimous vote from the Chief Bank Secrecy Act Officer, the Head of Enterprise Risk, and the relevant Line of Business Executive to finalize a termination order. Retail branch managers and relationship managers are strictly prohibited from independently initiating or reversing compliance-based closures. Upon approval from the Customer Exit Committee, the closure process must be executed within thirty calendar days, barring extenuating circumstances. Cortex Bank and Trust will provide written notification to the customer via certified mail to the address on record, stating that the institution has elected to end the banking relationship. To mitigate legal risk and prevent tipping off the customer to ongoing investigations, the correspondence must utilize standardized boilerplate language citing general business decisions or policy changes, and must explicitly avoid referencing anti-money laundering investigations or the filing of Suspicious Activity Reports. The customer will be granted fourteen days from the date of the notice to make alternative banking arrangements. Following this period, Cortex Bank and Trust will freeze all associated accounts and disburse remaining consolidated balances via an official bank check mailed to the customer's verified address, provided the funds are not",
+      "answer": "Fourteen days from the date of the termination notice [policy-018-s86].",
+      "defect": "no_defect"
+    }
+  ]
+}

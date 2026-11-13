@@ -1,0 +1,106 @@
+<header>
+
+<p class="track-code">Lab 5.4</p>
+
+<h1>Lab 5.4: Before-and-after measurement</h1>
+
+<p>A change to an agent is a bet. You measured Tina in Lab 5.3; now you use that measurement to decide whether a change ships. You get a change request, you measure Tina before and after it on the same test set, you read the table by category, and you apply a budget that was written down before you looked. Quality and efficiency rarely agree, so the decision rule is the part you have to get right.</p>
+
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<pre><!-- include: problem.txt --></pre>
+
+  <p>Tina starts this lab slightly handicapped: when an analyst names no time window she asks for one instead of searching the last 7 days. On the lab's 30-question set that costs her the ambiguous questions, and only those: she routes the other categories correctly. The change request restores the default with one sentence. A fix that cheap looks like an easy ship, and that is the trap: it also changes how many tools she calls and what each question costs, so the number you were asked to move is not the only one that decides.</p>
+</section>
+
+<section>
+<h2>The gate question</h2>
+  <p>A <strong>gate</strong> is the decision point between a change and production: ship it, or do not. Something triggers a gate whenever the agent's behaviour can move: a prompt or tool-description change, a model swap, a retrieval change. A gate does not ask whether the change is good. It asks whether the measured effect is worth what it costs, against limits you set first.</p>
+  <p>Quality and efficiency signals that disagree are the normal case, not an exception. A change that makes an agent act where it used to ask will often raise accuracy and raise tool calls together. Neither number alone is the answer.</p>
+</section>
+
+<section>
+<h2>Before and after on the same Tina</h2>
+  <p>One change, one test set, one agent. Anything else that moves between the two runs is in the difference, so nothing else may move: if you edit Tina, her tools or her skills for any other reason, the comparison is void. <code>ara-eval.py reset</code> puts her back to her start state and says what it restored; then measure again.</p>
+  <p>The check makes the graded runs itself, on Tina as she is when you select Check, and freezes them root-side. Runs you make yourself are practice and teach you the numbers; they are not graded. Tool calls and tokens come from the agent's own response (<code>model_usage</code> and the round's tool steps), never from traces.</p>
+</section>
+
+<section>
+<h2>The budget comes first</h2>
+  <p>The budget is written before the measurement, never after it. A budget chosen after the numbers are in will always find a reason to ship. Your sandbox's change request states yours. Its fields:</p>
+<table>
+  <tr><th>Field</th><th>What it limits</th></tr>
+  <tr><td>Minimum gain</td><td>The overall routing-accuracy gain, in points, below which the change is not worth shipping</td></tr>
+  <tr><td>Large-gain size</td><td>The gain, in points, from which the larger limits below apply</td></tr>
+  <tr><td>Tool-call limit</td><td>The rise in tool calls per question, in percent of the before mean: one limit for a small gain, one for a large gain</td></tr>
+  <tr><td>Cost limit</td><td>The rise in cost per question, in percent of the before mean: small and large</td></tr>
+  <tr><td>Category limit</td><td>The most any single category may fall, in points</td></tr>
+</table>
+</section>
+
+<section>
+<h2>Reading the table by category</h2>
+  <p>The change in a category is the after value minus the before value. An overall number hides where the change landed: a change can help one class of question and quietly hurt another, and the largest rise is not always where the change was aimed. A lab-sized set moves in whole questions: one question in a category of four is 25 points. Read category changes with that in mind.</p>
+  <p>Coverage matters too. A test set written before a change may hold no questions where the change acts, and then it shows no effect at all. Check that the set has questions in the categories you expect the change to move.</p>
+</section>
+
+<section>
+<h2>Tokens are not dollars</h2>
+  <p>A token count is not a cost. This track prices tokens on one rate card, made-up figures in proportion to typical pricing:</p>
+<table>
+  <tr><th>Token kind</th><th>Dollars per million tokens</th></tr>
+  <tr><td>Fresh input</td><td>2.00</td></tr>
+  <tr><td>Cached input</td><td>0.20</td></tr>
+  <tr><td>Output</td><td>8.00</td></tr>
+</table>
+  <p>Cached input costs about a tenth of fresh, and output about four times fresh. Cost per question is the priced mean of a question's tokens; the monthly bill is cost per question times the questions per month, 100,000 in this track. Latency (p95) is recorded and never gated.</p>
+</section>
+
+<section>
+<h2>Prompt caching: static before dynamic</h2>
+  <p>Every model call resends the fixed part of the prompt: the instructions and the tool descriptions. Input the provider has seen recently is billed as cached, below fresh. So keep the fixed part fixed, with nothing per-request inside it, and put what changes per call after it. An edit to the fixed part invalidates the cache, and the first calls after it pay full price to write it again. The rate card has no cache-write price, which is a simplification here.</p>
+  <p>This change adds a sentence to a tool description: fixed text the cache can discount. A change that said "check each account separately" would add per-call work it cannot discount. In build-time runs about 57 percent of Tina's input was cached, which prices a question at about six cents on this rate card, or about 5,800 dollars a month at 100,000 questions. Measure the change on that bill rather than on token counts: the difference is a few percent, in either direction from run to run.</p>
+</section>
+
+<section>
+<h2>When a gate must run</h2>
+  <p>A model swap is the change a gate meets most often. A production gate sizes its test set until the run-to-run spread is smaller than the effect the gate must see, and sets limits outside that spread. A 30-question lab set cannot do that, so here the limits are chosen with the lab's spread in mind.</p>
+</section>
+
+<section>
+<h2>The scorecard</h2>
+  <p>The scorecard is a dashboard over the run records, built by an agent: custom panels are Preview, and the built-in agent builds and refines them from chat. Yours is not graded.</p>
+</section>
+
+<section>
+<h2>What comes next</h2>
+  <p>Module 6 automates this loop: observing an agent in production, and improving it from what is seen.</p>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Take the first row that applies.</p>
+<table>
+  <tr><th>If</th><th>Decision</th><th>Reason</th></tr>
+  <tr><td>Any category falls by more than the category limit</td><td>No ship</td><td><code>category_regression_over_budget</code></td></tr>
+  <tr><td>The overall gain is below the minimum gain</td><td>No ship</td><td><code>no_quality_gain</code></td></tr>
+  <tr><td>Tool calls per question rise by more than the applicable limit</td><td>No ship</td><td><code>tool_call_regression_over_budget</code></td></tr>
+  <tr><td>Cost per question rises by more than the applicable limit</td><td>No ship</td><td><code>token_cost_regression_over_budget</code></td></tr>
+  <tr><td>None of the above</td><td>Ship</td><td><code>quality_gain_within_budget</code></td></tr>
+</table>
+<p>Gains and drops are in points. Rises are percent of the before mean, to one decimal. The small or large limit pair applies by whether the gain is below the large-gain size. Worked example, the course design's: a gain of at least 2 points counts; under 15 points, tool calls may rise at most 50 percent and cost at most 30; at 15 or more, 100 and 60; no category may lose more than 10 points.</p>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+  <li><strong>Build 1:</strong> Tina as given, measured before the change by the check, with the numbers frozen.</li>
+  <li><strong>Build 2:</strong> the change applied as the change request names it, to that object only, and measured after by the check; a scorecard you build.</li>
+  <li><strong>Build 3:</strong> a decision, ship or no ship, with the one primary reason the rule gives for your sandbox's budget.</li>
+  <li><strong>Defend:</strong> what the change did in each category, what caching does to the bill, and a gate decision on a table you are given.</li>
+</ul>
+</section>

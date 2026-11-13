@@ -1,0 +1,21 @@
+{
+  "mappings": {
+    "properties": {
+      "sample_id": {
+        "type": "keyword"
+      },
+      "question": {
+        "type": "text"
+      },
+      "passage_ids": {
+        "type": "keyword"
+      },
+      "passages": {
+        "type": "text"
+      },
+      "answer": {
+        "type": "text"
+      }
+    }
+  }
+}

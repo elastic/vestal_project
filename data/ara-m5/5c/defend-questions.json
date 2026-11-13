@@ -1,0 +1,108 @@
+{
+ "track": "cert-sk-ara-5-c-ship-gate",
+ "challenge": "02-run-the-ship-gate",
+ "_doc": "DRAFT. The decision recorder's questions (07 2.5), written through defend.py to /home/elastic/defend/decision.json. Keys are the producer's exact strings (09 T4); the check reads `choice` (and `reason` on q3), never labels. Truth is derived in the check from the final-state class, the probes and the trusted aggregates (ara_shipgate.defend_truth), never from this file and never from the index. Inside challenge 02, not a separate challenge (02 6.1): the Check grades the Build and the Defend together, tier 75 when the Defend is inconsistent.",
+ "display_rules": {
+  "shuffle": "choices ordered by the sandbox seed so the right option does not sit in a fixed position",
+  "context": "q3 prints the learner's own secured numbers from /opt/ara/results/5-c/aggregates-secured.json next to the rule table: the stated gain, its threshold, each category's change",
+  "record": "choice (and reason for q3) written as the closed-vocabulary key; a decision.json copied from another seed fails q1 or q2"
+ },
+ "questions": [
+  {
+   "id": "q1",
+   "text": "What hole did the proposed change open? Name it as the platform team's change left it, even if you reverted the change.",
+   "note": "One choice. Reverting without finding the hole does not pass.",
+   "seed_variant": false,
+   "shuffle": "seed",
+   "choices": [
+    {
+     "key": "retrieval_scope_gap",
+     "label": "A search or tool path to documents or fields that the analyst roles' document and field security do not cover"
+    },
+    {
+     "key": "egress_opened",
+     "label": "A route out of Cortex that fetches addresses outside the approved sources"
+    },
+    {
+     "key": "injection_regressed",
+     "label": "A control against instructions hidden in outside text was weakened, so payloads that were stopped land again"
+    },
+    {
+     "key": "none",
+     "label": "None: the change is safe as the platform team staged it"
+    }
+   ]
+  },
+  {
+   "id": "q2",
+   "text": "What control does your final configuration rely on?",
+   "note": "Your Check records must agree with this answer: the check reads your roles, your guard, your instructions and your tools.",
+   "seed_variant": false,
+   "shuffle": "seed",
+   "choices": [
+    {
+     "key": "extend_role_to_new_index",
+     "label": "Both analyst roles now carry their document and field rules on the index the change added"
+    },
+    {
+     "key": "allowlist_guard",
+     "label": "The route out admits exactly the approved sources, including the one the change needed"
+    },
+    {
+     "key": "alternative_mitigation",
+     "label": "A control other than the removed instruction stops the payloads, and the change stays"
+    },
+    {
+     "key": "restore_instruction",
+     "label": "The instruction the change removed is back in Tina's instructions, and the rest of the change stays"
+    },
+    {
+     "key": "revert_change",
+     "label": "The change is reverted: what it added or removed is back as it was"
+    }
+   ]
+  },
+  {
+   "id": "q3",
+   "text": "Your decision on the platform team's change, and the reason.",
+   "note": "Take the first row of the rule table that applies, from your probes and your secured run.",
+   "seed_variant": false,
+   "shuffle": "seed",
+   "choices": [
+    {
+     "key": "ship_with_control",
+     "label": "Ship, with the control you chose"
+    },
+    {
+     "key": "no_ship",
+     "label": "Do not ship"
+    }
+   ],
+   "reasons": [
+    {
+     "key": "hole_open",
+     "label": "A security probe still fails on your final configuration"
+    },
+    {
+     "key": "change_reverted",
+     "label": "The change is no longer in place: you reverted it"
+    },
+    {
+     "key": "gain_kept_with_control",
+     "label": "The change is in place, secured, and your secured run keeps the stated gain within the category limit"
+    },
+    {
+     "key": "gain_lost_after_securing",
+     "label": "The change is in place and secured, but your secured run no longer shows the stated gain, or a category fell past the limit"
+    }
+   ]
+  }
+ ],
+ "rule_table_words": [
+  "Take the first row that applies.",
+  "A hard security probe fails: do not ship, reason hole_open.",
+  "The change is reverted: do not ship, reason change_reverted.",
+  "The change is in place, and your secured run keeps the gain the change request states with no category down by more than its limit: ship with control, reason gain_kept_with_control.",
+  "Otherwise: do not ship, reason gain_lost_after_securing."
+ ]
+}

@@ -1,0 +1,35 @@
+{
+  "script": {
+    "lang": "mustache",
+    "source": {
+      "retriever": {
+        "rrf": {
+          "retrievers": [
+            {
+              "standard": {
+                "query": {
+                  "match": {
+                    "body_text": "{{query_string}}"
+                  }
+                }
+              }
+            },
+            {
+              "standard": {
+                "query": {
+                  "semantic": {
+                    "field": "body",
+                    "query": "{{query_string}}"
+                  }
+                }
+              }
+            }
+          ],
+          "rank_window_size": 20
+        }
+      },
+      "size": 5,
+      "_source": false
+    }
+  }
+}

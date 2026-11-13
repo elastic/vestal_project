@@ -1,0 +1,5 @@
+Tina before the platform team's change, run through the lab's 42-question
+test set (v1c), by the harness you built in Lab 5.3:
+
+  routing accuracy, overall: 100.0
+  cost per 1,000 questions:  $74.5

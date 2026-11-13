@@ -1,0 +1,129 @@
+<header>
+
+<p class="track-code">Lab 5.3</p>
+
+<h1>Lab 5.3: Build the evaluation harness</h1>
+
+<p>Until now you changed Tina and looked at what happened. A change you cannot measure is a guess, and a measurement you cannot trust is worse, because it looks like an answer. In this lab you build the measurement: a test set curated to match what analysts really ask, a retrieval baseline, a routing baseline, and a model judge you prompt, tune and test, then use to name a defect planted in this sandbox's answers.</p>
+
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<pre><!-- include: problem.txt --></pre>
+
+  <p>Both numbers look like good news and both are wrong to rely on. The first set holds only questions Tina answers well, so its 100 percent is a property of the set, not of Tina. Routing accuracy also reads only which tools she called, so it cannot see an answer that quotes the wrong passage, or one that ignores the question. The second is a judge written the way most first drafts are: one prompt, a score, a plausible reason. On records it was not tuned on it missed a defect in every run.</p>
+  <p>While this lab was built, Tina's route was right on about 95 percent of the lab's question pool, and on 98 percent of a second set written to be harder, in every category. A set that only checks routes cannot tell you where an agent is weak, because on questions like these her routes are rarely the weak part, and the weakness this lab plants is in the answers. An evaluation harness exists to make that visible before the agent ships, and to stay trustworthy afterwards.</p>
+</section>
+
+<section>
+<h2>What a harness is</h2>
+<pre>test set ──> run ──> metrics ──> records ──> comparison
+ (labelled    (Tina    (code checks,  (one document per   (before and
+  questions)   answers)  a judge)      question, stored)   after, per category)
+   ^                                                              │
+   └──────────── curated to match the question log ───────────────┘</pre>
+  <p>A <strong>test set</strong> is a list of questions, each with what a right answer looks like. A <strong>run</strong> sends each one to the agent in a fresh conversation. <strong>Metrics</strong> turn each answer or route into numbers, <strong>records</strong> store them so a later run can be compared, and a <strong>comparison</strong> reads two labelled runs. In a new build you write the harness first, with the success criteria, and then the agent. This one is single-turn: each question is one message. Multi-turn evaluation is its own category and needs its own design.</p>
+</section>
+
+<section>
+<h2>The golden set</h2>
+  <p>Cortex keeps a log of what analysts ask Tina. A test set drawn from the questions that are easy to write drifts toward the happy path. Curate it to the log instead. Label each question with a category, and make sure every category that is a tenth or more of the log has at least three questions in your set:</p>
+<table>
+  <tr><th>Category</th><th>What it tests</th></tr>
+  <tr><td><code>straightforward</code></td><td>One desk, every parameter stated</td></tr>
+  <tr><td><code>ambiguous</code></td><td>A parameter is missing, or the answer spans several documents</td></tr>
+  <tr><td><code>time_window_edge</code></td><td>A window longer than the data, or a calendar period</td></tr>
+  <tr><td><code>cross_domain</code></td><td>Two desks in one question</td></tr>
+  <tr><td><code>adversarial</code></td><td>Tries to skip a rule, claims authority, or asks for an identifier</td></tr>
+  <tr><td><code>out_of_scope</code></td><td>A plain request that belongs to <code>cortex.escalate</code></td></tr>
+</table>
+  <p>The check compares your labels with the log's own and expects most of them to agree: two people labelling the same question disagree sometimes, so treat a label as a judgement, and a set with no non-straightforward category as a set that cannot find anything.</p>
+</section>
+
+<section>
+<h2>Retrieval is measured by _rank_eval</h2>
+  <p>For policy questions the thing to grade is what the search returns. Elasticsearch's <code>_rank_eval</code> API runs rated requests against an index and scores them. Three metrics, each at <code>k = 5</code>:</p>
+<table>
+  <tr><th>Metric</th><th>Reads</th></tr>
+  <tr><td>Precision at 5</td><td>the share of the top 5 results that are relevant</td></tr>
+  <tr><td>Recall at 5</td><td>the share of all relevant passages that reached the top 5</td></tr>
+  <tr><td>nDCG at 5</td><td>whether the relevant passages are ranked near the top (normalised discounted cumulative gain)</td></tr>
+</table>
+  <p>Rate every result you want counted: a passage you did not rate is not treated as irrelevant unless you set <code>ignore_unlabeled</code> to false, which this lab does. The check re-runs <code>_rank_eval</code> itself and compares its numbers with what you stored, so a figure you edited does not agree with it.</p>
+</section>
+
+<section>
+<h2>The grading ladder</h2>
+<pre>1  <span class="hl">code checks</span>       a route matched, a field present, a number in range        cheap, exact, narrow
+2  <span class="hl">a model judge</span>      interpretation: is the answer supported, on topic          cheap, broad, noisy
+3  <span class="hl">human review</span>       high-stakes or new behaviour; the labels a judge is calibrated against</pre>
+  <p>Use the lowest rung that can answer the question. Route matching is a code check. Whether an answer follows from its passages needs interpretation, so it needs a judge, and a judge needs humans to say what its scores should have been.</p>
+</section>
+
+<section>
+<h2>Model-judged quality: three metrics</h2>
+  <p>The vocabulary below is from the RAGAS evaluation family. Each metric reads a different slice of the record, which is why one can flag a defect another cannot see:</p>
+<table>
+  <tr><th>Metric</th><th>Reads</th><th>Ignores</th></tr>
+  <tr><td>Faithfulness</td><td>the passages and the answer: is every claim in the answer supported</td><td>the question</td></tr>
+  <tr><td>Answer relevance</td><td>the question and the answer: does the answer address what was asked</td><td>the passages</td></tr>
+  <tr><td>Context precision</td><td>the question and the passages: are the passages the ones the question needed</td><td>the answer</td></tr>
+</table>
+  <p>Here the judge is an ES|QL query. <code>COMPLETION</code> sends a prompt to a model endpoint from inside the query, so a record (<code>question</code>, <code>passages</code>, <code>answer</code>) goes in and a score comes out, one <code>COMPLETION</code> per metric. Use a model different from the one being judged: a model rates answers in its own style higher.</p>
+</section>
+
+<section>
+<h2>Three failure modes, and which metric flags each</h2>
+<table>
+  <tr><th>Failure</th><th>What the record looks like</th><th>The metric that drops</th></tr>
+  <tr><td><code>unfaithful_to_context</code></td><td>the answer states something the passages do not support</td><td>faithfulness</td></tr>
+  <tr><td><code>faithful_but_off_question</code></td><td>the answer follows its passages and does not address the question</td><td>answer relevance</td></tr>
+  <tr><td><code>wrong_context_retrieved</code></td><td>the answer is faithful and relevant to passages that do not fit the question</td><td>context precision</td></tr>
+</table>
+  <p>Each defect makes one metric drop and leaves the other two high, so a judge that scores only one metric misses the other two kinds. That is why this lab asks for three.</p>
+</section>
+
+<section>
+<h2>Writing a judge prompt</h2>
+  <p>Write each metric as a definition: what it reads, and what it ignores. Give a small fixed scale and define every value, for example 0, 0.5 and 1, with what each means. Ask for the score first and one sentence of reason after it, because the harness reads the first number and a reason helps you debug a wrong score. A scale of 1 to 10 invites a model to pick a number it cannot justify.</p>
+  <p>The harness reads the first number it finds in each reply and snaps it to the scale. A reply that begins with prose can put the wrong number first.</p>
+</section>
+
+<section>
+<h2>Tune on known records, trust on held-out ones</h2>
+  <p>Your sandbox holds labelled records: each says which defect it carries, or none. Tune your prompts until each defect's own metric drops where the other two hold and the clean records score 1. A judge tuned on a handful of records can fit them, so the check scores eight records you have not seen. A defect record's own metric must sit well below its others; a control must score 1 on all three. The check says how many it missed and which kind of defect, and never shows the record. Hold-out is how you find out whether a prompt learned the metric or learned the examples.</p>
+</section>
+
+<section>
+<h2>Judge variance</h2>
+  <p>The same query can score the same record differently on two runs. A single run is a sample. The gate runs the eight records five times and asks each one to pass in at least four of the five. A judge that passes three times out of five is not a gate, and two single runs that differ prove nothing by themselves. Cost scales the same way: five runs of eight records is forty judge calls per gate, and the harness records what each costs.</p>
+</section>
+
+<section>
+<h2>Run records, and where cost comes from</h2>
+  <p>Every run stores one document per question in <code>cortex-eval-runs</code>: route, tool-call count, input, cached input and output tokens, latency, the conversation id, and the judge scores. The token counts come from the converse response, <code>model_usage</code>, which reports them for each question. Traces are a separate, later subject: a harness number is never read from a trace, so it does not depend on tracing being on.</p>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Take the first row that applies.</p>
+<table>
+  <tr><th>The judge's scores for the record</th><th>The failure</th><th>Why</th></tr>
+  <tr><td>Faithfulness is well below the other two</td><td><code>unfaithful_to_context</code></td><td>the answer's claims are not supported by its passages</td></tr>
+  <tr><td>Answer relevance is well below the other two</td><td><code>faithful_but_off_question</code></td><td>the answer follows its passages and misses the question</td></tr>
+  <tr><td>Context precision is well below the other two</td><td><code>wrong_context_retrieved</code></td><td>the passages do not fit the question the answer was written for</td></tr>
+</table>
+<p>A metric that stays high on a defect would not have flagged it: Defend asks you to name one, with the reason it reads the wrong slice of the record.</p>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+  <li><strong>Build 1:</strong> a test set of 18 to 30 questions from your log, at least 6 about policy and 10 for the agent, at least 3 in every category that is a tenth of the log or more; most of your labels match the log's; a retrieval baseline that agrees with the check's own <code>_rank_eval</code> within 0.005; a routing baseline recorded.</li>
+  <li><strong>Build 2:</strong> a three-metric judge query that meets the contract, scores the planted record's own metric at least 0.5 below the other two and the controls at 1, passes the eight held-out records in at least four of five runs, and a diagnosis that names this sandbox's defect.</li>
+  <li><strong>Defend:</strong> where your set departs from the log, which metric would not have flagged the defect, and the risk a described harness carries.</li>
+</ul>
+</section>

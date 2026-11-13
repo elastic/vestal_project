@@ -11,6 +11,13 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import ara_eval as E  # noqa: E402
 
 
+def test_parse_score_numeric_zero_is_a_score_not_missing():
+    # a judge that converts the answer with TO_DOUBLE returns a number; 0.0 is falsy but is a score
+    assert E.parse_score(0.0) == (0.0, False)
+    assert E.parse_score(0) == (0.0, False)
+    assert E.parse_score(None) == (None, True)
+
+
 def test_parse_score_first_token_clamp_and_snap():
     assert E.parse_score("1 - every claim is in passage 2.") == (1.0, False)
     assert E.parse_score("0.5 Partly: the second claim has no support.") == (0.5, False)
@@ -127,3 +134,29 @@ if __name__ == "__main__":
         if k.startswith("test_"):
             fn()
             print(f"  ok    {k}")
+
+
+def test_coverage_b1_thresholds():
+    pool, key = _pool()
+    cats = ("straightforward", "ambiguous", "time_window_edge", "cross_domain", "adversarial", "out_of_scope")
+    by = {c: [q for q in pool if key[q] == c] for c in cats}
+    ts = lambda ids: [{"question_id": q, "category": key[q]} for q in ids]
+    # exactly 10 percent counts as required (3 each); 5 percent does not
+    shares = dict.fromkeys(cats, 0.0) | {"straightforward": 0.5, "ambiguous": 0.10, "cross_domain": 0.05}
+    ids = by["straightforward"][:7] + by["ambiguous"][:2] + by["cross_domain"][:3] + by["time_window_edge"][:8]
+    assert 18 <= len(ids) <= 30
+    f = " ".join(E.coverage(ts(ids), pool, key, shares))
+    assert "ambiguous" in f and "cross_domain" not in f.split(":")[-1]
+    # size 17 and 31 fail, 18 and 30 do not
+    pol, agt = [q for q in pool if pool[q]["kind"] == "policy"], [q for q in pool if pool[q]["kind"] == "agent"]
+    none = dict.fromkeys(cats, 0.0)
+    base = pol[:6] + agt[:12]
+    assert not any("needs 18 to 30" in m for m in E.coverage(ts(base), pool, key, none))
+    assert any("needs 18 to 30" in m for m in E.coverage(ts(base[:-1]), pool, key, none))
+    assert any("needs 18 to 30" in m for m in E.coverage(ts(pol[:6] + agt[:25]), pool, key, none))
+    # 5 policy fails, 9 agent fails
+    assert any("5 policy-retrieval" in m for m in E.coverage(ts(pol[:5] + agt[:13]), pool, key, none))
+    assert any("9 agent-level" in m for m in E.coverage(ts(pol[:9] + agt[:9]), pool, key, none))
+    # an id the key does not know is named, not a crash
+    assert any("not in the question pool" in m for m in E.coverage(ts(base) + [{"question_id": "p99", "category": "ambiguous"}],
+                                                                   dict(pool, p99={"kind": "agent"}), key, none))

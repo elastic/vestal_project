@@ -1,0 +1,12 @@
+A 15-question set, every question one Tina answers well, run through Tina:
+
+  adversarial: routing accuracy 100.0
+  out_of_scope: routing accuracy 100.0
+  straightforward: routing accuracy 100.0
+  time_window_edge: routing accuracy 100.0
+  overall: 100.0
+
+A first-draft judge, scoring eight answers it was not tuned on,
+five runs of the same eight:
+
+  held-out gate passed=False, runs with a missed record: 5 of 5

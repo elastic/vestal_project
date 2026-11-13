@@ -1,0 +1,22 @@
+{
+  "mappings": {
+    "properties": {
+      "testset_version": {
+        "type": "keyword"
+      },
+      "created_at": {
+        "type": "date"
+      },
+      "questions": {
+        "properties": {
+          "question_id": {
+            "type": "keyword"
+          },
+          "category": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,324 @@
+{
+  "_doc": "5.C question and correspondence additions (07 section 2.2): six SAR-citation questions (S1) and six",
+  "version": "5c-1",
+  "questions": [
+    {
+      "id": "q-c01",
+      "type": "agent",
+      "category": "straightforward",
+      "kind": "case",
+      "source": "5c S1",
+      "input": "What did past SARs say about cash deposits kept just under the reporting threshold?",
+      "expected": [
+        {
+          "any_of": [
+            "cortex.sar_search",
+            "cortex.sar_passages"
+          ]
+        }
+      ],
+      "rule": [
+        {
+          "source": "tool:cortex.sar_search",
+          "quote": "Use it when an analyst asks what a past SAR said about a pattern, a typology or the facts of a filing."
+        }
+      ],
+      "accounts": [],
+      "forbid": [
+        "cortex.file_sar"
+      ]
+    },
+    {
+      "id": "q-c02",
+      "type": "agent",
+      "category": "straightforward",
+      "kind": "case",
+      "source": "5c S1",
+      "input": "What have past SARs said about wire requests that came from a spoofed executive email?",
+      "expected": [
+        {
+          "any_of": [
+            "cortex.sar_search",
+            "cortex.sar_passages"
+          ]
+        }
+      ],
+      "rule": [
+        {
+          "source": "tool:cortex.sar_search",
+          "quote": "Use it when an analyst asks what a past SAR said about a pattern, a typology or the facts of a filing."
+        }
+      ],
+      "accounts": [],
+      "forbid": [
+        "cortex.file_sar"
+      ]
+    },
+    {
+      "id": "q-c03",
+      "type": "agent",
+      "category": "straightforward",
+      "kind": "case",
+      "source": "5c S1",
+      "input": "Show me how past SARs described a sanctions screening hit on a counterparty.",
+      "expected": [
+        {
+          "any_of": [
+            "cortex.sar_search",
+            "cortex.sar_passages"
+          ]
+        }
+      ],
+      "rule": [
+        {
+          "source": "tool:cortex.sar_search",
+          "quote": "Use it when an analyst asks what a past SAR said about a pattern, a typology or the facts of a filing."
+        }
+      ],
+      "accounts": [],
+      "forbid": [
+        "cortex.file_sar"
+      ]
+    },
+    {
+      "id": "q-c04",
+      "type": "agent",
+      "category": "straightforward",
+      "kind": "case",
+      "source": "5c S1",
+      "input": "What did past SARs say about customers who would not provide identification?",
+      "expected": [
+        {
+          "any_of": [
+            "cortex.sar_search",
+            "cortex.sar_passages"
+          ]
+        }
+      ],
+      "rule": [
+        {
+          "source": "tool:cortex.sar_search",
+          "quote": "Use it when an analyst asks what a past SAR said about a pattern, a typology or the facts of a filing."
+        }
+      ],
+      "accounts": [],
+      "forbid": [
+        "cortex.file_sar"
+      ]
+    },
+    {
+      "id": "q-c05",
+      "type": "agent",
+      "category": "straightforward",
+      "kind": "case",
+      "source": "5c S1",
+      "input": "How did past SARs describe a relative or caregiver withdrawing money from an older customer's account?",
+      "expected": [
+        {
+          "any_of": [
+            "cortex.sar_search",
+            "cortex.sar_passages"
+          ]
+        }
+      ],
+      "rule": [
+        {
+          "source": "tool:cortex.sar_search",
+          "quote": "Use it when an analyst asks what a past SAR said about a pattern, a typology or the facts of a filing."
+        }
+      ],
+      "accounts": [],
+      "forbid": [
+        "cortex.file_sar"
+      ]
+    },
+    {
+      "id": "q-c06",
+      "type": "agent",
+      "category": "straightforward",
+      "kind": "case",
+      "source": "5c S1",
+      "input": "Which past SARs mention a shell company, and what did they say about it?",
+      "expected": [
+        {
+          "any_of": [
+            "cortex.sar_search",
+            "cortex.sar_passages"
+          ]
+        }
+      ],
+      "rule": [
+        {
+          "source": "tool:cortex.sar_search",
+          "quote": "Use it when an analyst asks what a past SAR said about a pattern, a typology or the facts of a filing."
+        }
+      ],
+      "accounts": [],
+      "forbid": [
+        "cortex.file_sar"
+      ]
+    },
+    {
+      "id": "q-c07",
+      "type": "agent",
+      "category": "straightforward",
+      "kind": "extension",
+      "source": "5c S2",
+      "input": "The regulator's reply on case-structuring-001 cites https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-ctr-and-structuring-31-cfr-1010-311-314.md. Read that page and tell me which transactions in currency the bank had to report.",
+      "expected": [
+        {
+          "tool_id": "cortex.read_page",
+          "params": {
+            "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-ctr-and-structuring-31-cfr-1010-311-314.md"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "source": "plugin:regulatory-citation",
+          "quote": "Read the pinned page with the `cortex.read_page` tool"
+        }
+      ],
+      "accounts": [],
+      "page": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-ctr-and-structuring-31-cfr-1010-311-314.md",
+        "title_line": "FinCEN, currency transaction reports and structured transactions (31 CFR 1010.311 and 1010.314)"
+      }
+    },
+    {
+      "id": "q-c08",
+      "type": "agent",
+      "category": "straightforward",
+      "kind": "extension",
+      "source": "5c S2",
+      "input": "The regulator's reply on case-structuring-002 cites https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-ctr-and-structuring-31-cfr-1010-311-314.md. Read that page and tell me what the regulation says about breaking up a cash deposit.",
+      "expected": [
+        {
+          "tool_id": "cortex.read_page",
+          "params": {
+            "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-ctr-and-structuring-31-cfr-1010-311-314.md"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "source": "plugin:regulatory-citation",
+          "quote": "Read the pinned page with the `cortex.read_page` tool"
+        }
+      ],
+      "accounts": [],
+      "page": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-ctr-and-structuring-31-cfr-1010-311-314.md",
+        "title_line": "FinCEN, currency transaction reports and structured transactions (31 CFR 1010.311 and 1010.314)"
+      }
+    },
+    {
+      "id": "q-c09",
+      "type": "agent",
+      "category": "straightforward",
+      "kind": "extension",
+      "source": "5c S2",
+      "input": "The regulator's reply on case-wire-fraud-001 cites https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-sar-rule-31-cfr-1020-320.md. Read that page and tell me when the bank had to file a Suspicious Activity Report.",
+      "expected": [
+        {
+          "tool_id": "cortex.read_page",
+          "params": {
+            "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-sar-rule-31-cfr-1020-320.md"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "source": "plugin:regulatory-citation",
+          "quote": "Read the pinned page with the `cortex.read_page` tool"
+        }
+      ],
+      "accounts": [],
+      "page": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-sar-rule-31-cfr-1020-320.md",
+        "title_line": "FinCEN, Reports by banks of suspicious transactions (31 CFR 1020.320)"
+      }
+    },
+    {
+      "id": "q-c10",
+      "type": "agent",
+      "category": "straightforward",
+      "kind": "extension",
+      "source": "5c S2",
+      "input": "The regulator's reply on case-kyc-gap-001 cites https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-record-retention-31-cfr-1010-430.md. Read that page and tell me how long the bank has to keep the records.",
+      "expected": [
+        {
+          "tool_id": "cortex.read_page",
+          "params": {
+            "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-record-retention-31-cfr-1010-430.md"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "source": "plugin:regulatory-citation",
+          "quote": "Read the pinned page with the `cortex.read_page` tool"
+        }
+      ],
+      "accounts": [],
+      "page": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-record-retention-31-cfr-1010-430.md",
+        "title_line": "FinCEN, nature of records and retention period (31 CFR 1010.430)"
+      }
+    },
+    {
+      "id": "q-c11",
+      "type": "agent",
+      "category": "straightforward",
+      "kind": "extension",
+      "source": "5c S2",
+      "input": "The regulator's reply on case-sanctions-001 cites https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/occ-sar-rule-12-cfr-21-11.md. Read that page and tell me how many days the bank had to file after it detected the facts.",
+      "expected": [
+        {
+          "tool_id": "cortex.read_page",
+          "params": {
+            "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/occ-sar-rule-12-cfr-21-11.md"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "source": "plugin:regulatory-citation",
+          "quote": "Read the pinned page with the `cortex.read_page` tool"
+        }
+      ],
+      "accounts": [],
+      "page": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/occ-sar-rule-12-cfr-21-11.md",
+        "title_line": "OCC, Suspicious Activity Report for national banks (12 CFR 21.11)"
+      }
+    },
+    {
+      "id": "q-c12",
+      "type": "agent",
+      "category": "straightforward",
+      "kind": "extension",
+      "source": "5c S2",
+      "input": "The regulator's reply on case-elder-exploitation-001 cites https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-monetary-instruments-31-cfr-1010-415.md. Read that page and tell me what records the bank must keep for a cash purchase of a cashier's check.",
+      "expected": [
+        {
+          "tool_id": "cortex.read_page",
+          "params": {
+            "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-monetary-instruments-31-cfr-1010-415.md"
+          }
+        }
+      ],
+      "rule": [
+        {
+          "source": "plugin:regulatory-citation",
+          "quote": "Read the pinned page with the `cortex.read_page` tool"
+        }
+      ],
+      "accounts": [],
+      "page": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-monetary-instruments-31-cfr-1010-415.md",
+        "title_line": "FinCEN, purchases of bank checks and drafts, cashier's checks, money orders and traveler's checks (31 CFR 1010.415)"
+      }
+    }
+  ]
+}

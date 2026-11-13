@@ -1,0 +1,7 @@
+{
+  "_doc": "Cortex's rate card (Lab 5.4, 5.C): made-up prices in dollars per million tokens, in proportion to typical published pricing (cached input about a tenth of fresh input, output about four times fresh input), not any provider's price list. monthly_questions is Tina's monthly question volume.",
+  "price_fresh_input": 2.00,
+  "price_cached_input": 0.20,
+  "price_output": 8.00,
+  "monthly_questions": 100000
+}

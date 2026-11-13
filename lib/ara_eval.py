@@ -39,7 +39,7 @@ def parse_score(output: Any, scale: tuple = DEFAULT_SCALE) -> tuple[float | None
     """(value, off_scale). The first numeric token of a COMPLETION output, clamped to 0 to 1 and snapped
     to the nearest scale value (a tie snaps down). off_scale is True when the token was not already a
     scale value (ara-eval.py judge reports the count). No numeric token: (None, True)."""
-    m = _NUMBER.search(str(output or ""))
+    m = _NUMBER.search("" if output is None else str(output))
     if not m:
         return None, True
     raw = float(m.group(0))
@@ -84,14 +84,14 @@ def coverage(testset: list[dict], pool: dict, key: dict, shares: dict, label_sha
     log variant (0 to 1). Returns the failures, each a message; empty means it passes."""
     out = []
     ids = [q["question_id"] for q in testset]
-    unknown = [i for i in ids if i not in pool]
+    unknown = [i for i in ids if i not in pool or i not in key]
     if unknown:
-        out.append(f"{len(unknown)} question ids are not in the question pool: {', '.join(unknown[:5])}.")
+        out.append(f"{len(unknown)} question ids are not in the question pool or its key: {', '.join(unknown[:5])}.")
     if len(set(ids)) != len(ids):
         out.append("A question appears more than once in the test set.")
     if not size[0] <= len(ids) <= size[1]:
         out.append(f"The test set holds {len(ids)} questions; it needs {size[0]} to {size[1]}.")
-    known = [q for q in testset if q["question_id"] in pool]
+    known = [q for q in testset if q["question_id"] in pool and q["question_id"] in key]
     n_policy = sum(pool[q["question_id"]]["kind"] == "policy" for q in known)
     n_agent = sum(pool[q["question_id"]]["kind"] == "agent" for q in known)
     if n_policy < min_policy:

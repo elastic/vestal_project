@@ -1,0 +1,140 @@
+{
+  "mappings": {
+    "properties": {
+      "run_id": {
+        "type": "keyword"
+      },
+      "run_label": {
+        "type": "keyword"
+      },
+      "run_at": {
+        "type": "date"
+      },
+      "provided": {
+        "type": "boolean"
+      },
+      "connector_id": {
+        "type": "keyword"
+      },
+      "judge_inference_id": {
+        "type": "keyword"
+      },
+      "testset_version": {
+        "type": "keyword"
+      },
+      "question_id": {
+        "type": "keyword"
+      },
+      "sample_id": {
+        "type": "keyword"
+      },
+      "category": {
+        "type": "keyword"
+      },
+      "expected_route": {
+        "properties": {
+          "tool_id": {
+            "type": "keyword"
+          },
+          "agent_id": {
+            "type": "keyword"
+          },
+          "ok": {
+            "type": "boolean"
+          },
+          "page_fetch_ok": {
+            "type": "boolean"
+          },
+          "params": {
+            "type": "flattened"
+          }
+        }
+      },
+      "observed_route": {
+        "properties": {
+          "tool_id": {
+            "type": "keyword"
+          },
+          "agent_id": {
+            "type": "keyword"
+          },
+          "ok": {
+            "type": "boolean"
+          },
+          "page_fetch_ok": {
+            "type": "boolean"
+          },
+          "params": {
+            "type": "flattened"
+          }
+        }
+      },
+      "route_correct": {
+        "type": "boolean"
+      },
+      "tool_call_count": {
+        "type": "integer"
+      },
+      "input_tokens": {
+        "type": "long"
+      },
+      "output_tokens": {
+        "type": "long"
+      },
+      "cached_input_tokens": {
+        "type": "long"
+      },
+      "llm_calls": {
+        "type": "integer"
+      },
+      "latency_ms": {
+        "type": "long"
+      },
+      "conversation_id": {
+        "type": "keyword"
+      },
+      "judge": {
+        "properties": {
+          "faithfulness": {
+            "type": "float"
+          },
+          "answer_relevance": {
+            "type": "float"
+          },
+          "context_precision": {
+            "type": "float"
+          },
+          "raw": {
+            "properties": {
+              "faithfulness": {
+                "type": "text",
+                "index": false
+              },
+              "answer_relevance": {
+                "type": "text",
+                "index": false
+              },
+              "context_precision": {
+                "type": "text",
+                "index": false
+              }
+            }
+          }
+        }
+      },
+      "retrieval": {
+        "properties": {
+          "precision_at_5": {
+            "type": "float"
+          },
+          "recall_at_5": {
+            "type": "float"
+          },
+          "ndcg_at_5": {
+            "type": "float"
+          }
+        }
+      }
+    }
+  }
+}

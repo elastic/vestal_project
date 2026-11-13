@@ -363,6 +363,16 @@ def ensure_run(record: pathlib.Path, fp: str, runner: list[str], wait_s: float, 
     return None, time.time() - started  # died twice, or no time left to restart: the next Check starts it
 
 
+def peek(record: pathlib.Path, fp: str) -> dict | None:
+    """The finished, unconsumed record for fp, or None. Never starts, kills or consumes a run: for the Defend feedback, which
+    grades from a measurement the Check already made and says nothing when there is none."""
+    with _Lock(record):
+        st, rec = _read(record.with_suffix(".start")), _read(record)
+    if _current(rec, st, fp) and not st.get("consumed") and not rec.get("outage"):
+        return rec
+    return None
+
+
 def publish(record: pathlib.Path, rec: dict) -> bool:
     """The runner's write: kept only while this run is still the current one for its record."""
     with _Lock(record):
