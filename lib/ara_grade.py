@@ -70,12 +70,12 @@ DEADLINE_SERVICE_MESSAGE = ("The check ran out of time after {seconds} seconds a
 DEADLINE_KIBANA_MESSAGE = ("The check ran out of time after {seconds} seconds and wrote no grade: Kibana "
                            "or the model was slow to respond. Wait a moment and select Check again.")
 
-# Every missing or unreadable grader, config or held-out file (coordinator rule, 2026-10-06).
+# Every missing or unreadable grader, config or held-out file (design decision, 2026-10-06).
 GRADER_FILE_MISSING = ("A grader file is missing or unreadable. This is a provisioning error, not "
                        "your work: stop the track and start it again.")
 MISSING_THRESHOLDS = GRADER_FILE_MISSING
 
-# Every Defend's missing or unreadable decision.json (coordinator rule, 2026-10-06).
+# Every Defend's missing or unreadable decision.json (design decision, 2026-10-06).
 NO_DECISION = ("No decision.json found. Run `python3 /opt/ara/lib/defend.py` in the Terminal, "
                "answer every question, then select Check.")
 BAD_DECISION = ("decision.json can't be read. Run `python3 /opt/ara/lib/defend.py` again, then "

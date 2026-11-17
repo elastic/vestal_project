@@ -76,7 +76,7 @@ def cmd_log(h: pathlib.Path, out) -> None:
 
 def cmd_add(h: pathlib.Path, pairs: list[str], out) -> None:
     if not pairs or len(pairs) % 2:
-        raise Problem("add takes pairs: a pool id and its category, for example: add q-006 straightforward")
+        raise Problem("add takes pairs: a pool id and its category, for example: add ID CATEGORY [ID CATEGORY ...]")
     in_log = {i["pool_id"] for i in log_of(h)}
     questions = read_set(h)
     have = {q["question_id"]: q for q in questions}
