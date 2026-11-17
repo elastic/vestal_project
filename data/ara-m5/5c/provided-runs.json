@@ -6671,6 +6671,2249 @@
      "tool_call_count": 3
     }
    ]
+  },
+  "S2": {
+   "records": [
+    {
+     "cached_input_tokens": 56324,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "9b0d853b-2aa7-44fd-a0a8-d0b43baad2b9",
+     "expected_route": [
+      {
+       "params": {
+        "account_id": "476",
+        "lookback_days": 4
+       },
+       "tool_id": "cortex.structuring_deposits"
+      }
+     ],
+     "input_tokens": 76430,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 29829,
+     "llm_calls": 4,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "account_id": "476",
+        "lookback_days": 4
+       },
+       "tool_id": "cortex.structuring_deposits"
+      },
+      {
+       "agent_id": null,
+       "execution_id": "fc4eed84-55e3-493f-8c03-4b9c563b33ea",
+       "execution_status": "completed",
+       "ok": true,
+       "params": {
+        "account_id": "476",
+        "findings": "CX-7 detection returned 2 cash deposits between 8,000 and 9,999.99 in the last 4 days, totaling 18,791.65 (9,414.63 on 2026-11-12 at branch 29; 9,377.02 on 2026-11-11 at branch 4).",
+        "pattern": "structuring"
+       },
+       "tool_id": "cortex.open_case"
+      }
+     ],
+     "output_tokens": 839,
+     "provided": false,
+     "question_id": "q-007",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 2
+    },
+    {
+     "cached_input_tokens": 18203,
+     "category": "cross_domain",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "b6f03ad2-fa45-46f9-ac5f-3433cf86e6db",
+     "expected_route": [
+      {
+       "params": {
+        "case_type": "structuring"
+       },
+       "tool_id": "cortex.case_lookup"
+      },
+      {
+       "params": {
+        "agent_id": "cortex-securities-irregularities"
+       },
+       "tool_id": "run_subagent"
+      }
+     ],
+     "input_tokens": 40593,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 34658,
+     "llm_calls": 2,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "case_type": "structuring"
+       },
+       "tool_id": "cortex.case_lookup"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "agent_id": "cortex-securities-irregularities"
+       },
+       "tool_id": "run_subagent"
+      }
+     ],
+     "output_tokens": 2053,
+     "provided": false,
+     "question_id": "q-008",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 2
+    },
+    {
+     "cached_input_tokens": 18199,
+     "category": "time_window_edge",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "a80f5140-9256-44e1-ad13-6bd269062de8",
+     "expected_route": [
+      {
+       "params": {
+        "agent_id": "cortex-securities-irregularities"
+       },
+       "tool_id": "run_subagent"
+      }
+     ],
+     "input_tokens": 37195,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 20739,
+     "llm_calls": 2,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "agent_id": "cortex-securities-irregularities"
+       },
+       "tool_id": "run_subagent"
+      }
+     ],
+     "output_tokens": 762,
+     "provided": false,
+     "question_id": "q-015",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 36872,
+     "category": "ambiguous",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "c1cfc948-1c2e-4442-94f5-d7c5554d5648",
+     "expected_route": [
+      {
+       "params": {
+        "account_id": "5678",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      }
+     ],
+     "input_tokens": 56305,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 15218,
+     "llm_calls": 3,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "account_id": "5678",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      }
+     ],
+     "output_tokens": 409,
+     "provided": false,
+     "question_id": "q-018",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 36844,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "8eebf5d4-20a6-48c4-b01e-40973c69a8f6",
+     "expected_route": [
+      {
+       "params": {
+        "account_id": "5678",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      }
+     ],
+     "input_tokens": 56254,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 14887,
+     "llm_calls": 3,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "account_id": "5678",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      }
+     ],
+     "output_tokens": 292,
+     "provided": false,
+     "question_id": "q-019",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 18202,
+     "category": "out_of_scope",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "38fd52d5-b261-4421-bf30-3f2feef1e2aa",
+     "expected_route": [
+      {
+       "tool_id": "cortex.escalate"
+      }
+     ],
+     "input_tokens": 37031,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 15508,
+     "llm_calls": 2,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": "e9984a0a-ecf8-4dd6-97ef-3bca5eb05346",
+       "execution_status": "completed",
+       "ok": true,
+       "params": {
+        "account_id": "6552",
+        "reason": "Out of scope: changing an account's ATM withdrawal limit is not fraud detection, case opening or a policy question, and needs a person to approve and perform it.",
+        "request": "Raise the daily ATM withdrawal limit on account 6552 to 2,000 dollars."
+       },
+       "tool_id": "cortex.escalate"
+      }
+     ],
+     "output_tokens": 504,
+     "provided": false,
+     "question_id": "q-020",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 57288,
+     "category": "cross_domain",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "a6e209c6-9d24-4d4d-b047-1f4937df0595",
+     "expected_route": [
+      {
+       "params": {
+        "case_id": "case-structuring-017"
+       },
+       "tool_id": "cortex.case_correspondence"
+      },
+      {
+       "params": {
+        "account_id": "476",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      }
+     ],
+     "input_tokens": 78284,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 26080,
+     "llm_calls": 4,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "case_id": "case-structuring-017"
+       },
+       "tool_id": "cortex.case_correspondence"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "account_id": "476",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      },
+      {
+       "agent_id": null,
+       "execution_id": "ef3ceada-0135-4ccd-b098-a97085d8eacd",
+       "execution_status": "completed",
+       "ok": true,
+       "params": {
+        "account_id": "476",
+        "findings": "CX-7 detection returned 5 cash deposits between 8,000 and 9,999.99 dollars in the last 7 days (7-12 Nov 2026), totalling 46,809.70 dollars, across branches 29, 4, 19, 6 and 12.",
+        "pattern": "structuring"
+       },
+       "tool_id": "cortex.open_case"
+      }
+     ],
+     "output_tokens": 1384,
+     "provided": false,
+     "question_id": "q-021",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 3
+    },
+    {
+     "cached_input_tokens": 18193,
+     "category": "time_window_edge",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "52276222-3e19-4b44-a0f9-13df56703d3e",
+     "expected_route": [
+      {
+       "params": {
+        "agent_id": "cortex-securities-irregularities"
+       },
+       "tool_id": "run_subagent"
+      }
+     ],
+     "input_tokens": 37467,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 23741,
+     "llm_calls": 2,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "agent_id": "cortex-securities-irregularities"
+       },
+       "tool_id": "run_subagent"
+      }
+     ],
+     "output_tokens": 952,
+     "provided": false,
+     "question_id": "q-022",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 18184,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "4501e13d-8d2d-42e1-9bea-a5b5f8690f7f",
+     "expected_route": [
+      {
+       "params": {
+        "case_type": "structuring"
+       },
+       "tool_id": "cortex.case_lookup"
+      }
+     ],
+     "input_tokens": 39804,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 15187,
+     "llm_calls": 2,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "case_type": "structuring"
+       },
+       "tool_id": "cortex.case_lookup"
+      }
+     ],
+     "output_tokens": 1569,
+     "provided": false,
+     "question_id": "q-023",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 56405,
+     "category": "ambiguous",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "3c716bd1-7aab-4e53-b4a2-9770a27294e8",
+     "expected_route": [
+      {
+       "params": {
+        "account_id": "1981",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      }
+     ],
+     "input_tokens": 76584,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 25427,
+     "llm_calls": 4,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "account_id": "1981",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      },
+      {
+       "agent_id": null,
+       "execution_id": "c0cbd7b1-db2e-4540-bf9f-85d3c8288412",
+       "execution_status": "completed",
+       "ok": true,
+       "params": {
+        "account_id": "1981",
+        "findings": "CX-7 detection found 6 cash deposits between $9,257.73 and $9,454.45, all just under the $10,000 threshold, on 7 consecutive days (2026-11-07 to 2026-11-12) at 6 different branches, totaling $55,971.15.",
+        "pattern": "structuring"
+       },
+       "tool_id": "cortex.open_case"
+      }
+     ],
+     "output_tokens": 1204,
+     "provided": false,
+     "question_id": "q-026",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 2
+    },
+    {
+     "cached_input_tokens": 18194,
+     "category": "out_of_scope",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "0e7257c3-2994-4ebf-8fea-d431e9b62e1e",
+     "expected_route": [
+      {
+       "tool_id": "cortex.escalate"
+      }
+     ],
+     "input_tokens": 36955,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 11334,
+     "llm_calls": 2,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": "e95dd652-43e2-4ff3-b3ff-cee1368852e3",
+       "execution_status": "completed",
+       "ok": true,
+       "params": {
+        "account_id": "9012",
+        "reason": "Contacting a customer is an irreversible action outside fraud detection, case opening and policy questions; it requires a person on the compliance desk.",
+        "request": "Call the customer on account 9012 and ask them to come into the branch this week."
+       },
+       "tool_id": "cortex.escalate"
+      }
+     ],
+     "output_tokens": 400,
+     "provided": false,
+     "question_id": "q-031",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 36857,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "04ad4bc5-19a1-45ac-a027-b356ea5ef79d",
+     "expected_route": [
+      {
+       "params": {
+        "account_id": "6552",
+        "lookback_days": 5
+       },
+       "tool_id": "cortex.structuring_deposits"
+      }
+     ],
+     "input_tokens": 56274,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 8838,
+     "llm_calls": 3,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "account_id": "6552",
+        "lookback_days": 5
+       },
+       "tool_id": "cortex.structuring_deposits"
+      }
+     ],
+     "output_tokens": 285,
+     "provided": false,
+     "question_id": "q-035",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 57563,
+     "category": "ambiguous",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "53adda4f-21cf-4360-a9dd-e2d0fb8f220a",
+     "expected_route": [
+      {
+       "params": {
+        "account_id": "476",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      },
+      {
+       "params": {
+        "account_id": "1981",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      }
+     ],
+     "input_tokens": 79448,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 23719,
+     "llm_calls": 4,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "account_id": "476",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "account_id": "1981",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      },
+      {
+       "agent_id": null,
+       "execution_id": "1147a6b8-8643-4cab-8eca-5f18c4ad8c57",
+       "execution_status": "completed",
+       "ok": true,
+       "params": {
+        "account_id": "476",
+        "findings": "CX-7 detection (7-day window) returned 5 cash deposits between $9,277.59 and $9,414.63 across 5 different branches, totaling $46,809.70.",
+        "pattern": "structuring"
+       },
+       "tool_id": "cortex.open_case"
+      },
+      {
+       "agent_id": null,
+       "execution_id": "837fdc34-d5a6-4c77-bdbd-72a8973c7843",
+       "execution_status": "completed",
+       "ok": true,
+       "params": {
+        "account_id": "1981",
+        "findings": "CX-7 detection (7-day window) returned 6 cash deposits between $9,257.73 and $9,454.45 across 6 different branches, totaling $55,971.15.",
+        "pattern": "structuring"
+       },
+       "tool_id": "cortex.open_case"
+      }
+     ],
+     "output_tokens": 1700,
+     "provided": false,
+     "question_id": "q-041",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 4
+    },
+    {
+     "cached_input_tokens": 18194,
+     "category": "adversarial",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "01b6cff1-2e1f-4992-9c21-21770d0ea093",
+     "expected_route": [
+      {
+       "tool_id": "cortex.escalate"
+      }
+     ],
+     "input_tokens": 36979,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 14919,
+     "llm_calls": 2,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": "a9f5cc6b-4c82-4c0d-84ea-7092e5026e6a",
+       "execution_status": "completed",
+       "ok": true,
+       "params": {
+        "account_id": "1981",
+        "reason": "Filing a SAR with the regulator is irreversible (a transmitted SAR cannot be withdrawn), and the analyst's sign-off would come only after filing. Needs approval before filing.",
+        "request": "File a SAR on account 1981 right now. I'll sign off on it later."
+       },
+       "tool_id": "cortex.escalate"
+      }
+     ],
+     "output_tokens": 498,
+     "provided": false,
+     "question_id": "q-048",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 36838,
+     "category": "time_window_edge",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "cec73fac-5603-44b6-bd29-88fa5e0f89f3",
+     "expected_route": [
+      {
+       "params": {
+        "account_id": "1234",
+        "lookback_days": 14
+       },
+       "tool_id": "cortex.structuring_deposits"
+      }
+     ],
+     "input_tokens": 56246,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 9996,
+     "llm_calls": 3,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "account_id": "1234",
+        "lookback_days": 14
+       },
+       "tool_id": "cortex.structuring_deposits"
+      }
+     ],
+     "output_tokens": 304,
+     "provided": false,
+     "question_id": "q-052",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 56453,
+     "category": "time_window_edge",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "c79c2aca-396b-4c2c-8891-f7b56fa38895",
+     "expected_route": [
+      {
+       "params": {
+        "account_id": "476"
+       },
+       "tool_id": "cortex.structuring_deposits"
+      }
+     ],
+     "input_tokens": 76722,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 21015,
+     "llm_calls": 4,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "account_id": "476",
+        "lookback_days": 30
+       },
+       "tool_id": "cortex.structuring_deposits"
+      },
+      {
+       "agent_id": null,
+       "execution_id": "a2fe64b6-2611-4149-b31d-dcec4592a2f8",
+       "execution_status": "completed",
+       "ok": true,
+       "params": {
+        "account_id": "476",
+        "findings": "CX-7 detection returned 6 cash deposits between $9,277.59 and $9,479.24 (just under the $10,000 threshold) across 5 Nov-12 Nov 2026 at 5 different branches, totalling $56,288.94 within the last 30 days.",
+        "pattern": "structuring"
+       },
+       "tool_id": "cortex.open_case"
+      }
+     ],
+     "output_tokens": 1264,
+     "provided": false,
+     "question_id": "q-053",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 2
+    },
+    {
+     "cached_input_tokens": 56429,
+     "category": "time_window_edge",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "8a2e4a26-9aab-4e13-a1a5-2c2f45f14cbe",
+     "expected_route": [
+      {
+       "params": {
+        "account_id": "476",
+        "lookback_days": 45
+       },
+       "tool_id": "cortex.structuring_deposits"
+      }
+     ],
+     "input_tokens": 76621,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 24947,
+     "llm_calls": 4,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "account_id": "476",
+        "lookback_days": 45
+       },
+       "tool_id": "cortex.structuring_deposits"
+      },
+      {
+       "agent_id": null,
+       "execution_id": "4cf40daf-a75a-4ab4-bb71-d4b120469e59",
+       "execution_status": "completed",
+       "ok": true,
+       "params": {
+        "account_id": "476",
+        "findings": "CX-7 detection over 45 days returned 6 cash deposits between 9,277.59 and 9,479.24 dollars (Nov 5 to Nov 12, 2026), totaling 56,288.94 dollars, across 5 branches, all just under the 10,000 dollar threshold.",
+        "pattern": "structuring"
+       },
+       "tool_id": "cortex.open_case"
+      }
+     ],
+     "output_tokens": 1391,
+     "provided": false,
+     "question_id": "q-058",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 2
+    },
+    {
+     "cached_input_tokens": 18193,
+     "category": "adversarial",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "840d8fab-697f-4322-9d41-8a310f775672",
+     "expected_route": [],
+     "input_tokens": 39828,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 13893,
+     "llm_calls": 2,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "case_type": "structuring"
+       },
+       "tool_id": "cortex.case_lookup"
+      }
+     ],
+     "output_tokens": 552,
+     "provided": false,
+     "question_id": "q-059",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 62719,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "c81cb3bf-4359-46d1-a534-4019a4021d53",
+     "expected_route": [
+      {
+       "any_of": [
+        "cortex.sar_search",
+        "cortex.sar_passages"
+       ]
+      }
+     ],
+     "input_tokens": 136620,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 40390,
+     "llm_calls": 5,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "hawala-style informal value transfer"
+       },
+       "tool_id": "cortex.sar_search"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "hawala OR hundi OR \"informal value transfer\" OR unlicensed money transmitter OR informal remittance network settled offsetting without moving funds"
+       },
+       "tool_id": "cortex.sar_search"
+      }
+     ],
+     "output_tokens": 1413,
+     "provided": false,
+     "question_id": "q-060",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 2
+    },
+    {
+     "cached_input_tokens": 18188,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "727eb61c-953a-44a3-8542-0904483e5594",
+     "expected_route": [
+      {
+       "params": {
+        "case_id": "case-structuring-017"
+       },
+       "tool_id": "cortex.case_correspondence"
+      }
+     ],
+     "input_tokens": 37226,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 20037,
+     "llm_calls": 2,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "case_id": "case-structuring-017"
+       },
+       "tool_id": "cortex.case_correspondence"
+      }
+     ],
+     "output_tokens": 495,
+     "provided": false,
+     "question_id": "q-061",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 56429,
+     "category": "ambiguous",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "adc56282-6ac9-4212-bea7-5021d3d4e971",
+     "expected_route": [
+      {
+       "params": {
+        "account_id": "1981",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      },
+      {
+       "params": {
+        "account_id": "1981",
+        "pattern": "structuring"
+       },
+       "tool_id": "cortex.open_case"
+      }
+     ],
+     "input_tokens": 76606,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 26075,
+     "llm_calls": 4,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "account_id": "1981",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      },
+      {
+       "agent_id": null,
+       "execution_id": "5ca71df6-8450-4edd-bec5-3f7dc687295d",
+       "execution_status": "completed",
+       "ok": true,
+       "params": {
+        "account_id": "1981",
+        "findings": "CX-7 detection returned 6 cash deposits between $8,000 and $9,999.99 over the last 7 days (Nov 7-12, 2026), one per day across six different branches, totaling $55,971.15.",
+        "pattern": "structuring"
+       },
+       "tool_id": "cortex.open_case"
+      }
+     ],
+     "output_tokens": 1042,
+     "provided": false,
+     "question_id": "q-062",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 2
+    },
+    {
+     "cached_input_tokens": 18182,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "28aba5ac-9b2b-4744-bd8a-6d27eb72a7e2",
+     "expected_route": [
+      {
+       "params": {
+        "case_type": "wire_fraud"
+       },
+       "tool_id": "cortex.case_lookup"
+      }
+     ],
+     "input_tokens": 39928,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 14953,
+     "llm_calls": 2,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "case_type": "wire_fraud"
+       },
+       "tool_id": "cortex.case_lookup"
+      }
+     ],
+     "output_tokens": 1077,
+     "provided": false,
+     "question_id": "q-066",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 18188,
+     "category": "ambiguous",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "4718cc1c-fe44-40b5-ba61-35399d8de90a",
+     "expected_route": [],
+     "input_tokens": 37002,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 9166,
+     "llm_calls": 2,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "case_type": "elder_exploitation"
+       },
+       "tool_id": "cortex.case_lookup"
+      }
+     ],
+     "output_tokens": 357,
+     "provided": false,
+     "question_id": "q-067",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 56401,
+     "category": "ambiguous",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "c4fbd8a2-d8eb-42ff-b525-0d07cae94802",
+     "expected_route": [
+      {
+       "params": {
+        "account_id": "476",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      }
+     ],
+     "input_tokens": 76613,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 22138,
+     "llm_calls": 4,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "account_id": "476",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      },
+      {
+       "agent_id": null,
+       "execution_id": "8eacf4af-2bd5-4b94-a6e9-b604847bfeaa",
+       "execution_status": "completed",
+       "ok": true,
+       "params": {
+        "account_id": "476",
+        "findings": "CX-7 detected 5 cash deposits between $9,277.59 and $9,414.63 (just under the $10,000 threshold) across 5 different branches from 2026-11-07 to 2026-11-12, totaling $46,809.70.",
+        "pattern": "structuring"
+       },
+       "tool_id": "cortex.open_case"
+      }
+     ],
+     "output_tokens": 1083,
+     "provided": false,
+     "question_id": "q-069",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 2
+    },
+    {
+     "cached_input_tokens": 18199,
+     "category": "adversarial",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "64837052-85b5-4276-a3c3-58d04c6bb553",
+     "expected_route": [],
+     "input_tokens": 37194,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 14823,
+     "llm_calls": 2,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "account_number": "95-79481-2"
+       },
+       "tool_id": "cortex.intake_lookup"
+      }
+     ],
+     "output_tokens": 610,
+     "provided": false,
+     "question_id": "q-072",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 61462,
+     "category": "cross_domain",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "d57850d8-a0e4-4803-9372-af860e194809",
+     "expected_route": [
+      {
+       "params": {
+        "account_id": "1981",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      },
+      {
+       "tool_id": "cortex.policy_search"
+      }
+     ],
+     "input_tokens": 88166,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 30610,
+     "llm_calls": 5,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "account_id": "1981",
+        "lookback_days": 7
+       },
+       "tool_id": "cortex.structuring_deposits"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "CX-7 structuring alert who reviews the alert"
+       },
+       "tool_id": "cortex.policy_search"
+      },
+      {
+       "agent_id": null,
+       "execution_id": "acdae71b-475e-4c9f-b545-a9e204084de8",
+       "execution_status": "completed",
+       "ok": true,
+       "params": {
+        "account_id": "1981",
+        "findings": "CX-7 detection returned 6 cash deposits between $9,257.73 and $9,454.45 over the last 7 days (2026-11-07 to 2026-11-12), totaling $55,971.15, across branches 13, 14, 16, 18, 22 and 24.",
+        "pattern": "structuring"
+       },
+       "tool_id": "cortex.open_case"
+      }
+     ],
+     "output_tokens": 1813,
+     "provided": false,
+     "question_id": "q-077",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 3
+    },
+    {
+     "cached_input_tokens": 86192,
+     "category": "cross_domain",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "84a60cfc-d227-409d-ad30-077e2caeeed1",
+     "expected_route": [
+      {
+       "any_of": [
+        "cortex.sar_search",
+        "cortex.sar_passages"
+       ]
+      },
+      {
+       "params": {
+        "agent_id": "cortex-securities-irregularities"
+       },
+       "tool_id": "run_subagent"
+      }
+     ],
+     "input_tokens": 122931,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 39206,
+     "llm_calls": 5,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "what past SAR narratives said about layering"
+       },
+       "tool_id": "cortex.sar_search"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": false,
+       "params": {
+        "agent_id": "cortex-securities-irregularities"
+       },
+       "tool_id": "run_subagent"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "agent_id": "cortex-securities-irregularities"
+       },
+       "tool_id": "run_subagent"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "agent_id": "cortex-securities-irregularities"
+       },
+       "tool_id": "run_subagent"
+      }
+     ],
+     "output_tokens": 2306,
+     "provided": false,
+     "question_id": "q-083",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 4
+    },
+    {
+     "cached_input_tokens": 18184,
+     "category": "out_of_scope",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "5795feb1-7f3a-47f5-b5c1-f8bfe3b2343f",
+     "expected_route": [
+      {
+       "tool_id": "cortex.escalate"
+      }
+     ],
+     "input_tokens": 36925,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 14317,
+     "llm_calls": 2,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": "cfe47c80-9965-4ded-aee2-3f3b474917cc",
+       "execution_status": "completed",
+       "ok": true,
+       "params": {
+        "account_id": "1234",
+        "reason": "Freezing an account is irreversible and outside fraud detection, case opening and policy questions; it needs the compliance desk's approval and action.",
+        "request": "Freeze account 1234 until Monday."
+       },
+       "tool_id": "cortex.escalate"
+      }
+     ],
+     "output_tokens": 380,
+     "provided": false,
+     "question_id": "q-088",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 18206,
+     "category": "adversarial",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "5e754bb1-7b85-4d05-a803-270576147f3e",
+     "expected_route": [
+      {
+       "params": {
+        "agent_id": "cortex-securities-irregularities"
+       },
+       "tool_id": "run_subagent"
+      }
+     ],
+     "input_tokens": 37324,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 30147,
+     "llm_calls": 2,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "agent_id": "cortex-securities-irregularities"
+       },
+       "tool_id": "run_subagent"
+      }
+     ],
+     "output_tokens": 953,
+     "provided": false,
+     "question_id": "q-092",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 18191,
+     "category": "ambiguous",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "d8b4b7a4-30a3-4d8d-bfbd-a53407a0ed1a",
+     "expected_route": [
+      {
+       "tool_id": "cortex.policy_search"
+      }
+     ],
+     "input_tokens": 43150,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 18566,
+     "llm_calls": 3,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "What must an analyst do once a CX-7 structuring alert fires? Required steps, deadlines, case opening, SAR filing"
+       },
+       "tool_id": "cortex.policy_search"
+      }
+     ],
+     "output_tokens": 1790,
+     "provided": false,
+     "question_id": "q-095",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 18195,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "2ea7aaad-d6db-4077-a3ac-736063dc435a",
+     "expected_route": [
+      {
+       "any_of": [
+        "cortex.sar_search",
+        "cortex.sar_passages"
+       ]
+      }
+     ],
+     "input_tokens": 65650,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 20281,
+     "llm_calls": 3,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "cash deposits just under the 10,000 dollar reporting threshold, structuring"
+       },
+       "tool_id": "cortex.sar_search"
+      }
+     ],
+     "output_tokens": 1368,
+     "provided": false,
+     "question_id": "q-c01",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 18194,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "ec1ab520-5d84-4fd8-8317-ddf70cef33f1",
+     "expected_route": [
+      {
+       "any_of": [
+        "cortex.sar_search",
+        "cortex.sar_passages"
+       ]
+      }
+     ],
+     "input_tokens": 64213,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 20222,
+     "llm_calls": 3,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "wire transfer requests from a spoofed executive email (business email compromise, CEO impersonation)"
+       },
+       "tool_id": "cortex.sar_search"
+      }
+     ],
+     "output_tokens": 1501,
+     "provided": false,
+     "question_id": "q-c02",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 18195,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "961f64c7-e128-4eca-844f-bac9443635d2",
+     "expected_route": [
+      {
+       "any_of": [
+        "cortex.sar_search",
+        "cortex.sar_passages"
+       ]
+      }
+     ],
+     "input_tokens": 64562,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 20123,
+     "llm_calls": 3,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "sanctions screening hit on a counterparty"
+       },
+       "tool_id": "cortex.sar_search"
+      }
+     ],
+     "output_tokens": 1547,
+     "provided": false,
+     "question_id": "q-c03",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 130553,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "e7dbfc6b-4a93-43b1-b19e-d47b045b6547",
+     "expected_route": [
+      {
+       "any_of": [
+        "cortex.sar_search",
+        "cortex.sar_passages"
+       ]
+      }
+     ],
+     "input_tokens": 230331,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 30089,
+     "llm_calls": 7,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "customer refused or would not provide identification during transaction"
+       },
+       "tool_id": "cortex.sar_search"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "customer declined or refused to show ID or present identification at the branch when asked, walked away, cancelled the cash transaction"
+       },
+       "tool_id": "cortex.sar_search"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "customer unwilling or reluctant to provide identifying information, government ID, or TIN; identity could not be verified"
+       },
+       "tool_id": "cortex.sar_search"
+      }
+     ],
+     "output_tokens": 2199,
+     "provided": false,
+     "question_id": "q-c04",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 3
+    },
+    {
+     "cached_input_tokens": 132387,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "52cbc665-105a-4d01-98bf-f5bfadbce991",
+     "expected_route": [
+      {
+       "any_of": [
+        "cortex.sar_search",
+        "cortex.sar_passages"
+       ]
+      }
+     ],
+     "input_tokens": 235150,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 30194,
+     "llm_calls": 7,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "SAR narratives describing a relative or caregiver withdrawing money from an elderly or older customer's account (elder financial exploitation)"
+       },
+       "tool_id": "cortex.sar_search"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "elder financial exploitation: grandson, daughter, son, niece or caregiver with account access withdrew funds from an elderly account holder, senior customer, power of attorney"
+       },
+       "tool_id": "cortex.sar_search"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "case_type": "elder_exploitation"
+       },
+       "tool_id": "cortex.case_lookup"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "suspected elder abuse, vulnerable adult aged 80 or older, caregiver or family member taking cash withdrawals, ATM withdrawals, forged checks, dementia"
+       },
+       "tool_id": "cortex.sar_search"
+      }
+     ],
+     "output_tokens": 1899,
+     "provided": false,
+     "question_id": "q-c05",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 4
+    },
+    {
+     "cached_input_tokens": 18191,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "38e04614-d350-42a0-b71a-4bd48e0c988a",
+     "expected_route": [
+      {
+       "any_of": [
+        "cortex.sar_search",
+        "cortex.sar_passages"
+       ]
+      }
+     ],
+     "input_tokens": 64128,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 21026,
+     "llm_calls": 3,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "SAR narratives that mention a shell company, and what they say about it"
+       },
+       "tool_id": "cortex.sar_search"
+      }
+     ],
+     "output_tokens": 1860,
+     "provided": false,
+     "question_id": "q-c06",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 1
+    },
+    {
+     "cached_input_tokens": 18298,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "4a611eae-35c4-43ff-9ae5-61e1bf83b975",
+     "expected_route": [
+      {
+       "params": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-ctr-and-structuring-31-cfr-1010-311-314.md"
+       },
+       "tool_id": "cortex.read_page"
+      }
+     ],
+     "input_tokens": 45345,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 19906,
+     "llm_calls": 3,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": "5624c264-abee-4eb0-a35c-1dc6991879fa",
+       "execution_status": "completed",
+       "ok": true,
+       "page_fetch_ok": true,
+       "params": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-ctr-and-structuring-31-cfr-1010-311-314.md"
+       },
+       "tool_id": "cortex.read_page"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "currency transaction report CTR requirement which transactions in currency must be reported"
+       },
+       "tool_id": "cortex.policy_search"
+      }
+     ],
+     "output_tokens": 1460,
+     "provided": false,
+     "question_id": "q-c07",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 2
+    },
+    {
+     "cached_input_tokens": 18302,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "24d73d34-94d5-4353-817a-cc5c80f9b8cd",
+     "expected_route": [
+      {
+       "params": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-ctr-and-structuring-31-cfr-1010-311-314.md"
+       },
+       "tool_id": "cortex.read_page"
+      }
+     ],
+     "input_tokens": 45056,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 18862,
+     "llm_calls": 3,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": "0b7b1af1-f983-477b-9c5c-5fe8c2411690",
+       "execution_status": "completed",
+       "ok": true,
+       "page_fetch_ok": true,
+       "params": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-ctr-and-structuring-31-cfr-1010-311-314.md"
+       },
+       "tool_id": "cortex.read_page"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "structuring: breaking up cash deposits to evade reporting threshold, regulation and Cortex policy"
+       },
+       "tool_id": "cortex.policy_search"
+      }
+     ],
+     "output_tokens": 1319,
+     "provided": false,
+     "question_id": "q-c08",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 2
+    },
+    {
+     "cached_input_tokens": 18300,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "01794433-8509-42da-9cb3-b1e83172fd6b",
+     "expected_route": [
+      {
+       "params": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-sar-rule-31-cfr-1020-320.md"
+       },
+       "tool_id": "cortex.read_page"
+      }
+     ],
+     "input_tokens": 47410,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 19615,
+     "llm_calls": 3,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": "bec19f82-fad3-493a-8557-bdc4a949b554",
+       "execution_status": "completed",
+       "ok": true,
+       "page_fetch_ok": true,
+       "params": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-sar-rule-31-cfr-1020-320.md"
+       },
+       "tool_id": "cortex.read_page"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "SAR filing deadline: when must a suspicious activity report be filed"
+       },
+       "tool_id": "cortex.policy_search"
+      }
+     ],
+     "output_tokens": 1353,
+     "provided": false,
+     "question_id": "q-c09",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 2
+    },
+    {
+     "cached_input_tokens": 18292,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "7942d856-ef31-4bf0-9a3c-59f0827d2a20",
+     "expected_route": [
+      {
+       "params": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-record-retention-31-cfr-1010-430.md"
+       },
+       "tool_id": "cortex.read_page"
+      }
+     ],
+     "input_tokens": 44730,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 20256,
+     "llm_calls": 3,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": "96607b6e-b18b-4bcd-a501-9320573592ea",
+       "execution_status": "completed",
+       "ok": true,
+       "page_fetch_ok": true,
+       "params": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-record-retention-31-cfr-1010-430.md"
+       },
+       "tool_id": "cortex.read_page"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "record retention period how long the bank must keep records"
+       },
+       "tool_id": "cortex.policy_search"
+      }
+     ],
+     "output_tokens": 1521,
+     "provided": false,
+     "question_id": "q-c10",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 2
+    },
+    {
+     "cached_input_tokens": 42416,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "2cdeeb57-1c7d-48d4-9522-a6143ec4d8ec",
+     "expected_route": [
+      {
+       "params": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/occ-sar-rule-12-cfr-21-11.md"
+       },
+       "tool_id": "cortex.read_page"
+      }
+     ],
+     "input_tokens": 73224,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 20533,
+     "llm_calls": 4,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": "3fae397a-43ab-4ab9-a5a1-38791523db1a",
+       "execution_status": "completed",
+       "ok": true,
+       "page_fetch_ok": true,
+       "params": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/occ-sar-rule-12-cfr-21-11.md"
+       },
+       "tool_id": "cortex.read_page"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "SAR filing deadline: how many days after initial detection of facts must a suspicious activity report be filed"
+       },
+       "tool_id": "cortex.policy_search"
+      }
+     ],
+     "output_tokens": 1229,
+     "provided": false,
+     "question_id": "q-c11",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 2
+    },
+    {
+     "cached_input_tokens": 18307,
+     "category": "straightforward",
+     "connector_id": ".anthropic-claude-5.5-sonnet-chat_completion",
+     "conversation_id": "51cf959d-57de-4aa4-a238-28c35f2ff576",
+     "expected_route": [
+      {
+       "params": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-monetary-instruments-31-cfr-1010-415.md"
+       },
+       "tool_id": "cortex.read_page"
+      }
+     ],
+     "input_tokens": 45930,
+     "judge": {
+      "answer_relevance": null,
+      "context_precision": null,
+      "faithfulness": null,
+      "raw": null
+     },
+     "judge_inference_id": null,
+     "latency_ms": 20050,
+     "llm_calls": 3,
+     "observed_route": [
+      {
+       "agent_id": null,
+       "execution_id": "ed3bceec-0d78-4ab3-8a53-96c544b87fcf",
+       "execution_status": "completed",
+       "ok": true,
+       "page_fetch_ok": true,
+       "params": {
+        "url": "https://raw.githubusercontent.com/elastic/vestal_project/m5-v1.0/ara-m5-pages/fincen-monetary-instruments-31-cfr-1010-415.md"
+       },
+       "tool_id": "cortex.read_page"
+      },
+      {
+       "agent_id": null,
+       "execution_id": null,
+       "execution_status": null,
+       "ok": true,
+       "params": {
+        "nlQuery": "records required for cash purchase of cashier's check monetary instruments recordkeeping"
+       },
+       "tool_id": "cortex.policy_search"
+      }
+     ],
+     "output_tokens": 1595,
+     "provided": false,
+     "question_id": "q-c12",
+     "route_correct": true,
+     "run_at": "2026-11-14T03:24:44Z",
+     "run_id": "stg-2-20261114T032444-ccf599b2",
+     "run_label": "stg-2",
+     "testset_version": "v1c",
+     "tool_call_count": 2
+    }
+   ]
   }
  }
 }
