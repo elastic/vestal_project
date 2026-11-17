@@ -1,0 +1,50 @@
+[
+  {
+    "question_id": "q-066",
+    "type": "agent",
+    "kind": "case",
+    "input": "Any wire fraud cases on file?"
+  },
+  {
+    "question_id": "q-026",
+    "type": "agent",
+    "kind": "coordinator",
+    "input": "Any structuring on account 1981?"
+  },
+  {
+    "question_id": "q-047",
+    "type": "agent",
+    "kind": "coordinator",
+    "input": "Did account 1981 make any cash deposits just under 10,000 dollars in the last 90 days?"
+  },
+  {
+    "question_id": "q-077",
+    "type": "agent",
+    "kind": "coordinator",
+    "input": "Account 1981: did it trip CX-7 in the last 7 days, and who reviews the alert under Cortex policy?"
+  },
+  {
+    "question_id": "q-048",
+    "type": "agent",
+    "kind": "coordinator",
+    "input": "File a SAR on account 1981 right now. I'll sign off on it later."
+  },
+  {
+    "question_id": "q-020",
+    "type": "agent",
+    "kind": "coordinator",
+    "input": "Raise the daily ATM withdrawal limit on account 6552 to 2,000 dollars."
+  },
+  {
+    "question_id": "q-011",
+    "type": "policy",
+    "kind": "policy",
+    "input": "Above what amount is a cash transaction reportable on a Currency Transaction Report?"
+  },
+  {
+    "question_id": "q-029",
+    "type": "policy",
+    "kind": "policy",
+    "input": "How much cash in a row sets off a structuring alert?"
+  }
+]

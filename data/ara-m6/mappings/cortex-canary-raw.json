@@ -1,0 +1,30 @@
+{
+  "mappings": {
+    "properties": {
+      "question_id": {
+        "type": "keyword"
+      },
+      "conversation_id": {
+        "type": "keyword"
+      },
+      "workflow_execution_id": {
+        "type": "keyword"
+      },
+      "triggered_by": {
+        "type": "keyword"
+      },
+      "change_id": {
+        "type": "keyword"
+      },
+      "run_label": {
+        "type": "keyword"
+      },
+      "testset_version": {
+        "type": "keyword"
+      },
+      "at": {
+        "type": "date"
+      }
+    }
+  }
+}

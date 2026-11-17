@@ -26,7 +26,11 @@ M5 and later (25 section 1):
   ragas      no RAGAS package in any import, requirement or pip install line (RAGAS is vocabulary only)
   reason     no grading check reads a judge's written reason (judge.raw, ["raw"], ["reason"]); a Defend
              check is exempt: its "reason" is the learner's closed-list reason id, not a judge's text
-  traces     no grading check reads traces-* (harness numbers come from the converse response)
+  traces     no grading check reads traces-* (harness numbers come from the converse response); M5 only
+M6 (28 section 1): an M6 check reads traces (the trace reader, pack keys), so the rule narrows:
+  harness    a grading check that reads traces-* must not also read a harness number (routing accuracy, route
+             correctness, tool call count, token totals, cost per question, aggregates); those come from the
+             converse response and the conversation API, never from traces
 Exit 1 on any FAIL.
 """
 from __future__ import annotations
@@ -39,6 +43,9 @@ import sys
 
 MODEL_RE = re.compile(r"(claude-[a-z0-9.-]+|Claude-Sonnet|sonnet-\d|gemini-\d|gpt-\d|Anthropic-)", re.I)
 TOOL_ID_RE = re.compile(r"^cortex\.[a-z0-9_]+$")
+HARNESS_NUMBER_RE = re.compile(
+    r"routing_accuracy|route_correct|tool_call_count|tool_calls_per_question|cost_per_question|aggregates\(|"
+    r"(?:fresh_|cached_)?input_tokens_per_question|round_usage\(|model_usage")
 HYPHEN_ID_RE = re.compile(r"^(tina|cortex)-[a-z0-9-]+$")
 
 
@@ -55,8 +62,8 @@ def main(argv=None) -> int:
         fails += 0 if ok else 1
 
     print(track.name)
-    mm = re.match(r"(?:cert-sk-ara|ara-m\d)-(\d)-", track.name)
-    mod = f"m{mm.group(1)}" if mm else "m4"
+    mm = re.match(r"cert-sk-ara-(\d)-|ara-m(\d)-", track.name)
+    mod = f"m{mm.group(1) or mm.group(2)}" if mm else "m4"
     setup = next(track.glob("01-*/setup-elastic-serverless")).read_text()
     m = re.search(r'^ARA_ASSETS_TAG="([^"]+)"', setup, re.M)
     report("tag", bool(m) and m.group(1).startswith(f"{mod}-"), f"ARA_ASSETS_TAG={m.group(1) if m else None}")
@@ -85,7 +92,11 @@ def main(argv=None) -> int:
             report("identity", not re.search(r"AB\([^)]*ES_API_KEY[^)]*\)\.converse|admin\(\)\.converse", text), f.name)
             if mod >= "m5" and "-defend-" not in f.name:
                 report("reason", not re.search(r"judge\.raw|\[[\"']raw[\"']\]|\[[\"']reason[\"']\]|\.get\([\"'](?:raw|reason)[\"']", text), f.name)
-                report("traces", "traces-" not in text, f.name)
+                if mod == "m5":
+                    report("traces", "traces-" not in text, f.name)
+                elif mod >= "m6" and "traces-" in text:
+                    hit = HARNESS_NUMBER_RE.search(text)
+                    report("harness", not hit, f"{f.name}" + (f": reads {hit.group(0)} beside traces-*" if hit else ""))
 
     thresholds = json.loads((track / "private/thresholds.json").read_text())
     ids = [(k, v) for sec in thresholds.values() if isinstance(sec, dict) for k, v in sec.items()
@@ -101,7 +112,8 @@ def main(argv=None) -> int:
         while mf.exists():
             m4 = json.loads(mf.read_text())
             chain.append(m4)
-            mf = (mf.parent / f"{m4['extends']}.json").resolve() if m4.get("extends") else pathlib.Path("/nonexistent")
+            nxt = next(iter(sorted(a.assets.glob(f"manifests/*/{m4['extends']}.json"))), None) if m4.get("extends") else None  # an M6 chain extends M5's and M4's
+            mf = nxt.resolve() if nxt else pathlib.Path("/nonexistent")
         for m4 in chain:
             for t in m4.get("tools") or []:
                 manifest_ids.add(t["id"])
@@ -128,7 +140,7 @@ def main(argv=None) -> int:
                 for n, line in enumerate(f.read_text(errors="replace").splitlines(), 1):
                     if re.search(r"^\s*(import ragas|from ragas)|pip[^#\n]*\bragas\b|^ragas\b", line, re.I):
                         report("ragas", False, f"{f.relative_to(track)}:{n}: {line.strip()[:90]}")
-    pages = a.assets / f"modules/{mod}" / track.name.removeprefix("cert-sk-ara-")
+    pages = a.assets / f"modules/{mod}" / track.name.removeprefix("cert-sk-ara-").removeprefix("ara-m6-").replace("capstone-", "6-c-")
     report("model", pages.is_dir(), f"assets pages {pages.relative_to(a.assets)}"
            + ("" if pages.is_dir() else " not found"))
     for f in sorted(pages.rglob("*")) if pages.is_dir() else []:

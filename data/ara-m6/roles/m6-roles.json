@@ -1,0 +1,50 @@
+{
+  "_doc": "Roles M6 setup creates (28 section 8.1). Kibana privileges confirmed by a probe (2026-11-12): a key with these ran POST /api/workflows/workflow/<id>/run past the privilege check (the earlier feature_workflows.* names gave 403, workflowsManagement:execute). Probe r5 (2026-11-12) confirmed the rest: under this key the workflow's ai.agent step ran to completion and its structured_output.proposals fed a foreach that wrote documents. Index privileges are the design: read the trace stream and the run records, create documents in cortex-eval-proposals, nothing else. Probe r4: the evaluator workflow's ai.agent step failed under this key with cluster:monitor/xpack/inference/get unauthorized, so the role carries the cluster privilege monitor_inference; r5 re-ran under the key with it (completed) and without it (failed with the same error).",
+  "P7_GUESS": [
+    "feature_agentBuilder.read",
+    "feature_workflowsManagement.read",
+    "feature_workflowsManagement.workflow_execute",
+    "feature_workflowsManagement.workflow_execution_read"
+  ],
+  "cortex-evaluator-reader": {
+    "cluster": [
+      "monitor_inference"
+    ],
+    "indices": [
+      {
+        "names": [
+          "traces-agent_builder.otel-*",
+          "cortex-eval-runs",
+          "cortex-eval-testsets"
+        ],
+        "privileges": [
+          "read",
+          "view_index_metadata"
+        ]
+      },
+      {
+        "names": [
+          "cortex-eval-proposals"
+        ],
+        "privileges": [
+          "create_doc",
+          "read"
+        ]
+      }
+    ],
+    "applications": [
+      {
+        "application": "kibana-.kibana",
+        "privileges": [
+          "feature_agentBuilder.read",
+          "feature_workflowsManagement.read",
+          "feature_workflowsManagement.workflow_execute",
+          "feature_workflowsManagement.workflow_execution_read"
+        ],
+        "resources": [
+          "space:default"
+        ]
+      }
+    ]
+  }
+}

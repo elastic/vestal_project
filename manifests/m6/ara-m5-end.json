@@ -1,0 +1,11 @@
+{
+ "_doc": "The M5 reference end M6 builds on (28 section 8.3; design decision of 2026-11-11: unhandicapped Tina, no 5.4 change). Contract, composed by setup from the 5.3 reference end: Tina carries the 5.2 hardening block (private overlay), the read-page guard is in place, leftover reach cleared, PII variant A, tina-eval and cortex-eval-runs exist, test set v1 and the rate card are loaded. Includes nothing from 5.4 or 5.C.",
+ "extends": "ara-m5-5-2-start",
+ "id": "ara-m5-end",
+ "overlay": {
+  "tina-compliance": {
+   "append_instructions": "private overlay: resolved by setup from the track's private files, not named here"
+  }
+ },
+ "run_labels": []
+}

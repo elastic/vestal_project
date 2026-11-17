@@ -303,6 +303,34 @@ def test_m4_lint_m5_rules():
         assert "FAIL reason" not in text and "FAIL connector" not in text, text
 
 
+def test_m4_lint_m6_traces_rule_is_harness_numbers():
+    # 28 section 1: an M6 check may read traces-*, but never a harness number beside it.
+    import m4_lint
+    with tempfile.TemporaryDirectory() as tmp:
+        root = pathlib.Path(tmp)
+        t = root / "cert-sk-ara-6-1-trace-diagnosis"
+        (t / "01-brief").mkdir(parents=True)
+        (t / "01-brief/setup-elastic-serverless").write_text('ARA_ASSETS_TAG="m6-v0.1"\n')
+        (t / "private/checks/x").mkdir(parents=True)
+        (t / "private/thresholds.json").write_text("{}")
+        assets = root / "assets"
+        (assets / "modules/m6/6-1-trace-diagnosis").mkdir(parents=True)
+        check = t / "private/checks/x/02-read-one-trace.py"
+        run = lambda: m4_lint.main([str(t), "--assets", str(assets)])
+        check.write_text("spans = es('POST', '/traces-agent_builder.otel-*/_search')\nkey = json.load(open(KEY))\n")
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            run()
+        assert "ok   tag ARA_ASSETS_TAG=m6-v0.1" in out.getvalue() and "FAIL harness" not in out.getvalue(), out.getvalue()
+        check.write_text("spans = es('POST', '/traces-agent_builder.otel-*/_search')\ncost = rec['cost_per_question']\n")
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            rc = run()
+        assert rc == 1 and "FAIL harness 02-read-one-trace.py: reads cost_per_question beside traces-*" in out.getvalue(), out.getvalue()
+        check.write_text("acc = rec['routing_accuracy']\n")  # no traces read: fine
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            run()
+        assert "FAIL harness" not in out.getvalue() and "FAIL traces" not in out.getvalue()
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0

@@ -145,6 +145,7 @@ def aggregates(records: list[dict], card: dict | None = None) -> dict:
         "questions": n,
         "routing_accuracy": {c: r1(v * 100) if v is not None else None for c, v in acc.items()},
         "routing_accuracy_overall": r1(100 * sum(bool(r["route_correct"]) for r in recs) / n),
+        "category_counts": {c: sum(1 for r in recs if r["category"] == c) for c in CATEGORIES if any(r["category"] == c for r in recs)},
         "tool_calls_per_question": mean(lambda r: int(r.get("tool_call_count") or 0)),
         "input_tokens_per_question": total_in / n,
         "cached_input_tokens_per_question": cached / n,

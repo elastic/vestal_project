@@ -31,7 +31,7 @@ from typing import Any, Callable, Iterable
 import ara_behavior
 import ara_eval
 import ara_eval_run
-from agent_builder import ABError, round_usage, route_record
+from agent_builder import ABError, round_usage, route_record, strip_candidate_ids
 from ara_pool_match import match_item
 
 # Server-managed fields: moved by the server, not by an edit. Probe: an identical re-PUT of the agent changes
@@ -178,10 +178,14 @@ def _own(route: list[dict]) -> list[tuple]:
 
 def recompute(records: list[dict], reader: Any, testset: list[dict], pool: dict, agent_id: str,
               pinned_model: str | None = None, window: tuple[float, float] | None = None,
-              terminal: Iterable[str] = TERMINAL, latency_tolerance_ms: int | None = None) -> list[dict]:
+              terminal: Iterable[str] = TERMINAL, latency_tolerance_ms: int | None = None,
+              ids_only: bool = False) -> list[dict]:
     """Failures (empty = verified). Every failure names the question id. Canonical inputs (testset, pool) come
     from root-held files, never from the records. A test-set question with no record fails; so does a record
-    for a question outside the test set, and two records sharing a conversation."""
+    for a question outside the test set, and two records sharing a conversation. A stored route is always
+    compared with the conversation's: a record with no `observed_route` and no `route` is compared as an empty
+    route and fails unless the question's route is empty. `ids_only=True` is for the canary's raw rows (6.3),
+    which hold ids and no route: a row with neither key has no route to compare. Only the 6.3 canary checks pass it."""
     fails: list[dict] = []
     by_q: dict[Any, dict] = {}
     for r in records:
@@ -244,12 +248,14 @@ def recompute(records: list[dict], reader: Any, testset: list[dict], pool: dict,
             if ts is None or not window[0] <= ts <= window[1]:
                 fails.append(_fail(qid, "started_at", "round is outside the run window", list(window), ts))
                 continue
-        route = route_record(rnd)
+        route = strip_candidate_ids(route_record(rnd))   # a candidate copy's tools carry --cand-<proposal>: routes are compared on production ids
         ok, _why = match_item(q, route, rnd)
         want: dict[str, Any] = {"observed_route": _own(route), "route_correct": ok,
                                 "tool_call_count": usage["tool_call_count"],
                                 **{k: usage[k] for k in USAGE_FIELDS}}
-        have = dict(rec, observed_route=_own(rec.get("observed_route") or rec.get("route") or []))
+        have = dict(rec)
+        if not (ids_only and "observed_route" not in rec and "route" not in rec):   # fail-closed: only an ids-only canary row skips the route
+            have["observed_route"] = _own(rec.get("observed_route") or rec.get("route") or [])
         for field, v in want.items():
             if field in have and have[field] != v:
                 fails.append(_fail(qid, field, "stored value differs from the conversation", have[field], v))

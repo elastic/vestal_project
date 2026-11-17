@@ -143,3 +143,45 @@ def test_jsonl_writer_and_args(tmp_path):
     assert len(open(p).read().splitlines()) == 2
     a = H.parse_args(["--agent", "tina-eval", "--testset", "t.json", "--concurrency", "2"])
     assert (a.agent, a.testset, a.concurrency, a.pool) == ("tina-eval", "t.json", 2, None)
+
+
+def test_candidate_tool_suffix_is_stripped_from_a_route():
+    import ara_eval_run as R
+    rec = [{"tool_id": "cortex.layering_chain--cand-prop-review-2", "args": {}}, {"tool_id": "cortex.escalate"}, {"tool_id": "platform.core.search"}]
+    assert [c["tool_id"] for c in R.strip_candidate_ids(rec)] == ["cortex.layering_chain", "cortex.escalate", "platform.core.search"]
+
+
+def _es_client_class():
+    import importlib.util, pathlib
+    spec = importlib.util.spec_from_file_location("ara_eval_script", pathlib.Path(__file__).with_name("ara-eval.py"))
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return next(v for v in vars(m).values() if isinstance(v, type) and hasattr(v, "_concrete_ratings"))
+
+
+def test_rank_eval_ratings_follow_the_index_that_holds_each_document():
+    cls = _es_client_class()
+
+    class FakeES:
+        def request(self, m, p, b=None):
+            assert p == "/cortex-policies/_search"
+            return 200, {"hits": {"hits": [{"_id": "a", "_index": "cortex-policies-v1"}, {"_id": "b", "_index": "cortex-policies-v2"}]}}
+    obj = cls.__new__(cls)
+    obj.es = FakeES()
+    body = {"requests": [{"id": "q", "ratings": [{"_index": "cortex-policies", "_id": "a", "rating": 1}, {"_index": "cortex-policies", "_id": "b", "rating": 1}, {"_index": "cortex-policies", "_id": "gone", "rating": 1}]}]}
+    out = obj._concrete_ratings("cortex-policies", body)
+    assert [r["_index"] for r in out["requests"][0]["ratings"]] == ["cortex-policies-v1", "cortex-policies-v2", "cortex-policies"]
+    assert body["requests"][0]["ratings"][0]["_index"] == "cortex-policies"   # the caller's request is not modified
+
+    class Same:
+        def request(self, m, p, b=None):
+            return 200, {"hits": {"hits": [{"_id": "a", "_index": "cortex-policies"}]}}
+    obj.es = Same()
+    one = {"requests": [{"id": "q", "ratings": [{"_index": "cortex-policies", "_id": "a", "rating": 1}]}]}
+    assert obj._concrete_ratings("cortex-policies", one) is one
+
+    class Broken:
+        def request(self, m, p, b=None):
+            raise OSError("down")
+    obj.es = Broken()
+    assert obj._concrete_ratings("cortex-policies", one) is one

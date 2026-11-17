@@ -1,0 +1,48 @@
+{
+  "mappings": {
+    "_meta": {
+      "version": 1
+    },
+    "properties": {
+      "proposal_id": {
+        "type": "keyword"
+      },
+      "action": {
+        "type": "keyword"
+      },
+      "at": {
+        "type": "date"
+      },
+      "candidate_agent_id": {
+        "type": "keyword"
+      },
+      "tool_copies": {
+        "type": "flattened"
+      },
+      "skill_copies": {
+        "type": "flattened"
+      },
+      "run_label": {
+        "type": "keyword"
+      },
+      "comparison_label": {
+        "type": "keyword"
+      },
+      "gate": {
+        "type": "flattened"
+      },
+      "snapshot": {
+        "type": "flattened"
+      },
+      "outcome": {
+        "type": "keyword"
+      },
+      "check_run": {
+        "type": "boolean"
+      },
+      "warning": {
+        "type": "text"
+      }
+    }
+  }
+}

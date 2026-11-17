@@ -1,0 +1,32 @@
+{
+ "_doc": "Capstone 6.C (07 section 3.2): the 6.3 reference end (not 6.4) + a 30-day canary history whose last night drops + trace pack + change log (cause and decoy) + the change-policy variant with its reference gate.json (incident block included) + ara-loop.py + m6-baseline before the seed + one seed C1-C3 then m6-degraded. Desk: America/New_York, shifts 06:00, 14:00, 22:00, opens 07:00.",
+ "degradation": {
+  "after": "m6-baseline",
+  "applied_by": "ara_seed_driver.seed",
+  "variants": [
+   "C1",
+   "C2",
+   "C3"
+  ]
+ },
+ "extends": "ara-m6-6-3-end",
+ "files": [
+  "/home/elastic/cortex-loop/change-policy.md",
+  "/home/elastic/cortex-loop/gate.json"
+ ],
+ "history": {
+  "days": 30,
+  "last_night_degraded": true,
+  "runs_per_day": 3,
+  "variants": [
+   "C1",
+   "C2",
+   "C3"
+  ]
+ },
+ "id": "ara-m6-capstone-start",
+ "run_labels": [
+  "m6-baseline",
+  "m6-degraded"
+ ]
+}

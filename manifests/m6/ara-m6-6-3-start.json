@@ -1,0 +1,34 @@
+{
+ "_doc": "Lab 6.3 (28 section 4): the 6.2 reference end + cortex-canary-run (manual only) + cortex-policy-lexical + cortex-answer-audit (not attached) + cortex-deploy.sh + cortex-change-log + canary-v1 + the ops scenario sheet (O1-O3). No scheduled trigger anywhere.",
+ "extends": "ara-m6-6-2-end",
+ "files": [
+  "/home/elastic/cortex-ops/cortex-deploy.sh",
+  "/home/elastic/cortex-ops/scenarios.md"
+ ],
+ "id": "ara-m6-6-3-start",
+ "run_labels": [],
+ "search_templates": [
+  "cortex-policy-lexical"
+ ],
+ "testsets": [
+  "canary-v1"
+ ],
+ "workflows": [
+  {
+   "enabled": true,
+   "id": "cortex-canary-run",
+   "source": "ara_workflows_m6.canary_run_yaml",
+   "triggers": [
+    "manual"
+   ]
+  },
+  {
+   "enabled": true,
+   "id": "cortex-answer-audit",
+   "source": "ara_workflows_m6.answer_audit_yaml",
+   "triggers": [
+    "manual"
+   ]
+  }
+ ]
+}

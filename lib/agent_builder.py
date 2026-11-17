@@ -368,6 +368,20 @@ def _step_internal(s: dict) -> bool:
     return s.get("tool_origin") == "internal" or is_internal(s.get("tool_id"))
 
 
+_CAND_SUFFIX = re.compile(r"--cand-[A-Za-z0-9._-]+$")
+
+
+def strip_candidate_ids(record: list) -> list:
+    """A candidate copy's tools carry `--cand-<proposal>` after the production id (ara-loop.py candidate); a route is graded on the production ids,
+    so the suffix is removed from every call (every tool-calling question failed on a candidate for its tool names alone)."""
+    out = []
+    for c in record:
+        if isinstance(c, dict):
+            c = {k: (_CAND_SUFFIX.sub("", v) if k in ("tool_id", "agent_id") and isinstance(v, str) else v) for k, v in c.items()}
+        out.append(c)
+    return out
+
+
 def route_record(resp: dict) -> list[dict]:
     """The ordered custom tool calls in one converse response, internal tools filtered and
     delegations kept. Every entry is the coordinator's own call (agent_id None); a specialist's

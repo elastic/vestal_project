@@ -1,0 +1,53 @@
+{
+ "_doc": "Lab 6.2 (28 section 3): the 6.1 reference end + week pack W (W1-W3) + W's patterns installed live before m6-baseline + the change policy variant + the week's two named proposals + cortex-evaluator-run skeleton + role cortex-evaluator-reader + empty ledger + ara-loop.py + the proposal examples + m6-baseline by setup (detached during the Brief).",
+ "extends": "ara-m6-6-1-end",
+ "files": [
+  "/home/elastic/cortex-loop/change-policy.md",
+  "/home/elastic/cortex-loop/proposal-examples/"
+ ],
+ "id": "ara-m6-6-2-start",
+ "indices": {
+  "cortex-audit": "data/ara-m6/mappings/cortex-audit.json",
+  "cortex-canary-raw": "data/ara-m6/mappings/cortex-canary-raw.json",
+  "cortex-change-log": "data/ara-m6/mappings/cortex-change-log.json",
+  "cortex-eval-ledger": "data/ara-m6/mappings/cortex-eval-ledger.json",
+  "cortex-eval-proposals": "data/ara-m6/mappings/cortex-eval-proposals.json"
+ },
+ "pack": {
+  "source": "data/ara-m6/traces/W<n>/",
+  "variants": [
+   "W1",
+   "W2",
+   "W3"
+  ]
+ },
+ "patterns_live": [
+  "double_search",
+  "short_default_window",
+  "needless_question",
+  "oversized_result",
+  "unattached_tool"
+ ],
+ "roles": [
+  "cortex-evaluator-reader"
+ ],
+ "run_labels": [
+  "m6-baseline"
+ ],
+ "seeded_docs": {
+  "cortex-eval-proposals": [
+   "prop-review-1",
+   "prop-review-2"
+  ]
+ },
+ "workflows": [
+  {
+   "enabled": true,
+   "id": "cortex-evaluator-run",
+   "source": "ara_workflows_m6.evaluator_run_yaml",
+   "triggers": [
+    "manual"
+   ]
+  }
+ ]
+}

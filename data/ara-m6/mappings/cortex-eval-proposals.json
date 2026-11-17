@@ -1,0 +1,52 @@
+{
+  "mappings": {
+    "_meta": {
+      "version": 1
+    },
+    "properties": {
+      "proposal_id": {
+        "type": "keyword"
+      },
+      "run_id": {
+        "type": "keyword"
+      },
+      "created_at": {
+        "type": "date"
+      },
+      "status": {
+        "type": "keyword"
+      },
+      "check_run": {
+        "type": "boolean"
+      },
+      "kind": {
+        "type": "keyword"
+      },
+      "proposal_type": {
+        "type": "keyword"
+      },
+      "target": {
+        "type": "keyword"
+      },
+      "change": {
+        "type": "flattened"
+      },
+      "evidence": {
+        "type": "flattened"
+      },
+      "expected_effect": {
+        "properties": {
+          "metric": {
+            "type": "keyword"
+          },
+          "category": {
+            "type": "keyword"
+          }
+        }
+      },
+      "rationale": {
+        "type": "text"
+      }
+    }
+  }
+}

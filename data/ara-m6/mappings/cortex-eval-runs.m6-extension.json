@@ -1,0 +1,37 @@
+{
+  "_doc": "Added to M5's cortex-eval-runs mapping (28 section 8.8); every field optional, so an M5 document still indexes. Version 2 of the mapping.",
+  "version": 2,
+  "properties": {
+    "agent_id": {
+      "type": "keyword"
+    },
+    "trace_id": {
+      "type": "keyword"
+    },
+    "workflow_execution_id": {
+      "type": "keyword"
+    },
+    "triggered_by": {
+      "type": "keyword"
+    },
+    "change_id": {
+      "type": "keyword"
+    },
+    "escalated": {
+      "type": "boolean"
+    },
+    "retrieval": {
+      "properties": {
+        "recall_at_5": {
+          "type": "float"
+        },
+        "ndcg_at_5": {
+          "type": "float"
+        },
+        "lexical_recall_at_5": {
+          "type": "float"
+        }
+      }
+    }
+  }
+}

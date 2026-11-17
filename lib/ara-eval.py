@@ -50,7 +50,27 @@ class EvalES:
         return len(docs)
 
     def rank_eval(self, index: str, body: dict) -> dict:
-        return self._ok("_rank_eval", *self.es.request("POST", f"/{index}/_rank_eval", body))
+        return self._ok("_rank_eval", *self.es.request("POST", f"/{index}/_rank_eval", self._concrete_ratings(index, body)))
+
+    def _concrete_ratings(self, index: str, body: dict) -> dict:
+        """_rank_eval matches a rating to a hit by the hit's concrete index. The ratings name production's index, so when `index` is an alias over several
+        indices (mixed endpoints: 6.4 L2, 6.C C2) or a candidate source (6.C's gate) they match nothing and every metric reads 0: each rated id gets the
+        index that holds it among the indices searched. A lookup that fails leaves the request as it was."""
+        try:
+            ids = sorted({r["_id"] for q in body.get("requests", []) for r in q.get("ratings", [])})
+            if not ids:
+                return body
+            code, resp = self.es.request("POST", f"/{index}/_search", {"size": len(ids), "_source": False, "query": {"ids": {"values": ids}}})
+            where = {h["_id"]: h["_index"] for h in (resp or {}).get("hits", {}).get("hits", [])} if code == 200 else {}
+            out = json.loads(json.dumps(body))
+            changed = False
+            for q in out["requests"]:
+                for r in q.get("ratings", []):
+                    if r["_id"] in where and r.get("_index") != where[r["_id"]]:
+                        r["_index"], changed = where[r["_id"]], True
+            return out if changed else body
+        except Exception:  # noqa: BLE001
+            return body
 
     def search_runs(self, label: str) -> list[dict]:
         body = self._ok("run search", *self.es.request("POST", "/cortex-eval-runs/_search",

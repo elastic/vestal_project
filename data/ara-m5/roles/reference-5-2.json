@@ -12,7 +12,7 @@
      "cortex-atm-events",
      "cortex-brokerage-trades",
      "cortex-ref-*",
-     "cortex-policies"
+     "cortex-policies", "cortex-policies-*"
     ],
     "privileges": [
      "read",
@@ -116,7 +116,7 @@
      "cortex-atm-events",
      "cortex-brokerage-trades",
      "cortex-ref-*",
-     "cortex-policies"
+     "cortex-policies", "cortex-policies-*"
     ],
     "privileges": [
      "read",

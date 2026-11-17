@@ -44,7 +44,7 @@ from typing import Any, Callable
 
 from agent_builder import ABError
 from ara_eval import CATEGORIES, DEFAULT_SCALE, METRICS, category_means, parse_score
-from ara_eval_run import ATTEMPTS, EXIT_NO_GRADE, load_pool, run_testset, summarize
+from ara_eval_run import default_concurrency, ATTEMPTS, EXIT_NO_GRADE, load_pool, run_testset, summarize
 from ara_judge import contract_violations
 from ara_rank_bundle import INDEX, METRICS as RB_METRICS, TEMPLATE_ID, cross_check
 
@@ -256,6 +256,23 @@ def labelled_from(reqs: list[dict]) -> list[dict]:
             for r in reqs]
 
 
+def _reasons(err, limit=400) -> str:
+    """The distinct 'reason' strings nested anywhere in an error body, shortest useful form."""
+    out = []
+    def walk(x):
+        if isinstance(x, dict):
+            r = x.get("reason")
+            if isinstance(r, str) and r not in out:
+                out.append(r)
+            for v in x.values():
+                walk(v)
+        elif isinstance(x, list):
+            for v in x:
+                walk(v)
+    walk(err)
+    return ("; ".join(out) or str(err))[-limit:]
+
+
 def cmd_rank_eval(a: argparse.Namespace, ctx: Ctx) -> int:
     path = a.rank_eval or ctx.home / "rank-eval.json"
     reqs, bodies = load_bundle(path)
@@ -269,7 +286,7 @@ def cmd_rank_eval(a: argparse.Namespace, ctx: Ctx) -> int:
         fails = (responses[key] or {}).get("failures") or {}
         if fails:
             ctx.say(f"_rank_eval reported a failure for {', '.join(sorted(fails))} ({key}): "
-                    + str(next(iter(fails.values())))[:200])
+                    + _reasons(next(iter(fails.values()))))
             return EXIT_CHECK_FAILED
     labelled = labelled_from(reqs)
     cc = cross_check(responses, labelled)
@@ -534,7 +551,7 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--agent", required=True, help="agent id to evaluate")
     r.add_argument("--pool", help="question pool JSON (default: $ARA_EVAL_POOL)")
     r.add_argument("--key", help="question_id -> category JSON; grades by these categories (checks and M6)")
-    r.add_argument("--concurrency", type=int, default=3)
+    r.add_argument("--concurrency", type=int, default=default_concurrency())
     q = sub.add_parser("rank-eval", help="run the rated requests, one _rank_eval call per metric, and record per category")
     q.add_argument("--label", required=True)
     q.add_argument("--rank-eval", help="the artifact (default: ~/cortex-eval/rank-eval.json)")

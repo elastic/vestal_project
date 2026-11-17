@@ -232,3 +232,62 @@ def test_a_round_that_ended_on_an_unanswered_ask_is_terminal():
     recs = good_records(w)
     w.convs[recs[0]["conversation_id"]]["rounds"][0]["status"] = "awaiting_prompt"
     assert not I.recompute(recs, w, TS, POOL, "tina", pinned_model=MODEL)
+
+
+def _without_route(recs):
+    out = copy.deepcopy(recs)
+    for r in out:
+        r.pop("observed_route", None)
+        r.pop("route", None)
+    return out
+
+
+def test_recompute_is_fail_closed_for_a_record_with_no_route():
+    """Default: a stored record with neither observed_route nor route is compared as an empty route, so a question that
+    made a tool call fails on observed_route (the behavior before the canary option existed)."""
+    w = World()
+    bare = _without_route(good_records(w))
+    f = I.recompute(bare, w, TS, POOL, "tina", pinned_model=MODEL)
+    assert {(x["question_id"], x["field"]) for x in f} == {("q1", "observed_route"), ("q2", "observed_route")}
+    # the same records are not accepted by a caller that does not opt in, whatever else they hold
+    assert I.recompute(bare, w, TS, POOL, "tina", pinned_model=MODEL, ids_only=False) == f
+
+
+def test_recompute_ids_only_is_an_explicit_canary_opt_in_and_skips_nothing_else():
+    w = World()
+    bare = _without_route(good_records(w))
+    assert I.recompute(bare, w, TS, POOL, "tina", pinned_model=MODEL, ids_only=True) == []
+    # the opt-in skips only the absent route: the stored verdict, the counts and the conversation are still checked
+    wrong = copy.deepcopy(bare)
+    wrong[0]["route_correct"] = not wrong[0]["route_correct"]
+    wrong[1]["tool_call_count"] = 9
+    wrong[1]["conversation_id"] = "c-other"
+    f = I.recompute(wrong, w, TS, POOL, "tina", pinned_model=MODEL, ids_only=True)
+    assert {(x["question_id"], x["field"]) for x in f} == {("q1", "route_correct"), ("q2", "conversation_id")}
+    wrong2 = copy.deepcopy(bare)
+    wrong2[1]["tool_call_count"] = 9
+    assert {(x["question_id"], x["field"]) for x in I.recompute(wrong2, w, TS, POOL, "tina", pinned_model=MODEL, ids_only=True)} == {("q2", "tool_call_count")}
+
+
+def test_recompute_compares_a_stored_route_with_or_without_the_option():
+    w = World()
+    recs = good_records(w)
+    for flag in (False, True):
+        assert I.recompute(copy.deepcopy(recs), w, TS, POOL, "tina", pinned_model=MODEL, ids_only=flag) == []
+        edited = copy.deepcopy(recs)
+        edited[0]["observed_route"] = [{"tool_id": "cortex.account_lookup", "params": {"account_id": "1"}, "agent_id": None}]
+        f = I.recompute(edited, w, TS, POOL, "tina", pinned_model=MODEL, ids_only=flag)
+        assert {(x["question_id"], x["field"]) for x in f} == {("q1", "observed_route")}
+        # a route stored as null or empty is a stored route: it is compared even with the option
+        for stored in (None, []):
+            blank = copy.deepcopy(recs)
+            blank[0]["observed_route"] = stored
+            blank[0]["route"] = stored   # records carry both keys; the check reads observed_route, then route
+            f = I.recompute(blank, w, TS, POOL, "tina", pinned_model=MODEL, ids_only=flag)
+            assert {(x["question_id"], x["field"]) for x in f} == {("q1", "observed_route")}
+
+
+def test_check_run_never_opts_in():
+    """check_run verifies the records of its own run; it must not accept a record without a route."""
+    import inspect
+    assert "ids_only" not in inspect.getsource(I.check_run)

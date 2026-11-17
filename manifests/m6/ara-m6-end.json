@@ -1,0 +1,6 @@
+{
+ "_doc": "The M6 end (28 section 8.4): the 6.4 reference end with the live degradation fixed and every scheduled trigger removed: Tina with the 6.1 fix and the 6.2 change, cortex-evaluator, the canary and audit workflows, the ledger, the change log, the M5 harness, canary-v1. The exam's practical-task base.",
+ "extends": "ara-m6-6-3-end",
+ "id": "ara-m6-end",
+ "run_labels": []
+}

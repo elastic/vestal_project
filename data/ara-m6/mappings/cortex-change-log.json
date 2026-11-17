@@ -1,0 +1,30 @@
+{
+  "mappings": {
+    "_meta": {
+      "version": 1
+    },
+    "properties": {
+      "at": {
+        "type": "date"
+      },
+      "kind": {
+        "type": "keyword"
+      },
+      "object": {
+        "type": "keyword"
+      },
+      "before": {
+        "type": "text"
+      },
+      "after": {
+        "type": "text"
+      },
+      "change_id": {
+        "type": "keyword"
+      },
+      "actor": {
+        "type": "keyword"
+      }
+    }
+  }
+}

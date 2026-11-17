@@ -1,0 +1,15 @@
+{
+  "mappings": {
+    "properties": {
+      "round_id": {
+        "type": "keyword"
+      },
+      "conversation_id": {
+        "type": "keyword"
+      },
+      "audited_at": {
+        "type": "date"
+      }
+    }
+  }
+}

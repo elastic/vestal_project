@@ -1,0 +1,340 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "proposals": {
+      "items": {
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "proposal_type": {
+                  "enum": [
+                    "attach_tool",
+                    "detach_tool"
+                  ]
+                }
+              },
+              "required": [
+                "proposal_type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "change": {
+                  "properties": {
+                    "tool_id": {
+                      "minLength": 1,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "tool_id"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "proposal_type": {
+                  "enum": [
+                    "instruction_change",
+                    "tool_description_change",
+                    "tool_query_change"
+                  ]
+                }
+              },
+              "required": [
+                "proposal_type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "change": {
+                  "properties": {
+                    "field": {
+                      "minLength": 1,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "text": {
+                      "minLength": 1,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "field",
+                    "text"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "proposal_type": {
+                  "enum": [
+                    "data_change"
+                  ]
+                }
+              },
+              "required": [
+                "proposal_type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "change": {
+                  "allOf": [
+                    {
+                      "if": {
+                        "properties": {
+                          "operation": {
+                            "const": "delete_matching"
+                          }
+                        },
+                        "required": [
+                          "operation"
+                        ]
+                      },
+                      "then": {
+                        "properties": {
+                          "query": {
+                            "type": "object"
+                          }
+                        },
+                        "required": [
+                          "query"
+                        ]
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "candidate_source": {
+                      "minLength": 1,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "operation": {
+                      "enum": [
+                        "repoint_alias",
+                        "delete_matching"
+                      ]
+                    },
+                    "production_source": {
+                      "minLength": 1,
+                      "pattern": "\\S",
+                      "type": "string"
+                    },
+                    "tool_id": {
+                      "minLength": 1,
+                      "pattern": "\\S",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "tool_id",
+                    "production_source",
+                    "candidate_source",
+                    "operation"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "improvement"
+                }
+              },
+              "required": [
+                "kind"
+              ]
+            },
+            "then": {
+              "properties": {
+                "proposal_type": {
+                  "not": {
+                    "const": "data_change"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "properties": {
+          "change": {
+            "type": "object"
+          },
+          "evidence": {
+            "items": {
+              "properties": {
+                "conversation_id": {
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                "observation": {
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                "trace_id": {
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "conversation_id",
+                "trace_id",
+                "observation"
+              ],
+              "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "expected_effect": {
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "metric": {
+                      "const": "routing_accuracy"
+                    }
+                  },
+                  "required": [
+                    "metric"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "category": {
+                      "enum": [
+                        "straightforward",
+                        "ambiguous",
+                        "time_window_edge",
+                        "cross_domain",
+                        "adversarial",
+                        "out_of_scope",
+                        "all"
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "metric": {
+                      "const": "ndcg_at_5"
+                    }
+                  },
+                  "required": [
+                    "metric"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "category": {
+                      "const": "policy_retrieval"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "metric": {
+                      "enum": [
+                        "tool_calls",
+                        "cost"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "metric"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "category": {
+                      "const": "all"
+                    }
+                  }
+                }
+              }
+            ],
+            "properties": {
+              "category": {
+                "type": "string"
+              },
+              "metric": {
+                "enum": [
+                  "routing_accuracy",
+                  "ndcg_at_5",
+                  "tool_calls",
+                  "cost"
+                ]
+              }
+            },
+            "required": [
+              "metric",
+              "category"
+            ],
+            "type": "object"
+          },
+          "kind": {
+            "enum": [
+              "improvement",
+              "incident_fix"
+            ]
+          },
+          "proposal_type": {
+            "enum": [
+              "instruction_change",
+              "tool_description_change",
+              "tool_query_change",
+              "attach_tool",
+              "detach_tool",
+              "data_change"
+            ]
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "target": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "proposal_type",
+          "target",
+          "change",
+          "evidence",
+          "expected_effect"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "proposals"
+  ],
+  "title": "Cortex evaluator output",
+  "type": "object"
+}

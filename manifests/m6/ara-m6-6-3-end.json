@@ -1,0 +1,17 @@
+{
+ "_doc": "The 6.3 reference end (28 section 8.4): cortex-answer-audit attached to Tina (post-execution), no scheduled trigger; the learner's triggers are removed by cleanup.",
+ "extends": "ara-m6-6-3-start",
+ "id": "ara-m6-6-3-end",
+ "run_labels": [],
+ "workflows": [
+  {
+   "attached_to": "tina-compliance",
+   "enabled": true,
+   "id": "cortex-answer-audit",
+   "source": "ara_workflows_m6.answer_audit_yaml",
+   "triggers": [
+    "manual"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+# Cortex fraud desk: how Tina is run
+
+Time zone: Asia/Singapore. The desk starts a shift at 00:00, 08:00, 16:00 (local time) and opens its day at 08:00 local time.
+
+## What the desk needs
+
+1. **No change reaches an analyst unchecked.** Whenever Tina is changed, the change is checked against the canary questions, and the result is tied to that change's id.
+2. **Overnight drift is caught before the desk opens.** The sanctions feed lands at 21:30 UTC every day. Anything it does to Tina's answers must be found at least 15 minutes after it lands and at least 15 minutes before the desk opens at 08:00 local time. Work in one time zone.
+3. **Every answer that used a SAR search is audited within a minute.** One record per such answer, naming the round and the conversation.
+
+## What you are given
+
+The canary workflow `cortex-canary-run`, the audit workflow `cortex-answer-audit`, and the deploy script `/home/elastic/cortex-ops/cortex-deploy.sh`.

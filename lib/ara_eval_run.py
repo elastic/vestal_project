@@ -19,12 +19,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import pathlib
 import threading
+import re
 import time
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Callable
 
-from agent_builder import ABError, round_usage, route_record, splice_delegated, trace_calls
+from agent_builder import ABError, round_usage, route_record, splice_delegated, trace_calls, strip_candidate_ids
 from ara_eval import CATEGORIES, category_means
 from ara_pool_match import match_item
 
@@ -84,6 +87,7 @@ def run_question(client: Any, agent_id: str, q: dict, label: str | None = None, 
             continue
         except Exception as e:  # noqa: BLE001
             return _record(q, label, "error", reason=f"{type(e).__name__}: {str(e)[:160]}")
+        record = strip_candidate_ids(record)
         ok, reason = match_item(q, record, resp)
         usage = round_usage(resp, ms, resp.get("conversation_id"))
         if cleanup and hasattr(client, "delete_conversation") and resp.get("conversation_id"):
@@ -149,11 +153,20 @@ def jsonl_writer(path: str) -> Callable[[dict], None]:
     return write
 
 
+def default_concurrency() -> int:
+    """3 for learners. Calibration and test copies set ARA_EVAL_CONCURRENCY or write /opt/ara/concurrency."""
+    try:
+        v = os.environ.get("ARA_EVAL_CONCURRENCY") or pathlib.Path("/opt/ara/concurrency").read_text().strip()
+        return max(1, int(v))
+    except (OSError, ValueError):
+        return 3
+
+
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(prog="ara-eval.py run")
     p.add_argument("--agent", required=True, help="agent id to evaluate")
     p.add_argument("--testset", required=True, help="test set JSON: a list of {question_id, category}")
     p.add_argument("--pool", help="question pool JSON (default: the sandbox's own)")
     p.add_argument("--out", help="record file, one JSON line per question (default: eval-runs)")
-    p.add_argument("--concurrency", type=int, default=3)
+    p.add_argument("--concurrency", type=int, default=default_concurrency())
     return p.parse_args(argv)

@@ -1,0 +1,12 @@
+{
+ "_doc": "The 6.2 reference end: W1's patterns live, W1's good proposal applied, cortex-evaluator built, the ledger filled by the reference run. No scheduled trigger.",
+ "agents": [
+  {
+   "id": "cortex-evaluator",
+   "tools": "custom ES|QL, read-only, bounded; no built-ins, skills or sub-agents"
+  }
+ ],
+ "extends": "ara-m6-6-2-start",
+ "id": "ara-m6-6-2-end",
+ "run_labels": []
+}

@@ -1,0 +1,28 @@
+{
+ "_doc": "Lab 6.4 (28 section 5): the 6.3 reference end + 30-day canary history H1-H3 + change log with decoys + one live degradation L1-L3 seeded after m6-baseline, measured as m6-degraded. Every scheduled trigger removed; the canary keeps its manual trigger.",
+ "degradation": {
+  "after": "m6-baseline",
+  "applied_by": "ara_seed_driver.seed",
+  "variants": [
+   "L1",
+   "L2",
+   "L3"
+  ]
+ },
+ "extends": "ara-m6-6-3-end",
+ "history": {
+  "days": 30,
+  "label_prefix": "canary-seed",
+  "runs_per_day": 3,
+  "variants": [
+   "H1",
+   "H2",
+   "H3"
+  ]
+ },
+ "id": "ara-m6-6-4-start",
+ "run_labels": [
+  "m6-baseline",
+  "m6-degraded"
+ ]
+}

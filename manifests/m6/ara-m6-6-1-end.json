@@ -1,0 +1,14 @@
+{
+ "_doc": "The 6.1 reference end: cortex.structuring_deposits fixed (the defect removed; id, parameters and description unchanged) and the variant's capability tool built and NOT attached (variant A's cortex.account_history is the one 6.2's unattached-tool pattern uses).",
+ "extends": "ara-m6-6-1-start",
+ "id": "ara-m6-6-1-end",
+ "overlay": {
+  "cortex.structuring_deposits": {
+   "query_variant": "private overlay: resolved by setup from the track's private files, not named here"
+  }
+ },
+ "run_labels": [],
+ "tools_added_unattached": [
+  "cortex.account_history"
+ ]
+}

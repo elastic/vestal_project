@@ -1,0 +1,26 @@
+{
+  "mappings": {
+    "_meta": {
+      "version": 1
+    },
+    "properties": {
+      "exception_id": {
+        "type": "keyword"
+      },
+      "policy_id": {
+        "type": "keyword"
+      },
+      "effective_from": {
+        "type": "date",
+        "format": "yyyy-MM-dd"
+      },
+      "effective_to": {
+        "type": "date",
+        "format": "yyyy-MM-dd"
+      },
+      "summary": {
+        "type": "text"
+      }
+    }
+  }
+}
