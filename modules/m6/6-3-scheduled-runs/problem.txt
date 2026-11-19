@@ -1,0 +1,5 @@
+A change went to Tina on Tuesday afternoon. The scheduled canary ran Wednesday morning.
+
+  [PENDING: capture of the execution history around the deploy]
+
+  The canary did not run between the deploy and Wednesday.

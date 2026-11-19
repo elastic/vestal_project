@@ -1,0 +1,75 @@
+<header>
+
+<p class="track-code">Lab 6.2</p>
+
+<h1>Lab 6.2: Close the self-improvement loop</h1>
+
+<p>Cortex wants a weekly review of Tina's traces that proposes improvements. A model reads the week and writes proposals. Nothing reaches Tina until a gate that measures the change says it passes.</p>
+
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<pre><!-- include: problem.txt --></pre>
+
+  <p>Both proposals cite real conversations and give a plausible reason. One lifts its target category and drops another, or raises cost past anything Cortex would accept. Reading them does not tell you which. Measuring does.</p>
+</section>
+
+<section>
+<h2>The evaluator pattern</h2>
+  <p>A second agent, the <strong>evaluator</strong>, reads Tina's traces and run records and writes structured proposals. It never applies them. If it did, it would be grading the system it changes, and the traces it reads hold text outsiders wrote: a correspondence body or an analyst prompt can reach it, as M5's payloads reached Tina.</p>
+</section>
+
+<section>
+<h2>The proposal</h2>
+  <p>A proposal has: <code>kind</code> (<code>improvement</code>); <code>proposal_type</code> (<code>instruction_change</code>, <code>tool_description_change</code>, <code>tool_query_change</code>, <code>attach_tool</code>, <code>detach_tool</code>); <code>target</code> (an agent id or a tool id); <code>change</code> (the <code>tool_id</code> for attach or detach, otherwise <code>field</code> and <code>text</code>); <code>evidence</code> (at least one item: a <code>conversation_id</code>, a <code>trace_id</code> and a short <code>observation</code>); <code>expected_effect</code> (<code>metric</code> and <code>category</code>); and a <code>rationale</code>, which is never graded. You turn this into a JSON Schema.</p>
+</section>
+
+<section>
+<h2>What a schema does not guarantee</h2>
+  <p>An <code>ai.agent</code> step with a JSON schema returns output of that shape. The shape is all it guarantees. A proposal is worth what its evidence is worth, so check that each cited conversation exists and shows what the observation says.</p>
+</section>
+
+<section>
+<h2>Bounded tools</h2>
+  <p>Give the evaluator ES|QL tools of your own that return aggregates or rows with a <code>LIMIT</code>. Open-ended exploration is slow: in Jeff Vestal's Self-Improving Agents workshop, bounded tools took about 4 tool calls in 30 seconds where the traces skill took about 32 calls in 8 minutes. [PENDING: re-measured on the build-time project]</p><p>What the traces carry. Each span in <code>traces-agent_builder.otel-*</code> has <code>trace_id</code>, <code>name</code>, <code>@timestamp</code>, <code>duration</code> and <code>status.code</code>, and under <code>attributes</code>: <code>gen_ai.conversation.id</code>, <code>gen_ai.operation.name</code> (<code>invoke_agent</code>, <code>chat</code> or <code>execute_tool</code>), <code>gen_ai.tool.name</code>, <code>gen_ai.tool.call.arguments</code>, <code>gen_ai.tool.call.result</code>, <code>gen_ai.usage.input_tokens</code> and <code>gen_ai.usage.output_tokens</code>. Your tools can read any of them.</p>
+</section>
+
+<section>
+<h2>The evaluator reads everything</h2>
+  <p>It can read every trace, so it holds sensitive data. Give it only the privileges it reads with, and no tool that writes. Its own runs are traced into the same stream, so the week it reads includes its own conversations.</p>
+</section>
+
+<section>
+<h2>Propose, gate, apply, re-measure</h2>
+  <p>Candidates are <strong>copies</strong> of the agent, its tools and its skills, so a gate never touches production. The gate runs the harness on the candidate and compares it with the <strong>comparison run</strong>: production's latest trusted measurement, <code>m6-baseline</code> before any apply, the last confirmed re-measure after one. Apply what passed, snapshot what it replaced, re-measure production, and roll back if the re-measure does not confirm the gain. Agent Builder keeps no version history of agents, so the ledger is the version history.</p>
+</section>
+
+<section>
+<h2>Variance and limits</h2>
+  <p>The course design's "no regression" reads as no regression past a limit set outside the run-to-run spread. One run is a sample: a gain that vanishes on re-measure was noise.</p>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Take the first row that applies.</p>
+<table>
+<tr><th>Condition, from trusted aggregates</th><th>decision</th><th>reason</th></tr>
+<tr><td>A category's routing accuracy falls by more than <code>category_drop_limit_points</code></td><td><code>fail</code></td><td><code>category_regression</code></td></tr>
+<tr><td>The gain is below <code>min_gain_points</code> (<code>min_gain_pct</code> for an efficiency proposal)</td><td><code>fail</code></td><td><code>no_gain</code></td></tr>
+<tr><td>Tool calls per question rise by more than <code>tool_call_limit_pct</code></td><td><code>fail</code></td><td><code>tool_call_regression</code></td></tr>
+<tr><td>Cost per question rises by more than <code>cost_limit_pct</code></td><td><code>fail</code></td><td><code>cost_regression</code></td></tr>
+<tr><td>Otherwise</td><td><code>pass</code></td><td><code>within_policy</code></td></tr>
+</table>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+  <li><strong>Build 1:</strong> an evaluator with two or more bounded read-only tools, a schema that rejects malformed proposals, and runs that name the week's patterns with real evidence.</li>
+  <li><strong>Build 2:</strong> <code>gate.json</code> equal to Cortex's policy, the passing proposal applied and confirmed, the trap not applied, and a ledger that replays to production.</li>
+  <li><strong>Defend:</strong> the risk a gate would have caught, the row that stopped your trap, and what stops outside text.</li>
+</ul>
+</section>

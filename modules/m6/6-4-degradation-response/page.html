@@ -1,0 +1,68 @@
+<header>
+
+<p class="track-code">Lab 6.4</p>
+
+<h1>Lab 6.4: Detect and respond to degradation</h1>
+
+<p>Thirty days of canary records are in the index, and Tina is worse today. Find the three incident windows in the history, then find and fix the one happening now.</p>
+
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<pre><!-- include: problem.txt --></pre>
+
+  <p>The series stepped down on one day. The change log shows a model pin the same afternoon. The pin changed no model. The step came from somewhere else.</p>
+</section>
+
+<section>
+<h2>Three kinds of degradation</h2>
+  <p><strong>Retrieval drift</strong>: a step down in ranking metrics after an ingest, under both semantic and lexical retrieval, with the new documents in the top results; model, tools and routes unchanged. <strong>Embedding staleness</strong>: documents embedded under different models, or a different model than the queries. Scores do not compare, older documents fall out of semantic results, and lexical search still finds them. <strong>Behavior shift</strong>: the tool-call mix moves and escalations rise while retrieval stays flat, usually after an instruction, description or model change.</p>
+</section>
+
+<section>
+<h2>Keep the series that tell them apart</h2>
+  <p>The canary records are the series: routing accuracy by category, tool calls per question, escalation share, recall and nDCG at 5, and a lexical control, recall at 5 under <code>cortex-policy-lexical</code>. The lexical series is why staleness is visible: it holds while the semantic one falls. Run it with <code>search_type=dfs_query_then_fetch</code>: without it, BM25 scores differ per index, so splitting the data across two indices moves the lexical series too.</p>
+</section>
+
+<section>
+<h2>CHANGE_POINT</h2>
+  <p><code>CHANGE_POINT</code> finds where a series changes. Types: <code>step_change</code>, <code>spike</code>, <code>dip</code>, <code>distribution_change</code>, <code>trend_change</code>. It needs at least 22 values per series; use <code>BY</code> to group.</p>
+</section>
+
+<section>
+<h2>A change log is a lead, not a verdict</h2>
+  <p>Correlate a change point with the change log without trusting the log: it holds changes that did not cause the incident, sometimes closer in time than the cause that did. The evidence is the series and the traces.</p>
+</section>
+
+<section>
+<h2>The playbook</h2>
+  <p><strong>Diagnose</strong> (compare with a baseline from the same environment), <strong>isolate</strong> (component and affected class), <strong>fix</strong>, <strong>re-measure</strong>. A recovery inside the run-to-run spread is not a recovery.</p>
+</section>
+
+<section>
+<h2>How a semantic_text field records its endpoint</h2>
+  <p>A <code>semantic_text</code> field keeps its <code>inference_id</code> in the mapping, and the endpoint's model and version come from the inference API. Updating <code>inference_id</code> is only allowed to a compatible endpoint, so a mixed set is finished by re-indexing, not by editing the mapping: an update to an endpoint with different model settings is refused (HTTP 400).</p>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Take the first row that applies.</p>
+<table>
+<tr><th>What the series show</th><th>Type</th><th>Why</th></tr>
+<tr><td>Ranking down under semantic and lexical retrieval after an ingest; new documents in the top results</td><td><code>retrieval_drift</code></td><td>the index content changed</td></tr>
+<tr><td>Semantic recall down, lexical recall flat</td><td><code>embedding_staleness</code></td><td>scores from two models do not compare</td></tr>
+<tr><td>Tool mix shifted and escalations up, retrieval flat</td><td><code>behavior_shift</code></td><td>an instruction, description or model changed the route</td></tr>
+</table>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+  <li><strong>Build 1:</strong> three windows with type, signal and a date within one day.</li>
+  <li><strong>Build 2:</strong> the component and class named, the cause fixed with nothing else changed, and a re-measure within tolerance of the baseline.</li>
+  <li><strong>Defend:</strong> the signal, why the log misleads, and what the re-measure catches.</li>
+</ul>
+</section>

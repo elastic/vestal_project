@@ -1,0 +1,9 @@
+The analyst's ticket (placeholder: replace with the build-time capture)
+
+  [PENDING: conversation id, time, analyst's words]
+
+A first look at the round, ES|QL over the trace stream:
+
+  [PENDING: span list with names, status, duration]
+
+  Ok spans are not all fine. One of these holds an error in its result.

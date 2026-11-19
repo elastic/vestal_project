@@ -17,6 +17,7 @@ Grader plumbing: no learner helper reads traces for the learner. Harness numbers
 from __future__ import annotations
 
 import json
+import re
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from typing import Any
@@ -99,9 +100,21 @@ def _json(text: Any) -> Any:
         return None
 
 
+_FAILED_STATES = ("failed", "error", "timed_out", "cancelled", "canceled")
+_UPSTREAM_ERROR = re.compile(r"Warning: Target URL returned error [45]\d\d")   # the page reader answers 200 and says so in its text (observed, probe P1)
+
+
 def _is_error(obj: Any) -> bool:
+    """An error the tool hands back as its result: an error object, a failed workflow execution, an HTTP step that answered 4xx/5xx,
+    or the page reader's upstream-error warning. None of these changes the span status (observed, m6/probe-P1)."""
     if isinstance(obj, dict):
         if obj.get("type") == "error" or isinstance(obj.get("error"), (dict, str)) and obj.get("error"):
+            return True
+        if str(obj.get("status", "")).lower() in _FAILED_STATES and ("workflow_id" in obj or "execution_id" in obj):
+            return True
+        if isinstance(obj.get("status"), int) and obj["status"] >= 400 and "statusText" in obj:
+            return True
+        if isinstance(obj.get("data"), str) and _UPSTREAM_ERROR.search(obj["data"]):
             return True
         return any(_is_error(v) for v in obj.values())
     if isinstance(obj, list):
@@ -119,8 +132,9 @@ def _has_content(obj: Any) -> bool:
 
 
 def result_outcome(span_status: str, text: Any) -> str:
-    """Classify a tool span. A span is Error only for parameter validation; an error the tool returns as its
-    result sits under Ok; there is no row-count field, so an empty result is read from the result content."""
+    """Classify a tool span. The platform marks a span Error when it rejects the call itself (a parameter the tool
+    cannot accept, read as validation_error); a failure the tool or its workflow returns as its result sits under an Ok
+    span; there is no row-count field, so an empty result is read from the result content."""
     if span_status == "Error":
         return "validation_error"
     obj = _json(text)

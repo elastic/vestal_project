@@ -126,3 +126,11 @@ def test_variants_have_distinct_keys():
     # the variant table itself never repeats a fault between two variants
     for f in ("failure_class", "defective_clause", "missing_capability", "failing_tool"):
         assert len({r[f] for r in P.VARIANTS.values()}) == 3
+
+
+def test_compare_tolerates_user_name_either_way():
+    a = P.field_set(round_a())
+    with_user = dict(a, **{"attributes.user.name": "str"})
+    assert P.compare_field_sets(with_user, a) == {"missing": [], "extra": [], "type_changed": []}
+    assert P.compare_field_sets(a, with_user) == {"missing": [], "extra": [], "type_changed": []}
+    assert P.compare_field_sets(with_user, dict(a, new_field="str"))["extra"] == ["new_field"]

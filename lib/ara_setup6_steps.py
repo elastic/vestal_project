@@ -93,7 +93,9 @@ class Steps6:
     def pack_load(self, pack: str, variant: str) -> None:
         d = self._need(f"data/ara-m6/traces/{pack}/manifest.json").parent
         manifest = json.loads((d / "manifest.json").read_text())
-        key = json.loads((d / "key.json").read_text()) if (d / "key.json").exists() else None
+        # The key never ships with the pack data: it is root-held and embedded by the private track repo (a pack directory
+        # that carries a key.json is ignored here). No private key means no load, so a learner-visible pack stays keyless.
+        key = json.loads(self._held_in(f"pack-{pack}-key.json").read_text())
 
         class _ES:
             request_ndjson = staticmethod(lambda m, p, t: self.nd(m, p, t))
@@ -104,7 +106,7 @@ class Steps6:
         if tk.exists():
             t = json.loads(tk.read_text())
             cid = out["id_map"].get(t["conversation_id"], t["conversation_id"])
-            self.ticket = {"conversation_id": cid, "at": self._conv_time(cid), "words": t.get("words", "Tina took about 40 seconds and then gave up.")}
+            self.ticket = {"conversation_id": cid, "at": self._conv_time(cid), "words": t.get("words", "One of Tina's answers was incomplete.")}
 
     def _conv_time(self, conv_id: str) -> str:
         code, body = self.es("POST", f"/{P.SPAN_INDEX}/_search", {"size": 0, "query": {"term": {H.CONV: conv_id}},

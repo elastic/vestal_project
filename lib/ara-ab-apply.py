@@ -243,7 +243,7 @@ def main(argv: list[str]) -> int:
         print(__doc__)
         return 2
     check = "--check" in argv[2:]
-    ab = AB(os.environ["KIBANA_URL"], os.environ["ES_API_KEY"], timeout=60)
+    ab = AB(os.environ["KIBANA_URL"], os.environ["ES_API_KEY"], timeout=60, retries=2)
     n = apply(pathlib.Path(argv[1]), ab, check=check)
     print(f"{'differ' if check else 'applied'}: {n}")
     return 1 if check and n else 0

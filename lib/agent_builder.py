@@ -82,11 +82,13 @@ def is_internal(tool_id: Any) -> bool:
 class AB:
     """A Kibana client bound to one API key. connector_id pins the model for converse()."""
 
-    def __init__(self, kibana: str, api_key: str, connector_id: str | None = None, timeout: float = 45):
+    def __init__(self, kibana: str, api_key: str, connector_id: str | None = None, timeout: float = 45,
+                 retries: int = 0):
         self.kibana = kibana.rstrip("/")
         self.api_key = api_key
         self.connector_id = connector_id
         self.timeout = timeout
+        self.retries = retries  # setup callers pass 2 (09 principle 8); 0 for checks and learner tools, which have their own retry and deadline
 
     @classmethod
     def from_env(cls, key_var: str = "ARA_TINA_RUNTIME_KEY", timeout: float = 45) -> "AB":
@@ -103,13 +105,22 @@ class AB:
             headers["x-elastic-internal-origin"] = "kibana"  # internal routes refuse calls without it
         data = json.dumps(body).encode() if body is not None else None
         req = urllib.request.Request(f"{self.kibana}{path}", data=data, method=method, headers=headers)
-        try:
-            with urllib.request.urlopen(req, timeout=timeout or self.timeout) as resp:
-                code, txt = resp.status, resp.read().decode()
-        except urllib.error.HTTPError as e:
-            code, txt = e.code, e.read().decode(errors="replace")
-        except Exception as e:  # refused, reset, DNS, timeout
-            raise RemoteCallFailed(f"{method} {path}: {type(e).__name__}: {e}") from None
+        # retries > 0: a call that got no answer is sent again, 1 + retries attempts in all, then RemoteCallFailed. A POST is never
+        # resent blind (the server may have created the object); the create-or-update wrappers below re-read before they write.
+        attempts = 1 + (self.retries if method != "POST" else 0)
+        for attempt in range(attempts):
+            try:
+                with urllib.request.urlopen(req, timeout=timeout or self.timeout) as resp:
+                    code, txt = resp.status, resp.read().decode()
+                break
+            except urllib.error.HTTPError as e:
+                code, txt = e.code, e.read().decode(errors="replace")
+                break
+            except Exception as e:  # refused, reset, DNS, timeout
+                if attempt + 1 < attempts:
+                    self._pause(attempt)
+                    continue
+                raise RemoteCallFailed(f"{method} {path}: {type(e).__name__}: {e}") from None
         try:
             parsed = json.loads(txt) if txt else {}
         except ValueError:
@@ -121,6 +132,25 @@ class AB:
     def get(self, path: str, **kw):
         return self.request("GET", path, **kw)
 
+    def _pause(self, attempt: int) -> None:
+        from ara_grade import REMOTE_BACKOFF_S  # the module-wide pair (1 s, 3 s)
+        time.sleep(REMOTE_BACKOFF_S[min(attempt, len(REMOTE_BACKOFF_S) - 1)])
+
+    def _put(self, read, put, post):
+        """Create or update. read() returns the current object or None; put(cur) updates it; post() creates it. With retries=0 this is one
+        read and one write, as before. With retries=N a POST that got no answer is not resent blind: the next attempt re-reads first,
+        so an object the server did create is updated, not created twice. After 1 + N attempts the RemoteCallFailed is raised."""
+        for attempt in range(1 + self.retries):
+            cur = read()
+            if cur is not None:
+                return put(cur)
+            try:
+                return post()
+            except RemoteCallFailed:
+                if attempt >= self.retries:
+                    raise
+                self._pause(attempt)
+
     # ── tools ────────────────────────────────────────────────────────────────
     def get_tool(self, tool_id: str) -> dict | None:
         code, body = self.get(f"/api/agent_builder/tools/{tool_id}")
@@ -129,9 +159,9 @@ class AB:
     def put_tool(self, tool: dict) -> tuple[int, Any]:
         """Create the tool, or replace it when it exists. The id goes in the path on update."""
         tid = tool["id"]
-        if self.get_tool(tid) is None:
-            return self.request("POST", "/api/agent_builder/tools", tool)
-        return self.request("PUT", f"/api/agent_builder/tools/{tid}", {k: v for k, v in tool.items() if k not in ("id", "type")})
+        return self._put(lambda: self.get_tool(tid),
+                         lambda cur: self.request("PUT", f"/api/agent_builder/tools/{tid}", {k: v for k, v in tool.items() if k not in ("id", "type")}),
+                         lambda: self.request("POST", "/api/agent_builder/tools", tool))
 
     def delete_tool(self, tool_id: str) -> int:
         return self.request("DELETE", f"/api/agent_builder/tools/{tool_id}")[0]
@@ -146,9 +176,9 @@ class AB:
 
     def put_agent(self, agent: dict) -> tuple[int, Any]:
         aid = agent["id"]
-        if self.get_agent(aid) is None:
-            return self.request("POST", "/api/agent_builder/agents", agent)
-        return self.request("PUT", f"/api/agent_builder/agents/{aid}", {k: v for k, v in agent.items() if k != "id"})
+        return self._put(lambda: self.get_agent(aid),
+                         lambda cur: self.request("PUT", f"/api/agent_builder/agents/{aid}", {k: v for k, v in agent.items() if k != "id"}),
+                         lambda: self.request("POST", "/api/agent_builder/agents", agent))
 
     def delete_agent(self, agent_id: str) -> int:
         return self.request("DELETE", f"/api/agent_builder/agents/{agent_id}")[0]
@@ -168,9 +198,9 @@ class AB:
 
     def put_skill(self, skill: dict) -> tuple[int, Any]:
         sid = skill["id"]
-        if self.get_skill(sid) is None:
-            return self.request("POST", "/api/agent_builder/skills", skill)
-        return self.request("PUT", f"/api/agent_builder/skills/{sid}", {k: v for k, v in skill.items() if k != "id"})
+        return self._put(lambda: self.get_skill(sid),
+                         lambda cur: self.request("PUT", f"/api/agent_builder/skills/{sid}", {k: v for k, v in skill.items() if k != "id"}),
+                         lambda: self.request("POST", "/api/agent_builder/skills", skill))
 
     def delete_skill(self, skill_id: str) -> int:
         return self.request("DELETE", f"/api/agent_builder/skills/{skill_id}")[0]
@@ -186,11 +216,10 @@ class AB:
     def put_connector(self, name: str, type_id: str, config: dict, secrets: dict | None = None) -> tuple[int, Any]:
         """Create the connector, or update the one with this name in place (its id is server-assigned,
         so a workflow's connector-id names it by name)."""
-        cur = self.connector_by_name(name)
         body = {"name": name, "config": config, "secrets": secrets or {}}
-        if cur is None:
-            return self.request("POST", "/api/actions/connector", dict(body, connector_type_id=type_id))
-        return self.request("PUT", f"/api/actions/connector/{cur['id']}", body)
+        return self._put(lambda: self.connector_by_name(name),
+                         lambda cur: self.request("PUT", f"/api/actions/connector/{cur['id']}", body),
+                         lambda: self.request("POST", "/api/actions/connector", dict(body, connector_type_id=type_id)))
 
     def delete_connector(self, connector_id: str) -> int:
         return self.request("DELETE", f"/api/actions/connector/{connector_id}")[0]
@@ -248,9 +277,9 @@ class AB:
         return body if code == 200 else None
 
     def put_workflow(self, workflow_id: str, yaml_text: str) -> tuple[int, Any]:
-        if self.get_workflow(workflow_id) is not None:
-            return self.request("PUT", f"/api/workflows/workflow/{workflow_id}", {"yaml": yaml_text})
-        return self.request("POST", "/api/workflows/workflow", {"id": workflow_id, "yaml": yaml_text})
+        return self._put(lambda: self.get_workflow(workflow_id),
+                         lambda cur: self.request("PUT", f"/api/workflows/workflow/{workflow_id}", {"yaml": yaml_text}),
+                         lambda: self.request("POST", "/api/workflows/workflow", {"id": workflow_id, "yaml": yaml_text}))
 
     def delete_workflow(self, workflow_id: str) -> int:
         return self.request("DELETE", f"/api/workflows/workflow/{workflow_id}")[0]

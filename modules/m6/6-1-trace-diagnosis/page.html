@@ -1,0 +1,76 @@
+<header>
+
+<p class="track-code">Lab 6.1</p>
+
+<h1>Lab 6.1: Diagnose agent behavior from traces</h1>
+
+<p>An analyst reports that one of Tina's answers was incomplete. Three weeks of her rounds are in the trace stream. Find the failing step, the costly step, the tool whose query cannot match, and the capability she lacks.</p>
+
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<pre><!-- include: problem.txt --></pre>
+
+  <p>The ticket says one of Tina's answers was incomplete. The dashboard shows an overall error rate that looks fine and a slow round or two. Neither tells you which step failed or which step made the round expensive.</p>
+  <p>Found nothing is not the same as could not have found anything. A tool that returns empty on every call, with matches in the data, is a different failure from one that returns empty because there was nothing to find.</p>
+</section>
+
+<section>
+<h2>One trace per round</h2>
+  <p>Every conversation round with Tina is one <strong>trace</strong>. Its spans nest: the round, the agent execution, model calls (every token counted), tool calls (arguments and result, no tokens of their own) and workflow runs. A span carries the conversation id in <code>attributes.gen_ai.conversation.id</code>, so a ticket's conversation id finds its trace. The round's <code>trace_id</code> works too, but is undocumented.</p><pre>round
+ └ agent execution
+    ├ model call        input_tokens  output_tokens
+    ├ tool call         arguments, result
+    ├ model call
+    └ workflow run</pre>
+</section>
+
+<section>
+<h2>Spans, and where cost lands</h2>
+  <p>A tool span has no token count. A large tool result is paid for by the <em>next</em> model call, which reads it as input. So the costly step is a model call, and the question is which earlier step put the tokens there: a whole page returned by <code>cortex.read_page</code>, message bodies from <code>cortex.case_correspondence</code>, or the third of three near-identical searches.</p>
+</section>
+
+<section>
+<h2>Two traps in the trace stream</h2>
+  <p>A tool span is marked <code>Error</code> only when the parameters fail validation. An error the tool returns as its result sits under <code>Ok</code>, so read the result. Content fields are <code>keyword</code> with <code>ignore_above: 1024</code>, so a longer value reads as null in ES|QL: read it from <code>_source</code>. There is no row-count field either: an empty result is read from the result content.</p>
+</section>
+
+<section>
+<h2>Reading a tool definition</h2>
+  <p>A custom ES|QL tool's span carries its parameters, never its query. Read the query in the tool's definition, run it by hand with the span's parameters, and run the underlying data directly to see whether the thing it looks for exists. A tool that returns nothing on every call while the data holds matches cannot match: its query is wrong, not the data.</p>
+</section>
+
+<section>
+<h2>Gaps and escalations</h2>
+  <p>An escalation is right or wrong by Cortex policy, not by count. Out-of-scope questions are meant to escalate. The ones to chase are a class Tina escalates because no tool answers it, or because a tool exists and is not attached. Building the missing tool and attaching it are separate steps: attaching changes every route, so it needs a measurement.</p>
+</section>
+
+<section>
+<h2>Trace content is sensitive data</h2>
+  <p>The trace settings decide what a span holds: names, ids, prompts, tool details, model responses, and (off here) the system prompt and user data. Without real names every custom tool, agent and workflow reads as <code>custom</code>. Anyone who can read the stream reads every trace, so a trace with content capture holds what Tina saw, including PII. Retention follows the data stream's lifecycle.</p>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Take the first row that applies.</p>
+<table>
+<tr><th>The span's result</th><th>failure_class</th><th>Why</th></tr>
+<tr><td>An error reported inside a result (an error object, a failed workflow status, or an upstream error message), span status <code>Ok</code></td><td><code>tool_error_in_ok_result</code></td><td>the tool failed and said so only in its content</td></tr>
+<tr><td>Span status <code>Error</code> on a parameter the tool rejects</td><td><code>validation_error</code></td><td>the call itself was invalid</td></tr>
+<tr><td>No rows or results, and the round gave up</td><td><code>empty_result</code></td><td>the tool ran and found nothing</td></tr>
+<tr><td>The model call failed</td><td><code>model_error</code></td><td>the failure is in generation, not a tool</td></tr>
+</table>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+  <li><strong>Build 1:</strong> the five fields on the ticket's round.</li>
+  <li><strong>Build 2:</strong> the defective clause named, and the tool's query fixed with its id, parameters and description unchanged.</li>
+  <li><strong>Build 3:</strong> the missing capability named, and its tool built and not attached.</li>
+  <li><strong>Defend:</strong> which case each summary is, and which earlier step put the tokens in your costly call.</li>
+</ul>
+</section>

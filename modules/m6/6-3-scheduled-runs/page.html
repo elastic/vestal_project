@@ -1,0 +1,68 @@
+<header>
+
+<p class="track-code">Lab 6.3</p>
+
+<h1>Lab 6.3: Schedule recurring agent runs</h1>
+
+<p>The fraud desk starts work at three shift times in its own time zone. Cortex needs a canary that runs before each shift, a check after every deploy, and an audit of every answer that searched SARs.</p>
+
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+
+</header>
+
+<section id="problem">
+<h2>The problem</h2>
+<pre><!-- include: problem.txt --></pre>
+
+  <p>A calendar schedule catches a change the next time it fires. It does not catch one the minute it lands. Cortex needs a check tied to the deploy, a check timed to the feed, and an audit tied to each answer: three needs, three patterns.</p>
+</section>
+
+<section>
+<h2>Three trigger patterns</h2>
+  <p><strong>Scheduled</strong>: an interval (<code>every</code>) or a calendar rule (<code>rrule</code>: <code>freq</code> DAILY, WEEKLY or MONTHLY, <code>interval</code>, <code>byhour</code>, <code>byminute</code>, <code>byweekday</code>, <code>tzid</code>). There is no cron syntax and the shortest interval is one minute. <strong>Ad hoc</strong>: a call to the workflow run API from whatever caused the need, such as a deploy script. <strong>Per-response</strong>: a post-execution workflow on the agent, run after every answer with the prompt, response and tool calls (each call carries its <code>tool_id</code>). It runs after every round, so to act on only some, test the tool calls inside the workflow: a <code>foreach</code> over <code>inputs.tool_calls</code> with an <code>if</code> whose condition reads <code>foreach.item.tool_id : cortex.sar_search</code>. Conditions use <code>:</code>, not <code>==</code>.</p>
+</section>
+
+<section>
+<h2>Time zones</h2>
+  <p><code>tzid</code> defaults to UTC. Without <code>byhour</code> and <code>byminute</code>, a late run shifts every later run. Convert a stated time into one zone before comparing it with a window.</p>
+</section>
+
+<section>
+<h2>The canary</h2>
+  <p>A small fixed question set, run unattended, recorded in the harness's schema so it compares with the baseline. Eight questions per run, each in a fresh conversation.</p>
+</section>
+
+<section>
+<h2>What a schedule costs</h2>
+  <p>Tokens per run times runs per day, priced on M5's rate card. A schedule is a design input: an hourly canary costs eight times a three-times-daily one.</p>
+</section>
+
+<section>
+<h2>Who a schedule runs as</h2>
+  <p>A scheduled workflow runs with the privileges of whoever last saved it. In production that last saver is a deliberate choice. Agent Builder access for service accounts exists; this lab does not teach it as a feature.</p>
+</section>
+
+<section>
+<h2>Reading the execution history</h2>
+  <p><code>triggeredBy</code>, status and step input and output separate three cases: did not run, ran and failed, ran and found nothing. Event triggers on Agent Builder conversations exist (Preview) and are named here, not used.</p>
+</section>
+
+<section id="rule">
+<h2>Decision rule</h2>
+<p class="rule-line">Take the first row that applies.</p>
+<table>
+<tr><th>The need</th><th>Pattern</th><th>Why</th></tr>
+<tr><td>Something must be checked right after an event that causes it</td><td><code>ad_hoc</code></td><td>called by what caused it, with no window between</td></tr>
+<tr><td>Something must run at set times whatever happens</td><td><code>scheduled</code></td><td>nothing triggers it but the calendar</td></tr>
+<tr><td>Something must follow every answer, and cannot stop it</td><td><code>per_response</code></td><td>runs after the answer, so it cannot block a filing</td></tr>
+</table>
+</section>
+
+<section id="done">
+<h2>What done looks like</h2>
+<ul>
+  <li><strong>Build 1:</strong> a calendar rule with <code>tzid</code> matching the desk's shifts, no interval left, and one scheduled execution you watched.</li>
+  <li><strong>Build 2:</strong> each need's pattern named, the deploy script calling the canary with the change id, a window trigger, and the audit attached after answers.</li>
+  <li><strong>Defend:</strong> a pattern with reasons, your schedule's daily cost, and what an execution history shows.</li>
+</ul>
+</section>

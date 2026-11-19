@@ -151,8 +151,14 @@ def field_set(spans: list[dict]) -> dict[str, str]:
     return out
 
 
+# Fields whose presence depends on who ran the round, not on the telemetry shape (the recording sandbox's user).
+TOLERATED_FIELDS = frozenset({"attributes.user.name"})
+
+
 def compare_field_sets(pack: dict[str, str], live: dict[str, str]) -> dict[str, list]:
     """Phase 0 item 0-e. `missing` are in the pack and not in the live round, `extra` the reverse."""
+    pack = {k: v for k, v in pack.items() if k not in TOLERATED_FIELDS}
+    live = {k: v for k, v in live.items() if k not in TOLERATED_FIELDS}
     shared = set(pack) & set(live)
     return {"missing": sorted(set(pack) - set(live)), "extra": sorted(set(live) - set(pack)),
             "type_changed": sorted(k for k in shared if "NoneType" not in (pack[k], live[k]) and pack[k] != live[k])}

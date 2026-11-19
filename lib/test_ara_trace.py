@@ -104,3 +104,16 @@ def test_tool_outcomes_and_grouping_and_join():
 
 def test_timestamp_formats():
     assert T.parse_ts("2026-11-01T10:00:00.500Z") == T.parse_ts(1793527200500)
+
+
+def test_outcomes_read_the_shapes_observed_on_the_platform():
+    """Probe P1 (2026-11-18): a failed workflow and a reader 404 both arrive under an Ok span, with no error object."""
+    failed = {"results": [{"type": "other", "data": {"execution": {"execution_id": "e", "status": "failed", "workflow_id": "w", "error_message": "[ENOTFOUND] x"}}}]}
+    assert T.result_outcome("Ok", json.dumps(failed)) == "tool_error_in_ok_result"
+    page = {"results": [{"type": "other", "data": {"execution": {"execution_id": "e", "status": "completed", "workflow_id": "w", "output": [
+        {"data": "Title: \n\nWarning: Target URL returned error 404: Not Found\n\nMarkdown Content:\n404: Not Found\n", "statusText": "OK", "status": 200}]}}}]}
+    assert T.result_outcome("Ok", json.dumps(page)) == "tool_error_in_ok_result"
+    http = {"results": [{"data": {"execution": {"execution_id": "e", "status": "completed", "workflow_id": "w", "output": [{"data": "gone", "statusText": "Not Found", "status": 404}]}}}]}
+    assert T.result_outcome("Ok", json.dumps(http)) == "tool_error_in_ok_result"
+    good = {"results": [{"data": {"execution": {"execution_id": "e", "status": "completed", "workflow_id": "w", "output": [{"data": "# Policy\nbody", "statusText": "OK", "status": 200}]}}}]}
+    assert T.result_outcome("Ok", json.dumps(good)) == "ok"

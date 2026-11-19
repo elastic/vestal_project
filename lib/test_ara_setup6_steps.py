@@ -394,3 +394,59 @@ class BaselineAgg(unittest.TestCase):
         d = json.loads((root / "opt/ara/heldout/6-4/baseline-agg.json").read_text())
         self.assertEqual(d["routing_accuracy_overall"], 100.0)
         self.assertEqual(d["ndcg_at_5"], 0.8)
+
+
+class PackKey(unittest.TestCase):
+    """pack_load: pack data carries no key; the key comes from the root-held private file, and a missing one fails closed."""
+
+    def _assets(self, with_public_key=False):
+        import ara_pack_cli as C
+        a = pathlib.Path(tempfile.mkdtemp())
+        d = a / "data/ara-m6/traces/T-B"
+        spans = []
+        for t in range(2):
+            tid = f"{t + 1:032x}"
+            spans.append({"trace_id": tid, "span_id": f"{t * 10 + 1:016x}", "name": "invoke_agent Tina", "@timestamp": "2026-10-10T09:00:00.000Z",
+                          "duration": 5_000_000_000, "attributes": {"gen_ai.conversation.id": f"conv-{t}"}})
+        C.write_pack(spans, d, "T-B")
+        if with_public_key:
+            (d / "key.json").write_text(json.dumps({"failing_span_id": f"{1:016x}"}))
+        return a
+
+    def _private_key(self, d, track="6-1", name="pack-T-B-key.json"):
+        (d / "opt/ara/heldout" / track).mkdir(parents=True, exist_ok=True)
+        (d / "opt/ara/heldout" / track / name).write_text(json.dumps({"failing_span_id": f"{1:016x}"}))
+
+    def test_pack_without_key_json_loads_with_the_private_key(self):
+        a = self._assets()
+        s, f, d = steps("6-1", assets=a)
+        self._private_key(d)
+        s.pack_load("T-B", "B")
+        self.assertTrue(f.bulks)
+        held = json.loads((d / "opt/ara/heldout/6-1/key.json").read_text())
+        self.assertNotEqual(held["failing_span_id"], f"{1:016x}")  # remapped under the sandbox salt
+
+    def test_missing_private_key_fails_closed_and_loads_nothing(self):
+        a = self._assets()
+        s, f, d = steps("6-1", assets=a)
+        with self.assertRaises(S.DataMissing) as e:
+            s.pack_load("T-B", "B")
+        self.assertIn("pack-T-B-key.json", str(e.exception))
+        self.assertEqual(f.bulks, [])
+
+    def test_a_key_in_the_pack_directory_is_not_used(self):
+        a = self._assets(with_public_key=True)
+        s, f, d = steps("6-1", assets=a)
+        with self.assertRaises(S.DataMissing):
+            s.pack_load("T-B", "B")
+        self.assertEqual(f.bulks, [])
+
+    def test_week_pack_writes_the_week_key(self):
+        import ara_pack_cli as C
+        a = pathlib.Path(tempfile.mkdtemp())
+        C.write_pack([{"trace_id": f"{1:032x}", "span_id": f"{1:016x}", "name": "invoke_agent Tina", "@timestamp": "2026-10-10T09:00:00.000Z",
+                       "duration": 1, "attributes": {"gen_ai.conversation.id": "c"}}], a / "data/ara-m6/traces/W1", "W1")
+        s, f, d = steps("6-2", assets=a)
+        self._private_key(d, "6-2", "pack-W1-key.json")
+        s.pack_load("W1", "W1")
+        self.assertTrue((d / "opt/ara/heldout/6-2/week-key.json").exists())

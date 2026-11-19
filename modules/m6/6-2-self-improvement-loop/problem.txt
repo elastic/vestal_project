@@ -1,0 +1,6 @@
+Last week's evaluator wrote two proposals. Both look reasonable.
+
+  prop-review-1  [PENDING: type, target, expected_effect]
+  prop-review-2  [PENDING: type, target, expected_effect]
+
+Applying either one costs nothing to try, and nothing tells you which one makes Tina worse.

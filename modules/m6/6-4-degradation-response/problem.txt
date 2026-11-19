@@ -1,0 +1,7 @@
+canary-v1, routing accuracy by day (placeholder; replace with the build-time capture)
+
+  [PENDING: 30-day series with one visible step]
+
+The change log entry nearest the step:
+
+  [PENDING: entry]

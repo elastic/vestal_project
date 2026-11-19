@@ -1,0 +1,38 @@
+<header>
+
+<p class="track-code">Capstone 6.C</p>
+
+<h1>Capstone 6.C: Architect's Challenge, overnight drop</h1>
+
+<p>The 06:00 canary run shows a drop and the desk opens soon. Find the cause from the evidence, put the fix through the gate before applying it, and leave a monitor that would have fired before the morning.</p>
+
+<p class="tip"><strong>Tip:</strong> Select <strong>Hide Instructions</strong> in the top bar to give the Brief full width.</p>
+
+</header>
+
+<section id="scenario">
+<h2>The scenario</h2>
+<p>Cortex's fraud desk works in <code>America/New_York</code>. Shifts start at 06:00, 14:00 and 22:00, and the desk opens at 07:00. The change policy is in <code>~/cortex-loop/change-policy.md</code> and its reference gate is <code>gate.json</code>, with an incident block.</p>
+<p>The canary has run three times a day for thirty days. Last night's 22:00 run was healthy. The 06:00 run was not. The change log holds last night's entries, and one of them is not the cause.</p>
+</section>
+
+<section id="slo">
+<h2>The SLO</h2>
+<p>Checked against windows you never see.</p>
+<table>
+<tr><th>Target</th><th>Value</th><th>Class</th></tr>
+<tr><td>Recovery</td><td>affected metric within <code>recovery_tolerance</code> of <code>m6-baseline</code>; no category past its limit</td><td>MEASURED</td></tr>
+<tr><td>Gate before apply</td><td>a passing gate decision before the fix reached production</td><td>ARTIFACT, hard</td></tr>
+<tr><td>Fixed state</td><td>cause fixed, decoy untouched, nothing else changed</td><td>ARTIFACT</td></tr>
+<tr><td>Monitor</td><td>fires on a degraded night, quiet otherwise, in time</td><td>ARTIFACT</td></tr>
+<tr><td>Diagnosis</td><td>consistent with the evidence</td><td>DEFEND</td></tr>
+</table>
+<table>
+<tr><th>Tier</th><th>When</th></tr>
+<tr><td>100</td><td>all met, Defend consistent</td></tr>
+<tr><td>75 (pass)</td><td>recovered; constraints and monitor pass</td></tr>
+<tr><td>50</td><td>recovered; gate, fixed state or monitor fails</td></tr>
+<tr><td>25</td><td>changed, not recovered</td></tr>
+<tr><td>0</td><td>nothing changed</td></tr>
+</table>
+</section>
