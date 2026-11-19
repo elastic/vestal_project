@@ -75,3 +75,44 @@ if __name__ == "__main__":
         if k.startswith("test_"):
             fn()
             print(f"  ok    {k}")
+
+
+BUSY = {"type": "inference_exception", "reason": "inference id [.jina-embeddings-v5-text-small]",
+        "caused_by": {"type": "status_exception", "reason": "inference entity id [.jina-embeddings-v5-text-small] status [503]. Error message: [Service temporarily unavailable]"}}
+
+
+class BusyES(FakeES):
+    """The embedding endpoint refuses the first `busy_sends` bulk requests: every document of them gets an inference_exception."""
+    def __init__(self, busy_sends):
+        super().__init__()
+        self.busy, self.sends = busy_sends, 0
+
+    def request_ndjson(self, method, path, ndjson):
+        self.sends += 1
+        if self.sends <= self.busy:
+            ids = [json.loads(a)["index"]["_id"] for a in ndjson.splitlines()[::2]]
+            return 200, {"errors": True, "items": [{"index": {"_id": i, "status": 400, "error": BUSY}} for i in ids]}
+        return super().request_ndjson(method, path, ndjson)
+
+
+def test_load_index_survives_a_busy_embedding_endpoint(monkeypatch):
+    import ara_embed_retry as R
+    slept = []
+    monkeypatch.setattr(R.time, "sleep", slept.append)
+    es = BusyES(busy_sends=2)
+    n = C.load_index(es, ROOT, "cortex-sar-narratives", "sar_id", 4, True, log=lambda *_: None)
+    assert n == 40 and len(es.docs["cortex-sar-narratives"]) == 40 and slept == [15, 30]
+
+
+def test_load_index_fails_with_the_index_name_when_the_endpoint_stays_down(monkeypatch):
+    import ara_embed_retry as R
+    slept = []
+    monkeypatch.setattr(R.time, "sleep", slept.append)
+    es = BusyES(busy_sends=10_000)
+    try:
+        C.load_index(es, ROOT, "cortex-cases", "case_id", 20, True, log=lambda *_: None)
+    except SystemExit as e:
+        assert str(e).startswith("cortex-cases: bulk ") and "503" in str(e)
+    else:
+        raise AssertionError("expected SystemExit")
+    assert tuple(slept) == R.LADDER and es.docs["cortex-cases"] == {}
