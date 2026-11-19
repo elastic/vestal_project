@@ -13,6 +13,8 @@ from __future__ import annotations
 import json
 import pathlib
 
+from ara_embed_retry import post_docs
+
 IDENTIFIERS = ("subject_name", "subject_account", "subject_tin")
 INDICES = (("cortex-cases", "case_id", 20), ("cortex-sar-narratives", "sar_id", 4))  # (index, id field, bulk batch)
 
@@ -36,14 +38,11 @@ def load_index(es, src: pathlib.Path, index: str, id_field: str, batch: int, ide
     if code != 200:
         raise SystemExit(f"{index}: create HTTP {code} {str(body)[:300]}")
     docs = documents(src, index, identifiers)
-    for i in range(0, len(docs), batch):
-        # semantic_text runs inference inside the bulk request, so long SAR narratives go a few at a time
-        ops = "".join(json.dumps({"index": {"_index": index, "_id": d[id_field]}}) + "\n" + json.dumps(d) + "\n"
-                      for d in docs[i:i + batch])
-        code, body = es.request_ndjson("POST", "/_bulk", ops)
-        if code != 200 or body.get("errors"):
-            first = next((x for x in body.get("items") or [] if next(iter(x.values())).get("error")), body)
-            raise SystemExit(f"{index}: bulk HTTP {code} {str(first)[:300]}")
+    # semantic_text runs inference inside the bulk request, so long SAR narratives go a few at a time; a document the embedding
+    # endpoint refused (503, 429, timeout) is sent again a little later, only that one, under its fixed _id (ara_embed_retry)
+    left = post_docs(es, index, docs, lambda d: d[id_field], batch=batch, log=log)
+    if left:
+        raise SystemExit(f"{index}: bulk {str(left[0][1])[:300]} ({len(left)} documents not accepted)")
     es.request("POST", f"/{index}/_refresh")
     code, body = es.request("GET", f"/{index}/_count")
     n = body.get("count") if code == 200 else None
