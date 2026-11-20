@@ -181,3 +181,87 @@ def test_post_docs_a_persistent_503_stops_at_the_first_batch_and_returns_what_is
 def test_post_docs_a_mapping_error_ends_at_once():
     left, sleeps = post(FakeES([{"p0": MAPPING}]))
     assert [d["id"] for d, _ in left] == ["p0"] and sleeps == []
+
+
+# ── connection errors, DNS, field names, and the shared wait budget (review of 2026-11-19) ──────────────────────────────────────────
+
+def _client_error(name, module, msg):
+    return type(name, (Exception,), {"__module__": module})(msg)
+
+
+class RemoteCallFailed(Exception):   # the name agent_builder and ara_security raise; the classifier reads the text
+    pass
+
+
+@pytest.mark.parametrize("err,expected", [
+    (_client_error("ConnectionError", "elastic_transport", "Connection error caused by: ConnectionError(Connection reset by peer)"), True),
+    (_client_error("ConnectionTimeout", "elastic_transport", "Connection timed out"), True),
+    (ConnectionResetError("[Errno 54] Connection reset by peer"), True),
+    (ConnectionRefusedError("[Errno 111] Connection refused"), True),
+    (BrokenPipeError("broken pipe"), True),
+    (RemoteCallFailed("POST /api/x: ConnectionResetError: [Errno 104] Connection reset by peer"), True),
+    (RemoteCallFailed("GET /api/x: ConnectionRefusedError: [Errno 111] Connection refused"), True),
+    (RemoteCallFailed("GET /api/x: RemoteDisconnected: Remote end closed connection without response"), True),
+    (RemoteCallFailed("GET /api/x: TimeoutError: timed out"), True),
+    ("bulk HTTP 0 Connection closed", True),
+    # DNS: waiting does not fix a name that does not resolve
+    (RemoteCallFailed("GET /api/x: URLError: <urlopen error [Errno -2] Name or service not known>"), False),
+    (RemoteCallFailed("GET /api/x: URLError: <urlopen error [Errno 8] nodename nor servname provided, or not known>"), False),
+    (_client_error("ConnectionError", "elastic_transport", "Connection error caused by: NameResolutionError(Failed to resolve 'es.example')"), False),
+    (RemoteCallFailed("GET /x: gaierror: [Errno -3] Temporary failure in name resolution"), False),
+    # an unrelated client error is neither
+    (RemoteCallFailed("GET /x: URLError: <urlopen error unknown url type: htp>"), False),
+    (ValueError("not our problem"), False),
+])
+def test_connection_errors_are_transient_and_dns_failures_are_not(err, expected):
+    assert R.transient_error(err) is expected
+
+
+def test_the_wrapped_socket_error_is_read_through_the_cause():
+    try:
+        try:
+            raise ConnectionResetError("Connection reset by peer")
+        except OSError as e:
+            raise _client_error("SomeClientError", "other", "request failed") from e
+    except Exception as outer:
+        assert R.transient_error(outer) is True
+
+
+@pytest.mark.parametrize("err", [
+    {"type": "mapper_parsing_exception", "reason": "failed to parse field [timeout] of type [date] in document with id 'a'"},
+    {"type": "mapper_parsing_exception", "reason": "Could not dynamically add mapping for field [unavailable]"},
+    {"type": "illegal_argument_exception", "reason": "unknown field \"timed out\" in [settings]"},
+    {"index": {"_id": "a", "status": 400, "error": {"type": "strict_dynamic_mapping_exception", "reason": "mapping set to strict, dynamic introduction of [timeout] within [_doc] is not allowed"}}},
+    {"index": {"_id": "a", "status": 400, "error": {"type": "mapper_parsing_exception", "reason": "x"}, "data": {"timeout": 1, "unavailable": True, "status [503]": 1}}},
+])
+def test_a_quoted_field_name_in_the_reason_does_not_make_an_error_transient(err):
+    assert R.transient_error(err) is False
+
+
+@pytest.mark.parametrize("err", [
+    {"type": "inference_exception", "reason": "inference timed out after 30s"},
+    {"type": "es_rejected_execution_exception", "reason": "rejected execution of coordinating operation"},
+    {"type": "status_exception", "reason": "Service temporarily unavailable"},
+    {"type": "task_cancelled_exception", "reason": "x"},
+    {"index": {"_id": "a", "status": 400, "error": {"type": "inference_exception", "reason": "Exception when running inference id [.j] on field [body]",
+                                                     "caused_by": {"type": "x", "reason": "the request timed out"}}}},
+])
+def test_a_real_reason_in_the_error_object_is_still_transient(err):
+    assert R.transient_error(err) is True
+
+
+def test_post_docs_waits_stay_within_one_budget_across_batches():
+    docs = [{"k": str(i)} for i in range(6)]
+    sleeps = []
+    es = FakeES([{d["k"]: "bulk HTTP 503 busy" for d in docs}] * 40, whole=[503] * 40)
+    out = R.post_docs(es, "ix", docs, lambda d: d["k"], batch=2, sleeps=(10, 10, 10), sleep=sleeps.append, log=lambda *_: None)
+    assert out and sum(sleeps) <= 30   # the first batch uses the whole ladder and ends the load; nothing waits again
+
+
+def test_post_docs_a_later_batch_gets_only_what_is_left_of_the_budget():
+    docs = [{"k": str(i)} for i in range(4)]
+    sleeps = []
+    # batch 1: one whole-bulk 503 then accepted (one wait of 10); batch 2: 503 throughout, 20 of the 30 s budget are left -> two waits, then stop
+    es = FakeES([], whole=[503, 200] + [503] * 10)
+    out = R.post_docs(es, "ix", docs, lambda d: d["k"], batch=2, sleeps=(10, 10, 10), sleep=sleeps.append, log=lambda *_: None)
+    assert sleeps == [10, 10, 10] and len(es.sent) == 5 and len(out) == 2
