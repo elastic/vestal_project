@@ -106,7 +106,9 @@ _UPSTREAM_ERROR = re.compile(r"Warning: Target URL returned error [45]\d\d")   #
 
 def _is_error(obj: Any) -> bool:
     """An error the tool hands back as its result: an error object, a failed workflow execution, an HTTP step that answered 4xx/5xx,
-    or the page reader's upstream-error warning. None of these changes the span status (observed, m6/probe-P1)."""
+    or the page reader's upstream-error warning. The first, second and fourth shapes are observed: the page reader's warning text
+    arrives as an Ok span (T-A recording, probe P1) and a failed workflow as an Ok span with execution.status "failed" and no `error`
+    key (probe A1a). The HTTP-step status >= 400 rule is INFERRED, NOT OBSERVED: no recording or probe has shown such a step."""
     if isinstance(obj, dict):
         if obj.get("type") == "error" or isinstance(obj.get("error"), (dict, str)) and obj.get("error"):
             return True

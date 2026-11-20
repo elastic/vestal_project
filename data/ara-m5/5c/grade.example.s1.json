@@ -1,6 +1,6 @@
 {
   "schema": "5c-2",
-  "assets_ref": "m5-v1.1",
+  "assets_ref": "m5-v1.2",
   "connector_id": "<from thresholds.json>",
   "judge_inference_id": "<from thresholds.json>",
   "tier": 100,
